@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from "react";
 import { collection, doc, getDocs, increment, updateDoc } from "firebase/firestore";
@@ -8,9 +8,24 @@ import { useParams } from "next/navigation";
 import { db } from "@/lib/fireabase";
 import ProductCard from "@/components/ProductCard";
 
+// Define a type for your products
+interface Product {
+  id: string; // Add id property to the Product interface
+  name: string;
+  description: string;
+  category: string;
+  images: string[];
+  regularPrice: number;
+  discountPrice: number;
+  isNew: boolean;
+  isInStock: boolean;
+  rating: number;
+  ratingCount: number;
+}
+
 const Products = () => {
   const { storeId } = useParams();
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]); // Use the defined Product type
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +38,6 @@ const Products = () => {
 
         const isCounted = localStorage.getItem(`MyShop_${storeId}_View`);
 
-
         if (userID && !isCounted) {
           const userDocRef = doc(db, "users", userID);
           await updateDoc(userDocRef, {
@@ -35,10 +49,24 @@ const Products = () => {
         try {
           const productsRef = collection(db, userID as string);
           const querySnapshot = await getDocs(productsRef);
-          const productList = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
+          
+          const productList: Product[] = querySnapshot.docs.map((doc) => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              name: data.name,
+              description: data.description,
+              category: data.category,
+              images: data.images,
+              regularPrice: data.regularPrice,
+              discountPrice: data.discountPrice,
+              isNew: data.isNew,
+              isInStock: data.isInStock,
+              rating: data.rating,
+              ratingCount: data.ratingCount,
+            };
+          });
+
           setProducts(productList);
         } catch (error) {
           console.error("Error fetching products: ", error);
@@ -93,7 +121,7 @@ const Products = () => {
       ) : (
         <div className="flex flex-wrap items-center justify-center gap-2">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} /> // Use product.id as key
           ))}
         </div>
       )}
