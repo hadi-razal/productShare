@@ -158,7 +158,7 @@ const HomePage: React.FC = () => {
             The all-in-one commerce platform that combines AI-powered insights, 
             enterprise-grade security, and seamless integration for maximum efficiency.
           </p>
-          <Link href="/signup">
+          <Link href="/login">
             <button className="mt-6 px-6 py-3 text-white bg-slate-950 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
               Get Started
             </button>
