@@ -192,13 +192,13 @@ const ProductPage: React.FC = () => {
           <RatingStars rating={productData.rating} totalReviews={productData.totalReviews} />
 
           {/* Pricing */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             {productData.discountPrice ? (
               <>
                 <span className="md:text-3xl text-lg font-bold text-gray-900">
                   ₹{productData.discountPrice}
                 </span>
-                <span className="md:text-3xl text-lg text-gray-400 line-through">
+                <span className="text-lg text-gray-400 line-through">
                   ₹{productData.regularPrice}
                 </span>
                 <span className="px-2 py-1 bg-red-100 text-red-600 rounded-full text-sm font-medium">

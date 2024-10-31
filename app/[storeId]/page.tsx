@@ -49,7 +49,7 @@ const Products = () => {
         try {
           const productsRef = collection(db, userID as string);
           const querySnapshot = await getDocs(productsRef);
-          
+
           const productList: Product[] = querySnapshot.docs.map((doc) => {
             const data = doc.data();
             return {
@@ -119,11 +119,12 @@ const Products = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
         </div>
       ) : (
-        <div className="flex flex-wrap items-center justify-center gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} /> // Use product.id as key
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
+
       )}
     </div>
   );
