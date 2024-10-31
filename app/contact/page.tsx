@@ -1,9 +1,13 @@
+import Footer from '@/components/Footer'
 import React from 'react'
 
-const page = () => {
+const ContactPage = () => {
   return (
-    <div>Contact Page</div>
+    <div className='pt-40'>
+      <h1>Contact Page</h1>
+      <Footer/>
+    </div>
   )
 }
 
-export default page
+export default ContactPage

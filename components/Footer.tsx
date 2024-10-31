@@ -1,8 +1,6 @@
 import Link from "next/link";
 
 const Footer = () => {
-
-  
   return (
     <footer className="py-16 bg-gray-950 pb-32">
         <div className="max-w-7xl mx-auto px-6 text-center">

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { ChevronLeft, ChevronRight, Share2, Star } from 'lucide-react';
 import { getUserId } from '@/helpers/getUserId';
@@ -20,7 +20,6 @@ interface ProductData {
 }
 
 const ProductPage: React.FC = () => {
-  const router = useRouter();
   const { storeId, productId } = useParams();
   const [productData, setProductData] = useState<ProductData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
