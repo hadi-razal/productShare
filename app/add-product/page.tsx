@@ -131,7 +131,7 @@ const CreateProduct = () => {
             try {
               const imageUrls = await uploadImagesToFirebase();
 
-              await addDoc(collection(db, `${userData.username}`), {
+              await addDoc(collection(db, `${userData.uid}`), {
                 ...productData,
                 images: imageUrls,
                 createdAt: serverTimestamp(),
