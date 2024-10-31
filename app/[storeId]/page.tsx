@@ -83,33 +83,16 @@ const Products = () => {
       setProducts([]); // Reset products if component unmounts
     };
   }, [storeId]);
+  
 
   return (
-    <div className="container min-h-screen max-w-7xl mx-auto px-3 py-8 pt-32">
-      <div className="flex justify-between items-center mb-8">
-        <div className="flex gap-4">
-          <select className="px-4 py-2 border rounded-lg bg-white">
-            <option>All Categories</option>
-            <option>Electronics</option>
-            <option>Fashion</option>
-            <option>Home</option>
-            <option>Sports</option>
-            <option>Books</option>
-          </select>
-          <select className="px-4 py-2 border rounded-lg bg-white">
-            <option>Sort by: Featured</option>
-            <option>Price: Low to High</option>
-            <option>Price: High to Low</option>
-            <option>Rating</option>
-          </select>
-        </div>
-      </div>
+    <div className="container min-h-screen max-w-7xl mx-auto px-3 py-8 pt-[90px]">        
 
       <div className='rounded-md mb-5 flex items-center justify-center cursor-pointer gap-3 bg-gray-950 pr-5 w-full'>
         <input
           type='text'
           placeholder='Search Product or Category'
-          className='border px-4 py-4 rounded-md w-full focus:outline-none'
+          className='border px-4 py-4 bg-gray-100 rounded-md w-full focus:outline-none'
         />
         <Search className='rounded-md text-[30px] cursor-pointer text-white' />
       </div>
@@ -119,7 +102,7 @@ const Products = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
+        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
