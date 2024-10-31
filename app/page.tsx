@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode, useEffect } from 'react';
-import { Star, Users, ShoppingBag, Globe, Zap, Shield, Box, Settings, BarChart, ArrowRight, 
+import { Star, Users, ShoppingBag, Globe, Zap, Shield, Box, Settings, BarChart, 
           CreditCard, Award} from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
@@ -27,8 +27,6 @@ const StatCard: React.FC<StatProps> = ({ icon, value, label, subtext }) => (
     </div>
   </div>
 );
-
-
 
 const FeatureCard: React.FC<{ icon: ReactNode; title: string; description: string }> = ({ 
   icon, 
@@ -57,7 +55,7 @@ const TestimonialCard: React.FC<{
       <div className="text-slate-950">
         <Star className="w-6 h-6" />
       </div>
-      <p className="text-gray-700 italic">"{quote}"</p>
+      <p className="text-gray-700 italic">&ldquo;{quote}&rdquo;</p>
       <div className="mt-4">
         <p className="font-semibold text-slate-950">{author}</p>
         <p className="text-gray-600 text-sm">{role} at {company}</p>
@@ -109,7 +107,6 @@ const HomePage: React.FC = () => {
     }
   ];
 
-  
   const testimonials = [
     {
       quote: "Product Share transformed our business. We have seen a 300% increase in sales since switching.",
@@ -178,16 +175,6 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-          {/* Testimonials Section */}
-          <section className="py-16 bg-white">
-        <h2 className="text-3xl font-bold text-center text-slate-950 mb-12">Testimonials</h2>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
-          {testimonials.map((testimonial, index) => (
-            <TestimonialCard key={index} {...testimonial} />
-          ))}
-        </div>
-      </section>
-
       {/* Features Section */}
       <section className="py-16 ">
         <h2 className="text-3xl font-bold text-center text-slate-950 mb-12">Features</h2>
@@ -207,8 +194,6 @@ const HomePage: React.FC = () => {
           ))}
         </div>
       </section>
-
-     
     </div>
   );
 };
