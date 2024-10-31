@@ -1,4 +1,6 @@
 
+"use client"
+
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { Plus, X } from 'lucide-react';
 import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
