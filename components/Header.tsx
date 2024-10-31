@@ -7,19 +7,39 @@ import { useRouter } from "next/navigation";
 import { auth } from "@/lib/fireabase";
 import Link from "next/link";
 
-// Define the props interface for NavLink
 interface NavLinkProps {
   href: string;
-  children: React.ReactNode; // This allows for any valid React node as children
+  children: React.ReactNode;
+  onClick?: () => void;
 }
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUser, setIsUser] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
+  // Close menu when resizing to desktop view
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Auth state management
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsUser(!!user);
@@ -32,57 +52,62 @@ const Header = () => {
       await signOut(auth);
       router.push('/login');
       setIsUser(false);
-      toggleMenu();
+      setIsOpen(false);
     } catch (error) {
       console.error("Error logging out:", error);
     }
   };
 
-  // Use the defined interface for the NavLink component
-  const NavLink = ({ href, children }: NavLinkProps) => (
+  const NavLink = ({ href, children, onClick }: NavLinkProps) => (
     <Link
       href={href}
-      className="relative px-3 py-2 text-gray-700 hover:text-gray-950 transition-colors duration-200
-        after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 
-        after:bottom-0 after:left-0 after:bg-gray-950 after:transition-transform 
-        after:duration-300 hover:after:scale-x-100"
+      onClick={onClick}
+      className="group relative px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200"
     >
-      {children}
+      <span className="relative z-10">{children}</span>
+      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-white transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
     </Link>
   );
 
   return (
-    <header className={`fixed bg-gray-300 flex items-center w-full top-0 h-[80px] z-50 transition-all duration-300`}>
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="flex items-center justify-between h-16">
+    <header 
+      className={`fixed w-full top-0 z-50 transition-all duration-300
+        ${isScrolled ? 'bg-gray-950/95 backdrop-blur-sm shadow-lg' : 'bg-gray-950'}
+        ${isOpen ? 'h-screen md:h-[80px]' : 'h-[80px]'}`}
+    >
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[80px] relative">
+        <div className="flex items-center justify-between h-full">
           {/* Logo */}
-          <Link href={'/'} className="flex-shrink-0 flex items-center space-x-2">
-            <Share2 className="h-6 w-6 text-gray-950" />
-            <span className="text-3xl font-bold">ProductShare</span>
+          <Link 
+            href={'/'} 
+            className="flex items-center space-x-3 text-white hover:opacity-90 transition-opacity"
+          >
+            <Share2 className="h-7 w-7" />
+            <span className="text-2xl font-bold tracking-tight">ProductShare</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-6">
             {!isUser && (
               <>
                 <NavLink href="/pricing">Pricing</NavLink>
-                <NavLink href="/about">About Us</NavLink>
-                <NavLink href="/contact">Contact Us</NavLink>
+                <NavLink href="/about">About</NavLink>
+                <NavLink href="/contact">Contact</NavLink>
               </>
             )}
             {!isUser ? (
               <Link
                 href="/login"
-                className="ml-4 px-4 py-2 rounded-full bg-gray-950 text-white hover:bg-blue-700 
-                  transition-colors duration-200 shadow-md hover:shadow-lg"
+                className="px-5 py-2.5 rounded-md bg-white text-gray-900 hover:bg-gray-200
+                  transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
               >
                 Login
               </Link>
             ) : (
               <button
                 onClick={handleLogout}
-                className="ml-4 px-4 py-2 rounded-full bg-red-600 text-white hover:bg-red-700 
-                  transition-colors duration-200 shadow-md hover:shadow-lg"
+                className="px-5 py-2.5 rounded-md bg-red-500 text-white hover:bg-red-600
+                  transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
               >
                 Logout
               </button>
@@ -90,37 +115,45 @@ const Header = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button
-              onClick={toggleMenu}
-              className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 
-                focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-            >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden p-2 text-gray-300 hover:text-white focus:outline-none"
+          >
+            {isOpen ? (
+              <X className="h-6 w-6 transition-transform duration-200 rotate-180" />
+            ) : (
+              <Menu className="h-6 w-6 transition-transform duration-200" />
+            )}
+          </button>
         </div>
 
         {/* Mobile Menu */}
-        <div
-          className={`md:hidden transition-all duration-300 ease-in-out ${
-            isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
-          }`}
+        <div 
+          className={`md:hidden absolute inset-x-0 top-[80px] bg-gray-950 transition-all duration-300 ease-in-out
+            ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10 pointer-events-none'}`}
         >
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-white rounded-lg shadow-lg mt-2">
+          <div className="p-4 space-y-4">
             {!isUser && (
-              <>
-                <Link href="/pricing" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-950 hover:bg-gray-900 transition-colors duration-200">Pricing</Link>
-                <Link href="/about" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-950 hover:bg-gray-900 transition-colors duration-200">About Us</Link>
-                <Link href="/contact" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-950 hover:bg-gray-900 transition-colors duration-200">Contact Us</Link>
-              </>
+              <div className="flex flex-col space-y-4">
+                <NavLink href="/pricing" onClick={() => setIsOpen(false)}>Pricing</NavLink>
+                <NavLink href="/about" onClick={() => setIsOpen(false)}>About</NavLink>
+                <NavLink href="/contact" onClick={() => setIsOpen(false)}>Contact</NavLink>
+              </div>
             )}
             {!isUser ? (
-              <Link href="/login" className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-white bg-gray-950 hover:bg-blue-700 transition-colors duration-200">Login</Link>
+              <Link
+                href="/login"
+                onClick={() => setIsOpen(false)}
+                className="block w-full text-center px-5 py-3 rounded-md bg-white text-gray-900
+                  hover:bg-gray-200 transition-colors duration-200 font-medium"
+              >
+                Login
+              </Link>
             ) : (
               <button
                 onClick={handleLogout}
-                className="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-white bg-red-500 hover:bg-red-600 transition-colors duration-200"
+                className="block w-full text-center px-5 py-3 rounded-md bg-red-500 text-white
+                  hover:bg-red-600 transition-colors duration-200 font-medium"
               >
                 Logout
               </button>
