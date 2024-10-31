@@ -1,7 +1,10 @@
+"use client"
 
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
     product: {
+        id: string;
         name: string;
         description: string;
         category: string;
@@ -16,8 +19,13 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+
+
+    const router = useRouter()
+
+
     return (
-        <div className="sm:w-[300px] xs:w-[190px] w-full rounded-md border border-gray-200 bg-gray-200 shadow-sm transition-all duration-300 hover:shadow-lg">
+        <div onClick={()=>router.push(`/123/${product.id}`)} className="cursor-pointer sm:w-[300px] xs:w-[190px] w-full rounded-md border border-gray-200 bg-gray-200 shadow-sm transition-all duration-300 hover:shadow-lg">
             {/* Image Section */}
             <div className="relative">
                 <img
