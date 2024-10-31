@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
-import { DevBundlerService } from 'next/dist/server/lib/dev-bundler-service';
 import Link from 'next/link';
-import { auth } from '@/lib/fireabse';
+import { auth, db } from '@/lib/fireabse';
 
 const RegisterPage: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -24,7 +23,7 @@ const RegisterPage: React.FC = () => {
             user.uid
 
             // Add user details to Firestore
-            await setDoc(doc(DevBundlerService, "users", user.uid), {
+            await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
                 name,
                 username,

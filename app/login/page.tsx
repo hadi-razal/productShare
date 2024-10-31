@@ -5,6 +5,7 @@ import {  signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/fireabse';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 
 const LoginPage: React.FC = () => {
@@ -17,6 +18,7 @@ const LoginPage: React.FC = () => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             console.log("Logged In Successfully", userCredential.user);
+            toast.success("Logged In Successfully")
         } catch (error) {
             console.error("Login failed:", error);
             setError("Invalid email or password. Please try again.");

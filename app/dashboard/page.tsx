@@ -157,7 +157,7 @@ const UserDashboard = () => {
 
               <div className="w-full flex items-center justify-center">
 
-                <Link href={'/store/123'} className="w-full mt-4 px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition">
+                <Link href={'/123'} className="w-full mt-4 px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition">
                   View Catalog
                 </Link>
 
