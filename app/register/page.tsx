@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import Link from 'next/link';
-import { auth, db } from '@/lib/fireabse';
+import { auth, db } from '@/lib/fireabase';
 
 const RegisterPage: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -19,8 +19,6 @@ const RegisterPage: React.FC = () => {
             // Create user with email and password
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-
-            user.uid
 
             // Add user details to Firestore
             await setDoc(doc(db, "users", user.uid), {
@@ -38,21 +36,21 @@ const RegisterPage: React.FC = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center">
-            <div className="  rounded-md  p-8 max-w-md w-full">
-                <h2 className="text-2xl font-bold text-slate-950 text-center mb-6">Login to Your Account</h2>
+            <div className="rounded-md p-8 max-w-md w-full">
+                <h2 className="text-2xl font-bold text-slate-950 text-center mb-6">Register Your Account</h2>
                 <form onSubmit={handleRegister} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="email">
+                        <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="name">
                             Full Name
                         </label>
                         <input
                             type="text"
-                            id="email"
+                            id="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
-                            className="block w-full bg-gray-300  p-3 border border-gray-600 rounded-md "
-                            placeholder="Enter your email"
+                            className="block w-full bg-gray-300 p-3 border border-gray-600 rounded-md"
+                            placeholder="Enter your full name"
                         />
                     </div>
                     <div>
@@ -65,22 +63,22 @@ const RegisterPage: React.FC = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="block w-full bg-gray-300  p-3 border border-gray-600 rounded-md "
+                            className="block w-full bg-gray-300 p-3 border border-gray-600 rounded-md"
                             placeholder="Enter your email"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="email">
+                        <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="username">
                             Username
                         </label>
                         <input
                             type="text"
-                            id="email"
+                            id="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
-                            className="block w-full bg-gray-300  p-3 border border-gray-600 rounded-md "
-                            placeholder="Enter your email"
+                            className="block w-full bg-gray-300 p-3 border border-gray-600 rounded-md"
+                            placeholder="Enter your username"
                         />
                     </div>
                     <div>
@@ -93,7 +91,7 @@ const RegisterPage: React.FC = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="block w-full bg-gray-300  p-3 border border-gray-600 rounded-md "
+                            className="block w-full bg-gray-300 p-3 border border-gray-600 rounded-md"
                             placeholder="Enter your password"
                         />
                     </div>
@@ -107,7 +105,7 @@ const RegisterPage: React.FC = () => {
                 </form>
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-700">
-                        have an account?{' '}
+                        Have an account?{' '}
                         <Link href="/login" className="text-slate-950 hover:underline">
                             Login here
                         </Link>

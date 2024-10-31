@@ -6,7 +6,7 @@ import { Plus, X } from 'lucide-react';
 import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { auth, db, storage } from '@/lib/fireabse';
+import { auth, db, storage } from '@/lib/fireabase';
 
 interface ProductData {
   name: string;

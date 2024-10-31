@@ -5,7 +5,7 @@ import { collection, doc, getDocs, increment, updateDoc } from "firebase/firesto
 import { Search } from "lucide-react";
 import { getUserId } from "@/helpers/getUserId";
 import { useParams } from "next/navigation";
-import { db } from "@/lib/fireabse";
+import { db } from "@/lib/fireabase";
 import ProductCard from "@/components/ProductCard";
 
 const Products = () => {

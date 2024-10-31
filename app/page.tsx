@@ -2,10 +2,10 @@
 
 import React, { ReactNode, useEffect } from 'react';
 import { Star, Users, ShoppingBag, Globe, Zap, Shield, Box, Settings, BarChart, ArrowRight, 
-         Clock, CreditCard, MessageSquare, TrendingUp, Award, Heart, Gift, Truck } from 'lucide-react';
+          CreditCard, Award} from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { auth } from '@/lib/fireabse';
+import { auth } from '@/lib/fireabase'; // Make sure the path is correct
 import Link from 'next/link';
 
 interface StatProps {
@@ -28,43 +28,7 @@ const StatCard: React.FC<StatProps> = ({ icon, value, label, subtext }) => (
   </div>
 );
 
-interface PricingTierProps {
-  name: string;
-  price: string;
-  features: string[];
-  popular?: boolean;
-}
 
-const PricingCard: React.FC<PricingTierProps> = ({ name, price, features, popular }) => (
-  <div className={`relative bg-gray-200 rounded-lg shadow-md overflow-hidden ${
-    popular ? 'ring-2 ring-slate-950' : ''
-  }`}>
-    {popular && (
-      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-        <span className="bg-slate-950 text-white px-4 py-1 rounded-full text-sm">Most Popular</span>
-      </div>
-    )}
-    <div className="p-6">
-      <div className="text-center">
-        <h3 className="text-xl font-bold text-slate-950 mb-2">{name}</h3>
-        <div className="text-3xl font-bold text-slate-950 mb-6">{price}</div>
-        <ul className="space-y-3 text-left mb-6">
-          {features.map((feature, i) => (
-            <li key={i} className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-slate-950" />
-              <span className="text-gray-700">{feature}</span>
-            </li>
-          ))}
-        </ul>
-        <button className={`w-full py-2 rounded-md transition-all duration-300 ${
-          popular ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-950'
-        } hover:opacity-90`}>
-          Get Started
-        </button>
-      </div>
-    </div>
-  </div>
-);
 
 const FeatureCard: React.FC<{ icon: ReactNode; title: string; description: string }> = ({ 
   icon, 
@@ -145,48 +109,10 @@ const HomePage: React.FC = () => {
     }
   ];
 
-  const pricingTiers = [
-    {
-      name: 'Starter',
-      price: '$49/month',
-      features: [
-        'Up to 1,000 products',
-        'Basic analytics',
-        'Email support',
-        '2% transaction fee',
-        '2 team members'
-      ]
-    },
-    {
-      name: 'Professional',
-      price: '$149/month',
-      features: [
-        'Up to 10,000 products',
-        'Advanced analytics',
-        'Priority support',
-        '1% transaction fee',
-        '5 team members',
-        'API access'
-      ],
-      popular: true
-    },
-    {
-      name: 'Enterprise',
-      price: 'Custom',
-      features: [
-        'Unlimited products',
-        'Custom analytics',
-        'Dedicated support',
-        'Custom pricing',
-        'Unlimited team members',
-        'Full API access'
-      ]
-    }
-  ];
-
+  
   const testimonials = [
     {
-      quote: "Product Share transformed our business. We've seen a 300% increase in sales since switching.",
+      quote: "Product Share transformed our business. We have seen a 300% increase in sales since switching.",
       author: "Sarah Johnson",
       role: "CEO",
       company: "Fashion Boutique Inc"
@@ -233,81 +159,56 @@ const HomePage: React.FC = () => {
 
           <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
             The all-in-one commerce platform that combines AI-powered insights, 
-            enterprise-grade security, and seamless scalability to help you grow your 
-            business faster than ever before.
+            enterprise-grade security, and seamless integration for maximum efficiency.
           </p>
-        </div>
-
-        <div className="flex justify-center gap-4 mb-32">
-          <Link href="/login" className="flex items-center gap-2 px-8 py-4 rounded-md text-lg font-medium bg-slate-950 hover:bg-slate-800 text-white shadow-md transition-all duration-300">
-            Start Free Trial
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-          <Link href="/demo" className="flex items-center gap-2 px-8 py-4 rounded-md text-lg font-medium bg-gray-200 hover:bg-slate-50 text-slate-950 shadow-md transition-all duration-300">
-            Watch Demo
+          <Link href="/signup">
+            <button className="mt-6 px-6 py-3 text-white bg-slate-950 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+              Get Started
+            </button>
           </Link>
         </div>
+      </section>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {stats.map((stat, i) => (
-            <StatCard key={i} {...stat} />
+      {/* Stats Section */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-6">
+          {stats.map((stat, index) => (
+            <StatCard key={index} {...stat} />
+          ))}
+        </div>
+      </section>
+
+          {/* Testimonials Section */}
+          <section className="py-16 bg-white">
+        <h2 className="text-3xl font-bold text-center text-slate-950 mb-12">Testimonials</h2>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
+          {testimonials.map((testimonial, index) => (
+            <TestimonialCard key={index} {...testimonial} />
           ))}
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-32 b border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl font-bold text-slate-950 mb-4">Enterprise-Grade Features</h2>
-            <p className="text-xl text-gray-700 max-w-2xl mx-auto">
-              Built for scale with the security, reliability, and flexibility your business needs.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, i) => (
-              <FeatureCard key={i} {...feature} />
-            ))}
-          </div>
+      <section className="py-16 ">
+        <h2 className="text-3xl font-bold text-center text-slate-950 mb-12">Features</h2>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
+          {features.map((feature, index) => (
+            <FeatureCard key={index} {...feature} />
+          ))}
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-32 bg-gray-50 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl font-bold text-slate-950 mb-4">What Our Customers Say</h2>
-            <p className="text-xl text-gray-700 max-w-2xl mx-auto">
-              Join thousands of successful businesses that trust Product Share.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {testimonials.map((testimonial, i) => (
-              <TestimonialCard key={i} {...testimonial} />
-            ))}
-          </div>
+      <section className="py-16 bg-white">
+        <h2 className="text-3xl font-bold text-center text-slate-950 mb-12">Testimonials</h2>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
+          {testimonials.map((testimonial, index) => (
+            <TestimonialCard key={index} {...testimonial} />
+          ))}
         </div>
       </section>
 
-      {/* Call to Action Section */}
-      <section className="py-32 bg-slate-950 text-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-5xl font-bold mb-8">Ready to Scale Your Business?</h2>
-          <p className="text-xl text-gray-300 mb-12">
-            Join over 250,000 businesses that trust Product Share to power their growth.
-          </p>
-          <div className="flex items-center justify-center gap-4">
-            <Link href="/signup" className="px-8 py-4 rounded-md text-lg font-medium bg-gray-200 text-slate-950 hover:bg-gray-100 transition-all duration-300">
-              Start Free Trial
-            </Link>
-            <Link href="/contact" className="px-8 py-4 rounded-md text-lg font-medium border border-white hover:bg-gray-200/10 transition-all duration-300">
-              Contact Sales
-            </Link>
-          </div>
-        </div>
-      </section>
+     
     </div>
   );
 };

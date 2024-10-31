@@ -4,7 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { User, Package, PlusCircle, Users, Share2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
-import { auth, db } from '@/lib/fireabse';
+import { auth, db } from '@/lib/fireabase';
 import Link from 'next/link';
 
 type CardProps = {

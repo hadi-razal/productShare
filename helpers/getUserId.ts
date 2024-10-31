@@ -1,4 +1,4 @@
-import { db } from "@/lib/fireabse";
+import { db } from "@/lib/fireabase";
 import { getDocs, query, collection, where } from "firebase/firestore";
 
 // Function to get user ID by username

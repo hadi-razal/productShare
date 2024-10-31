@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import {  signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/fireabse';
+import { auth } from '@/lib/fireabase';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -69,7 +69,7 @@ const LoginPage: React.FC = () => {
                 </form>
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-700">
-                        Don't have an account?{' '}
+                        Dont have an account?{' '}
                         <Link href={'/login'} className="text-slate-950 hover:underline">
                             Register here
                         </Link>
