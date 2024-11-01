@@ -7,24 +7,13 @@ import { getUserId } from "@/helpers/getUserId";
 import { useParams } from "next/navigation";
 import { db } from "@/lib/fireabase";
 import ProductCard from "@/components/ProductCard";
+import { ProductType } from "@/type";
 
-interface Product {
-  id: string; 
-  name: string;
-  description: string;
-  category: string;
-  images: string[];
-  regularPrice: number;
-  discountPrice: number;
-  isNew: boolean;
-  isInStock: boolean;
-  rating: number;
-  ratingCount: number;
-}
 
 const Products = () => {
+
   const { storeId } = useParams();
-  const [products, setProducts] = useState<Product[]>([]); // Use the defined Product type
+  const [products, setProducts] = useState<ProductType[]>([]); // Use the defined Product type
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -49,10 +38,10 @@ const Products = () => {
           const productsRef = collection(db, userID as string);
           const querySnapshot = await getDocs(productsRef);
 
-          const productList: Product[] = querySnapshot.docs.map((doc) => {
+          const productList: ProductType[] = querySnapshot.docs.map((doc) => {
             const data = doc.data();
             return {
-              id: doc.id,
+            id: doc.id,
               name: data.name,
               description: data.description,
               category: data.category,
@@ -103,7 +92,7 @@ const Products = () => {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} storeId={storeId as string} product={product} />
           ))}
         </div>
 

@@ -1,4 +1,4 @@
-export interface ProductTypes {
+export interface ProductType {
     id: string; 
     name: string;
     description: string;
@@ -12,7 +12,7 @@ export interface ProductTypes {
     ratingCount: number;
   }
   
-export interface user {
+export interface userType {
     id: string; 
     name: string;
     profile: string;
