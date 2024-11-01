@@ -44,6 +44,7 @@ const Products = () => {
             id: doc.id,
               name: data.name,
               description: data.description,
+              colors: data?.colors,
               category: data.category,
               images: data.images,
               regularPrice: data.regularPrice,
@@ -52,6 +53,8 @@ const Products = () => {
               isInStock: data.isInStock,
               rating: data.rating,
               ratingCount: data.ratingCount,
+              
+
             };
           });
 

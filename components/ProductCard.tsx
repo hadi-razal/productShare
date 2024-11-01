@@ -27,7 +27,7 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
 
 
     return (
-        <div onClick={() => router.push(`/store/${storeId}/${product.id}`)} className="cursor-pointer w-full rounded-md border border-gray-200 bg-gray-200 shadow-sm transition-all duration-300 hover:shadow-lg">
+        <div onClick={() => router.push(`/store/${storeId}/${product.id}`)} className="cursor-pointer relative w-full rounded-md border border-gray-200 bg-gray-200 shadow-sm transition-all duration-300 hover:shadow-lg">
             {/* Image Section */}
             <div className="relative">
                 <img
@@ -36,20 +36,20 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
                     className="w-full h-48 object-cover rounded-t-lg"
                 />
                 <div className="absolute top-1 left-1 flex gap-2">
-                   
+
                     {!product.isInStock && (
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-500 text-white">
+                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-700 text-white">
                             Out of Stock
                         </span>
                     )}
                     {product.regularPrice > product.discountPrice && product.isInStock && (
-                        <span className="px-2 py-1 bg-red-100 text-red-600 rounded-full text-[12px] font-medium">
+                        <span className="px-2 py-1 bg-red-700 text-white rounded-full text-[12px] font-medium">
                             {calculateDiscount()}% OFF
                         </span>
                     )}
                 </div>
                 <div className="absolute top-1 right-1 flex gap-2">
-                {product.isNew && (
+                    {product.isNew && (
                         <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-500 text-white">
                             New
                         </span>
@@ -74,7 +74,7 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
                     <span className="ml-1 text-gray-600 text-xs">({14})</span>
                 </div>
 
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-2">
                     <span className="text-md font-normal">₹{product?.regularPrice}</span>
                     {product?.regularPrice > product?.discountPrice && (
                         <>
@@ -85,6 +85,13 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
                     )}
                 </div>
             </div>
+            <div className="absolute bottom-2 right-2 flex gap-2">
+                    {product.isBestSelling && (
+                        <span className="px-2 py-1 w-10 text-[8px] flex items-center justify-center text-center h-10 font-bold rounded-full bg-gray-700 text-white">
+                            Best Selling
+                        </span>
+                    )}
+                </div>
         </div>
     );
 };

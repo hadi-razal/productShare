@@ -75,7 +75,7 @@ const ProductPage: React.FC = () => {
   };
 
   // Rating Stars Component
-  const RatingStars: React.FC<{ rating: number; totalReviews: number }> = ({
+  const RatingStars: React.FC<{ rating: number; totalReviews?: number }> = ({
     rating = 4.5,
     totalReviews = 128,
   }) => (
@@ -177,9 +177,9 @@ const ProductPage: React.FC = () => {
 
         {/* Product Details Section */}
         <div className="space-y-4">
-          {productData.isInStock && (
-            <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-              In Stock
+          {productData.isInStock == false && (
+            <span className="px-3 py-1 bg-red-700 text-white rounded-full text-sm font-medium">
+              Out of Stock
             </span>
           )}
           <h1 className="md:text-3xl text-lg font-semibold text-gray-950">{productData.name}</h1>

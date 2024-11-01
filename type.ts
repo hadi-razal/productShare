@@ -9,9 +9,11 @@ export interface ProductType {
     discountPrice: number;
     isNew: boolean;
     isInStock: boolean;
+    isBestSelling?: boolean;
     rating: number;
-    totalReviews: number;
+    totalReviews?: number;
     ratingCount: number;
+    availableStock?: number;
   }
   
 export interface userType {
