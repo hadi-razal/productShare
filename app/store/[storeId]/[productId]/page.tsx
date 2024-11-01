@@ -104,7 +104,7 @@ const ProductPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
+      <div className="container flex justify-center items-center h-screen mx-auto px-4 text-center">
         <p className="text-gray-500">Loading product details...</p>
       </div>
     );
@@ -162,14 +162,16 @@ const ProductPage: React.FC = () => {
 
           {/* Thumbnail Preview */}
           {productData.images && productData.images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto">
+            <div className="flex gap-2 overflow-x-auto relative">
               {productData.images.map((image, index) => (
                 <div
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
-                  className={`cursor-pointer w-16 h-16 rounded-lg overflow-hidden transition-all ${currentImageIndex === index ? 'ring-2 ring-indigo-500' : ''
-                    }`}
+                  className={`cursor-pointer w-16 h-16 rounded-lg overflow-hidden transition-all relative`}
                 >
+                  {currentImageIndex === index && (
+                    <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
+                  )}
                   <img
                     src={image}
                     alt={`Thumbnail ${index + 1}`}
@@ -179,6 +181,7 @@ const ProductPage: React.FC = () => {
               ))}
             </div>
           )}
+
         </div>
 
         {/* Product Details Section */}

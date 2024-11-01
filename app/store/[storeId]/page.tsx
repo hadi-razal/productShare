@@ -8,9 +8,8 @@ import { useParams } from "next/navigation";
 import { db } from "@/lib/fireabase";
 import ProductCard from "@/components/ProductCard";
 
-// Define a type for your products
 interface Product {
-  id: string; // Add id property to the Product interface
+  id: string; 
   name: string;
   description: string;
   category: string;
@@ -73,15 +72,15 @@ const Products = () => {
         }
       }
 
-      setIsLoading(false); // End loading
+      setIsLoading(false); 
     };
 
     fetchProducts();
 
-    // Cleanup function to avoid memory leaks if needed
     return () => {
-      setProducts([]); // Reset products if component unmounts
+      setProducts([]);
     };
+
   }, [storeId]);
   
 

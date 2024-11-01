@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/fireabase';
 import Link from 'next/link';
+import { getUsername } from '@/helpers/getUsername';
 
 type CardProps = {
   children: React.ReactNode;
@@ -82,7 +83,7 @@ const Button = ({ children, variant = "primary", className = "", ...props }: But
   };
 
   return (
-    <button 
+    <button
       className={`${baseClasses} ${variants[variant]} ${className}`}
       {...props}
     >
@@ -106,7 +107,7 @@ const LinkButton = ({ children, href, variant = "primary", className = "" }: Lin
   };
 
   return (
-    <Link 
+    <Link
       href={href}
       className={`${baseClasses} ${variants[variant]} ${className}`}
     >
@@ -118,6 +119,7 @@ const LinkButton = ({ children, href, variant = "primary", className = "" }: Lin
 const UserDashboard = () => {
   const [numberOfProducts, setNumberOfProducts] = useState<number | null>(null);
   const [numberOfStoreVisit, setNumberOfStoreVisit] = useState<number | null>(null);
+  const [username, setUsername] = useState<string | null>()
 
   useEffect(() => {
     const fetchProductCount = async (userId: string) => {
@@ -134,7 +136,7 @@ const UserDashboard = () => {
       try {
         const userDocRef = doc(db, "users", userId);
         const snapshotUser = await getDoc(userDocRef);
-        
+
         if (snapshotUser.exists()) {
           const data = snapshotUser.data();
           setNumberOfStoreVisit(data.visitCount ?? 0);
@@ -144,8 +146,14 @@ const UserDashboard = () => {
       }
     };
 
+    const updateUsername = async (user:any) => {
+      const username = await getUsername(user.uid);
+      setUsername(username);
+    };
+
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        updateUsername(user)
         fetchProductCount(user.uid);
         fetchStoreVisit(user.uid);
       }
@@ -206,7 +214,7 @@ const UserDashboard = () => {
             icon={Package}
             iconColor="text-blue-600"
             primaryAction={
-              <LinkButton href="/123">
+              <LinkButton href={`/store/${username}`}>
                 View Catalog
               </LinkButton>
             }
