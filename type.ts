@@ -17,7 +17,8 @@ export interface ProductType {
   }
   
 export interface userType {
-    id: string; 
+    id?: string; 
+    uid?: string; 
     name: string;
     profile: string;
     email: string;

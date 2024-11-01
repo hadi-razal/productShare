@@ -212,7 +212,7 @@ const ProductPage: React.FC = () => {
 
               <div className='flex items-center gap-1 flex-wrap'>
 
-                {productData.colors.map((color: any, index: any) => (
+                {productData.colors.map((color: string, index: number) => (
                   <span
                     key={index}
                     style={{ background: color }}

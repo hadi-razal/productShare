@@ -1,6 +1,6 @@
 "use client";
 
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { User, Package, PlusCircle, Users, Share2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
@@ -119,7 +119,7 @@ const LinkButton = ({ children, href, variant = "primary", className = "" }: Lin
 const UserDashboard = () => {
   const [numberOfProducts, setNumberOfProducts] = useState<number | null>(null);
   const [numberOfStoreVisit, setNumberOfStoreVisit] = useState<number | null>(null);
-  const [username, setUsername] = useState<string | null>()
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProductCount = async (userId: string) => {
@@ -146,14 +146,14 @@ const UserDashboard = () => {
       }
     };
 
-    const updateUsername = async (user:any) => {
-      const username = await getUsername(user.uid);
-      setUsername(username);
+    const updateUsername = async (user: FirebaseUser) => {
+      const fetchedUsername = await getUsername(user.uid);
+      setUsername(fetchedUsername);
     };
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        updateUsername(user)
+        updateUsername(user);
         fetchProductCount(user.uid);
         fetchStoreVisit(user.uid);
       }
@@ -214,7 +214,7 @@ const UserDashboard = () => {
             icon={Package}
             iconColor="text-blue-600"
             primaryAction={
-              <LinkButton href={`/store/${username}`}>
+              <LinkButton href={`/store/${username ?? ''}`}>
                 View Catalog
               </LinkButton>
             }
