@@ -5,6 +5,7 @@ import {  signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/fireabase';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 
 const LoginPage: React.FC = () => {
@@ -12,11 +13,14 @@ const LoginPage: React.FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
 
+    const router = useRouter()
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             console.log("Logged In Successfully", userCredential.user);
+            router.push(`/dashboard`)
         } catch (error) {
             console.error("Login failed:", error);
             setError("Invalid email or password. Please try again.");

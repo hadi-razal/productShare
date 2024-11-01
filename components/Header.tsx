@@ -24,8 +24,8 @@ const Header = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Close menu when resizing to desktop view
@@ -35,8 +35,8 @@ const Header = () => {
         setIsOpen(false);
       }
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Auth state management
@@ -50,7 +50,7 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      router.push('/login');
+      router.push("/login");
       setIsUser(false);
       setIsOpen(false);
     } catch (error) {
@@ -70,16 +70,19 @@ const Header = () => {
   );
 
   return (
-    <header 
+    <header
       className={`fixed w-full top-0 z-50 transition-all duration-300
-        ${isScrolled ? 'bg-gray-950/95 backdrop-blur-sm shadow-lg' : 'bg-gray-950'}
-        ${isOpen ? 'h-screen md:h-[80px]' : 'h-[80px]'}`}
+        ${isScrolled ? "bg-gray-950/95 backdrop-blur-sm shadow-lg" : "bg-gray-950"}
+        ${isOpen ? "h-screen md:h-[80px]" : "h-[80px]"}`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[80px] relative">
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
-          <Link 
-            href={'/'} 
+          <Link
+            href={isUser ? "/dashboard" : "#"}
+            onClick={(e) => {
+              if (!isUser) e.preventDefault();
+            }}
             className="flex items-center space-x-3 text-white hover:opacity-90 transition-opacity"
           >
             <Share2 className="h-7 w-7" />
@@ -128,16 +131,22 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div 
+        <div
           className={`md:hidden absolute inset-x-0 top-[80px] bg-gray-950 transition-all duration-300 ease-in-out
-            ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10 pointer-events-none'}`}
+            ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none"}`}
         >
           <div className="p-4 space-y-4">
             {!isUser && (
               <div className="flex flex-col space-y-4">
-                <NavLink href="/pricing" onClick={() => setIsOpen(false)}>Pricing</NavLink>
-                <NavLink href="/about" onClick={() => setIsOpen(false)}>About</NavLink>
-                <NavLink href="/contact" onClick={() => setIsOpen(false)}>Contact</NavLink>
+                <NavLink href="/pricing" onClick={() => setIsOpen(false)}>
+                  Pricing
+                </NavLink>
+                <NavLink href="/about" onClick={() => setIsOpen(false)}>
+                  About
+                </NavLink>
+                <NavLink href="/contact" onClick={() => setIsOpen(false)}>
+                  Contact
+                </NavLink>
               </div>
             )}
             {!isUser ? (

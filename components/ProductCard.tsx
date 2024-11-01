@@ -60,12 +60,12 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
 
             {/* Content Section */}
             <div className="p-2">
-                <div className="flex items-center gap-2 mb-2">
+                {/* <div className="flex items-center gap-2 mb-2">
                     <span className="px-2 py-1 text-xs font-semibold rounded-md bg-gray-100 text-gray-800">
                         {product?.category}
                     </span>
 
-                </div>
+                </div> */}
 
                 <h3 className="font-light text-sm text-ellipsis line-clamp-3">{product.name}</h3>
                 <div className="flex items-center text-xl text-yellow-500">

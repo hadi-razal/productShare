@@ -6,22 +6,13 @@ import { doc, getDoc } from 'firebase/firestore';
 import { ChevronLeft, ChevronRight, Share2, Star } from 'lucide-react';
 import { getUserId } from '@/helpers/getUserId';
 import { db } from '@/lib/fireabase';
+import { ProductType } from '@/type';
 
-interface ProductData {
-  name: string;
-  description: string;
-  regularPrice: number;
-  discountPrice?: number;
-  rating: number;
-  totalReviews: number;
-  images: string[];
-  features: string[];
-  inStock: boolean;
-}
+
 
 const ProductPage: React.FC = () => {
   const { storeId, productId } = useParams();
-  const [productData, setProductData] = useState<ProductData | null>(null);
+  const [productData, setProductData] = useState<ProductType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
@@ -45,7 +36,7 @@ const ProductPage: React.FC = () => {
         const productRef = doc(db, userId, productId as string);
         const productSnap = await getDoc(productRef);
         if (productSnap.exists()) {
-          setProductData(productSnap.data() as ProductData);
+          setProductData(productSnap.data() as ProductType);
         }
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -186,7 +177,7 @@ const ProductPage: React.FC = () => {
 
         {/* Product Details Section */}
         <div className="space-y-4">
-          {productData.inStock && (
+          {productData.isInStock && (
             <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
               In Stock
             </span>
@@ -215,6 +206,25 @@ const ProductPage: React.FC = () => {
             )}
           </div>
 
+          {productData.colors.length > 0 && (
+            <div className='flex flex-col justify-center gap-2'>
+              <span className='text-md text-gray-950 font-medium opacity-85'> Available Colors :</span>
+
+              <div className='flex items-center gap-1 flex-wrap'>
+
+                {productData.colors.map((color: any, index: any) => (
+                  <span
+                    key={index}
+                    style={{ background: color }}
+                    className={`relative cursor-pointer h-[35px] w-[35px] rounded-[50%] flex items-center justify-center shadow-lg`}
+                  />
+                ))}
+
+              </div>
+            </div>
+          )}
+
+
           <p className="text-gray-600 leading-relaxed border-t border-gray-200 pt-4">
             {productData.description}
           </p>
@@ -226,20 +236,7 @@ const ProductPage: React.FC = () => {
             </button>
           </div>
 
-          {/* Features */}
-          {productData.features && (
-            <div className="mt-6 space-y-2">
-              <h3 className="text-lg font-semibold text-gray-800">Product Features</h3>
-              <ul className="space-y-1 text-gray-600">
-                {productData.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-indigo-500 rounded-full" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+
         </div>
       </div>
     </div>

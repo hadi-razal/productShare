@@ -297,7 +297,7 @@ const CreateProduct = () => {
                   onClick={() => { }}
                   className={`relative cursor-pointer h-[35px] w-[35px] rounded-[50%] flex items-center justify-center shadow-lg`}
                 >
-                  {color}
+                  
                 </span>
               ))}
             </div>
