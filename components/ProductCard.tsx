@@ -27,7 +27,7 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
 
 
     return (
-        <div onClick={() => router.push(`/${storeId}/123/${product.id}`)} className="cursor-pointer w-full rounded-md border border-gray-200 bg-gray-200 shadow-sm transition-all duration-300 hover:shadow-lg">
+        <div onClick={() => router.push(`/store/${storeId}/${product.id}`)} className="cursor-pointer w-full rounded-md border border-gray-200 bg-gray-200 shadow-sm transition-all duration-300 hover:shadow-lg">
             {/* Image Section */}
             <div className="relative">
                 <img
