@@ -118,7 +118,7 @@ const ProductPage: React.FC = () => {
         {/* Product Image Section */}
         <div className="space-y-4">
 
-          <div className="relative rounded-lg overflow-hidden w-full h-96 bg-gray-300 border flex items-center justify-center">
+          <div className="relative rounded-lg overflow-hidden w-full h-96 flex items-center justify-center">
             {productData.images && productData.images.length > 0 ? (
               <>
                 <img
