@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, X, Share2, User } from "lucide-react";
+import { Menu, X, Share2 } from "lucide-react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
