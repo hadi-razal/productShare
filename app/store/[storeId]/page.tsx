@@ -5,7 +5,7 @@ import { collection, doc, getDocs, increment, updateDoc } from "firebase/firesto
 import { Search } from "lucide-react";
 import { getUserId } from "@/helpers/getUserId";
 import { useParams } from "next/navigation";
-import { db } from "@/lib/fireabase";
+import { db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
 
@@ -79,7 +79,7 @@ const Products = () => {
   return (
     <div className="container min-h-screen max-w-7xl mx-auto px-3 py-8 pt-[90px]">        
 
-      <div className='rounded-md mb-5 flex items-center justify-center cursor-pointer gap-3 bg-gray-950 pr-5 w-full'>
+      <div className='rounded-md mb-5 flex items-center justify-center cursor-pointer gap-3 bg-indigo-700 pr-5 w-full'>
         <input
           type='text'
           placeholder='Search Product or Category'

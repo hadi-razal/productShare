@@ -20,8 +20,10 @@ const plans = [
       "Advanced Analytics & Reports",
       "Unlimited Products",
       "24/7 Premium Support",
+      "Custom Theme",
+      "Custom Logo",
     ],
-    buttonText: "Choose Plan",
+    buttonText: "Upgrade",
     bgColor: "bg-gray-950",
     popular: true,
     label: "Premium",
@@ -37,7 +39,7 @@ const Pricing = () => {
         Choose the perfect plan for your business needs
       </p>
       
-      <div className="flex flex-col lg:flex-row justify-center items-stretch gap-8 px-4">
+      <div className="flex flex-col sm:flex-row justify-center items-stretch gap-8 px-4">
         {plans.map((plan) => (
           <div
             key={plan.id}

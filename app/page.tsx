@@ -1,55 +1,60 @@
-"use client";
+"use client"
 
-import React, { ReactNode, useEffect } from 'react';
-import { Star, Users, ShoppingBag, Globe, Zap, Shield, Box, Settings, BarChart, 
-          CreditCard, Award, ArrowRight, ChevronRight } from 'lucide-react';
+import React, { useEffect } from 'react';
+import {
+  Store, Users, ShoppingBag, BarChart2, Bot, Palette, Share2,
+   ArrowRight, ChevronRight,
+  Award, Sparkles
+} from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { auth } from '@/lib/fireabase';
+import { auth } from '@/lib/firebase';
 import Link from 'next/link';
 
-interface StatProps {
-  icon: ReactNode;
+interface StatCardProps {
+  icon: React.ReactNode;
   value: string;
   label: string;
   subtext?: string;
 }
 
-const StatCard: React.FC<StatProps> = ({ icon, value, label, subtext }) => (
-  <div className="relative group">
-    <div className="absolute inset-0 bg-gradient-to-r from-slate-900/10 to-slate-800/10 rounded-xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
-    <div className="relative bg-gray-200/80 backdrop-blur-sm rounded-xl border border-gray-100 p-6 shadow-lg hover:shadow-2xl transition-all duration-500">
+const StatCard: React.FC<StatCardProps> = ({ icon, value, label, subtext }) => (
+  <div className="group relative">
+    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
+    <div className="relative bg-white/90 backdrop-blur-sm rounded-xl border border-gray-100 p-6 shadow-lg hover:shadow-2xl transition-all duration-500">
       <div className="flex items-center gap-4">
-        <div className="text-slate-900 bg-slate-100 p-3 rounded-lg">{icon}</div>
+        <div className="text-indigo-600 bg-blue-50 p-3 rounded-lg">{icon}</div>
         <div>
-          <div className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+          <div className="text-3xl font-bold bg-indigo-700  bg-clip-text text-transparent">
             {value}
           </div>
-          <div className="text-sm font-medium text-slate-600">{label}</div>
-          {subtext && <div className="text-xs text-slate-500 mt-1">{subtext}</div>}
+          <div className="text-sm font-medium text-gray-600">{label}</div>
+          {subtext && <div className="text-xs text-gray-500 mt-1">{subtext}</div>}
         </div>
       </div>
     </div>
   </div>
 );
 
-const FeatureCard: React.FC<{ icon: ReactNode; title: string; description: string }> = ({ 
-  icon, 
-  title, 
-  description 
-}) => (
+interface FeatureCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}
+
+const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) => (
   <div className="group relative">
-    <div className="absolute inset-0 bg-gradient-to-r from-slate-900/10 to-slate-800/10 rounded-xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
-    <div className="relative h-full p-8 bg-gray-200/80 backdrop-blur-sm rounded-xl border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-500">
+    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
+    <div className="relative h-full p-8 bg-white/90 backdrop-blur-sm rounded-xl border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-500">
       <div className="flex flex-col gap-6">
-        <div className="inline-flex text-slate-900 bg-gradient-to-br from-slate-50 to-gray-100 p-4 rounded-xl shadow-inner group-hover:scale-110 transition-transform duration-500 w-fit">
+        <div className="inline-flex text-indigo-600 bg-blue-50 p-4 rounded-xl shadow-inner group-hover:scale-110 transition-transform duration-500 w-fit">
           {icon}
         </div>
         <div>
-          <h3 className="text-xl font-semibold text-slate-900 mb-3">{title}</h3>
-          <p className="text-slate-600 leading-relaxed">{description}</p>
+          <h3 className="text-xl font-semibold text-gray-900 mb-3">{title}</h3>
+          <p className="text-gray-600 leading-relaxed">{description}</p>
         </div>
-        <div className="mt-auto flex items-center text-slate-700 font-medium group-hover:text-slate-900 transition-colors">
+        <div className="mt-auto flex items-center text-indigo-600 font-medium group-hover:text-blue-700 transition-colors">
           Learn more <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
@@ -57,26 +62,24 @@ const FeatureCard: React.FC<{ icon: ReactNode; title: string; description: strin
   </div>
 );
 
-const TestimonialCard: React.FC<{ 
-  quote: string; 
-  author: string; 
-  role: string; 
-  company: string 
-}> = ({ quote, author, role, company }) => (
-  <div className="group relative">
-    <div className="absolute inset-0 bg-gradient-to-r from-slate-900/10 to-slate-800/10 rounded-xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
-    <div className="relative bg-gray-200/80 backdrop-blur-sm rounded-xl border border-gray-100 p-8 shadow-lg hover:shadow-2xl transition-all duration-500">
-      <div className="flex flex-col space-y-6">
-        <div className="flex gap-1">
-          {[...Array(5)].map((_, i) => (
-            <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-          ))}
-        </div>
-        <p className="text-slate-700 text-lg leading-relaxed italic">&ldquo;{quote}&rdquo;</p>
-        <div className="pt-4 border-t border-gray-200">
-          <p className="font-semibold text-slate-900">{author}</p>
-          <p className="text-slate-600 text-sm">{role} at {company}</p>
-        </div>
+interface StorePreviewProps {
+  name: string;
+  image: string;
+  products: string;
+  views: string;
+}
+
+const StorePreview: React.FC<StorePreviewProps> = ({ name, image, products, views }) => (
+  <div className="group relative w-full" >
+    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
+    <div className="relative bg-white/90 backdrop-blur-sm rounded-xl border border-gray-100 p-6 shadow-lg hover:shadow-2xl transition-all duration-500">
+      <div className="w-full h-48 bg-gray-100 rounded-lg mb-4 overflow-hidden">
+        <img src={image} alt={name} className="w-full h-full object-cover" />
+      </div>
+      <h3 className="text-lg font-semibold text-gray-900 mb-2">{name}</h3>
+      <div className="flex justify-between text-sm text-gray-600">
+        <span>{products} Products</span>
+        <span>{views} Views</span>
       </div>
     </div>
   </div>
@@ -85,64 +88,70 @@ const TestimonialCard: React.FC<{
 const HomePage: React.FC = () => {
   const router = useRouter();
 
-  const stats = [
-    { icon: <Users size={24} />, value: '250K+', label: 'Active Sellers', subtext: '32% YoY Growth' },
-    { icon: <ShoppingBag size={24} />, value: '5M+', label: 'Products Listed', subtext: '200+ Categories' },
-    { icon: <Star size={24} />, value: '4.9/5', label: 'Seller Rating', subtext: '50K+ Reviews' },
-    { icon: <Globe size={24} />, value: '180+', label: 'Countries', subtext: 'Global Reach' },
+  const stats: StatCardProps[] = [
+    { icon: <Store size={24} />, value: '100+', label: 'Active Stores', subtext: '45% YoY Growth' },
+    { icon: <ShoppingBag size={24} />, value: '500+', label: 'Products Listed', subtext: '100+ Categories' },
+    { icon: <Users size={24} />, value: '10k+', label: 'Monthly Visitors', subtext: 'Across all stores' },
+    { icon: <BarChart2 size={24} />, value: '200%', label: 'Avg. Growth', subtext: 'For active stores' },
   ];
 
-  const features = [
+  const features: FeatureCardProps[] = [
     {
-      icon: <Zap className="w-8 h-8" />,
-      title: 'AI-Powered Optimization',
-      description: 'Smart pricing, inventory forecasting, and customer insights powered by advanced machine learning.'
+      icon: <Store className="w-8 h-8" />,
+      title: 'Custom Store Themes',
+      description: 'Create a unique brand identity with customizable themes, logos, and layouts.'
     },
     {
-      icon: <Shield className="w-8 h-8" />,
-      title: 'Enterprise Security',
-      description: 'SOC 2 Type II certified with end-to-end encryption and advanced fraud prevention.'
+      icon: <Bot className="w-8 h-8" />,
+      title: 'AI Chat Assistant',
+      description: 'Engage customers 24/7 with an intelligent chatbot trained on your product catalog.'
     },
     {
-      icon: <Box className="w-8 h-8" />,
-      title: 'Unified Commerce',
-      description: 'Manage all your sales channels, inventory, and fulfillment from a single dashboard.'
-    },
-    {
-      icon: <CreditCard className="w-8 h-8" />,
-      title: 'Flexible Payments',
-      description: 'Accept 50+ payment methods with automated reconciliation and instant payouts.'
-    },
-    {
-      icon: <BarChart className="w-8 h-8" />,
+      icon: <BarChart2 className="w-8 h-8" />,
       title: 'Advanced Analytics',
-      description: 'Real-time metrics, custom reports, and predictive insights for data-driven decisions.'
+      description: 'Track visitor behavior, sales performance, and customer engagement in real-time.'
     },
     {
-      icon: <Settings className="w-8 h-8" />,
-      title: 'API-First Platform',
-      description: 'Extensible architecture with webhooks, SDKs, and comprehensive API documentation.'
+      icon: <Share2 className="w-8 h-8" />,
+      title: 'Easy Sharing',
+      description: 'Generate beautiful product catalogs and share them instantly with custom links.'
+    },
+    {
+      icon: <Palette className="w-8 h-8" />,
+      title: 'Brand Customization',
+      description: 'Match your store’s look and feel to your brand with custom colors and fonts.'
+    },
+    {
+      icon: <Sparkles className="w-8 h-8" />,
+      title: 'AI Product Optimization',
+      description: 'Auto-enhance product descriptions, tags, and SEO with AI assistance.'
     }
   ];
 
-  const testimonials = [
+  const storeShowcases: StorePreviewProps[] = [
     {
-      quote: "Product Share transformed our business. We have seen a 300% increase in sales since switching.",
-      author: "Sarah Johnson",
-      role: "CEO",
-      company: "Fashion Boutique Inc"
+      name: "Fashion Boutique",
+      image: "/api/placeholder/400/300",
+      products: "250+",
+      views: "50K"
     },
     {
-      quote: "The AI-powered insights have been game-changing for our inventory management.",
-      author: "Michael Chen",
-      role: "Operations Director",
-      company: "Tech Retail Co"
+      name: "Tech Store",
+      image: "/api/placeholder/400/300",
+      products: "1000+",
+      views: "100K"
     },
     {
-      quote: "Best customer support I've experienced. They're always one step ahead.",
-      author: "David Miller",
-      role: "Founder",
-      company: "Outdoor Gear Ltd"
+      name: "Artisan Crafts",
+      image: "/api/placeholder/400/300",
+      products: "150+",
+      views: "25K"
+    },
+    {
+      name: "Duoph Store",
+      image: "/api/placeholder/400/300",
+      products: "50+",
+      views: "10K"
     }
   ];
 
@@ -156,51 +165,49 @@ const HomePage: React.FC = () => {
   }, [router]);
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen max-w-7xl mx-auto">
       {/* Hero Section */}
       <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,0,0,0.04),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.04),transparent)]" />
         <section className="relative max-w-7xl mx-auto px-6 pt-24 pb-20">
           <div className="flex justify-center mb-12">
-            <div className="group flex items-center gap-2 px-6 py-2.5 rounded-full bg-gray-200/80 backdrop-blur-sm border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-500">
-              <div className="p-1.5 bg-yellow-100 rounded-full">
-                <Award className="w-4 h-4 text-yellow-600" />
+            <div className="group flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/90 backdrop-blur-sm border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-500">
+              <div className="p-1.5 bg-blue-100 rounded-full">
+                <Award className="w-4 h-4 text-indigo-700 " />
               </div>
-              <span className="text-sm font-medium text-slate-900">Rated #1 E-commerce Platform 2024</span>
-              <ChevronRight className="w-4 h-4 text-slate-600 group-hover:translate-x-1 transition-transform" />
+              <span className="text-sm font-medium text-gray-900 cursor-pointer">#1 Premium Sellers Store</span>
+              <ChevronRight className="w-4 h-4 text-gray-600 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
           <div className="relative z-10 text-center max-w-4xl mx-auto mb-16 space-y-8">
             <h1 className="text-6xl lg:text-7xl font-bold leading-tight">
-              <span className="inline-block bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent">
-                Transform Your Business
+              <span className="inline-block bg-indigo-700  bg-clip-text text-transparent">
+                Your Products,
               </span>
-              <span className="block mt-2 text-4xl lg:text-5xl bg-gradient-to-r from-slate-700 to-slate-600 bg-clip-text text-transparent">
-                With Product Share
+              <span className="block mt-2 text-4xl lg:text-5xl bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                Beautifully Showcased
               </span>
             </h1>
 
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              The all-in-one commerce platform that combines AI-powered insights, 
-              enterprise-grade security, and seamless integration.
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Create stunning product catalogs, engage customers with AI chat, 
+              and track performance with powerful analytics.
             </p>
 
             <div className="flex items-center justify-center gap-4">
+
               <Link href="/login">
-                <button className="group px-8 py-4 bg-slate-900 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 flex items-center gap-3">
-                  Get Started
+                <button className="group px-8 py-4 bg-indigo-700  hover:bg-indigo-800 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 flex items-center gap-3">
+                  Start Selling Now 
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </Link>
-              <button className="px-8 py-4 bg-gray-200 text-slate-900 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500">
-                Watch Demo
-              </button>
+           
             </div>
           </div>
 
-          {/* Integrated Stats */}
-          <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {stats.map((stat, index) => (
               <StatCard key={index} {...stat} />
             ))}
@@ -210,16 +217,16 @@ const HomePage: React.FC = () => {
 
       {/* Features Section */}
       <section className="py-24 relative">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center_left,rgba(0,0,0,0.02),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center_left,rgba(37,99,235,0.04),transparent)]" />
         <div className="relative max-w-7xl mx-auto px-6">
           <div className="max-w-2xl mx-auto text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                Powerful Features
+              <span className="bg-indigo-700  bg-clip-text text-transparent">
+                Everything You Need
               </span>
             </h2>
-            <p className="text-slate-600 text-lg">
-              Everything you need to scale your business, all in one place
+            <p className="text-gray-600 text-lg">
+              Powerful features to showcase your products and grow your business
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -230,23 +237,23 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Store Showcase Section */}
       <section className="py-24 relative">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center_right,rgba(0,0,0,0.02),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center_right,rgba(37,99,235,0.04),transparent)]" />
         <div className="relative max-w-7xl mx-auto px-6">
           <div className="max-w-2xl mx-auto text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                Loved by Businesses
+              <span className="bg-indigo-700  bg-clip-text text-transparent">
+                Successful Stores
               </span>
             </h2>
-            <p className="text-slate-600 text-lg">
-              Join thousands of satisfied customers who trust Product Share
+            <p className="text-gray-600 text-lg">
+              Join thousands of businesses already thriving on our platform
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <TestimonialCard key={index} {...testimonial} />
+          <div className="grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {storeShowcases.map((store, index) => (
+              <StorePreview key={index} {...store} />
             ))}
           </div>
         </div>

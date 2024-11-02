@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import Link from 'next/link';
-import { auth, db } from '@/lib/fireabase';
+import { auth, db } from '@/lib/firebase';
 
 const RegisterPage: React.FC = () => {
     const [email, setEmail] = useState('');

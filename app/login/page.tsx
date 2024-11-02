@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import {  signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/fireabase';
+import { auth } from '@/lib/firebase';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -65,7 +65,7 @@ const LoginPage: React.FC = () => {
                     </div>
                     <button
                         type="submit"
-                        className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-slate-950 hover:bg-slate-800 text-white shadow-lg"
+                        className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-indigo-700  hover:bg-indigo-800  text-white shadow-lg"
                     >
                         Login
                         <ArrowRight className="w-5 h-5 ml-2" />

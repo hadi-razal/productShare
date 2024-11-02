@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        'primaryColor': 'linear-gradient(to right, #3B82F6, #4F46E5)',
       },
     },
   },
