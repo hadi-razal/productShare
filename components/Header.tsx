@@ -27,15 +27,8 @@ const NavLink = ({ href, children, onClick }: NavLinkProps) => (
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUser, setIsUser] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
 
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Close menu on resizing to desktop view
   useEffect(() => {
