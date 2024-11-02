@@ -17,7 +17,12 @@ const ProductPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
-  const [reviewInput, setReviewInput] = useState<string | null>("");
+  const [reviewInput, setReviewInput] = useState<{ user: string; review: string }>({
+    user: "",
+    review: ""
+  });
+  const [displayReviewInput, setDisplayReviewInput] = useState<boolean>(false)
+
 
   // Fetch user ID
   useEffect(() => {
@@ -75,6 +80,14 @@ const ProductPage: React.FC = () => {
     }
     return 0;
   };
+
+  const handleReview = async () => {
+    try {
+      console.log(reviewInput)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   // Rating Stars Component
   const RatingStars: React.FC<{ rating: number; totalReviews?: number }> = ({
@@ -245,20 +258,43 @@ const ProductPage: React.FC = () => {
               <Share2 className="w-5 h-5 text-gray-600" />
             </button>
           </div>
-
-          <div className='w-full flex flex-col items-center justify-center gap-3 '>
-
-            <h1 className='text-lg font-semibold'>Customer Reviews</h1>
-
-            <button className='text-blue-600 text-sm font-semibold'>Write a Review</button>
-
-            <input type="text" placeholder='Enter your name (optional)' className='w-full border py-3 p-4 focus:outline-none rounded-md' />
-            <input type="text" placeholder='Write your review' className='w-full border py-3 p-4 focus:outline-none rounded-md' />
-            <button className='bg-gray-600 text-white px-5 py-3 rounded-md'>Submit</button>
-          </div>
-
-
         </div>
+
+
+      </div>
+
+      {/* user review section  */}
+
+      <div className='w-full flex flex-col items-center justify-center gap-3 py-16 '>
+
+        <h1 className='text-2xl font-semibold'>Customer Reviews</h1>
+
+        <button className='text-blue-600 text-sm font-semibold' onClick={() => setDisplayReviewInput(!displayReviewInput)}>{!displayReviewInput ? " Write a Review" : "Hide"}</button>
+
+        {displayReviewInput && (
+          <>
+            <input
+              type="text"
+              placeholder="Enter your name (optional)"
+              value={reviewInput.user}
+              onChange={(e) => setReviewInput((prev) => ({ ...prev, user: e.target.value }))}
+              className="w-full border py-3 p-4 focus:outline-none rounded-md"
+            />
+
+            <input
+              type="text"
+              placeholder="Write your review"
+              value={reviewInput.review}
+              onChange={(e) => setReviewInput((prev) => ({ ...prev, review: e.target.value }))}
+              className="w-full border py-3 p-4 focus:outline-none rounded-md"
+            />
+
+            <button onClick={handleReview} className="bg-gray-600 text-white px-5 py-3 rounded-md">
+              Submit
+            </button>
+
+          </>
+        )}
       </div>
     </div>
   );
