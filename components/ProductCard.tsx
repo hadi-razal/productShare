@@ -1,6 +1,7 @@
 "use client"
 
 import { ProductType } from "@/type";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 
@@ -30,10 +31,14 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
         <div onClick={() => router.push(`/store/${storeId}/${product.id}`)} className="cursor-pointer relative w-full rounded-md border bg-gray-50 shadow-sm transition-all duration-300 hover:shadow-lg">
             {/* Image Section */}
             <div className="relative">
-                <img
+                <Image
+                    quality={50}
+                    unoptimized= {true}
+                    width={0}
+                    height={0}
                     src={product.images[0]}
                     alt="Image"
-                    className="w-full h-48 object-cover rounded-t-lg"
+                    className="w-full h-48 object-contain rounded-t-lg"
                 />
                 <div className="absolute top-1 left-1 flex gap-2">
 
@@ -86,12 +91,12 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
                 </div>
             </div>
             <div className="absolute bottom-2 right-2 flex gap-2">
-                    {product.isBestSelling && (
-                        <span className="px-2 py-1 w-10 text-[8px] flex items-center justify-center text-center h-10 font-bold rounded-full bg-gray-700 text-white">
-                            Best Selling
-                        </span>
-                    )}
-                </div>
+                {product.isBestSelling && (
+                    <span className="px-2 py-1 w-10 text-[8px] flex items-center justify-center text-center h-10 font-bold rounded-full bg-gray-700 text-white">
+                        Best Selling
+                    </span>
+                )}
+            </div>
         </div>
     );
 };

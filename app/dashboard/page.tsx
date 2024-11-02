@@ -7,6 +7,7 @@ import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import Link from 'next/link';
 import { getUsername } from '@/helpers/getUsername';
+import { useRouter } from 'next/navigation';
 
 type CardProps = {
   children: React.ReactNode;
@@ -117,10 +118,25 @@ const LinkButton = ({ children, href, variant = "primary", className = "" }: Lin
 };
 
 const UserDashboard = () => {
+
   const [numberOfProducts, setNumberOfProducts] = useState<number | null>(null);
   const [numberOfStoreVisit, setNumberOfStoreVisit] = useState<number | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+
+  const router = useRouter()
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log(user);
+      if (!user) {
+        router.push('/login');
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
 
   useEffect(() => {
     const fetchProductCount = async (userId: string) => {
@@ -137,7 +153,7 @@ const UserDashboard = () => {
       try {
         const userDocRef = doc(db, "users", userId);
         const snapshotUser = await getDoc(userDocRef);
-        
+
         if (snapshotUser.exists()) {
           const data = snapshotUser.data();
           setNumberOfStoreVisit(data.visitCount ?? 0);
@@ -163,11 +179,11 @@ const UserDashboard = () => {
         fetchStoreVisit(user.uid);
         setLoading(false);
       } else {
-        setLoading(false); 
+        setLoading(false);
       }
     });
 
-    return () => unsubscribe(); 
+    return () => unsubscribe();
   }, []);
 
   return (

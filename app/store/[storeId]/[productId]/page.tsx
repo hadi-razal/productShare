@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, Share2, Star } from 'lucide-react';
 import { getUserId } from '@/helpers/getUserId';
 import { db } from '@/lib/firebase';
 import { ProductType } from '@/type';
+import Image from 'next/image';
 
 
 
@@ -16,6 +17,7 @@ const ProductPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const [reviewInput, setReviewInput] = useState<string | null>("");
 
   // Fetch user ID
   useEffect(() => {
@@ -121,7 +123,11 @@ const ProductPage: React.FC = () => {
           <div className="relative rounded-lg overflow-hidden w-full h-96 flex items-center justify-center">
             {productData.images && productData.images.length > 0 ? (
               <>
-                <img
+                <Image
+                  quality={50}
+                  unoptimized={true}
+                  width={0}
+                  height={0}
                   src={productData.images[currentImageIndex]}
                   alt={productData.name}
                   className="object-contain h-full w-full transition-transform duration-300 ease-in-out"
@@ -163,7 +169,11 @@ const ProductPage: React.FC = () => {
                   {currentImageIndex === index && (
                     <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
                   )}
-                  <img
+                  <Image
+                    quality={50}
+                    unoptimized={true}
+                    width={0}
+                    height={0}
                     src={image}
                     alt={`Thumbnail ${index + 1}`}
                     className="w-full h-full object-cover"
@@ -234,6 +244,17 @@ const ProductPage: React.FC = () => {
             <button className="p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-shadow hover:shadow-lg">
               <Share2 className="w-5 h-5 text-gray-600" />
             </button>
+          </div>
+
+          <div className='w-full flex flex-col items-center justify-center gap-3 '>
+
+            <h1 className='text-lg font-semibold'>Customer Reviews</h1>
+
+            <button className='text-blue-600 text-sm font-semibold'>Write a Review</button>
+
+            <input type="text" placeholder='Enter your name (optional)' className='w-full border py-3 p-4 focus:outline-none rounded-md' />
+            <input type="text" placeholder='Write your review' className='w-full border py-3 p-4 focus:outline-none rounded-md' />
+            <button className='bg-gray-600 text-white px-5 py-3 rounded-md'>Submit</button>
           </div>
 
 
