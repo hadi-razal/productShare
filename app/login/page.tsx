@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useState } from 'react';
-import {  signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
+import {  onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -14,6 +14,15 @@ const LoginPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     const router = useRouter()
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          if (user) {
+            router.push('/dashboard');
+          }
+        });
+        return () => unsubscribe();
+      }, [router]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();

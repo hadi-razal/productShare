@@ -7,6 +7,7 @@ import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import Link from 'next/link';
 import { getUsername } from '@/helpers/getUsername';
+import { Span } from 'next/dist/trace';
 
 type CardProps = {
   children: React.ReactNode;
@@ -32,7 +33,7 @@ const StatCard = ({ title, value, subtitle, icon: Icon, bgColor }: StatCardProps
     <div className="flex items-center justify-between">
       <div>
         <p className="text-gray-500 text-sm">{title}</p>
-        <h3 className="text-2xl font-bold text-slate-950">{value}</h3>
+        <h3 className="text-2xl font-bold text-slate-950">{value ?? (<span className='font-normal text-sm'>calculating...</span>)}</h3>
         <p className="text-green-500 text-sm">{subtitle}</p>
       </div>
       <div className={`${bgColor} p-3 rounded-full`}>
@@ -120,6 +121,7 @@ const UserDashboard = () => {
   const [numberOfProducts, setNumberOfProducts] = useState<number | null>(null);
   const [numberOfStoreVisit, setNumberOfStoreVisit] = useState<number | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchProductCount = async (userId: string) => {
@@ -136,7 +138,7 @@ const UserDashboard = () => {
       try {
         const userDocRef = doc(db, "users", userId);
         const snapshotUser = await getDoc(userDocRef);
-
+        
         if (snapshotUser.exists()) {
           const data = snapshotUser.data();
           setNumberOfStoreVisit(data.visitCount ?? 0);
@@ -147,17 +149,26 @@ const UserDashboard = () => {
     };
 
     const updateUsername = async (user: FirebaseUser) => {
-      const fetchedUsername = await getUsername(user.uid);
-      setUsername(fetchedUsername);
+      try {
+        const fetchedUsername = await getUsername(user.uid);
+        setUsername(fetchedUsername);
+      } catch (error) {
+        console.error("Error fetching username:", error);
+      }
     };
 
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         updateUsername(user);
         fetchProductCount(user.uid);
         fetchStoreVisit(user.uid);
+        setLoading(false);
+      } else {
+        setLoading(false); 
       }
     });
+
+    return () => unsubscribe(); 
   }, []);
 
   return (
@@ -173,14 +184,14 @@ const UserDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <StatCard
             title="Total Products"
-            value={numberOfProducts}
+            value={loading ? null : numberOfProducts}
             subtitle="Active in catalog"
             icon={Package}
             bgColor="bg-blue-50 text-blue-600"
           />
           <StatCard
             title="Total Visitors"
-            value={numberOfStoreVisit}
+            value={loading ? null : numberOfStoreVisit}
             subtitle="This week"
             icon={Users}
             bgColor="bg-purple-50 text-purple-600"

@@ -3,13 +3,15 @@
 import React, { useEffect } from 'react';
 import {
   Store, Users, ShoppingBag, BarChart2, Bot, Palette, Share2,
-   ArrowRight, ChevronRight,
+  ArrowRight, ChevronRight,
   Award, Sparkles
 } from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import Link from 'next/link';
+import Marquee from 'react-fast-marquee';
+import { stats } from '@/constants/stats';
 
 interface StatCardProps {
   icon: React.ReactNode;
@@ -19,7 +21,7 @@ interface StatCardProps {
 }
 
 const StatCard: React.FC<StatCardProps> = ({ icon, value, label, subtext }) => (
-  <div className="group relative">
+  <div className="group relative mr-3">
     <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
     <div className="relative bg-white/90 backdrop-blur-sm rounded-xl border border-gray-100 p-6 shadow-lg hover:shadow-2xl transition-all duration-500">
       <div className="flex items-center gap-4">
@@ -88,12 +90,7 @@ const StorePreview: React.FC<StorePreviewProps> = ({ name, image, products, view
 const HomePage: React.FC = () => {
   const router = useRouter();
 
-  const stats: StatCardProps[] = [
-    { icon: <Store size={24} />, value: '100+', label: 'Active Stores', subtext: '45% YoY Growth' },
-    { icon: <ShoppingBag size={24} />, value: '500+', label: 'Products Listed', subtext: '100+ Categories' },
-    { icon: <Users size={24} />, value: '10k+', label: 'Monthly Visitors', subtext: 'Across all stores' },
-    { icon: <BarChart2 size={24} />, value: '200%', label: 'Avg. Growth', subtext: 'For active stores' },
-  ];
+
 
   const features: FeatureCardProps[] = [
     {
@@ -191,7 +188,7 @@ const HomePage: React.FC = () => {
             </h1>
 
             <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Create stunning product catalogs, engage customers with AI chat, 
+              Create stunning product catalogs, engage customers with AI chat,
               and track performance with powerful analytics.
             </p>
 
@@ -199,18 +196,20 @@ const HomePage: React.FC = () => {
 
               <Link href="/login">
                 <button className="group px-8 py-4 bg-indigo-700  hover:bg-indigo-800 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 flex items-center gap-3">
-                  Start Selling Now 
+                  Start Selling Now
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </Link>
-           
+
             </div>
           </div>
 
-          <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <StatCard key={index} {...stat} />
-            ))}
+          <div className="max-w-3xl mx-auto">
+            <Marquee loop={0} speed={70}  className=' flex items-center justify-center gap-3'>
+              {stats.map((stat, index) => (
+                <StatCard key={index} {...stat} />
+              ))}
+            </Marquee>
           </div>
         </section>
       </div>

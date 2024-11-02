@@ -76,7 +76,7 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-6">
             {!isUser && (
               <>
-                <NavLink href="/pricing">Pricing</NavLink>
+                <NavLink href="/pricing">Buy Premium</NavLink>
                 <NavLink href="/about">About</NavLink>
                 <NavLink href="/contact">Contact</NavLink>
               </>
@@ -110,7 +110,7 @@ const Header = () => {
 
         {/* Mobile Menu */}
         <div
-          className={`md:hidden absolute inset-x-0 top-[80px] bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none"}`}
+          className={`md:hidden absolute inset-x-0 top-[80px] bg-indigo-700 transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none"}`}
         >
           <div className="p-4 space-y-4">
             {!isUser && (

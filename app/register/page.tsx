@@ -1,17 +1,30 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import Link from 'next/link';
 import { auth, db } from '@/lib/firebase';
+import { useRouter } from 'next/navigation';
 
 const RegisterPage: React.FC = () => {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+
+    const router = useRouter()
+    
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          if (user) {
+            router.push('/dashboard');
+          }
+        });
+        return () => unsubscribe();
+      }, [router]);
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
