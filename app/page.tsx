@@ -205,12 +205,17 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="max-w-3xl mx-auto">
-            <Marquee loop={0} speed={70}  className=' flex items-center justify-center gap-3'>
-              {stats.map((stat, index) => (
-                <StatCard key={index} {...stat} />
-              ))}
-            </Marquee>
+            <div className="marquee">
+              <div className="marquee-content py-4">
+                {stats.map((stat, index) => (
+                  <div className="stat-card py-4" key={index}>
+                    <StatCard {...stat} />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
+
         </section>
       </div>
 

@@ -5,3 +5,29 @@
 :root {
 /* background: #f3f4f6; */
 }
+
+
+.marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+  
+  .marquee-content {
+    display: inline-block;
+    animation: marquee 500s linear infinite;
+  }
+  
+  @keyframes marquee {
+    0% {
+      transform: translate(0);
+    }
+    100% {
+      transform: translate(-100%);
+    }
+  }
+  
+  .stat-card {
+    display: inline-block;
+    margin-right: 20px; /* Space between items */
+  }
