@@ -7,7 +7,7 @@ import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import Link from 'next/link';
 import { getUsername } from '@/helpers/getUsername';
-import { useRouter } from 'next/navigation';
+import {  useRouter } from 'next/navigation';
 
 type CardProps = {
   children: React.ReactNode;
@@ -117,7 +117,7 @@ const LinkButton = ({ children, href, variant = "primary", className = "" }: Lin
   );
 };
 
-const UserDashboard = () => {
+const StoreDashboard = () => {
 
   const [numberOfProducts, setNumberOfProducts] = useState<number | null>(null);
   const [numberOfStoreVisit, setNumberOfStoreVisit] = useState<number | null>(null);
@@ -268,4 +268,4 @@ const UserDashboard = () => {
   );
 };
 
-export default UserDashboard;
+export default StoreDashboard;

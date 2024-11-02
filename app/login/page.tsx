@@ -29,7 +29,7 @@ const LoginPage: React.FC = () => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             console.log("Logged In Successfully", userCredential.user);
-            router.push(`/dashboard`)
+            router.push(`/store`)
         } catch (error) {
             console.error("Login failed:", error);
             setError("Invalid email or password. Please try again.");
