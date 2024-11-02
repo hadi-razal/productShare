@@ -7,7 +7,6 @@ import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import Link from 'next/link';
 import { getUsername } from '@/helpers/getUsername';
-import { Span } from 'next/dist/trace';
 
 type CardProps = {
   children: React.ReactNode;

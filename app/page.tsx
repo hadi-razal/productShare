@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import {
-  Store, Users, ShoppingBag, BarChart2, Bot, Palette, Share2,
+  Store, BarChart2, Bot, Palette, Share2,
   ArrowRight, ChevronRight,
   Award, Sparkles
 } from 'lucide-react';
@@ -10,7 +10,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import Link from 'next/link';
-import Marquee from 'react-fast-marquee';
 import { stats } from '@/constants/stats';
 
 interface StatCardProps {
