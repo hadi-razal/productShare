@@ -1,6 +1,6 @@
 import { Metadata, ResolvingMetadata } from 'next';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, Share2, Star } from 'lucide-react';
+import { Share2, Star } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 import { getUserId } from '@/helpers/getUserId';
 import { db } from '@/lib/firebase';
