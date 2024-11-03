@@ -43,7 +43,7 @@ export async function generateMetadata(
 }
 
 // Server-side data fetching
-async function getProduct(userId: string, productId: string) {
+async function getProduct(userId: string, productId: string): Promise<ProductType | null> {
   try {
     const productRef = doc(db, userId, productId);
     const productSnap = await getDoc(productRef);
@@ -58,7 +58,7 @@ async function getProduct(userId: string, productId: string) {
 }
 
 // Rating Stars Component
-const RatingStars = ({ rating = 4.5, totalReviews = 128 }) => (
+const RatingStars = ({ rating = 4.5, totalReviews = 128 }: { rating?: number; totalReviews?: number }) => (
   <div className="flex items-center gap-2">
     <div className="flex items-center">
       {[1, 2, 3, 4, 5].map((star) => (
@@ -75,7 +75,7 @@ const RatingStars = ({ rating = 4.5, totalReviews = 128 }) => (
 );
 
 // Calculate discount percentage
-const calculateDiscount = (regularPrice: number, discountPrice: number) => {
+const calculateDiscount = (regularPrice: number, discountPrice: number): number => {
   if (regularPrice && discountPrice) {
     const discount = ((regularPrice - discountPrice) / regularPrice) * 100;
     return Math.round(discount);
@@ -104,7 +104,7 @@ export default async function ProductPage({ params }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Product Image Section */}
         <div className="space-y-4">
-          <ImageGallery images={productData.images} productName={productData.name} />
+          <ImageGallery images={productData.images || []} productName={productData.name} />
         </div>
 
         {/* Product Details Section */}
@@ -143,7 +143,7 @@ export default async function ProductPage({ params }: Props) {
           </div>
 
           {/* Colors */}
-          {productData.colors.length > 0 && (
+          {productData.colors?.length > 0 && (
             <div className='flex flex-col justify-center gap-2'>
               <span className='text-md text-gray-950 font-medium opacity-85'>
                 Available Colors:
@@ -177,7 +177,7 @@ export default async function ProductPage({ params }: Props) {
 }
 
 // Image Gallery Component (Converted to Server Component)
-function ImageGallery({ images, productName }: { images: string[], productName: string }) {
+function ImageGallery({ images, productName }: { images: string[]; productName: string }) {
   const firstImage = images && images.length > 0 ? images[0] : null;
 
   return (
