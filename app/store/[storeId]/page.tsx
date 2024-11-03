@@ -2,23 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { collection, doc, getDocs, increment, updateDoc } from "firebase/firestore";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { getUserId } from "@/helpers/getUserId";
 import { useParams } from "next/navigation";
 import { db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
 
-
 const Products = () => {
-
   const { storeId } = useParams();
-  const [products, setProducts] = useState<ProductType[]>([]); // Use the defined Product type
+  const [products, setProducts] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]); // State for filtered products
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
 
       if (storeId) {
         const userID = await getUserId(storeId as string);
@@ -41,7 +41,7 @@ const Products = () => {
           const productList: ProductType[] = querySnapshot.docs.map((doc) => {
             const data = doc.data();
             return {
-            id: doc.id,
+              id: doc.id,
               name: data.name,
               description: data.description,
               colors: data?.colors,
@@ -53,18 +53,17 @@ const Products = () => {
               isInStock: data.isInStock,
               rating: data.rating,
               ratingCount: data.ratingCount,
-              
-
             };
           });
 
           setProducts(productList);
+          setFilteredProducts(productList); // Show all products initially
         } catch (error) {
           console.error("Error fetching products: ", error);
         }
       }
 
-      setIsLoading(false); 
+      setIsLoading(false);
     };
 
     fetchProducts();
@@ -72,21 +71,84 @@ const Products = () => {
     return () => {
       setProducts([]);
     };
-
   }, [storeId]);
-  
+
+  // Search handler
+  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(event.target.value);
+  };
+
+  // Function to filter products
+  const filterProducts = () => {
+    if (searchInput.trim() === "") {
+      setFilteredProducts(products); // Show all products if input is empty
+    } else {
+      const results = products.filter((product) =>
+        product.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchInput.toLowerCase()) ||
+        (product.colors && product.colors.some(color => color.toLowerCase().includes(searchInput.toLowerCase()))) ||
+        (product.category && product.category.toLowerCase().includes(searchInput.toLowerCase()))
+      );
+      setFilteredProducts(results);
+    }
+  };
+
+  // Handle search button click
+  const handleSearchClick = () => {
+    filterProducts();
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      filterProducts();
+    }
+  };
+
+  // Clear search input
+  const clearSearchInput = () => {
+    setSearchInput("");
+    setFilteredProducts(products); // Reset to show all products
+  };
 
   return (
-    <div className="container min-h-screen max-w-7xl mx-auto px-3 py-8 pt-[90px]">        
+    <div className="container min-h-screen max-w-7xl mx-auto px-3 py-8 pt-[90px]">
 
-      <div className='rounded-md mb-5 flex items-center justify-center cursor-pointer gap-3 bg-indigo-700 pr-5 w-full'>
+      <div className="relative flex items-center w-full pb-3">
         <input
-          type='text'
-          placeholder='Search Product or Category'
-          className='border px-4 py-4 bg-gray-100 rounded-md w-full focus:outline-none'
+          type="text"
+          value={searchInput}
+          onChange={handleSearchInputChange}
+          onKeyDown={handleKeyPress}
+          placeholder="Search products or categories..."
+          className="w-full px-4 py-3 pr-12 text-sm border rounded-lg border-gray-200 
+                     focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                     placeholder:text-gray-400"
+          aria-label="Search input"
         />
-        <Search className='rounded-md text-[30px] cursor-pointer text-white' />
+
+        <div className="absolute right-0 flex items-center justify-center h-full space-x-1">
+          {searchInput && (
+            <button
+              onClick={clearSearchInput}
+              className="p-2  text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Clear search"
+            >
+              <X size={18} />
+            </button>
+          )}
+
+          <button
+            onClick={handleSearchClick}
+            className="p-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 
+                       transition-colors duration-200  px-4 py-3 flex items-center justify-center"
+            aria-label="Search"
+          >
+            <Search size={18} />
+          </button>
+        </div>
       </div>
+
 
       {isLoading ? (
         <div className="flex justify-center items-center h-96">
@@ -94,11 +156,14 @@ const Products = () => {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
-          {products.map((product) => (
-            <ProductCard key={product.id} storeId={storeId as string} product={product} />
-          ))}
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <ProductCard key={product.id} storeId={storeId as string} product={product} />
+            ))
+          ) : (
+            <div className="col-span-full text-center">No products found.</div>
+          )}
         </div>
-
       )}
     </div>
   );
