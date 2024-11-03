@@ -239,60 +239,21 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
           </div>
 
           {productData.colors.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col flex-wrap gap-2">
               <h4 className="text-lg font-medium text-gray-800">Available Colors:</h4>
+              <div className='flex  flex-wrap '>
               {productData.colors.map((color, index) => (
-                <span key={index} className="px-3 py-1 rounded-full border border-gray-300 text-sm">
-                  {color}
+                <span key={index} style={{ background: color }} className=" h-10 w-10 rounded-full border border-gray-300 text-sm">
                 </span>
               ))}
+              </div>
+             
             </div>
           )}
 
           <p className="text-gray-600">{productData.description}</p>
 
-          {/* Review Section */}
-          <div>
-            <h2 className="text-lg font-semibold">Customer Reviews:</h2>
-            <button
-              onClick={() => setDisplayReviewInput((prev) => !prev)}
-              className="text-blue-600 underline"
-            >
-              {displayReviewInput ? 'Cancel' : 'Write a Review'}
-            </button>
-            {displayReviewInput && (
-              <div className="mt-2">
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  value={reviewInput.user}
-                  onChange={(e) => setReviewInput((prev) => ({ ...prev, user: e.target.value }))}
-                  className="border p-2 rounded w-full mb-2"
-                />
-                <textarea
-                  placeholder="Your Review"
-                  value={reviewInput.review}
-                  onChange={(e) => setReviewInput((prev) => ({ ...prev, review: e.target.value }))}
-                  className="border p-2 rounded w-full mb-2"
-                />
-                <input
-                  type="number"
-                  min={1}
-                  max={5}
-                  placeholder="Rating (1-5)"
-                  value={reviewInput.stars}
-                  onChange={(e) => setReviewInput((prev) => ({ ...prev, stars: e.target.value }))}
-                  className="border p-2 rounded w-full mb-2"
-                />
-                <button
-                  onClick={handleReview}
-                  className="bg-blue-600 text-white p-2 rounded"
-                >
-                  Submit Review
-                </button>
-              </div>
-            )}
-          </div>
+
         </div>
       </div>
     </div>
