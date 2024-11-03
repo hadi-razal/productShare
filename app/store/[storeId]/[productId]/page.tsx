@@ -3,24 +3,19 @@ import { getUserId } from '@/helpers/getUserId';
 import { Metadata } from 'next';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { ProductType } from '@/type';
 
-// Define types for product data
-interface ProductData {
-  name: string;
-  description: string;
-  images: string[];
-}
 
 // Define the type for params
-interface Params {
-  params: {
-    productId: string;
-    storeId: string;
-  };
-}
+// interface Params {
+//   params: {
+//     productId: string;
+//     storeId: string;
+//   };
+// }
 
 // Function to fetch product data based on ID
-async function getProductData(productId: string, storeId: string): Promise<ProductData | null> {
+async function getProductData(productId: string, storeId: string): Promise<ProductType | null> {
   try {
     const userId = await getUserId(storeId);
     
@@ -33,7 +28,7 @@ async function getProductData(productId: string, storeId: string): Promise<Produ
     const productSnap = await getDoc(productRef);
 
     if (productSnap.exists()) {
-      return productSnap.data() as ProductData;
+      return productSnap.data() as ProductType;
     }
   } catch (error) {
     console.error("Error fetching product data:", error);
@@ -42,7 +37,7 @@ async function getProductData(productId: string, storeId: string): Promise<Produ
 }
 
 // Generate metadata for the page
-export async function generateMetadata({ params }: Params): Promise<Metadata> {
+export async function generateMetadata({ params }:any): Promise<Metadata> {
   const { productId, storeId } = params; // No need to await params here
   
   const productData = await getProductData(productId, storeId);
@@ -72,7 +67,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 // Server component that renders the page
-export default async function Page({ params }: Params) {
+export default async function Page({ params }: any) {
   const { productId, storeId } = params; // No need to await params here
   
   // Fetch the product data here if needed
