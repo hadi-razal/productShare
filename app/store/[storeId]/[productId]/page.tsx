@@ -8,8 +8,8 @@ import { ProductType } from '@/type';
 
 type Props = {
   params: {
-    storeId: string;
-    productId: string;
+    storeId?: string;
+    productId?: string;
   };
 };
 
@@ -19,7 +19,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { storeId, productId } = params;
   
-  const userId = await getUserId(storeId);
+  const userId = await getUserId(storeId as string);
   const productRef = doc(db, userId as string, productId as string);
   const productSnap = await getDoc(productRef);
   const product = productSnap.exists() ? (productSnap.data() as ProductType) : null;
@@ -85,8 +85,8 @@ const calculateDiscount = (regularPrice: number, discountPrice: number) => {
 
 export default async function ProductPage({ params }: Props) {
   const { storeId, productId } = params;
-  const userId = await getUserId(storeId);
-  const productData = await getProduct(userId as string, productId);
+  const userId = await getUserId(storeId as string);
+  const productData = await getProduct(userId as string, productId as string);
 
   if (!productData) {
     return (
