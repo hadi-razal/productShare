@@ -8,7 +8,7 @@ import { db } from '@/lib/firebase';
 import { ProductType } from '@/type';
 import Head from 'next/head';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, Share2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ProductPageProps {
   productId: string;
