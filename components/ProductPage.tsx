@@ -9,12 +9,8 @@ import { ProductType } from '@/type';
 import Image from 'next/image';
 import Head from 'next/head';
 
-interface ProductPageProps {
-  productId: string;
-  storeId: string;
-}
 
-const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
+const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }:any) => {
   const [productData, setProductData] = useState<ProductType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [userId, setUserId] = useState<string | null>(null);
