@@ -241,7 +241,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
           {productData.colors.length > 0 && (
             <div className="flex flex-col flex-wrap gap-2">
               <h4 className="text-lg font-medium text-gray-800">Available Colors:</h4>
-              <div className='flex  flex-wrap '>
+              <div className='flex gap-1 flex-wrap '>
               {productData.colors.map((color, index) => (
                 <span key={index} style={{ background: color }} className=" h-10 w-10 rounded-full border border-gray-300 text-sm">
                 </span>

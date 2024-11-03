@@ -15,6 +15,7 @@ const Products = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState<string>("");
   const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]); // State for filtered products
+  const [selectedMenu, setSelectedMenu] = useState<string>("")
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -122,7 +123,7 @@ const Products = () => {
           onKeyDown={handleKeyPress}
           placeholder="Search products or categories..."
           className="w-full px-4 py-3 pr-12 text-sm border rounded-lg border-gray-200 
-                     focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                     focus:outline-none
                      placeholder:text-gray-400"
           aria-label="Search input"
         />
@@ -148,6 +149,11 @@ const Products = () => {
           </button>
         </div>
       </div>
+
+      {/* <div className="flex gap-1 pb-2">
+        <span className={`text-sm font-normal border py-2 px-3 rounded-md cursor-pointer  ${selectedMenu == "MostPopular" && "bg-gray-400 text-white"}`} onClick={() => setSelectedMenu("MostPopular")} >Most Popular</span>
+        <span className={`text-sm font-normal border py-2 px-3 rounded-md cursor-pointer ${selectedMenu == "MostSelling" && "bg-gray-400 text-white"} `} onClick={() => setSelectedMenu("MostSelling")} >Most Selling</span>
+      </div> */}
 
 
       {isLoading ? (
