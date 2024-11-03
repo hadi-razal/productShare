@@ -17,7 +17,7 @@ interface ProductData {
   category: string;
   sizes: string[];
   isInStock: boolean;
-  availableStock: string;
+  availableStock: string; 
   images: string[];
   tags: string;
   createdAt?: Date;
