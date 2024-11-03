@@ -9,7 +9,7 @@ import { ProductType } from '@/type';
 import Image from 'next/image';
 import Head from 'next/head';
 
-
+// @ts-ignore 
 const ProductPage = ({ productId, storeId }:any) => {
   const [productData, setProductData] = useState<ProductType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
