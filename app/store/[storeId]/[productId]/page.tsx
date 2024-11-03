@@ -9,7 +9,6 @@ interface ProductData {
   name: string;
   description: string;
   images: string[];
-  [key: string]: any;
 }
 
 // Define the type for params
