@@ -1,4 +1,4 @@
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 import Image from 'next/image';
 import { Share2, Star } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
@@ -16,7 +16,6 @@ type Props = {
 // Generate metadata
 export async function generateMetadata(
   { params }: Props,
-  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { storeId, productId } = params;
   
