@@ -15,7 +15,6 @@ const Products = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState<string>("");
   const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]); // State for filtered products
-  const [selectedMenu, setSelectedMenu] = useState<string>("")
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -54,6 +53,8 @@ const Products = () => {
               isInStock: data.isInStock,
               rating: data.rating,
               ratingCount: data.ratingCount,
+              sizes: data.sizes,
+              isMostSelling: data.isMostSelling,
             };
           });
 

@@ -12,6 +12,8 @@ interface ProductCardProps {
 const ProductCard = ({ product, storeId }: ProductCardProps) => {
   const router = useRouter();
 
+  console.log(product)
+
   const calculateDiscount = (): number => {
     // Ensure both prices are valid numbers and greater than 0
     const regularPrice = Number(product?.regularPrice);
@@ -110,9 +112,9 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
       </div>
 
       <div className="absolute bottom-2 right-2 flex gap-2">
-        {product.isBestSelling && (
+        {product.isMostSelling  && (
           <span className="px-2 py-1 w-10 text-[8px] flex items-center justify-center text-center h-10 font-bold rounded-full bg-gray-700 text-white">
-            Best Selling
+            Most Selling
           </span>
         )}
       </div>

@@ -4,6 +4,7 @@ export interface ProductType {
     description: string;
     category: string;
     colors:string[];
+    sizes:string[];
     images: string[];
     regularPrice: number;
     discountPrice: number;
@@ -14,6 +15,7 @@ export interface ProductType {
     totalReviews?: number;
     ratingCount: number;
     availableStock?: number;
+    isMostSelling?:boolean;
   }
   
 export interface userType {

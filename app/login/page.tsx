@@ -18,7 +18,7 @@ const LoginPage: React.FC = () => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
           if (user) {
-            router.push('/dashboard');
+            router.push('/store');
           }
         });
         return () => unsubscribe();
@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
             console.log("Logged In Successfully", userCredential.user);
             router.push(`/store`)
         } catch (error) {
-            console.error("Login failed:", error);
+            console.log("Login failed:", error);
             setError("Invalid email or password. Please try again.");
         }
         
