@@ -55,9 +55,6 @@ export async function generateMetadata({ params }: { params: { productId: string
 export default async function Page({ params }: { params: { productId: string; storeId: string } }) {
   const { productId, storeId } = await params; // Await the params
   
-  // Fetch the product data to pass to the component
-  const productData = await getProductData(productId, storeId); 
-
   // Render the ProductPage component with the fetched data
   return <ProductPage productId={productId} storeId={storeId}  />;
 }
