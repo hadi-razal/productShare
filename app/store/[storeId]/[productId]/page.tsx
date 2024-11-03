@@ -24,7 +24,7 @@ async function getProductData(productId: string, storeId: string) {
 
 // Server component that can fetch metadata for SSR
 export async function generateMetadata({ params }: { params: { productId: string; storeId: string } }): Promise<Metadata> {
-  const { productId, storeId } = await params; // Await the params
+  const { productId, storeId } = params; // No need to await params
 
   // Fetch product data based on ID
   const productData = await getProductData(productId, storeId);
@@ -53,9 +53,10 @@ export async function generateMetadata({ params }: { params: { productId: string
 
 // Server component that renders the page
 export default async function Page({ params }: { params: { productId: string; storeId: string } }) {
-  const { productId, storeId } = await params; // Await the params
+  const { productId, storeId } = params; // No need to await params
   
-  // Render the ProductPage component with the fetched data
-  return <ProductPage productId={productId} storeId={storeId}  />;
-}
+  // Fetch the product data to pass to the component
 
+  // Render the ProductPage component with the fetched data
+  return <ProductPage productId={productId} storeId={storeId} />;
+}
