@@ -1,62 +1,88 @@
-// app/product/[productId]/page.tsx
 import ProductPage from '@/components/ProductPage';
 import { getUserId } from '@/helpers/getUserId';
 import { Metadata } from 'next';
-import { doc, getDoc } from 'firebase/firestore'; // Import necessary Firestore functions
-import { db } from '@/lib/firebase'; // Adjust import based on your Firebase setup
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+
+// Define types for product data
+interface ProductData {
+  name: string;
+  description: string;
+  images: string[];
+  [key: string]: any;
+}
+
+// Define the type for params
+interface Params {
+  params: {
+    productId: string;
+    storeId: string;
+  };
+}
 
 // Function to fetch product data based on ID
-async function getProductData(productId: string, storeId: string) {
-  const userId = await getUserId(storeId); // Ensure you use the correct variable name
-
+async function getProductData(productId: string, storeId: string): Promise<ProductData | null> {
   try {
-    const productRef = doc(db, userId as string, productId as string);
+    const userId = await getUserId(storeId);
+    
+    if (!userId) {
+      console.error("User ID not found");
+      return null;
+    }
+
+    const productRef = doc(db, userId, productId);
     const productSnap = await getDoc(productRef);
+
     if (productSnap.exists()) {
-      return productSnap.data(); // Return the actual product data
+      return productSnap.data() as ProductData;
     }
   } catch (error) {
     console.error("Error fetching product data:", error);
   }
-
-  return null; // Return null if no product found or on error
+  return null;
 }
 
-// Server component that can fetch metadata for SSR
-export async function generateMetadata({ params }: { params: { productId: string; storeId: string } }): Promise<Metadata> {
-  const { productId, storeId } = params; // No need to await params
-
-  // Fetch product data based on ID
+// Generate metadata for the page
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { productId, storeId } = await params; // Await params here
+  
   const productData = await getProductData(productId, storeId);
 
-  const title = productData ? productData.name : "Product Not Found";
-  const description = productData ? productData.description : "No description available";
-  const image = productData && productData.image ? productData.image : null;
+  const title = productData?.name ?? "Product Not Found";
+  const description = productData?.description ?? "No description available";
+  const image = productData?.images[0] ?? null;
 
   return {
     title,
     description,
-    keywords: productData ? `ProductShare, ${productData.name}, product catalog, small business` : "ProductShare",
+    keywords: productData
+      ? `ProductShare, ${productData.name}, product catalog, small business`
+      : "ProductShare",
     openGraph: {
       title,
       description,
-      images: image ? [image] : [], // Include the product image if available
+      images: image ? [image] : [],
     },
     twitter: {
-      card: 'summary_large_image', // Use the summary card with large image
+      card: 'summary_large_image',
       title,
       description,
-      images: image ? [image] : [], // Include the product image if available
+      images: image ? [image] : [],
     },
   };
 }
 
 // Server component that renders the page
-export default async function Page({ params }: { params: { productId: string; storeId: string } }) {
-  const { productId, storeId } = params; // No need to await params
+export default async function Page({ params }: Params) {
+  const { productId, storeId } = await params; // Await params here
   
-  // Fetch the product data to pass to the component
+  // Fetch the product data here if needed
+  const productData = await getProductData(productId, storeId);
+  
+  if (!productData) {
+    // You might want to handle the not-found case
+    return <div>Product not found</div>;
+  }
 
-  // Render the ProductPage component with the fetched data
   return <ProductPage productId={productId} storeId={storeId} />;
 }
