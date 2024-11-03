@@ -10,7 +10,7 @@ import Image from 'next/image';
 import Head from 'next/head';
 
 
-const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }:any) => {
+const ProductPage = ({ productId, storeId }:any) => {
   const [productData, setProductData] = useState<ProductType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [userId, setUserId] = useState<string | null>(null);
