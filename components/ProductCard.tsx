@@ -33,7 +33,7 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
             <div className="relative">
                 <Image
                     quality={50}
-                    unoptimized= {true}
+                    unoptimized={true}
                     width={0}
                     height={0}
                     src={product.images[0]}
@@ -65,21 +65,25 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
 
             {/* Content Section */}
             <div className="p-2">
-                {/* <div className="flex items-center gap-2 mb-2">
-                    <span className="px-2 py-1 text-xs font-semibold rounded-md bg-gray-100 text-gray-800">
+                <div className="flex items-center gap-2 mb-2">
+
+                    <span className="px-4 py-1 text-xs font-normal rounded-md bg-gray-200 text-gray-950">
                         {product?.category}
                     </span>
 
-                </div> */}
+                </div>
 
                 <h3 className="font-light text-sm text-ellipsis line-clamp-3">{product.name}</h3>
-                <div className="flex items-center text-xl text-yellow-500">
+                {/* <span className="px-2 py-1 text-xs font-semibold rounded-md bg-gray-100 text-gray-800">
+                {product.category}
+                </span> */}
+                {/* <div className="flex items-center text-xl text-yellow-500">
                     {'★'.repeat(Math.floor(3))}
                     {'☆'.repeat(5 - Math.floor(3))}
                     <span className="ml-1 text-gray-600 text-xs">({14})</span>
-                </div>
+                </div> */}
 
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 my-2">
                     <span className="text-md font-normal">₹{product?.regularPrice}</span>
                     {product?.regularPrice > product?.discountPrice && (
                         <>

@@ -8,6 +8,7 @@ import { getUserId } from '@/helpers/getUserId';
 import { db } from '@/lib/firebase';
 import { ProductType } from '@/type';
 import Image from 'next/image';
+import Head from 'next/head';
 
 
 
@@ -17,9 +18,10 @@ const ProductPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
-  const [reviewInput, setReviewInput] = useState<{ user: string; review: string }>({
+  const [reviewInput, setReviewInput] = useState<{ user: string; review: string, stars: string }>({
     user: "",
-    review: ""
+    review: "",
+    stars: ""
   });
   const [displayReviewInput, setDisplayReviewInput] = useState<boolean>(false)
 
@@ -129,6 +131,14 @@ const ProductPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-12 pt-32 max-w-7xl">
+      <Head>
+        <title>{productData?.name || "Product"}</title>
+        <meta property="og:title" content={productData?.name || "Product"} />
+        <meta property="og:image" content={productData?.images?.[0] || "/default-image.jpg"} />
+        <meta property="og:description" content={productData?.description || "Check out this product!"} />
+        <meta property="og:url" content={`https://productshare.vercel.app/store/${storeId}/${productId}`} />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Head>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Product Image Section */}
         <div className="space-y-4">
@@ -280,6 +290,8 @@ const ProductPage: React.FC = () => {
               onChange={(e) => setReviewInput((prev) => ({ ...prev, user: e.target.value }))}
               className="w-full border py-3 p-4 focus:outline-none rounded-md"
             />
+
+
 
             <input
               type="text"

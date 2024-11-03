@@ -154,7 +154,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        router.push('/dashboard');
+        router.push('/store');
       }
     });
     return () => unsubscribe();
@@ -186,7 +186,7 @@ const HomePage: React.FC = () => {
               </span>
             </h1>
 
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 w-full">
               Create stunning product catalogs, engage customers with AI chat,
               and track performance with powerful analytics.
             </p>
