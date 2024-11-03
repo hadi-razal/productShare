@@ -43,7 +43,7 @@ async function getProductData(productId: string, storeId: string): Promise<Produ
 
 // Generate metadata for the page
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const { productId, storeId } = await params; // Await params here
+  const { productId, storeId } = params; // No need to await params here
   
   const productData = await getProductData(productId, storeId);
 
@@ -73,7 +73,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 // Server component that renders the page
 export default async function Page({ params }: Params) {
-  const { productId, storeId } = await params; // Await params here
+  const { productId, storeId } = params; // No need to await params here
   
   // Fetch the product data here if needed
   const productData = await getProductData(productId, storeId);
