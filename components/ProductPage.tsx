@@ -114,7 +114,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
         <meta property="og:description" content={productData.description || "Check out this product!"} />
       </Head>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
         {/* Product Images */}
         <div className="space-y-4 relative">
