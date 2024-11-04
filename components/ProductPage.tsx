@@ -36,6 +36,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     fetchUserId();
   }, [storeId]);
 
+
+
   useEffect(() => {
     const fetchProduct = async () => {
       if (!userId || !productId) return;
@@ -54,17 +56,21 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     fetchProduct();
   }, [userId, productId]);
 
+
   const nextImage = () => {
     if (productData?.images) {
       setCurrentImageIndex((prev) => prev === productData.images.length - 1 ? 0 : prev + 1);
     }
   };
 
+
   const prevImage = () => {
     if (productData?.images) {
       setCurrentImageIndex((prev) => prev === 0 ? productData.images.length - 1 : prev - 1);
     }
   };
+
+
 
   const calculateDiscount = () => {
     if (productData?.regularPrice && productData?.discountPrice) {
@@ -74,9 +80,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     return 0;
   };
 
+
   const handleShare = () => {
     setModalOpen(true);
   };
+
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(currentUrl)
@@ -86,6 +94,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
       })
       .catch((error) => console.error("Failed to copy link: ", error));
   };
+
 
   const closeModal = () => setModalOpen(false);
 
@@ -100,6 +109,17 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     }
     window.open(shareUrl, '_blank');
   };
+
+
+
+  const handleBuyNow = () => {
+    if (productData) {
+      const message = `Hello, I'm interested in purchasing:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n${productData.description || "No description available."}\n\n*${currentUrl}*`;
+      const whatsappUrl = `https://wa.me/919074063723?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    }
+  };
+
 
   if (loading) return <p className="text-gray-500">Loading product details...</p>;
 
@@ -135,74 +155,77 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
           <div className="flex gap-2 overflow-x-auto">
             {productData.images?.map((img, i) => (
               <div key={i} onClick={() => setCurrentImageIndex(i)} className={`w-16 h-16 ml-1 my-2 flex items-center justify-center rounded-lg overflow-hidden cursor-pointer ${i === currentImageIndex ? 'ring-2 ring-gray-500' : ''}`}>
-            <Image src={img} alt={`Thumbnail ${i}`} width={64} height={64} objectFit="contain" />
-          </div>
-          ))}
-        </div>
-
-      </div>
-
-      <div className="space-y-4">
-        <h1 className="text-xl font-semibold">{productData.name}</h1>
-
-        <div className="flex items-center space-x-2">
-          <span className="text-3xl font-bold">₹{productData.discountPrice || productData.regularPrice}</span>
-          {productData.discountPrice && <span className="line-through text-gray-500">₹{productData.regularPrice}</span>}
-          {productData.discountPrice && <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm">{calculateDiscount()}% OFF</span>}
-        </div>
-
-        <div className="flex gap-4 mt-6">
-          <button className="bg-indigo-700 flex items-center gap-2 justify-center text-white py-3 px-6 rounded-lg font-medium">
-            <FiShoppingCart className="text-white" />
-            Buy Now
-          </button>
-          <button
-            className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-6 rounded-lg font-medium"
-            onClick={handleShare}
-          >
-            <FiShare2 className="text-black" />
-            Share
-          </button>
-        </div>
-
-        {isModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
-            <div className="bg-white rounded-xl shadow-xl w-96 max-w-[90vw] p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-semibold text-gray-900">Share this product</h3>
-                <button onClick={closeModal} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
-                  <FiX className="w-5 h-5 text-gray-500" />
-                </button>
+                <Image src={img} alt={`Thumbnail ${i}`} width={64} height={64} objectFit="contain" />
               </div>
+            ))}
+          </div>
 
-              <div className="mb-6">
-                <div className="flex items-center gap-4">
-                  <button onClick={() => shareOnPlatform('facebook')} className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700">
-                    <FiFacebook className="w-6 h-6" />
+        </div>
+
+        <div className="space-y-4">
+          <h1 className="text-xl font-semibold">{productData.name}</h1>
+
+          <div className="flex items-center space-x-2">
+            <span className="text-3xl font-bold">₹{productData.discountPrice || productData.regularPrice}</span>
+            {productData.discountPrice && <span className="line-through text-gray-500">₹{productData.regularPrice}</span>}
+            {productData.discountPrice && <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm">{calculateDiscount()}% OFF</span>}
+          </div>
+
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={handleBuyNow}
+              className="bg-indigo-700 flex items-center gap-2 justify-center text-white py-3 px-6 rounded-lg font-medium"
+            >
+              <FiShoppingCart className="text-white" />
+              Buy Now
+            </button>
+            <button
+              className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-6 rounded-lg font-medium"
+              onClick={handleShare}
+            >
+              <FiShare2 className="text-black" />
+              Share
+            </button>
+          </div>
+
+          {isModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+              <div className="bg-white rounded-xl shadow-xl w-96 max-w-[90vw] p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900">Share this product</h3>
+                  <button onClick={closeModal} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+                    <FiX className="w-5 h-5 text-gray-500" />
                   </button>
-                  <button onClick={() => shareOnPlatform('twitter')} className="bg-blue-400 text-white p-3 rounded-lg hover:bg-blue-500">
-                    <FiTwitter className="w-6 h-6" />
-                  </button>
-                  <button onClick={() => shareOnPlatform('whatsapp')} className="bg-green-500 text-white p-3 rounded-lg hover:bg-green-600">
-                    <FaWhatsapp className="w-6 h-6" />
+                </div>
+
+                <div className="mb-6">
+                  <div className="flex items-center gap-4">
+                    <button onClick={() => shareOnPlatform('facebook')} className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700">
+                      <FiFacebook className="w-6 h-6" />
+                    </button>
+                    <button onClick={() => shareOnPlatform('twitter')} className="bg-blue-400 text-white p-3 rounded-lg hover:bg-blue-500">
+                      <FiTwitter className="w-6 h-6" />
+                    </button>
+                    <button onClick={() => shareOnPlatform('whatsapp')} className="bg-green-500 text-white p-3 rounded-lg hover:bg-green-600">
+                      <FaWhatsapp className="w-6 h-6" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={handleCopyLink}
+                    className={`text-sm flex items-center justify-center w-full gap-2 px-6 py-3 bg-gray-100 rounded-lg border transition-colors ${copied ? "bg-green-100 border-green-200 text-green-700" : "hover:bg-gray-200"}`}
+                  >
+                    {copied ? "Copied!" : "Copy link"}
                   </button>
                 </div>
               </div>
-
-              <div className="flex flex-col gap-3">
-                <button
-                  onClick={handleCopyLink}
-                  className={`text-sm flex items-center justify-center w-full gap-2 px-6 py-3 bg-gray-100 rounded-lg border transition-colors ${copied ? "bg-green-100 border-green-200 text-green-700" : "hover:bg-gray-200"}`}
-                >
-                  {copied ? "Copied!" : "Copy link"}
-                </button>
-              </div>
             </div>
-          </div>
-        )}
-        <p className="text-gray-600 pb-10">{productData.description}</p>
+          )}
+          <p className="text-gray-600 pb-10">{productData.description}</p>
+        </div>
       </div>
-    </div>
     </div >
   );
 };
