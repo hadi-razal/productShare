@@ -106,7 +106,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
   if (!productData) return <h2 className="text-2xl font-semibold text-gray-800">Product not found</h2>;
 
   return (
-    <div className="container mx-auto px-2 py-12 max-w-7xl pt-32">
+    <div className="container mx-auto px-4 py-12 max-w-7xl pt-24">
       <Head>
         <title>{productData.name}</title>
         <meta property="og:title" content={productData.name} />
@@ -117,7 +117,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
         {/* Product Images */}
-        <div className="space-y-4 relative">
+        <div className="space-y-4 ounded-md relative">
           <div className="relative rounded-md overflow-hidden w-full h-96">
             {productData.images?.[currentImageIndex] ? (
               <Image src={productData.images[currentImageIndex]} alt={productData.name} layout="fill" className='rounded-md' objectFit="contain" />
