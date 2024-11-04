@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-  Store, BarChart2, Bot, ShieldCheck, Sparkles, ArrowRight, 
+  Store, BarChart2, Bot, ArrowRight, 
   ArrowUpRight, Award, Users, Globe, Zap, Lock
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -21,33 +21,6 @@ const AnimatedBackground = () => (
   </div>
 );
 
-// Enhanced stat card with animations
-const StatCard = ({ icon, value, label, subtext, delay }:any) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay }}
-    className="relative p-6 rounded-2xl bg-white/80 backdrop-blur-lg border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-  >
-    <div className="flex items-center space-x-4">
-      <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl text-white">
-        {icon}
-      </div>
-      <div>
-        <motion.h3 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: delay + 0.2 }}
-          className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
-        >
-          {value}
-        </motion.h3>
-        <p className="text-sm font-medium text-gray-800">{label}</p>
-        {subtext && <p className="text-xs text-gray-600 mt-1">{subtext}</p>}
-      </div>
-    </div>
-  </motion.div>
-);
 
 // Enhanced feature card with hover effects
 const FeatureCard = ({ icon, title, description, delay }:any) => (
