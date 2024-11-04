@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { FiFacebook, FiTwitter, FiLinkedin, FiShoppingCart, FiShare2, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { FaWhatsapp } from 'react-icons/fa';
+import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { getUserId } from '@/helpers/getUserId';
 import { db } from '@/lib/firebase';
 import { ProductType } from '@/type';
@@ -214,6 +214,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
                     </button>
                     <button onClick={() => shareOnPlatform('whatsapp')} className="bg-green-500 text-white p-3 rounded-lg hover:bg-green-600">
                       <FaWhatsapp className="w-6 h-6" />
+                    </button>
+                    <button onClick={() => shareOnPlatform('instagram')} className="bg-red-500 text-white p-3 rounded-lg hover:bg-red-600">
+                      <FaInstagram className="w-6 h-6" />
                     </button>
                   </div>
                 </div>
