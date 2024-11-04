@@ -102,27 +102,30 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     if (productData) {
       const message = `check out this product:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n${productData.description || "No description available."}\n\n*${currentUrl}*`;
       let shareUrl = '';
-  
+
       if (platform === 'facebook') {
         shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${currentUrl}\n\n${message}`)}`;
       } else if (platform === 'twitter') {
         shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
       } else if (platform === 'whatsapp') {
         shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+      } else if (platform === 'instagram') {
+        shareUrl = `https://www.instagram.com/`;
+        alert("Instagram does not support direct sharing. Copy the following details to share:\n\n" + message);
       }
-  
+
       window.open(shareUrl, '_blank');
     }
   };
-  
+
   const handleBuyNow = () => {
     if (productData) {
-      const message = `Hello, I'm interested in purchasing:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n${productData.description || "No description available."}\n\n*${currentUrl}*`;
+      const message = `Hi, I'm interested in purchasing:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n*${currentUrl}*`;
       const whatsappUrl = `https://wa.me/919074063723?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
     }
   };
-  
+
 
   if (loading) return <p className="text-gray-500">Loading product details...</p>;
 
