@@ -143,7 +143,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
 
           {productData.isInStock === false && <p className="text-red-600">Out of Stock</p>}
 
-          <h1 className="text-3xl font-semibold">{productData.name}</h1>
+          <h1 className="text-xl font-semibold">{productData.name}</h1>
           <RatingStars rating={productData.rating} totalReviews={productData.totalReviews} />
 
           <div className="flex items-center space-x-2">
