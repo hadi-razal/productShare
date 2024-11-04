@@ -99,19 +99,22 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
   const closeModal = () => setModalOpen(false);
 
   const shareOnPlatform = (platform: string) => {
-    let shareUrl = '';
-    if (platform === 'facebook') {
-      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
-    } else if (platform === 'twitter') {
-      shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`;
-    } else if (platform === 'whatsapp') {
-      shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(currentUrl)}`;
+    if (productData) {
+      const message = `check out this product:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n${productData.description || "No description available."}\n\n*${currentUrl}*`;
+      let shareUrl = '';
+  
+      if (platform === 'facebook') {
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${currentUrl}\n\n${message}`)}`;
+      } else if (platform === 'twitter') {
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+      } else if (platform === 'whatsapp') {
+        shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+      }
+  
+      window.open(shareUrl, '_blank');
     }
-    window.open(shareUrl, '_blank');
   };
-
-
-
+  
   const handleBuyNow = () => {
     if (productData) {
       const message = `Hello, I'm interested in purchasing:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n${productData.description || "No description available."}\n\n*${currentUrl}*`;
@@ -119,7 +122,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
       window.open(whatsappUrl, '_blank');
     }
   };
-
+  
 
   if (loading) return <p className="text-gray-500">Loading product details...</p>;
 
