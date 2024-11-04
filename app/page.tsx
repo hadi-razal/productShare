@@ -1,262 +1,306 @@
 "use client"
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Store, BarChart2, Bot, Palette, Share2,
-  ArrowRight, ChevronRight,
-  Award, Sparkles
+  Store, BarChart2, Bot, ShieldCheck, Sparkles, ArrowRight, 
+  ArrowUpRight, Award, Users, Globe, Zap, Lock
 } from 'lucide-react';
-import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import Link from 'next/link';
-import { stats } from '@/constants/stats';
+import { motion } from 'framer-motion';
 
-interface StatCardProps {
-  icon: React.ReactNode;
-  value: string;
-  label: string;
-  subtext?: string;
-}
-
-const StatCard: React.FC<StatCardProps> = ({ icon, value, label, subtext }) => (
-  <div className="group relative mr-3">
-    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
-    <div className="relative bg-white/90 backdrop-blur-sm rounded-xl border border-gray-100 p-6 shadow-lg hover:shadow-2xl transition-all duration-500">
-      <div className="flex items-center gap-4">
-        <div className="text-indigo-600 bg-blue-50 p-3 rounded-lg">{icon}</div>
-        <div>
-          <div className="text-3xl font-bold bg-indigo-700  bg-clip-text text-transparent">
-            {value}
-          </div>
-          <div className="text-sm font-medium text-gray-600">{label}</div>
-          {subtext && <div className="text-xs text-gray-500 mt-1">{subtext}</div>}
-        </div>
-      </div>
+// Animated gradient background component
+const AnimatedBackground = () => (
+  <div className="absolute inset-0 -z-10">
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-50">
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
     </div>
+    <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-100/20 to-violet-100/20 animate-gradient" />
   </div>
 );
 
-interface FeatureCardProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}
-
-const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) => (
-  <div className="group relative">
-    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
-    <div className="relative h-full p-8 bg-white/90 backdrop-blur-sm rounded-xl border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-500">
-      <div className="flex flex-col gap-6">
-        <div className="inline-flex text-indigo-600 bg-blue-50 p-4 rounded-xl shadow-inner group-hover:scale-110 transition-transform duration-500 w-fit">
-          {icon}
-        </div>
-        <div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-3">{title}</h3>
-          <p className="text-gray-600 leading-relaxed">{description}</p>
-        </div>
-        <div className="mt-auto flex items-center text-indigo-600 font-medium group-hover:text-blue-700 transition-colors">
-          Learn more <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-        </div>
+// Enhanced stat card with animations
+const StatCard = ({ icon, value, label, subtext, delay }:any) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay }}
+    className="relative p-6 rounded-2xl bg-white/80 backdrop-blur-lg border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+  >
+    <div className="flex items-center space-x-4">
+      <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl text-white">
+        {icon}
+      </div>
+      <div>
+        <motion.h3 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: delay + 0.2 }}
+          className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
+        >
+          {value}
+        </motion.h3>
+        <p className="text-sm font-medium text-gray-800">{label}</p>
+        {subtext && <p className="text-xs text-gray-600 mt-1">{subtext}</p>}
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
-interface StorePreviewProps {
-  name: string;
-  image: string;
-  products: string;
-  views: string;
-}
-
-const StorePreview: React.FC<StorePreviewProps> = ({ name, image, products, views }) => (
-  <div className="group relative w-full" >
-    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
-    <div className="relative bg-white/90 backdrop-blur-sm rounded-xl border border-gray-100 p-6 shadow-lg hover:shadow-2xl transition-all duration-500">
-      <div className="w-full h-48 bg-gray-100 rounded-lg mb-4 overflow-hidden">
-        <img src={image} alt={name} className="w-full h-full object-cover" />
+// Enhanced feature card with hover effects
+const FeatureCard = ({ icon, title, description, delay }:any) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay }}
+    className="group relative p-8 rounded-2xl bg-white/80 backdrop-blur-lg border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300"
+  >
+    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/0 to-indigo-500/0 group-hover:from-blue-500/5 group-hover:to-indigo-500/5 transition-all duration-300" />
+    <div className="relative">
+      <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl text-white w-fit mb-6">
+        {icon}
       </div>
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{name}</h3>
-      <div className="flex justify-between text-sm text-gray-600">
-        <span>{products} Products</span>
-        <span>{views} Views</span>
+      <h3 className="text-xl font-bold text-gray-900 mb-3">{title}</h3>
+      <p className="text-gray-600">{description}</p>
+      <div className="flex items-center text-blue-600 font-medium mt-6 group-hover:text-indigo-600 transition-all">
+        Learn more 
+        <ArrowUpRight className="ml-2 w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
-const HomePage: React.FC = () => {
+// Premium store preview card
+const StorePreview = ({ name, image, products, views, delay }:any) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay }}
+    className="group relative p-6 rounded-2xl bg-white/80 backdrop-blur-lg border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300"
+  >
+    <div className="relative w-full h-64 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl mb-6 overflow-hidden">
+      <img 
+        src={image} 
+        alt={name} 
+        className="w-full h-full object-cover scale-100 group-hover:scale-110 transition-transform duration-700" 
+      />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-indigo-500/0 group-hover:from-blue-500/10 group-hover:to-indigo-500/10 transition-all duration-300" />
+    </div>
+    <h3 className="text-xl font-bold text-gray-900 mb-4">{name}</h3>
+    <div className="flex justify-between items-center">
+      <span className="flex items-center text-gray-700">
+        <Store className="w-5 h-5 mr-2 text-blue-600" />
+        {products} Products
+      </span>
+      <span className="flex items-center text-gray-700">
+        <Users className="w-5 h-5 mr-2 text-blue-600" />
+        {views} Views
+      </span>
+    </div>
+  </motion.div>
+);
+
+const HomePage = () => {
   const router = useRouter();
+  const [scrolled, setScrolled] = useState(false);
 
-
-
-  const features: FeatureCardProps[] = [
-    {
-      icon: <Store className="w-8 h-8" />,
-      title: 'Custom Store Themes',
-      description: 'Create a unique brand identity with customizable themes, logos, and layouts.'
-    },
-    {
-      icon: <Bot className="w-8 h-8" />,
-      title: 'AI Chat Assistant',
-      description: 'Engage customers 24/7 with an intelligent chatbot trained on your product catalog.'
-    },
-    {
-      icon: <BarChart2 className="w-8 h-8" />,
-      title: 'Advanced Analytics',
-      description: 'Track visitor behavior, sales performance, and customer engagement in real-time.'
-    },
-    {
-      icon: <Share2 className="w-8 h-8" />,
-      title: 'Easy Sharing',
-      description: 'Generate beautiful product catalogs and share them instantly with custom links.'
-    },
-    {
-      icon: <Palette className="w-8 h-8" />,
-      title: 'Brand Customization',
-      description: 'Match your store’s look and feel to your brand with custom colors and fonts.'
-    },
-    {
-      icon: <Sparkles className="w-8 h-8" />,
-      title: 'AI Product Optimization',
-      description: 'Auto-enhance product descriptions, tags, and SEO with AI assistance.'
-    }
-  ];
-
-  const storeShowcases: StorePreviewProps[] = [
-    {
-      name: "Fashion Boutique",
-      image: "/api/placeholder/400/300",
-      products: "250+",
-      views: "50K"
-    },
-    {
-      name: "Tech Store",
-      image: "/api/placeholder/400/300",
-      products: "1000+",
-      views: "100K"
-    },
-    {
-      name: "Artisan Crafts",
-      image: "/api/placeholder/400/300",
-      products: "150+",
-      views: "25K"
-    },
-    {
-      name: "Duoph Store",
-      image: "/api/placeholder/400/300",
-      products: "50+",
-      views: "10K"
-    }
-  ];
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        router.push('/store');
-      }
+      if (user) router.push('/store');
     });
     return () => unsubscribe();
   }, [router]);
 
+  const features = [
+    { 
+      icon: <Store className="w-8 h-8" />, 
+      title: 'AI-Powered Store Themes', 
+      description: 'Create unique, conversion-optimized storefronts with our AI theme generator.' 
+    },
+    { 
+      icon: <Bot className="w-8 h-8" />, 
+      title: '24/7 AI Customer Support', 
+      description: 'Intelligent chatbots that learn from your business and delight customers.' 
+    },
+    { 
+      icon: <BarChart2 className="w-8 h-8" />, 
+      title: 'Predictive Analytics', 
+      description: 'Forecast trends and optimize inventory with machine learning insights.' 
+    },
+    { 
+      icon: <Lock className="w-8 h-8" />, 
+      title: 'Enterprise Security', 
+      description: 'Military-grade encryption and advanced fraud prevention systems.' 
+    },
+    { 
+      icon: <Globe className="w-8 h-8" />, 
+      title: 'Global Commerce', 
+      description: 'Sell worldwide with automatic currency and language optimization.' 
+    },
+    { 
+      icon: <Zap className="w-8 h-8" />, 
+      title: 'Lightning Performance', 
+      description: 'Sub-second page loads and real-time inventory updates.' 
+    },
+  ];
+
+  const stores = [
+    { 
+      name: 'LUXE Collection', 
+      image: '/images/store1.jpg', 
+      products: '2,500+', 
+      views: '1.2M' 
+    },
+    { 
+      name: 'TechVerse', 
+      image: '/images/store2.jpg', 
+      products: '5,000+', 
+      views: '2.5M' 
+    },
+    { 
+      name: 'Artisan Gallery', 
+      image: '/images/store3.jpg', 
+      products: '1,500+', 
+      views: '800K' 
+    },
+  ];
+
   return (
-    <div className="min-h-screen max-w-7xl mx-auto">
+    <div className="relative min-h-screen overflow-hidden">
+      <AnimatedBackground />
+      
       {/* Hero Section */}
-      <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.04),transparent)]" />
-        <section className="relative max-w-7xl mx-auto px-6 pt-24 pb-20">
-          <div className="flex justify-center mb-12">
-            <div className="group flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/90 backdrop-blur-sm border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-500">
-              <div className="p-1.5 bg-blue-100 rounded-full">
-                <Award className="w-4 h-4 text-indigo-700 " />
-              </div>
-              <span className="text-sm font-medium text-gray-900 cursor-pointer">#1 Premium Sellers Store</span>
-              <ChevronRight className="w-4 h-4 text-gray-600 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </div>
+<section className="relative pt-32 pb-20 px-6">
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8 }}
+    className="text-center max-w-6xl mx-auto space-y-8"
+  >
+    <div className="flex items-center justify-center space-x-2 mb-8">
+      <motion.div
+        animate={{ 
+          rotate: [0, 360],
+          scale: [1, 1.2, 1]
+        }}
+        transition={{ 
+          duration: 2,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
+      >
+        <Award className="w-8 h-8 text-blue-600" />
+      </motion.div>
+      <p className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        Empowering 10,000+ Online Sellers Worldwide
+      </p>
+    </div>
 
-          <div className="relative z-10 text-center max-w-4xl mx-auto mb-16 space-y-8">
-            <h1 className="text-6xl lg:text-7xl font-bold leading-tight">
-              <span className="inline-block bg-indigo-700  bg-clip-text text-transparent">
-                Your Products,
-              </span>
-              <span className="block mt-2 text-4xl lg:text-5xl bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                Beautifully Showcased
-              </span>
-            </h1>
+    <h1 className="text-6xl md:text-7xl font-black text-gray-900">
+      <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        Showcase Your Products
+      </span>
+      <br />
+      <span className="relative">
+        with a Stunning Online Catalog
+        <motion.div
+          className="absolute -bottom-2 left-0 w-full h-1 bg-blue-600 rounded-full"
+          initial={{ width: "0%" }}
+          animate={{ width: "100%" }}
+          transition={{ duration: 1, delay: 0.5 }}
+        />
+      </span>
+    </h1>
 
-            <p className="text-xl text-gray-600 w-full">
-              Create stunning product catalogs, engage customers with AI chat,
-              and track performance with powerful analytics.
-            </p>
+    <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+      Build a beautiful, fully customizable online catalog to display your products effortlessly, 
+      reach more customers, and grow your business. No coding required.
+    </p>
 
-            <div className="flex items-center justify-center gap-4">
+    <motion.div 
+      className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mt-12"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.8 }}
+    >
+      <Link href="/login">
+        <button className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105">
+          Start Your Catalog 
+          <ArrowRight className="inline ml-2 group-hover:translate-x-1 transition-transform" />
+        </button>
+      </Link>
+      <Link href="/demo">
+        <button className="px-8 py-4 bg-white/80 backdrop-blur-lg text-gray-900 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105">
+          View Demo 
+          <ArrowUpRight className="inline ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+        </button>
+      </Link>
+    </motion.div>
+  </motion.div>
+</section>
 
-              <Link href="/login">
-                <button className="group px-8 py-4 bg-indigo-700  hover:bg-indigo-800 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 flex items-center gap-3">
-                  Start Selling Now
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </Link>
-
-            </div>
-          </div>
-
-          <div className="max-w-3xl mx-auto">
-            <div className="marquee">
-              <div className="marquee-content py-4">
-                {stats.map((stat, index) => (
-                  <div className="stat-card py-4" key={index}>
-                    <StatCard {...stat} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-        </section>
-      </div>
 
       {/* Features Section */}
-      <section className="py-24 relative">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center_left,rgba(37,99,235,0.04),transparent)]" />
-        <div className="relative max-w-7xl mx-auto px-6">
-          <div className="max-w-2xl mx-auto text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">
-              <span className="bg-indigo-700  bg-clip-text text-transparent">
-                Everything You Need
-              </span>
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Powerful features to showcase your products and grow your business
-            </p>
-          </div>
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-4xl font-bold text-center mb-4"
+          >
+            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              Platform Features
+            </span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-gray-600 text-center mb-16 max-w-2xl mx-auto"
+          >
+            Everything you need to build, scale, and optimize your enterprise commerce platform
+          </motion.p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <FeatureCard key={index} {...feature} />
+            {features.map((feature, idx) => (
+              <FeatureCard key={idx} {...feature} delay={idx * 0.1} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Store Showcase Section */}
-      <section className="py-24 relative">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center_right,rgba(37,99,235,0.04),transparent)]" />
-        <div className="relative max-w-7xl mx-auto px-6">
-          <div className="max-w-2xl mx-auto text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">
-              <span className="bg-indigo-700  bg-clip-text text-transparent">
-                Successful Stores
-              </span>
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Join thousands of businesses already thriving on our platform
-            </p>
-          </div>
-          <div className="grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {storeShowcases.map((store, index) => (
-              <StorePreview key={index} {...store} />
+      {/* Stores Section */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-4xl font-bold text-center mb-4"
+          >
+            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              Success Stories
+            </span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-gray-600 text-center mb-16 max-w-2xl mx-auto"
+          >
+            Join thousands of successful businesses powered by our platform
+          </motion.p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {stores.map((store, idx) => (
+              <StorePreview key={idx} {...store} delay={idx * 0.1} />
             ))}
           </div>
         </div>
