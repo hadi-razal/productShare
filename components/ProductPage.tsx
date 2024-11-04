@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { Star, Truck } from 'lucide-react';
+import { ShoppingCart, Star, Truck } from 'lucide-react';
 import { getUserId } from '@/helpers/getUserId';
 import { db } from '@/lib/firebase';
 import { ProductType } from '@/type';
@@ -21,13 +21,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [displayReviewInput, setDisplayReviewInput] = useState<boolean>(false);
-  const [reviewInput, setReviewInput] = useState<{ user: string; review: string; stars: string }>({
-    user: "",
-    review: "",
-    stars: ""
-  });
+  const [reviewInput, setReviewInput] = useState({ user: "", review: "", stars: "" });
 
-  // Fetch user ID
   useEffect(() => {
     const fetchUserId = async () => {
       if (storeId) {
@@ -38,7 +33,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     fetchUserId();
   }, [storeId]);
 
-  // Fetch product data
   useEffect(() => {
     const fetchProduct = async () => {
       if (!userId || !productId) return;
@@ -57,24 +51,18 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     fetchProduct();
   }, [userId, productId]);
 
-  // Image navigation functions
   const nextImage = () => {
     if (productData?.images) {
-      setCurrentImageIndex((prev) =>
-        prev === productData.images.length - 1 ? 0 : prev + 1
-      );
+      setCurrentImageIndex((prev) => prev === productData.images.length - 1 ? 0 : prev + 1);
     }
   };
 
   const prevImage = () => {
     if (productData?.images) {
-      setCurrentImageIndex((prev) =>
-        prev === 0 ? productData.images.length - 1 : prev - 1
-      );
+      setCurrentImageIndex((prev) => prev === 0 ? productData.images.length - 1 : prev - 1);
     }
   };
 
-  // Calculate discount percentage
   const calculateDiscount = () => {
     if (productData?.regularPrice && productData?.discountPrice) {
       const discount = ((productData.regularPrice - productData.discountPrice) / productData.regularPrice) * 100;
@@ -83,16 +71,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     return 0;
   };
 
-  const handleReview = async () => {
-    try {
-      console.log(reviewInput);
-      // Add your logic to submit the review here
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // Rating Stars Component
   const RatingStars: React.FC<{ rating: number; totalReviews?: number }> = ({
     rating = 4.5,
     totalReviews = 128,
@@ -102,8 +80,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`w-5 h-5 ${star <= Math.floor(rating) ? 'text-yellow-500' : 'text-gray-300'
-              }`}
+            className={`w-5 h-5 ${star <= Math.floor(rating) ? 'text-yellow-500' : 'text-gray-300'}`}
           />
         ))}
       </div>
@@ -111,150 +88,88 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     </div>
   );
 
-  if (loading) {
-    return (
-      <div className="container flex justify-center items-center h-screen mx-auto px-4 text-center">
-        <p className="text-gray-500">Loading product details...</p>
-      </div>
-    );
-  }
+  if (loading) return <p className="text-gray-500">Loading product details...</p>;
 
-  if (!productData) {
-    return (
-      <div className="container mx-auto px-4 py-32 text-center">
-        <h2 className="text-2xl font-semibold text-gray-800">Product not found</h2>
-        <p className="mt-2 text-gray-600">
-          The product you are looking for does not exist or has been removed.
-        </p>
-      </div>
-    );
-  }
+  if (!productData) return <h2 className="text-2xl font-semibold text-gray-800">Product not found</h2>;
 
   return (
-    <div className="container mx-auto px-4 py-12 pt-32 max-w-7xl">
+    <div className="container mx-auto px-4 py-12 max-w-7xl pt-32">
       <Head>
         <title>{productData.name}</title>
         <meta property="og:title" content={productData.name} />
         <meta property="og:image" content={productData.images?.[0] || "/default-image.jpg"} />
         <meta property="og:description" content={productData.description || "Check out this product!"} />
-        <meta property="og:url" content={`https://productshare.vercel.app/product/${storeId}/${productId}`} />
-        <meta name="twitter:card" content="summary_large_image" />
       </Head>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* Product Image Section */}
-        <div className="space-y-4">
-          <div className="relative rounded-lg overflow-hidden w-full h-96 flex items-center justify-center">
-            {productData.images && productData.images.length > 0 ? (
-              <>
-                <Image
-                  quality={50}
-                  unoptimized={true}
-                  width={0}
-                  height={0}
-                  src={productData.images[currentImageIndex]}
-                  alt={productData.name}
-                  className="object-contain h-full w-full transition-transform duration-300 ease-in-out"
-                />
-                {productData.images.length > 1 && (
-                  <div className="absolute inset-0 flex justify-between items-center px-4">
-                    <button
-                      onClick={prevImage}
-                      className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-105"
-                    >
-                      <ChevronLeft className="w-5 h-5 text-gray-700" />
-                    </button>
-                    <button
-                      onClick={nextImage}
-                      className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-105"
-                    >
-                      <ChevronRight className="w-5 h-5 text-gray-700" />
-                    </button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="flex items-center justify-center text-gray-500">
-                No image available
-              </div>
-            )}
-          </div>
 
-          {/* Thumbnail Preview */}
-          {productData.images && productData.images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto relative">
-              {productData.images.map((image, index) => (
-                <div
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`cursor-pointer w-16 h-16 rounded-lg overflow-hidden transition-all relative`}
-                >
-                  {currentImageIndex === index && (
-                    <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
-                  )}
-                  <Image
-                    quality={50}
-                    unoptimized={true}
-                    width={0}
-                    height={0}
-                    src={image}
-                    alt={`Thumbnail ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+        {/* Product Images */}
+        <div className="space-y-4 relative">
+          <div className="relative rounded-lg overflow-hidden w-full h-96">
+            {productData.images?.[currentImageIndex] ? (
+              <Image src={productData.images[currentImageIndex]} alt={productData.name} layout="fill" objectFit="contain" />
+            ) : (
+              <p>No image available</p>
+            )}
+            <button onClick={prevImage} className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md">
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button onClick={nextImage} className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md">
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="flex gap-2 overflow-x-auto">
+            {productData.images?.map((img, i) => (
+              <div key={i} onClick={() => setCurrentImageIndex(i)} className={`w-16 h-16 rounded-lg overflow-hidden cursor-pointer ${i === currentImageIndex ? 'ring-2 ring-gray-800' : ''}`}>
+                <Image src={img} alt={`Thumbnail ${i}`} width={64} height={64} objectFit="cover" />
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Product Details Section */}
-
-
+        {/* Product Details */}
         <div className="space-y-4">
 
-          {/* Free Delivery Banner */}
-
-          <div className="flex items-center mt-2">
-            <span className="px-3 py-1 bg-green-600 flex items-center justify-center gap-1 text-white rounded-full text-sm font-medium">
-              <Truck className='text-white' />
-              Free Delivery All Over India
-            </span>
-          </div>
-          
-          {productData.isInStock === false && (
-            <span className="px-3 py-1 bg-red-700 text-white rounded-full text-sm font-medium">
-              Out of Stock
-            </span>
+          {productData.isInStock === true && (
+            <div className="flex items-center">
+              <Truck className="text-gray-500" />
+              <span className="ml-2 text-gray-500 text-sm font-semibold">Free Delivery All Over India</span>
+            </div>
           )}
-          <h1 className="md:text-3xl text-lg font-semibold text-gray-950">{productData.name}</h1>
+
+
+
+          {productData.isInStock === false && <p className="text-red-600">Out of Stock</p>}
+
+          <h1 className="text-3xl font-semibold">{productData.name}</h1>
           <RatingStars rating={productData.rating} totalReviews={productData.totalReviews} />
 
-          {/* Pricing */}
-          <div className="flex items-center gap-2">
-            {productData.discountPrice ? (
-              <>
-                <span className="md:text-3xl text-lg font-bold text-gray-900">
-                  ₹{productData.discountPrice}
-                </span>
-                <span className="text-lg text-gray-400 line-through">
-                  ₹{productData.regularPrice}
-                </span>
-                <span className="px-2 py-1 bg-red-100 text-red-600 rounded-full text-sm font-medium">
-                  {calculateDiscount()}% OFF
-                </span>
-              </>
-            ) : (
-              <span className="md:text-3xl text-lg font-bold text-gray-900">
-                ₹{productData.regularPrice}
-              </span>
-            )}
+          <div className="flex items-center space-x-2">
+            <span className="text-3xl font-bold">₹{productData.discountPrice || productData.regularPrice}</span>
+            {productData.discountPrice && <span className="line-through text-gray-500">₹{productData.regularPrice}</span>}
+            {productData.discountPrice && <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm">{calculateDiscount()}% OFF</span>}
           </div>
 
 
+          {/* CTA Buttons */}
+          <div className="flex gap-4 mt-6">
+            <button className="bg-indigo-700 flex items-center gap-2 justify-center text-white py-3 px-6 rounded-lg font-medium">
+              <ShoppingCart className='text-white' />
+              Buy Now
+            </button>
+          </div>
 
-          <p className="text-gray-500 text-sm leading-relaxed">
-            {productData.description}
-          </p>
+          <p className="text-gray-600">{productData.description}</p>
+
+
+          {/* Review Form */}
+          <button onClick={() => setDisplayReviewInput(!displayReviewInput)} className="text-blue-500 mt-6">Leave a Review</button>
+          {displayReviewInput && (
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+              <textarea onChange={(e) => setReviewInput({ ...reviewInput, review: e.target.value })} placeholder="Write your review here..." className="w-full border rounded p-2"></textarea>
+              <button onClick={() => { }} className="bg-blue-600 text-white py-2 px-4 rounded-lg font-medium">Submit</button>
+            </form>
+          )}
         </div>
       </div>
     </div>
