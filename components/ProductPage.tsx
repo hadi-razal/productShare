@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { Star } from 'lucide-react';
+import { Star, Truck } from 'lucide-react';
 import { getUserId } from '@/helpers/getUserId';
 import { db } from '@/lib/firebase';
 import { ProductType } from '@/type';
@@ -156,7 +156,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
                   alt={productData.name}
                   className="object-contain h-full w-full transition-transform duration-300 ease-in-out"
                 />
-                {productData.images.length > 1 && ( // Only show buttons if there's more than one image
+                {productData.images.length > 1 && (
                   <div className="absolute inset-0 flex justify-between items-center px-4">
                     <button
                       onClick={prevImage}
@@ -208,7 +208,19 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
         </div>
 
         {/* Product Details Section */}
+
+
         <div className="space-y-4">
+
+          {/* Free Delivery Banner */}
+
+          <div className="flex items-center mt-2">
+            <span className="px-3 py-1 bg-green-600 flex items-center justify-center gap-1 text-white rounded-full text-sm font-medium">
+              <Truck className='text-white' />
+              Free Delivery All Over India
+            </span>
+          </div>
+          
           {productData.isInStock === false && (
             <span className="px-3 py-1 bg-red-700 text-white rounded-full text-sm font-medium">
               Out of Stock
@@ -238,36 +250,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
             )}
           </div>
 
-          {productData.colors.length > 0 && (
-            <div className="flex flex-col flex-wrap gap-2">
-              <h4 className="text-lg font-medium text-gray-800">Color Options</h4>
-              <div className='flex gap-1 flex-wrap '>
-              {productData.colors.map((color, index) => (
-                <span key={index} style={{ background: color }} className=" h-10 w-10 rounded-full border border-gray-300 text-sm">
-                </span>
-              ))}
-              </div>
-             
-            </div>
-          )}
-
-           {productData.sizes && productData.sizes.length > 0 && (
-            <div className="flex flex-col flex-wrap gap-2">
-              <h4 className="text-lg font-medium text-gray-800">Sizes</h4>
-              <div className='flex gap-1 flex-wrap '>
-              {productData.sizes.map((size, index) => (
-                <span key={index} className=" h-10 w-10 rounded-full flex items-center justify-center border border-gray-300 text-sm">
-                  {size}
-                </span>
-              ))}
-              </div>
-             
-            </div>
-          )}
-
-          <p className="text-gray-600">{productData.description}</p>
 
 
+          <p className="text-gray-500 text-sm leading-relaxed">
+            {productData.description}
+          </p>
         </div>
       </div>
     </div>
