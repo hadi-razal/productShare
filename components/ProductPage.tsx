@@ -118,13 +118,15 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
+
           <div className="flex gap-2 overflow-x-auto">
             {productData.images?.map((img, i) => (
-              <div key={i} onClick={() => setCurrentImageIndex(i)} className={`w-16 h-16 rounded-lg overflow-hidden cursor-pointer ${i === currentImageIndex ? 'ring-2 ring-gray-800' : ''}`}>
-                <Image src={img} alt={`Thumbnail ${i}`} width={64} height={64} objectFit="cover" />
+              <div key={i} onClick={() => setCurrentImageIndex(i)} className={`w-16 h-16 ml-1 my-2 flex items-center justify-center rounded-lg overflow-hidden cursor-pointer ${i === currentImageIndex ? 'ring-2 ring-gray-500' : ''}`}>
+                <Image src={img} alt={`Thumbnail ${i}`} width={64} height={64} objectFit="contain" />
               </div>
             ))}
           </div>
+
         </div>
 
         {/* Product Details */}
