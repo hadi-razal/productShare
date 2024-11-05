@@ -130,7 +130,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
   if (loading) return (
 
     <div className='flex items-center justify-center h-[calc(100vh-120px)]'>
-      <p className="text-gray-500">Loading product details...</p>
+     <p className='text-sm text-gray-400'>Loading product details</p>
     </div>
 
   )
