@@ -84,7 +84,7 @@ const Header = () => {
   };
 
   return (
-    <header className={`fixed bg-indigo-700 w-full top-0 z-50 ${isOpen ? "h-screen md:h-[80px]" : "h-[80px]"}`}>
+    <header className={`sticky bg-indigo-700 w-full top-0 z-50 ${isOpen ? "h-screen md:h-[80px]" : "h-[80px]"}`}>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[80px] relative">
         <div className="flex items-center justify-between h-full">
           <Link

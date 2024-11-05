@@ -127,12 +127,18 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
   };
 
 
-  if (loading) return <p className="text-gray-500">Loading product details...</p>;
+  if (loading) return (
+
+    <div className='flex items-center justify-center h-[calc(100vh-120px)]'>
+      <p className="text-gray-500">Loading product details...</p>
+    </div>
+
+  )
 
   if (!productData) return <h2 className="text-2xl font-semibold text-gray-800">Product not found</h2>;
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-7xl pt-24">
+    <div className="container mx-auto px-4 py-12 max-w-7xl ">
       <Head>
         <title>{productData.name}</title>
         <meta property="og:title" content={productData.name} />
@@ -172,7 +178,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
           <h1 className="text-xl font-semibold">{productData.name}</h1>
 
           <div className="flex items-center space-x-2">
-            <span className="text-3xl font-bold">₹{productData.discountPrice || productData.regularPrice}</span>
+            <span className="text-xl font-bold">₹{productData.discountPrice || productData.regularPrice}</span>
             {productData.discountPrice && <span className="line-through text-gray-500">₹{productData.regularPrice}</span>}
             {productData.discountPrice && <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm">{calculateDiscount()}% OFF</span>}
           </div>

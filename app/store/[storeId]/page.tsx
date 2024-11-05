@@ -114,7 +114,7 @@ const Products = () => {
   };
 
   return (
-    <div className="container min-h-screen max-w-7xl mx-auto px-3 py-8 pt-[90px]">
+    <div className="container min-h-screen max-w-7xl mx-auto px-3 pt-3 pb-8">
 
       <div className="relative flex items-center w-full pb-3">
         <input
@@ -155,6 +155,14 @@ const Products = () => {
         <span className={`text-sm font-normal border py-2 px-3 rounded-md cursor-pointer  ${selectedMenu == "MostPopular" && "bg-gray-400 text-white"}`} onClick={() => setSelectedMenu("MostPopular")} >Most Popular</span>
         <span className={`text-sm font-normal border py-2 px-3 rounded-md cursor-pointer ${selectedMenu == "MostSelling" && "bg-gray-400 text-white"} `} onClick={() => setSelectedMenu("MostSelling")} >Most Selling</span>
       </div> */}
+
+      <div className="flex items-center justify-end gap-1 pb-2">
+        <select name="" id="" className="px-4 py-2 rounded-md">
+          <option value="Latest" selected defaultChecked>Sort By</option>
+          <option value="Latest">Newly Added</option>
+          <option value="LtoH">Price Low To High</option>
+        </select>
+      </div>
 
 
       {isLoading ? (
