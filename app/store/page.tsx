@@ -1,269 +1,201 @@
-"use client";
+"use client"
 
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { User, Package, PlusCircle, Users, Share2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Package, Plus, Users, TrendingUp, ShoppingCart } from 'lucide-react';
 import { getUsername } from '@/helpers/getUsername';
-import {  useRouter } from 'next/navigation';
 
-type CardProps = {
-  children: React.ReactNode;
-  className?: string;
-};
-
-const Card = ({ children, className = "" }: CardProps) => (
-  <div className={`bg-gray-200 rounded-lg shadow-sm p-6 ${className}`}>
-    {children}
+// Stat Card Component
+const StatCard = ({ title, value, trend, icon: Icon }:any) => (
+  <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="flex items-center justify-between">
+      <div className="p-2 bg-purple-50 rounded-lg">
+        <Icon className="w-5 h-5 text-purple-600" />
+      </div>
+      {trend && (
+        <div className={`flex items-center text-sm ${
+          trend >= 0 ? 'text-green-600' : 'text-red-600'
+        }`}>
+          <TrendingUp className={`w-4 h-4 ${
+            trend >= 0 ? '' : 'transform rotate-180'
+          } mr-1`} />
+          <span>{Math.abs(trend)}%</span>
+        </div>
+      )}
+    </div>
+    <h3 className="mt-4 text-2xl font-semibold text-gray-900">
+      {value ?? '...'}
+    </h3>
+    <p className="mt-1 text-sm text-gray-500">{title}</p>
   </div>
 );
 
-type StatCardProps = {
-  title: string;
-  value: number | string | null;
-  subtitle: string;
-  icon: React.ComponentType<{ className?: string }>;
-  bgColor: string;
-};
-
-const StatCard = ({ title, value, subtitle, icon: Icon, bgColor }: StatCardProps) => (
-  <Card>
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-gray-500 text-sm">{title}</p>
-        <h3 className="text-2xl font-bold text-slate-950">{value ?? (<span className='font-normal text-sm'>calculating...</span>)}</h3>
-        <p className="text-green-500 text-sm">{subtitle}</p>
-      </div>
-      <div className={`${bgColor} p-3 rounded-full`}>
-        <Icon className="w-6 h-6" />
-      </div>
-    </div>
-  </Card>
-);
-
-type ActionCardProps = {
-  title: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  iconColor: string;
-  primaryAction: React.ReactNode;
-  secondaryAction?: React.ReactNode;
-};
-
-const ActionCard = ({ title, description, icon: Icon, iconColor, primaryAction, secondaryAction }: ActionCardProps) => (
-  <Card className="hover:shadow-md transition duration-300">
-    <div className="flex flex-col items-center text-center space-y-4">
-      <div className="bg-gray-100 p-3 rounded-full">
-        <Icon className={`w-8 h-8 ${iconColor}`} />
-      </div>
-      <h3 className="text-lg font-semibold text-slate-950">{title}</h3>
-      <p className="text-gray-600 text-sm">{description}</p>
-      <div className="w-full space-y-2">
-        {primaryAction}
-        {secondaryAction}
+// Action Card Component
+const ActionCard = ({ title, href, icon: Icon, description }:any) => (
+  <Link 
+    href={href}
+    className="block bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group"
+  >
+    <div className="p-6">
+      <div className="flex items-center space-x-4">
+        <div className="flex-shrink-0">
+          <div className="p-3 bg-gray-50 rounded-lg group-hover:bg-purple-50 transition-colors duration-200">
+            <Icon className="w-6 h-6 text-purple-600" />
+          </div>
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-200">
+            {title}
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            {description}
+          </p>
+        </div>
+        <div className="flex-shrink-0">
+          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-purple-50 group-hover:bg-purple-100 transition-colors duration-200">
+            <svg
+              className="w-4 h-4 text-purple-600 transform group-hover:translate-x-1 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
-  </Card>
+  </Link>
 );
 
-type ButtonProps = {
-  children: React.ReactNode;
-  variant?: "primary" | "secondary" | "purple";
-  className?: string;
-  onClick?: () => void;
-};
-
-const Button = ({ children, variant = "primary", className = "", ...props }: ButtonProps) => {
-  const baseClasses = "w-full px-4 py-2 rounded-md transition";
-  const variants = {
-    primary: "bg-green-600 text-white hover:bg-green-700",
-    secondary: "border border-purple-600 text-purple-600 hover:bg-purple-50",
-    purple: "bg-purple-600 text-white hover:bg-purple-700"
-  };
-
-  return (
-    <button
-      className={`${baseClasses} ${variants[variant]} ${className}`}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-};
-
-type LinkButtonProps = {
-  children: React.ReactNode;
-  href: string;
-  variant?: "primary" | "secondary";
-  className?: string;
-};
-
-const LinkButton = ({ children, href, variant = "primary", className = "" }: LinkButtonProps) => {
-  const baseClasses = "w-full px-4 py-2 rounded-md transition text-center";
-  const variants = {
-    primary: "bg-green-600 text-white hover:bg-green-700",
-    secondary: "border border-purple-600 text-purple-600 hover:bg-purple-50"
-  };
-
-  return (
-    <Link
-      href={href}
-      className={`${baseClasses} ${variants[variant]} ${className}`}
-    >
-      {children}
-    </Link>
-  );
-};
-
+// Main Dashboard Component
 const StoreDashboard = () => {
-
-  const [numberOfProducts, setNumberOfProducts] = useState<number | null>(null);
-  const [numberOfStoreVisit, setNumberOfStoreVisit] = useState<number | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-
-  const router = useRouter()
+  const [stats, setStats] = useState({
+    products: null,
+    visitors: null,
+    sales: null
+  });
+  const [username, setUsername] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log(user);
       if (!user) {
         router.push('/login');
+        return;
       }
+
+      const fetchData = async () => {
+        try {
+          // Fetch username
+          const fetchedUsername = await getUsername(user.uid);
+          setUsername(fetchedUsername);
+
+          // Fetch products count
+          const productsSnapshot = await getDocs(collection(db, user.uid));
+          
+          // Fetch visitor stats
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          const userData = userDoc.exists() ? userDoc.data() : { visitCount: 0 };
+
+          setStats({
+            products: productsSnapshot.size,
+            visitors: userData.visitCount ?? 0,
+            sales: userData.sales ?? 0
+          });
+          
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching dashboard data:", error);
+          setLoading(false);
+        }
+      };
+
+      fetchData();
     });
+
     return () => unsubscribe();
   }, [router]);
 
-
-  useEffect(() => {
-    const fetchProductCount = async (userId: string) => {
-      try {
-        const productsCollection = collection(db, userId);
-        const productsSnapshot = await getDocs(productsCollection);
-        setNumberOfProducts(productsSnapshot.size);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
-    const fetchStoreVisit = async (userId: string) => {
-      try {
-        const userDocRef = doc(db, "users", userId);
-        const snapshotUser = await getDoc(userDocRef);
-
-        if (snapshotUser.exists()) {
-          const data = snapshotUser.data();
-          setNumberOfStoreVisit(data.visitCount ?? 0);
-        }
-      } catch (error) {
-        console.error("Error fetching store visit count:", error);
-      }
-    };
-
-    const updateUsername = async (user: FirebaseUser) => {
-      try {
-        const fetchedUsername = await getUsername(user.uid);
-        setUsername(fetchedUsername);
-      } catch (error) {
-        console.error("Error fetching username:", error);
-      }
-    };
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        updateUsername(user);
-        fetchProductCount(user.uid);
-        fetchStoreVisit(user.uid);
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
   return (
-    <div className="min-h-screen pt-20">
-      <main className="max-w-7xl mx-auto p-6">
-        {/* Welcome Message */}
-        <Card className="mb-8">
-          <h2 className="text-2xl font-bold text-slate-950 mb-2">Product Showcase Dashboard</h2>
-          <p className="text-gray-600">Share your products and track visitor engagement</p>
-        </Card>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Welcome back{username ? `, ${username}` : ''}!</h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Here's what's happening with your store today
+          </p>
+        </div>
 
-        {/* Quick Stats */}
+        {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <StatCard
             title="Total Products"
-            value={loading ? null : numberOfProducts}
-            subtitle="Active in catalog"
+            value={loading ? null : stats.products}
+            trend={12}
             icon={Package}
-            bgColor="bg-blue-50 text-blue-600"
           />
           <StatCard
-            title="Total Visitors"
-            value={loading ? null : numberOfStoreVisit}
-            subtitle="This week"
+            title="Store Visitors"
+            value={loading ? null : stats.visitors}
+            trend={8}
             icon={Users}
-            bgColor="bg-purple-50 text-purple-600"
           />
           <StatCard
-            title="Total Shares"
-            value="286"
-            subtitle="Product links shared"
-            icon={Share2}
-            bgColor="bg-green-50 text-green-600"
+            title="Total Sales"
+            value={loading ? null : stats.sales}
+            trend={15}
+            icon={ShoppingCart}
           />
         </div>
 
-        {/* Action Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <ActionCard
-            title="Add Product"
-            description="Add a new product to your showcase"
-            icon={PlusCircle}
-            iconColor="text-green-600"
-            primaryAction={
-              <LinkButton href="/add-product">
-                Add New Product
-              </LinkButton>
-            }
-          />
-
-          <ActionCard
-            title="My Catalog"
-            description="View and manage your products"
-            icon={Package}
-            iconColor="text-blue-600"
-            primaryAction={
-              <LinkButton href={`/store/${username ?? ''}`}>
-                View Catalog
-              </LinkButton>
-            }
-          />
-
-          <ActionCard
-            title="Profile"
-            description="Manage your showcase profile"
-            icon={User}
-            iconColor="text-purple-600"
-            primaryAction={
-              <Button variant="purple">
-                Edit Profile
-              </Button>
-            }
-            secondaryAction={
-              <Button variant="secondary">
-                Profile Settings
-              </Button>
-            }
-          />
+        {/* Quick Actions */}
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Quick Actions
+          </h2>
+          <div className="grid gap-4">
+            <ActionCard
+              title="Add New Product"
+              href="/add-product"
+              icon={Plus}
+              description="List a new product in your showcase"
+            />
+            
+            <ActionCard
+              title="View Catalog"
+              href={`/store/${username ?? ''}`}
+              icon={Package}
+              description="Browse and manage your product listings"
+            />
+          </div>
         </div>
-      </main>
+
+        {/* Recent Activity (Optional) */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Recent Activity
+          </h2>
+          <div className="space-y-4">
+            {loading ? (
+              <p className="text-sm text-gray-500">Loading activity...</p>
+            ) : (
+              <p className="text-sm text-gray-500">No recent activity</p>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
