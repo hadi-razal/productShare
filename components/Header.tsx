@@ -29,7 +29,6 @@ const NavLink = ({ href, children, onClick }: NavLinkProps) => (
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUser, setIsUser] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [storeName, setStoreName] = useState<string | null>(null);
   const router = useRouter();
   const path = usePathname();
@@ -53,13 +52,6 @@ const Header = () => {
     fetchStoreName();
   }, [storeId, path]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -87,13 +79,7 @@ const Header = () => {
   };
 
   return (
-    <header 
-      className={`sticky w-full top-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? "bg-gradient-to-r from-indigo-900 to-purple-900 shadow-lg backdrop-blur-lg bg-opacity-90" 
-          : "bg-gradient-to-r from-indigo-800 to-purple-800"
-      } ${isOpen ? "h-screen md:h-[90px]" : "h-[90px]"}`}
-    >
+    <div className="fixed w-full top-0 z-50 transition-all duration-300 bg-blue-950">
       <nav className="max-w-7xl  mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex items-center justify-between h-[90px]">
           {/* Logo Section */}
@@ -127,7 +113,7 @@ const Header = () => {
                 <NavLink href="/contact">Contact</NavLink>
                 <Link
                   href="/login"
-                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-purple-400 to-purple-500 text-white hover:from-purple-500 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-indigo-800 shadow-lg shadow-purple-500/25"
+                  className="px-6 py-2.5 rounded-md bg-gradient-to-r from-purple-400 to-purple-500 text-white hover:from-purple-500 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-indigo-800 shadow-lg shadow-purple-500/25"
                 >
                   Login
                 </Link>
@@ -135,7 +121,7 @@ const Header = () => {
             ) : (
               <button
                 onClick={handleLogout}
-                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-indigo-800 shadow-lg shadow-red-500/25"
+                className="px-6 py-2.5 rounded-md bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-indigo-800 shadow-lg shadow-red-500/25"
               >
                 Logout
               </button>
@@ -154,11 +140,10 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         <div
-          className={`md:hidden fixed inset-0 top-20 bg-gradient-to-b from-indigo-900 to-purple-900 transition-all duration-500 ease-in-out ${
-            isOpen 
-              ? "opacity-100 translate-y-0" 
+          className={`md:hidden fixed inset-0 top-20 bg-blue-950 duration-300 ease-in-out transition-all ${isOpen
+              ? "opacity-100 translate-y-0"
               : "opacity-0 -translate-y-10 pointer-events-none"
-          }`}
+            }`}
         >
           <div className="p-6 space-y-6">
             {!isUser && (
@@ -178,14 +163,14 @@ const Header = () => {
               <Link
                 href="/login"
                 onClick={() => setIsOpen(false)}
-                className="block w-full text-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-400 to-purple-500 text-white hover:from-purple-500 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-purple-500/25"
+                className="block w-full text-center px-6 py-3 rounded-md border text-white"
               >
                 Login
               </Link>
             ) : (
               <button
                 onClick={handleLogout}
-                className="block w-full text-center px-6 py-3 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-red-500/25"
+                className="block w-full text-center px-6 py-3 rounded-md bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-red-500/25"
               >
                 Logout
               </button>
@@ -193,7 +178,7 @@ const Header = () => {
           </div>
         </div>
       </nav>
-    </header>
+    </div>
   );
 };
 

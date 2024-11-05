@@ -148,7 +148,7 @@ const Products = () => {
   }, [sortOption]);
 
   return (
-    <div className="container min-h-screen max-w-7xl mx-auto px-3 pt-3 pb-8">
+    <div className="container min-h-screen max-w-7xl mx-auto px-3 pb-8 pt-[100px]">
       <div className="relative flex items-center w-full pb-3">
         <input
           type="text"
@@ -175,7 +175,7 @@ const Products = () => {
 
           <button
             onClick={handleSearchClick}
-            className="p-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 
+            className="p-2 text-white bg-blue-950 rounded-md hover:bg-blue-900 
                        transition-colors duration-200 px-4 py-3 flex items-center justify-center"
             aria-label="Search"
           >
