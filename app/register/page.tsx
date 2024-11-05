@@ -20,7 +20,7 @@ const RegisterPage: React.FC = () => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
           if (user) {
-            router.push('/dashboard');
+            router.push('/store');
           }
         });
         return () => unsubscribe();
@@ -54,7 +54,7 @@ const RegisterPage: React.FC = () => {
                 <form onSubmit={handleRegister} className="space-y-6">
                     <div>
                         <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="name">
-                            Full Name
+                            Store Name
                         </label>
                         <input
                             type="text"
@@ -82,7 +82,7 @@ const RegisterPage: React.FC = () => {
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="username">
-                            Username
+                            Store Username
                         </label>
                         <input
                             type="text"
@@ -95,7 +95,7 @@ const RegisterPage: React.FC = () => {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="password">
+                        <label className="block text-sm font-medium text-slat-950 mb-2" htmlFor="password">
                             Password
                         </label>
                         <input
@@ -110,7 +110,7 @@ const RegisterPage: React.FC = () => {
                     </div>
                     <button
                         type="submit"
-                        className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-slate-950 hover:bg-slate-800 text-white shadow-lg"
+                        className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-blue-950 hover:bg-blue-900 text-white shadow-lg"
                     >
                         Register
                         <ArrowRight className="w-5 h-5 ml-2" />
@@ -119,7 +119,7 @@ const RegisterPage: React.FC = () => {
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-700">
                         Have an account?{' '}
-                        <Link href="/login" className="text-slate-950 hover:underline">
+                        <Link href="/login" className="text-blue-950 hover:underline">
                             Login here
                         </Link>
                     </p>

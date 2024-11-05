@@ -74,7 +74,7 @@ const LoginPage: React.FC = () => {
                     </div>
                     <button
                         type="submit"
-                        className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-indigo-700  hover:bg-indigo-800  text-white shadow-lg"
+                        className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-blue-950  hover:bg-blue-900  text-white shadow-lg"
                     >
                         Login
                         <ArrowRight className="w-5 h-5 ml-2" />
@@ -83,7 +83,7 @@ const LoginPage: React.FC = () => {
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-700">
                         Dont have an account?{' '}
-                        <Link href={'/login'} className="text-slate-950 hover:underline">
+                        <Link href={'/register'} className="text-blue-950  hover:underline">
                             Register here
                         </Link>
                     </p>
