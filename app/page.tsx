@@ -9,6 +9,7 @@ import heroAnimation from '../public/hero.json';
 const HeroSection = () => {
   return (
     <section className="relative flex flex-col md:flex-row max-w-7xl mx-auto items-center justify-between px-6 h-[calc(100vh-80px)] text-center md:text-left pt-24">
+      
       {/* Text Content */}
       <motion.div
         className="z-10 w-full md:w-3/5 text-blue-950"
@@ -19,6 +20,9 @@ const HeroSection = () => {
         <h1 className="text-6xl font-extrabold mt-6 tracking-tight leading-tight">
           Simplify Your Sales with <span className="text-blue-900">Product Share</span>
         </h1>
+        <h2 className="text-2xl font-medium text-gray-700 mt-2">
+          The easiest way to showcase and sell your products online.
+        </h2>
         <p className="mt-4 text-xl max-w-lg mx-auto md:mx-0">
           Easily create, share, and manage your online product catalog. Reach more customers and boost your brand presence with a simple, shareable link.
         </p>
@@ -32,13 +36,36 @@ const HeroSection = () => {
           <li className="flex items-center">
             <span className="mr-2 text-2xl font-semibold">✓</span>Customizable Catalog Pages
           </li>
+          <li className="flex items-center">
+            <span className="mr-2 text-2xl font-semibold">✓</span>Analytics & Insights
+          </li>
         </ul>
-        <Link
-          href="/signup"
-          className="mt-8 inline-block px-14 py-4 bg-blue-950 text-white font-semibold rounded-md shadow-lg transition duration-300 hover:bg-blue-900"
-        >
-         Create Your Store
-        </Link>
+        
+        {/* Call-to-Action Buttons */}
+        <div className="mt-8 flex flex-col md:flex-row items-center md:space-x-4">
+          <Link
+            href="/signup"
+            className="inline-block px-14 py-4 bg-blue-950 text-white font-semibold rounded-md shadow-lg transition duration-300 hover:bg-blue-900"
+          >
+            Create Your Store
+          </Link>
+          <Link
+            href="/learn-more"
+            className="inline-block px-8 py-4 mt-4 md:mt-0 bg-gray-200 text-blue-950 font-semibold rounded-md shadow-lg transition duration-300 hover:bg-gray-300"
+          >
+            Learn More
+          </Link>
+        </div>
+        
+        {/* Trusted by Section */}
+        <div className="mt-8 flex justify-center md:justify-start">
+          <p className="text-gray-500">Trusted by:</p>
+          <div className="ml-4 flex space-x-4">
+            <img src="/logo1.png" alt="Client Logo 1" className="h-6"/>
+            <img src="/logo2.png" alt="Client Logo 2" className="h-6"/>
+            <img src="/logo3.png" alt="Client Logo 3" className="h-6"/>
+          </div>
+        </div>
       </motion.div>
 
       {/* Animation Content */}

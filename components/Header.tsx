@@ -114,7 +114,7 @@ const Header = () => {
             {!isUser ? (
               <>
                 <NavLink href="/pricing">Buy Premium</NavLink>
-                <NavLink href="/about">About</NavLink>
+                <NavLink href="/about-us">About</NavLink>
                 <NavLink href="/contact">Contact</NavLink>
                 <Link
                   href="/login"
@@ -149,7 +149,7 @@ const Header = () => {
             {!isUser && (
               <div className="flex flex-col space-y-4">
                 <NavLink href="/pricing" onClick={() => setIsOpen(false)}>Pricing</NavLink>
-                <NavLink href="/about" onClick={() => setIsOpen(false)}>About</NavLink>
+                <NavLink href="/about-us" onClick={() => setIsOpen(false)}>About</NavLink>
                 <NavLink href="/contact" onClick={() => setIsOpen(false)}>Contact</NavLink>
               </div>
             )}

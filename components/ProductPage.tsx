@@ -138,7 +138,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
   if (!productData) return <h2 className="text-2xl font-semibold text-gray-800">Product not found</h2>;
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-7xl ">
+    <div className="container mx-auto px-4 py-12 max-w-7xl pt-24 ">
       <Head>
         <title>{productData.name}</title>
         <meta property="og:title" content={productData.name} />
