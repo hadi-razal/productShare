@@ -139,66 +139,61 @@ const HomePage = () => {
   return (
     <div className="relative min-h-screen overflow-hidden">
       <AnimatedBackground />
-      {/* Hero Section */}
-      <section className="relative flex gap-5 flex-col items-center justify-center pb-20 px-6 min-h-[calc(100vh-90px)]">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-6xl mx-auto space-y-8 md:mb-32 mb-16"
-        >
-          <div className="flex items-center justify-center space-x-2 mb-8">
-            <motion.div
-              animate={{
-                rotate: [0, 360],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
-            >
-              <Award className="w-8 h-8 text-white" />
-            </motion.div>
-            <p className="text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-white">
-              Empowering 10,000+ Online Sellers Worldwide
-            </p>
-          </div>
+     {/* Hero Section */}
+<section className="relative flex gap-5 flex-col items-center justify-center pb-20 px-6 min-h-[calc(100vh-90px)]">
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8 }}
+    className="text-center max-w-6xl mx-auto space-y-6 md:space-y-8 md:mb-32 mb-16"
+  >
+    <div className="flex items-center justify-center space-x-2 mb-8">
+      <motion.div
+        animate={{
+          rotate: [0, 360],
+          scale: [1, 1.2, 1]
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
+      >
+        <Award className="w-8 h-8 text-white" />
+      </motion.div>
+      <p className="text-lg md:text-xl font-semibold text-white">
+        Empowering 10,000+ Online Sellers Worldwide
+      </p>
+    </div>
 
-          <h1 className="text-6xl md:text-7xl font-black text-white">
-            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Showcase Your Products
-            </span>
-            <br />
-            <span className="relative">
-              with a Stunning Online Catalog
-              {/* <motion.div
-                className="absolute  left-0 w-full h-1 bg-indigo-600 rounded-full"
-                initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 2 }}
-              /> */}
-            </span>
-          </h1>
+    <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white">
+      <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+        Showcase Your Products
+      </span>
+      <br />
+      <span className="relative">
+        with a Stunning Online Catalog
+      </span>
+    </h1>
 
-          <p className="text-lg text-gray-200">
-            Seamlessly create, manage, and promote your catalog with our powerful tools.
-          </p>
+    <p className="text-base md:text-lg text-gray-200">
+      Seamlessly create, manage, and promote your catalog with our powerful tools.
+    </p>
 
-          <Link href="/login" className="inline-block mt-6 px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-full transition duration-300">
-            Get Started
-          </Link>
-        </motion.div>
-        <motion.div
-        className='absolute bottom-10'
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}>
-          <MdOutlineKeyboardDoubleArrowDown size={50} className='animate-bounce text-white' />
-        </motion.div>
-
-      </section>
+    <Link href="/login" className="inline-block mt-6 px-6 py-3 text-white border-white border rounded-md transition duration-300">
+      Create Your Store
+    </Link>
+  </motion.div>
+  
+  <motion.div
+    className='absolute bottom-10'
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8 }}
+  >
+    <MdOutlineKeyboardDoubleArrowDown size={50} className='animate-bounce text-white' />
+  </motion.div>
+</section>
 
       {/* Features Section */}
       <section className="py-20 bg-gray-50">
