@@ -92,10 +92,10 @@ const Header = () => {
         isScrolled 
           ? "bg-gradient-to-r from-indigo-900 to-purple-900 shadow-lg backdrop-blur-lg bg-opacity-90" 
           : "bg-gradient-to-r from-indigo-800 to-purple-800"
-      } ${isOpen ? "h-screen md:h-24" : "h-24"}`}
+      } ${isOpen ? "h-screen md:h-[90px]" : "h-[90px]"}`}
     >
       <nav className="max-w-7xl  mx-auto px-4 sm:px-6 lg:px-8 h-full">
-        <div className="flex items-center justify-between h-24">
+        <div className="flex items-center justify-between h-[90px]">
           {/* Logo Section */}
           <Link
             href={isUser ? "/store" : ""}
