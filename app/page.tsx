@@ -37,13 +37,13 @@ const HeroSection = () => {
           href="/signup"
           className="mt-8 inline-block px-14 py-4 bg-blue-950 text-white font-semibold rounded-md shadow-lg transition duration-300 hover:bg-blue-900"
         >
-          Start Building Your Catalog
+         Create Your Store
         </Link>
       </motion.div>
 
       {/* Animation Content */}
       <motion.div
-        className="w-full md:w-2/5 mt-10 md:mt-0 flex justify-end items-end"
+        className="w-full md:w-2/5 mt-10 md:mt-0 flex justify-center items-center"
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1 }}

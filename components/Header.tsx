@@ -84,7 +84,7 @@ const Header = () => {
   };
 
   return (
-    <header className={`fixed bg-indigo-700 w-full top-0 z-50 ${isOpen ? "h-screen md:h-[80px]" : "h-[80px]"}`}>
+    <header className={`fixed bg-blue-950 w-full top-0 z-50 ${isOpen ? "h-screen md:h-[80px]" : "h-[80px]"}`}>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[80px] relative">
         <div className="flex items-center justify-between h-full">
           <Link
@@ -143,9 +143,9 @@ const Header = () => {
         </div>
 
         <div
-          className={`md:hidden absolute inset-x-0 top-[80px] bg-indigo-700 transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none"}`}
+          className={`md:hidden absolute inset-x-0 top-[80px] bg-blue-950 transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none"}`}
         >
-          <div className="p-4 space-y-4">
+          <div className="p-2 space-y-4">
             {!isUser && (
               <div className="flex flex-col space-y-4">
                 <NavLink href="/pricing" onClick={() => setIsOpen(false)}>Pricing</NavLink>
