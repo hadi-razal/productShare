@@ -1,79 +1,69 @@
-"use client"
+"use client";
 
 import React, { useEffect, useState } from 'react';
 import {
-  Store, BarChart2, Bot, ArrowRight, 
-  ArrowUpRight, Award, Users, Globe, Zap, Lock
+  Store, BarChart2, Bot, ArrowRight,
+  ArrowUpRight, Award, Users, Globe, Zap, Lock,
+  ArrowBigDown,
+  ArrowBigDownDash,
+  ArrowDown
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { MdOutlineKeyboardDoubleArrowDown } from 'react-icons/md';
 
 // Animated gradient background component
 const AnimatedBackground = () => (
   <div className="absolute inset-0 -z-10">
-    <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-50">
+    <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 to-purple-900">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
     </div>
-    <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-100/20 to-violet-100/20 animate-gradient" />
+    <div className="absolute inset-0 bg-gradient-to-br from-transparent via-indigo-800 to-transparent animate-gradient" />
   </div>
 );
 
-
 // Enhanced feature card with hover effects
-const FeatureCard = ({ icon, title, description, delay }:any) => (
+const FeatureCard = ({ icon, title, description, delay }: any) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay }}
-    className="group relative p-8 rounded-2xl bg-white/80 backdrop-blur-lg border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300"
+    className="group relative p-8 rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-300"
   >
-    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/0 to-indigo-500/0 group-hover:from-blue-500/5 group-hover:to-indigo-500/5 transition-all duration-300" />
+    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-900/0 to-purple-900/0 group-hover:from-indigo-900/5 group-hover:to-purple-900/5 transition-all duration-300" />
     <div className="relative">
-      <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl text-white w-fit mb-6">
+      <div className="p-4 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-xl text-white w-fit mb-6">
         {icon}
       </div>
       <h3 className="text-xl font-bold text-gray-900 mb-3">{title}</h3>
       <p className="text-gray-600">{description}</p>
-      <div className="flex items-center text-blue-600 font-medium mt-6 group-hover:text-indigo-600 transition-all">
-        Learn more 
+      <div className="flex items-center text-indigo-600 font-medium mt-6 group-hover:text-purple-600 transition-all">
+        Learn more
         <ArrowUpRight className="ml-2 w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
       </div>
     </div>
   </motion.div>
 );
 
-// Premium store preview card
-const StorePreview = ({ name, image, products, views, delay }:any) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay }}
-    className="group relative p-6 rounded-2xl bg-white/80 backdrop-blur-lg border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300"
-  >
-    <div className="relative w-full h-64 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl mb-6 overflow-hidden">
-      <img 
-        src={image} 
-        alt={name} 
-        className="w-full h-full object-cover scale-100 group-hover:scale-110 transition-transform duration-700" 
-      />
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-indigo-500/0 group-hover:from-blue-500/10 group-hover:to-indigo-500/10 transition-all duration-300" />
-    </div>
-    <h3 className="text-xl font-bold text-gray-900 mb-4">{name}</h3>
-    <div className="flex justify-between items-center">
-      <span className="flex items-center text-gray-700">
-        <Store className="w-5 h-5 mr-2 text-blue-600" />
-        {products} Products
-      </span>
-      <span className="flex items-center text-gray-700">
-        <Users className="w-5 h-5 mr-2 text-blue-600" />
-        {views} Views
-      </span>
-    </div>
-  </motion.div>
-);
+
+
+// Header component
+const Header = () => {
+  return (
+    <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-r from-indigo-900 to-purple-900 shadow-md">
+      <div className="container mx-auto flex justify-between items-center p-4">
+        <h1 className="text-2xl font-bold text-white">My Catalog</h1>
+        <nav className="space-x-4">
+          <Link href="/login" className="text-gray-200 hover:text-indigo-300">Login</Link>
+          <Link href="/demo" className="text-gray-200 hover:text-indigo-300">Demo</Link>
+        </nav>
+      </div>
+    </header>
+  );
+};
 
 const HomePage = () => {
   const router = useRouter();
@@ -93,191 +83,134 @@ const HomePage = () => {
   }, [router]);
 
   const features = [
-    { 
-      icon: <Store className="w-8 h-8" />, 
-      title: 'AI-Powered Store Themes', 
-      description: 'Create unique, conversion-optimized storefronts with our AI theme generator.' 
+    {
+      icon: <Store className="w-8 h-8" />,
+      title: 'AI-Powered Store Themes',
+      description: 'Create unique, conversion-optimized storefronts with our AI theme generator.'
     },
-    { 
-      icon: <Bot className="w-8 h-8" />, 
-      title: '24/7 AI Customer Support', 
-      description: 'Intelligent chatbots that learn from your business and delight customers.' 
+    {
+      icon: <Bot className="w-8 h-8" />,
+      title: '24/7 AI Customer Support',
+      description: 'Intelligent chatbots that learn from your business and delight customers.'
     },
-    { 
-      icon: <BarChart2 className="w-8 h-8" />, 
-      title: 'Predictive Analytics', 
-      description: 'Forecast trends and optimize inventory with machine learning insights.' 
+    {
+      icon: <BarChart2 className="w-8 h-8" />,
+      title: 'Predictive Analytics',
+      description: 'Forecast trends and optimize inventory with machine learning insights.'
     },
-    { 
-      icon: <Lock className="w-8 h-8" />, 
-      title: 'Enterprise Security', 
-      description: 'Military-grade encryption and advanced fraud prevention systems.' 
+    {
+      icon: <Lock className="w-8 h-8" />,
+      title: 'Enterprise Security',
+      description: 'Military-grade encryption and advanced fraud prevention systems.'
     },
-    { 
-      icon: <Globe className="w-8 h-8" />, 
-      title: 'Global Commerce', 
-      description: 'Sell worldwide with automatic currency and language optimization.' 
+    {
+      icon: <Globe className="w-8 h-8" />,
+      title: 'Global Commerce',
+      description: 'Sell worldwide with automatic currency and language optimization.'
     },
-    { 
-      icon: <Zap className="w-8 h-8" />, 
-      title: 'Lightning Performance', 
-      description: 'Sub-second page loads and real-time inventory updates.' 
+    {
+      icon: <Zap className="w-8 h-8" />,
+      title: 'Lightning Performance',
+      description: 'Sub-second page loads and real-time inventory updates.'
     },
   ];
 
   const stores = [
-    { 
-      name: 'LUXE Collection', 
-      image: '/images/store1.jpg', 
-      products: '2,500+', 
-      views: '1.2M' 
+    {
+      name: 'LUXE Collection',
+      image: '/images/store1.jpg',
+      products: '2,500+',
+      views: '1.2M'
     },
-    { 
-      name: 'TechVerse', 
-      image: '/images/store2.jpg', 
-      products: '5,000+', 
-      views: '2.5M' 
+    {
+      name: 'TechVerse',
+      image: '/images/store2.jpg',
+      products: '5,000+',
+      views: '2.5M'
     },
-    { 
-      name: 'Artisan Gallery', 
-      image: '/images/store3.jpg', 
-      products: '1,500+', 
-      views: '800K' 
+    {
+      name: 'Artisan Gallery',
+      image: '/images/store3.jpg',
+      products: '1,500+',
+      views: '800K'
     },
   ];
 
   return (
     <div className="relative min-h-screen overflow-hidden">
       <AnimatedBackground />
-      
       {/* Hero Section */}
-<section className="relative pt-32 pb-20 px-6">
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-    className="text-center max-w-6xl mx-auto space-y-8"
-  >
-    <div className="flex items-center justify-center space-x-2 mb-8">
-      <motion.div
-        animate={{ 
-          rotate: [0, 360],
-          scale: [1, 1.2, 1]
-        }}
-        transition={{ 
-          duration: 2,
-          repeat: Infinity,
-          repeatType: "reverse"
-        }}
-      >
-        <Award className="w-8 h-8 text-blue-600" />
-      </motion.div>
-      <p className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-        Empowering 10,000+ Online Sellers Worldwide
-      </p>
-    </div>
-
-    <h1 className="text-6xl md:text-7xl font-black text-gray-900">
-      <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-        Showcase Your Products
-      </span>
-      <br />
-      <span className="relative">
-        with a Stunning Online Catalog
+      <section className="relative flex gap-5 flex-col items-center justify-center pb-20 px-6 min-h-[calc(100vh-90px)]">
         <motion.div
-          className="absolute -bottom-2 left-0 w-full h-1 bg-blue-600 rounded-full"
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{ duration: 1, delay: 0.5 }}
-        />
-      </span>
-    </h1>
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center max-w-6xl mx-auto space-y-8 md:mb-32 mb-16"
+        >
+          <div className="flex items-center justify-center space-x-2 mb-8">
+            <motion.div
+              animate={{
+                rotate: [0, 360],
+                scale: [1, 1.2, 1]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
+            >
+              <Award className="w-8 h-8 text-white" />
+            </motion.div>
+            <p className="text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-white">
+              Empowering 10,000+ Online Sellers Worldwide
+            </p>
+          </div>
 
-    <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-      Build a beautiful, fully customizable online catalog to display your products effortlessly, 
-      reach more customers, and grow your business. No coding required.
-    </p>
+          <h1 className="text-6xl md:text-7xl font-black text-white">
+            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Showcase Your Products
+            </span>
+            <br />
+            <span className="relative">
+              with a Stunning Online Catalog
+              {/* <motion.div
+                className="absolute  left-0 w-full h-1 bg-indigo-600 rounded-full"
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 2 }}
+              /> */}
+            </span>
+          </h1>
 
-    <motion.div 
-      className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mt-12"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.8 }}
-    >
-      <Link href="/login">
-        <button className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105">
-          Start Your Catalog 
-          <ArrowRight className="inline ml-2 group-hover:translate-x-1 transition-transform" />
-        </button>
-      </Link>
-      <Link href="/demo">
-        <button className="px-8 py-4 bg-white/80 backdrop-blur-lg text-gray-900 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105">
-          View Demo 
-          <ArrowUpRight className="inline ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-        </button>
-      </Link>
-    </motion.div>
-  </motion.div>
-</section>
+          <p className="text-lg text-gray-200">
+            Seamlessly create, manage, and promote your catalog with our powerful tools.
+          </p>
 
+          <Link href="/login" className="inline-block mt-6 px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-full transition duration-300">
+            Get Started
+          </Link>
+        </motion.div>
+        <motion.div
+        className='absolute bottom-10'
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}>
+          <MdOutlineKeyboardDoubleArrowDown size={50} className='animate-bounce text-white' />
+        </motion.div>
+
+      </section>
 
       {/* Features Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-4xl font-bold text-center mb-4"
-          >
-            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Platform Features
-            </span>
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-gray-600 text-center mb-16 max-w-2xl mx-auto"
-          >
-            Everything you need to build, scale, and optimize your enterprise commerce platform
-          </motion.p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, idx) => (
-              <FeatureCard key={idx} {...feature} delay={idx * 0.1} />
-            ))}
-          </div>
+      <section className="py-20 bg-gray-50">
+        <h2 className="text-4xl text-center font-bold mb-10">Why Choose Us</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 max-w-7xl mx-auto">
+          {features.map((feature, index) => (
+            <FeatureCard key={index} {...feature} delay={index * 0.2} />
+          ))}
         </div>
       </section>
 
-      {/* Stores Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-4xl font-bold text-center mb-4"
-          >
-            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Success Stories
-            </span>
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-gray-600 text-center mb-16 max-w-2xl mx-auto"
-          >
-            Join thousands of successful businesses powered by our platform
-          </motion.p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {stores.map((store, idx) => (
-              <StorePreview key={idx} {...store} delay={idx * 0.1} />
-            ))}
-          </div>
-        </div>
-      </section>
+
     </div>
   );
 };

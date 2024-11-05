@@ -1,86 +1,68 @@
-const plans = [
-  {
-    id: 1,
-    name: "Free Plan",
-    price: "₹0",
-    duration: "/month",
-    features: ["Basic Analytics", "Up to 2 Products", "Email Support"],
-    buttonText: "Get Started Free",
-    bgColor: "bg-white",
-    popular: false,
-    label: "Free",
-    description: "Perfect for trying out our services",
-  },
-  {
-    id: 2,
-    name: "Premium Plan",
-    price: "₹199",
-    duration: "/month",
-    features: [
-      "Advanced Analytics & Reports",
-      "Unlimited Products",
-      "24/7 Premium Support",
-      "Custom Theme",
-      "Custom Logo",
-    ],
-    buttonText: "Upgrade",
-    bgColor: "bg-gray-950",
-    popular: true,
-    label: "Premium",
-    description: "For growing businesses",
-  },
-];
+"use client";
 
-const Pricing = () => {
+const premiumPlan = {
+  name: "Premium Plan",
+  price: "₹99",
+  duration: "/month",
+  features: [
+    "Advanced Analytics & Reports",
+    "Unlimited Products",
+    "24/7 Premium Support",
+    "Custom Theme",
+    "Custom Logo",
+  ],
+  buttonText: "Buy Premium",
+  description: "For growing businesses looking to maximize their reach and efficiency.",
+};
+
+const BuyPremium = () => {
   return (
-    <div className="flex items-center justify-center flex-col min-h-screen bg-gray-100 py-16 pt-40">
-      <h2 className="text-4xl font-bold text-center mb-4 text-gray-950">Simple Pricing</h2>
-      <p className="text-gray-600 text-center mb-12 max-w-2xl px-4">
-        Choose the perfect plan for your business needs
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-blue-100 via-gray-100 to-blue-50 py-16 px-6">
+      <h2 className="text-4xl font-extrabold text-center mb-6 text-gray-900">Upgrade to Premium</h2>
+      <p className="text-lg text-gray-600 text-center mb-8 max-w-2xl">
+        Unlock powerful features to boost your business and provide a better experience for your customers.
       </p>
       
-      <div className="flex flex-col sm:flex-row justify-center items-stretch gap-8 px-4">
-        {plans.map((plan) => (
-          <div
-            key={plan.id}
-            className={`pricing-card ${plan.bgColor} p-8 shadow-lg rounded-md max-w-xs w-full text-center transform transition-transform relative`}
-          >
-            {plan.popular && (
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm">Popular</span>
-              </div>
-            )}
-            <div className={`${plan.popular ? "bg-gray-800" : "bg-gray-100"} inline-block rounded-full px-4 py-1 mb-4`}>
-              <span className={`${plan.popular ? "text-white" : "text-gray-950"} text-sm font-medium`}>
-                {plan.label}
-              </span>
-            </div>
-            <h3 className={`${plan.popular ? "text-white" : "text-gray-950"} text-2xl font-semibold mb-4`}>
-              {plan.name}
-            </h3>
-            <p className={`${plan.popular ? "text-gray-400" : "text-gray-500"} mb-4`}>{plan.description}</p>
-            <div className="price mb-8">
-              <span className={`${plan.popular ? "text-white" : "text-gray-950"} text-4xl font-bold`}>{plan.price}</span>
-              <span className={`${plan.popular ? "text-gray-400" : "text-gray-500"}`}>{plan.duration}</span>
-            </div>
-            <ul className="text-left space-y-3 mb-8">
-              {plan.features.map((feature, index) => (
-                <li key={index} className={`${plan.popular ? "text-gray-300" : "text-gray-600"} flex items-center`}>
-                  <svg className={`w-5 h-5 mr-2 ${plan.popular ? "text-blue-500" : "text-gray-950"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-            <button className="w-full bg-gray-950 text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-800 transition-colors">
-              {plan.buttonText}
-            </button>
+      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-lg text-center">
+        <div className="mb-6">
+          <h3 className="text-3xl font-semibold text-gray-800">{premiumPlan.name}</h3>
+          <div className="flex justify-center items-baseline my-4">
+            <span className="text-5xl font-bold text-gray-900">{premiumPlan.price}</span>
+            <span className="text-xl text-gray-500 ml-2">{premiumPlan.duration}</span>
           </div>
-        ))}
+        </div>
+
+        <h4 className="text-lg font-semibold text-gray-700 mb-4">Features Included:</h4>
+        <ul className="space-y-3 text-left text-gray-700">
+          {premiumPlan.features.map((feature, index) => (
+            <li key={index} className="flex items-center space-x-2">
+              <svg
+                className="w-6 h-6 text-blue-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+              <span className="hover:text-blue-600 transition-colors">{feature}</span>
+            </li>
+          ))}
+        </ul>
+
+        <button
+          className="mt-8 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-8 py-3 rounded-full font-semibold transition-transform transform hover:scale-105 shadow-md"
+          onClick={() => alert("Premium plan purchased successfully!")}
+        >
+          {premiumPlan.buttonText}
+        </button>
       </div>
     </div>
   );
 };
 
-export default Pricing;
+export default BuyPremium;

@@ -153,7 +153,7 @@ const StoreDashboard = () => {
             icon={Users}
           />
           <StatCard
-            title="Total Sales"
+            title="Buy Clicks"
             value={loading ? null : stats.sales}
             trend={15}
             icon={ShoppingCart}
