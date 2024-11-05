@@ -14,7 +14,8 @@ const Products = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState<string>("");
-  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]); // State for filtered products
+  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
+  const [sortOption, setSortOption] = useState<string>("");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -55,11 +56,12 @@ const Products = () => {
               ratingCount: data.ratingCount,
               sizes: data.sizes,
               isMostSelling: data.isMostSelling,
+              createdAt: data.createdAt,
             };
           });
 
           setProducts(productList);
-          setFilteredProducts(productList); // Show all products initially
+          setFilteredProducts(productList);
         } catch (error) {
           console.error("Error fetching products: ", error);
         }
@@ -80,19 +82,40 @@ const Products = () => {
     setSearchInput(event.target.value);
   };
 
-  // Function to filter products
+  // Function to filter and sort products
   const filterProducts = () => {
-    if (searchInput.trim() === "") {
-      setFilteredProducts(products); // Show all products if input is empty
-    } else {
-      const results = products.filter((product) =>
+    let results = [...products]; // Create a new array to avoid mutating state directly
+
+    // Apply search filter
+    if (searchInput.trim() !== "") {
+      results = results.filter((product) =>
         product.name.toLowerCase().includes(searchInput.toLowerCase()) ||
         product.description.toLowerCase().includes(searchInput.toLowerCase()) ||
         (product.colors && product.colors.some(color => color.toLowerCase().includes(searchInput.toLowerCase()))) ||
         (product.category && product.category.toLowerCase().includes(searchInput.toLowerCase()))
       );
-      setFilteredProducts(results);
     }
+
+    // Apply sorting
+    switch (sortOption) {
+      case "price-low-high":
+        results.sort((a, b) => (a.discountPrice || a.regularPrice) - (b.discountPrice || b.regularPrice));
+        break;
+      case "price-high-low":
+        results.sort((a, b) => (b.discountPrice || b.regularPrice) - (a.discountPrice || a.regularPrice));
+        break;
+      case "newest":
+        results.sort((a, b) => {
+          const dateA = a.createdAt?.toMillis?.() || 0;
+          const dateB = b.createdAt?.toMillis?.() || 0;
+          return dateB - dateA;
+        });
+        break;
+      default:
+        break;
+    }
+
+    setFilteredProducts(results);
   };
 
   // Handle search button click
@@ -110,12 +133,22 @@ const Products = () => {
   // Clear search input
   const clearSearchInput = () => {
     setSearchInput("");
-    setFilteredProducts(products); // Reset to show all products
+    setFilteredProducts(products);
   };
+
+  // Handle sort option change
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortOption(event.target.value);
+    filterProducts();
+  };
+
+  // Effect to reapply sorting when sort option changes
+  useEffect(() => {
+    filterProducts();
+  }, [sortOption]);
 
   return (
     <div className="container min-h-screen max-w-7xl mx-auto px-3 pt-3 pb-8">
-
       <div className="relative flex items-center w-full pb-3">
         <input
           type="text"
@@ -133,7 +166,7 @@ const Products = () => {
           {searchInput && (
             <button
               onClick={clearSearchInput}
-              className="p-2  text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
               aria-label="Clear search"
             >
               <X size={18} />
@@ -143,7 +176,7 @@ const Products = () => {
           <button
             onClick={handleSearchClick}
             className="p-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 
-                       transition-colors duration-200  px-4 py-3 flex items-center justify-center"
+                       transition-colors duration-200 px-4 py-3 flex items-center justify-center"
             aria-label="Search"
           >
             <Search size={18} />
@@ -151,16 +184,17 @@ const Products = () => {
         </div>
       </div>
 
-      {/* <div className="flex gap-1 pb-2">
-        <span className={`text-sm font-normal border py-2 px-3 rounded-md cursor-pointer  ${selectedMenu == "MostPopular" && "bg-gray-400 text-white"}`} onClick={() => setSelectedMenu("MostPopular")} >Most Popular</span>
-        <span className={`text-sm font-normal border py-2 px-3 rounded-md cursor-pointer ${selectedMenu == "MostSelling" && "bg-gray-400 text-white"} `} onClick={() => setSelectedMenu("MostSelling")} >Most Selling</span>
-      </div> */}
-
       <div className="flex items-center justify-end gap-1 pb-2">
-        <select name="" id="" className="px-4 py-2 rounded-md">
-          <option value="Latest" selected defaultChecked>Sort By</option>
-          <option value="Latest">Newly Added</option>
-          <option value="LtoH">Price Low To High</option>
+        <select
+          name="sort"
+          onChange={handleSortChange}
+          className="px-4 py-2 rounded-md border border-gray-200"
+          value={sortOption} // This sets the current value based on state
+        >
+          <option value="" disabled>Select sort option</option> // Placeholder for default selection
+          <option value="newest">Newly Added</option>
+          <option value="price-low-high">Price: Low to High</option>
+          <option value="price-high-low">Price: High to Low</option>
         </select>
       </div>
 

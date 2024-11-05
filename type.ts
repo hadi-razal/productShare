@@ -1,5 +1,6 @@
 export interface ProductType {
     id: string; 
+    createdAt:any;
     name: string;
     description: string;
     category: string;

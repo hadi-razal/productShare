@@ -91,11 +91,11 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
 
       {/* Content Section */}
       <div className="p-2">
-        <div className="flex items-center gap-2 mb-2">
+        {/* <div className="flex items-center gap-2 mb-2">
           <span className="px-4 py-1 text-xs font-normal rounded-md bg-gray-200 text-gray-950">
             {product?.category}
           </span>
-        </div>
+        </div> */}
         <h3 className="font-light text-sm text-ellipsis line-clamp-3">
           {product.name}
         </h3>
