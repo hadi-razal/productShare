@@ -188,7 +188,7 @@ const Products = () => {
         <select
           name="sort"
           onChange={handleSortChange}
-          className="px-4 py-2 rounded-md border border-gray-200"
+          className="px-4 py-2 focus:outline-none rounded-md border border-gray-200"
           value={sortOption} // This sets the current value based on state
         >
           <option value="" disabled>Select sort option</option> // Placeholder for default selection

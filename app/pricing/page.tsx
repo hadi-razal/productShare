@@ -17,7 +17,7 @@ const premiumPlan = {
 
 const BuyPremium = () => {
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-blue-100 via-gray-100 to-blue-50 py-16 px-6">
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-blue-100 via-gray-100 to-blue-50 py-16 pt-24 px-6">
       <h2 className="text-4xl font-extrabold text-center mb-6 text-gray-900">Upgrade to Premium</h2>
       <p className="text-lg text-gray-600 text-center mb-8 max-w-2xl">
         Unlock powerful features to boost your business and provide a better experience for your customers.
