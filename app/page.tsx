@@ -44,13 +44,13 @@ const HeroSection = () => {
         {/* Call-to-Action Buttons */}
         <div className="mt-8 flex flex-col md:flex-row items-center md:space-x-4">
           <Link
-            href="/signup"
+            href="/register"
             className="inline-block px-14 py-4 bg-blue-950 text-white font-semibold rounded-md shadow-lg transition duration-300 hover:bg-blue-900"
           >
             Create Your Store
           </Link>
           <Link
-            href="/learn-more"
+            href="/about-us"
             className="inline-block px-8 py-4 mt-4 md:mt-0 bg-gray-200 text-blue-950 font-semibold rounded-md shadow-lg transition duration-300 hover:bg-gray-300"
           >
             Learn More
@@ -58,13 +58,8 @@ const HeroSection = () => {
         </div>
         
         {/* Trusted by Section */}
-        <div className="mt-8 flex justify-center md:justify-start">
-          <p className="text-gray-500">Trusted by:</p>
-          <div className="ml-4 flex space-x-4">
-            <img src="/logo1.png" alt="Client Logo 1" className="h-6"/>
-            <img src="/logo2.png" alt="Client Logo 2" className="h-6"/>
-            <img src="/logo3.png" alt="Client Logo 3" className="h-6"/>
-          </div>
+        <div className="mt-3 flex justify-center md:justify-start">
+          <p className="text-gray-500 text-sm">Trusted by more than 1000+ sellers</p>
         </div>
       </motion.div>
 
