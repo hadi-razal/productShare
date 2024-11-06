@@ -1,4 +1,4 @@
-import type { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 import StoreProducts from '@/components/StoreProducts';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -11,16 +11,18 @@ interface StoreData {
   image?: string;
 }
 
-// Define props type according to Next.js structure
-type Props = {
-  params: { storeId: string }
-  searchParams: { [key: string]: string | string[] | undefined }
+// Define PageProps interface
+interface PageProps {
+  params: {
+    storeId: string;
+  };
 }
 
 // Function to fetch store data from Firestore
 async function getStoreData(storeId: string): Promise<StoreData | null> {
   try {
     const userId = await getUserId(storeId);
+
     if (!userId) {
       console.error("User ID not found");
       return null;
@@ -42,20 +44,17 @@ async function getStoreData(storeId: string): Promise<StoreData | null> {
   }
 }
 
-// Generate metadata with parent metadata support
-export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  // Get store data
-  const storeData = await getStoreData(params.storeId);
+// Correctly type the props for the `generateMetadata` function
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { storeId } = params;
 
-  // Get parent metadata images
-  const previousImages = (await parent).openGraph?.images || [];
+  // Fetch store data to get store name and description
+  const storeData = await getStoreData(storeId);
 
   const title = storeData?.name ?? 'Store Not Found';
   const description = storeData?.description ?? 'This store offers a variety of products.';
 
+  // Return dynamic metadata
   return {
     title,
     description,
@@ -63,9 +62,7 @@ export async function generateMetadata(
     openGraph: {
       title,
       description,
-      images: storeData?.image
-        ? [storeData.image, ...previousImages]
-        : [...previousImages],
+      images: storeData?.image ? [storeData.image] : [],
     },
     twitter: {
       card: 'summary_large_image',
@@ -76,13 +73,17 @@ export async function generateMetadata(
   };
 }
 
-// Page component with correct Props type
-export default async function Page({ params, searchParams }: Props) {
-  const storeData = await getStoreData(params.storeId);
+// Page component to render store products
+export default async function Page({ params }: any) {
+  const { storeId }: any = await params;
+
+  // Fetch store data to render products
+  const storeData = await getStoreData(storeId);
 
   return (
     <>
-      <StoreProducts storeId={params.storeId} />
+      {/* Render the store's products */}
+      <StoreProducts storeId={storeId} />
     </>
   );
 }
