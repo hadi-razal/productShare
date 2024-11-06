@@ -72,7 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // Page component with correct type annotations
 export default async function Page({ params }: Props) {
-  const { storeId } = params;
+  const { storeId } = await params;
   const storeData = await getStoreData(storeId);
 
   return (
