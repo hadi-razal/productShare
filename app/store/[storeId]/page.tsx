@@ -44,17 +44,14 @@ async function getStoreData(storeId: string): Promise<StoreData | null> {
   }
 }
 
-// Correctly type the props for the `generateMetadata` function
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { storeId } = params;
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const { storeId } = await params;
 
-  // Fetch store data to get store name and description
   const storeData = await getStoreData(storeId);
 
   const title = storeData?.name ?? 'Store Not Found';
   const description = storeData?.description ?? 'This store offers a variety of products.';
 
-  // Return dynamic metadata
   return {
     title,
     description,
@@ -64,20 +61,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       images: storeData?.image ? [storeData.image] : [],
     },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: storeData?.image ? [storeData.image] : [],
-    },
   };
 }
 
-// Page component to render store products
-export default async function Page({ params }: PageProps) {
-  const { storeId } = params;
+export default async function Page({ params }: any) {
+  const { storeId } = await params;
 
-  // Fetch store data to render products
   const storeData = await getStoreData(storeId);
 
   return (
