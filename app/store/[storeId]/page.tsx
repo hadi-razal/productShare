@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import type { Metadata, ResolvingMetadata } from 'next';
 import StoreProducts from '@/components/StoreProducts';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -11,13 +11,11 @@ interface StoreData {
   image?: string;
 }
 
-// Define correct types for Next.js pages
+// Define props type according to Next.js structure
 type Props = {
-  params: {
-    storeId: string;
-  };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
+  params: { storeId: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
 
 // Function to fetch store data from Firestore
 async function getStoreData(storeId: string): Promise<StoreData | null> {
@@ -44,10 +42,16 @@ async function getStoreData(storeId: string): Promise<StoreData | null> {
   }
 }
 
-// Generate metadata with correct types
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { storeId } = params;
-  const storeData = await getStoreData(storeId);
+// Generate metadata with parent metadata support
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // Get store data
+  const storeData = await getStoreData(params.storeId);
+
+  // Get parent metadata images
+  const previousImages = (await parent).openGraph?.images || [];
 
   const title = storeData?.name ?? 'Store Not Found';
   const description = storeData?.description ?? 'This store offers a variety of products.';
@@ -59,7 +63,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: storeData?.image ? [storeData.image] : [],
+      images: storeData?.image
+        ? [storeData.image, ...previousImages]
+        : [...previousImages],
     },
     twitter: {
       card: 'summary_large_image',
@@ -70,14 +76,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// Page component with correct type annotations
-export default async function Page({ params }: Props) {
-  const { storeId } = await params;
-  const storeData = await getStoreData(storeId);
+// Page component with correct Props type
+export default async function Page({ params, searchParams }: Props) {
+  const storeData = await getStoreData(params.storeId);
 
   return (
     <>
-      <StoreProducts storeId={storeId} />
+      <StoreProducts storeId={params.storeId} />
     </>
   );
 }
