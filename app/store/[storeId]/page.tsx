@@ -11,11 +11,18 @@ interface StoreData {
   image?: string;
 }
 
+// Define PageProps interface
+interface PageProps {
+  params: {
+    storeId: string;
+  };
+}
+
 // Function to fetch store data from Firestore
 async function getStoreData(storeId: string): Promise<StoreData | null> {
   try {
     const userId = await getUserId(storeId);
-    
+
     if (!userId) {
       console.error("User ID not found");
       return null;
@@ -38,7 +45,7 @@ async function getStoreData(storeId: string): Promise<StoreData | null> {
 }
 
 // Correctly type the props for the `generateMetadata` function
-export async function generateMetadata({ params }: { params: { storeId: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { storeId } = params;
 
   // Fetch store data to get store name and description
@@ -55,7 +62,7 @@ export async function generateMetadata({ params }: { params: { storeId: string }
     openGraph: {
       title,
       description,
-      images: storeData?.image ? [storeData.image] : [], // Add image if available
+      images: storeData?.image ? [storeData.image] : [],
     },
     twitter: {
       card: 'summary_large_image',
@@ -67,7 +74,7 @@ export async function generateMetadata({ params }: { params: { storeId: string }
 }
 
 // Page component to render store products
-export default async function Page({ params }: { params: { storeId: string } }) {
+export default async function Page({ params }: PageProps) {
   const { storeId } = params;
 
   // Fetch store data to render products
