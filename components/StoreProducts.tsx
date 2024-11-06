@@ -4,13 +4,11 @@ import { useEffect, useState } from "react";
 import { collection, doc, getDocs, increment, updateDoc } from "firebase/firestore";
 import { Search, X } from "lucide-react";
 import { getUserId } from "@/helpers/getUserId";
-import { useParams } from "next/navigation";
 import { db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
 
-const Products = () => {
-  const { storeId } = useParams();
+const StoreProducts = ({ storeId }:any) => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState<string>("");
@@ -218,4 +216,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default StoreProducts;
