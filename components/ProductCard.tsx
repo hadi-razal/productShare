@@ -1,27 +1,28 @@
 "use client";
 
 import { getUserId } from "@/helpers/getUserId";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import { ProductType } from "@/type";
 import { onAuthStateChanged } from "firebase/auth";
-import { Delete, DeleteIcon, PencilIcon, Trash } from "lucide-react";
+import { deleteDoc, doc } from "firebase/firestore";
+import { PencilIcon, Trash } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 interface ProductCardProps {
   product: ProductType;
   storeId: string;
+  refetchProducts: ()=>void;
 }
 
-const ProductCard = ({ product, storeId }: ProductCardProps) => {
+const ProductCard = ({ product, storeId , refetchProducts }: ProductCardProps) => {
   const router = useRouter();
-  const [isStoreOnwer, setIsStoreOwner] = useState(false)
-
-  console.log(product)
+  const [isStoreOwner, setIsStoreOwner] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const calculateDiscount = (): number => {
-    // Ensure both prices are valid numbers and greater than 0
     const regularPrice = Number(product?.regularPrice);
     const discountPrice = Number(product?.discountPrice);
 
@@ -33,73 +34,69 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
       discountPrice < regularPrice
     ) {
       const discount = ((regularPrice - discountPrice) / regularPrice) * 100;
-      // Round to 1 decimal place for more accurate display
       return Number(discount.toFixed(1));
     }
     return 0;
   };
 
-  // Calculate once to avoid multiple calculations
   const discountPercentage = calculateDiscount();
-
-  // Check if there's a valid discount
   const isDiscounted = discountPercentage > 0;
 
-  // Safely get the display price
   const getDisplayPrice = () => {
     if (isDiscounted) {
-      return Number(product?.discountPrice).toLocaleString('en-IN');
+      return Number(product?.discountPrice).toLocaleString("en-IN");
     }
-    return Number(product?.regularPrice).toLocaleString('en-IN');
+    return Number(product?.regularPrice).toLocaleString("en-IN");
   };
 
-  // Format the original price for display
   const getOriginalPrice = () => {
-    return Number(product?.regularPrice).toLocaleString('en-IN');
+    return Number(product?.regularPrice).toLocaleString("en-IN");
   };
-
 
   useEffect(() => {
     const getStoreOwner = async () => {
       try {
-
-        const userId = await getUserId(storeId)
-
+        const userId = await getUserId(storeId);
         onAuthStateChanged(auth, (user) => {
-
-          if (user) {
-            user.uid === userId
-            setIsStoreOwner(true)
+          if (user && user.uid === userId) {
+            setIsStoreOwner(true);
           }
-        })
-
+        });
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
+    };
+    getStoreOwner();
+  }, [storeId]);
 
-
-    getStoreOwner()
-
-  }, [storeId])
-
-
-  const handleDelete = async (e: any) => {
-    try {
-      e.stopPropagation();
-    } catch (error) {
-      console.log(error);
-    }
+  const handleDelete = (e: any) => {
+    e.stopPropagation();
+    setShowDeleteModal(true);
   };
 
-
+  const confirmDelete = async (e:any) => {
+    try {
+      e.stopPropagation();
+      const userId = await getUserId(storeId);
+      if (!userId) {
+        toast.success("Error")
+        return;
+      }
+      await deleteDoc(doc(db, userId, product.id));
+      refetchProducts()
+      toast.success("Product deleted successfully!");
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to delete product."); // Show error toast
+    }
+  };
 
   return (
     <div
       onClick={() => router.push(`/store/${storeId}/${product.id}`)}
       className="cursor-pointer relative w-full rounded-md border bg-gray-50 shadow-sm transition-all duration-300 hover:shadow-lg"
     >
-      {/* Image Section */}
       <div className="relative">
         <Image
           quality={50}
@@ -131,13 +128,7 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="p-2">
-        {/* <div className="flex items-center gap-2 mb-2">
-          <span className="px-4 py-1 text-xs font-normal rounded-md bg-gray-200 text-gray-950">
-            {product?.category}
-          </span>
-        </div> */}
         <h3 className="font-light text-sm text-ellipsis line-clamp-3">
           {product.name}
         </h3>
@@ -161,16 +152,15 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
         )}
       </div>
 
-
-      {isStoreOnwer && (
+      {isStoreOwner && (
         <div className="flex h-16 items-center justify-center">
-          <div className="flex gap-3  bottom-0 py-4 absolute items-center justify-center">
+          <div className="flex gap-3 bottom-0 py-4 absolute items-center justify-center">
             <button onClick={(e) => handleDelete(e)} className="bg-red-600 py-2 px-2 rounded-md text-white">
               <Trash />
             </button>
             <button onClick={(e) => {
-              e.stopPropagation()
-              router.push(`/store/${storeId}/edit/${product.id}`)
+              e.stopPropagation();
+              router.push(`/store/${storeId}/edit/${product.id}`);
             }} className="bg-blue-950 py-2 px-2 rounded-md text-white">
               <PencilIcon />
             </button>
@@ -178,7 +168,21 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
         </div>
       )}
 
-
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg">
+            <p className="mb-4 text-lg font-semibold">Are you sure you want to delete this product?</p>
+            <div className="flex justify-end gap-4">
+              <button onClick={() => setShowDeleteModal(false)} className="px-4 py-2 rounded bg-gray-300">
+                Cancel
+              </button>
+              <button onClick={(e) => confirmDelete(e)} className="px-4 py-2 rounded bg-red-600 text-white">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

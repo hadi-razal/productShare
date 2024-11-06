@@ -163,7 +163,7 @@ const EditProduct = () => {
             const productRef = doc(db, userId, productId as string);
             await updateDoc(productRef, updatedData);
             console.log('Product updated successfully!');
-            router.push('/products');
+            router.push(`/store/${storeId}`);
         } catch (error) {
             console.log("Error updating product:", error);
         } finally {
@@ -209,7 +209,7 @@ const EditProduct = () => {
                         name="description"
                         value={productData.description}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border bg-gray-200 rounded-md"
+                        className="w-full px-3 py-2 border rounded-md h-32 bg-gray-200" 
                         placeholder="Enter product description"
                     />
                 </div>

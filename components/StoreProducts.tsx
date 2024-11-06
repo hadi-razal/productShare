@@ -15,60 +15,62 @@ const StoreProducts = ({ storeId }: any) => {
   const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
   const [sortOption, setSortOption] = useState<string>("");
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
+  const fetchProducts = async () => {
+    setIsLoading(true);
 
-      if (storeId) {
-        const userID = await getUserId(storeId as string);
-        console.log(userID);
+    if (storeId) {
+      const userID = await getUserId(storeId as string);
+      console.log(userID);
 
-        const isCounted = sessionStorage.getItem(`MyShop_${storeId}_View`);
+      const isCounted = sessionStorage.getItem(`MyShop_${storeId}_View`);
 
-        if (userID && !isCounted) {
-          const userDocRef = doc(db, "users", userID);
-          await updateDoc(userDocRef, {
-            visitCount: increment(1),
-          });
-          sessionStorage.setItem(`MyShop_${storeId}_View`, 'true');
-        }
-
-        try {
-          const productsRef = collection(db, userID as string);
-          const querySnapshot = await getDocs(productsRef);
-
-          const productList: ProductType[] = querySnapshot.docs.map((doc) => {
-            const data = doc.data();
-            return {
-              id: doc.id,
-              name: data.name,
-              description: data.description,
-              colors: data?.colors,
-              category: data.category,
-              images: data.images,
-              regularPrice: data.regularPrice,
-              discountPrice: data.discountPrice,
-              isNew: data.isNew,
-              isInStock: data.isInStock,
-              rating: data.rating,
-              ratingCount: data.ratingCount,
-              sizes: data.sizes,
-              isMostSelling: data.isMostSelling,
-              createdAt: data.createdAt,
-              tags:data.tags,
-              isFeatured:data.isFeatured
-            };
-          });
-
-          setProducts(productList);
-          setFilteredProducts(productList);
-        } catch (error) {
-          console.error("Error fetching products: ", error);
-        }
+      if (userID && !isCounted) {
+        const userDocRef = doc(db, "users", userID);
+        await updateDoc(userDocRef, {
+          visitCount: increment(1),
+        });
+        sessionStorage.setItem(`MyShop_${storeId}_View`, 'true');
       }
 
-      setIsLoading(false);
-    };
+      try {
+        const productsRef = collection(db, userID as string);
+        const querySnapshot = await getDocs(productsRef);
+
+        const productList: ProductType[] = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            name: data.name,
+            description: data.description,
+            colors: data?.colors,
+            category: data.category,
+            images: data.images,
+            regularPrice: data.regularPrice,
+            discountPrice: data.discountPrice,
+            isNew: data.isNew,
+            isInStock: data.isInStock,
+            rating: data.rating,
+            ratingCount: data.ratingCount,
+            sizes: data.sizes,
+            isMostSelling: data.isMostSelling,
+            createdAt: data.createdAt,
+            tags: data.tags,
+            isFeatured: data.isFeatured
+          };
+        });
+
+        setProducts(productList);
+        setFilteredProducts(productList);
+      } catch (error) {
+        console.error("Error fetching products: ", error);
+      }
+    }
+
+    setIsLoading(false);
+  };
+
+
+  useEffect(() => {
 
     fetchProducts();
 
@@ -207,7 +209,7 @@ const StoreProducts = ({ storeId }: any) => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
-              <ProductCard key={product.id} storeId={storeId as string} product={product} />
+              <ProductCard key={product.id} refetchProducts={fetchProducts} storeId={storeId as string} product={product} />
             ))
           ) : (
             <div className="col-span-full text-center">No products found.</div>
