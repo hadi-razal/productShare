@@ -74,7 +74,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 // Page component to render store products
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: any) {
   const { storeId } = params;
 
   // Fetch store data to render products
