@@ -11,18 +11,18 @@ interface StoreData {
   image?: string;
 }
 
-// Define PageProps interface
-interface PageProps {
+// Define correct types for Next.js pages
+type Props = {
   params: {
     storeId: string;
   };
-}
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
 // Function to fetch store data from Firestore
 async function getStoreData(storeId: string): Promise<StoreData | null> {
   try {
     const userId = await getUserId(storeId);
-
     if (!userId) {
       console.error("User ID not found");
       return null;
@@ -44,17 +44,14 @@ async function getStoreData(storeId: string): Promise<StoreData | null> {
   }
 }
 
-// Correctly type the props for the `generateMetadata` function
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+// Generate metadata with correct types
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { storeId } = params;
-
-  // Fetch store data to get store name and description
   const storeData = await getStoreData(storeId);
 
   const title = storeData?.name ?? 'Store Not Found';
   const description = storeData?.description ?? 'This store offers a variety of products.';
 
-  // Return dynamic metadata
   return {
     title,
     description,
@@ -73,16 +70,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-// Page component to render store products
-export default async function Page({ params }: any) {
+// Page component with correct type annotations
+export default async function Page({ params }: Props) {
   const { storeId } = params;
-
-  // Fetch store data to render products
   const storeData = await getStoreData(storeId);
 
   return (
     <>
-      {/* Render the store's products */}
       <StoreProducts storeId={storeId} />
     </>
   );

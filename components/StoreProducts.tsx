@@ -8,7 +8,7 @@ import { db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
 
-const StoreProducts = ({ storeId }:any) => {
+const StoreProducts = ({ storeId }: any) => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState<string>("");
