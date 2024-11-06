@@ -34,6 +34,25 @@ const Header = () => {
   const path = usePathname();
   const { storeId } = useParams();
 
+  const handleLogoClick = () => {
+    try {
+      if (isUser) {
+        router.push("/store");
+        return;
+      }
+
+      // Ensure path exists and starts with '/store/' and storeId is defined
+      if (!isUser && path?.startsWith('/store/') && storeId) {
+        router.push(`/store/${storeId}`);
+        return;
+      }
+
+    } catch (error) {
+      console.error("Error navigating to the store:", error);
+    }
+  };
+
+
   const fetchStoreName = async () => {
     if (!storeId || !path.startsWith("/store/")) {
       console.log("No valid store ID or path.");
@@ -87,10 +106,9 @@ const Header = () => {
     <header className={`fixed bg-blue-950 w-full top-0 z-50 ${isOpen ? "h-screen md:h-[80px]" : "h-[80px]"}`}>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[80px] relative">
         <div className="flex items-center justify-between h-full">
-          <Link
-            href={isUser ? "/store" : ""}
-            onClick={(e) => !isUser && e.preventDefault()}
-            className="flex items-center space-x-3 text-white hover:opacity-90 transition-opacity"
+          <div
+            onClick={handleLogoClick}
+            className="flex items-center cursor-pointer space-x-3 text-white hover:opacity-90 transition-opacity"
           >
             <Share2 className="h-7 w-7" />
             <span className="text-2xl font-bold tracking-tight">
@@ -103,12 +121,12 @@ const Header = () => {
                 <span>{storeName}</span>
               )}
               {!isUser && !storeId && (
-                <span> 
-                  Product Share                 
+                <span>
+                  Product Share
                 </span>
               )}
             </span>
-          </Link>
+          </div>
 
           <div className="hidden md:flex items-center space-x-6">
             {!isUser ? (

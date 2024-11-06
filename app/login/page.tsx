@@ -80,11 +80,17 @@ const LoginPage: React.FC = () => {
                         <ArrowRight className="w-5 h-5 ml-2" />
                     </button>
                 </form>
-                <div className="mt-6 text-center">
+                <div className="mt-6 space-y-2 text-center">
                     <p className="text-sm text-gray-700">
                         Dont have an account?{' '}
                         <Link href={'/register'} className="text-blue-950  hover:underline">
                             Register here
+                        </Link>
+                    </p>
+                    <p className="text-sm text-gray-700">
+                        forgot password?{' '}
+                        <Link href={'/forgot-password'} className="text-blue-950  hover:underline">
+                            click here
                         </Link>
                     </p>
                 </div>

@@ -156,7 +156,7 @@ const Products = () => {
           onChange={handleSearchInputChange}
           onKeyDown={handleKeyPress}
           placeholder="Search products or categories..."
-          className="w-full px-4 py-3 pr-12 text-sm border rounded-lg border-gray-200 
+          className="w-full px-4 py-4 pr-12 text-sm border rounded-lg border-gray-200 
                      focus:outline-none
                      placeholder:text-gray-400"
           aria-label="Search input"
@@ -166,7 +166,7 @@ const Products = () => {
           {searchInput && (
             <button
               onClick={clearSearchInput}
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-2 py-4 text-gray-400 hover:text-gray-600 transition-colors"
               aria-label="Clear search"
             >
               <X size={18} />
@@ -175,8 +175,8 @@ const Products = () => {
 
           <button
             onClick={handleSearchClick}
-            className="p-2 text-white bg-blue-950 rounded-md hover:bg-blue-900 
-                       transition-colors duration-200 px-4 py-3 flex items-center justify-center"
+            className="p-2 text-white bg-blue-950 rounded-md  hover:bg-blue-900 
+                       transition-colors duration-200 px-4 py-4 flex items-center justify-center"
             aria-label="Search"
           >
             <Search size={18} />
