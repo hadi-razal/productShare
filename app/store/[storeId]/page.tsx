@@ -4,6 +4,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { getUserId } from '@/helpers/getUserId';
 
+// Interface for store data
 interface StoreData {
   name: string;
   description: string;
@@ -13,8 +14,8 @@ interface StoreData {
 // Function to fetch store data from Firestore
 async function getStoreData(storeId: string): Promise<StoreData | null> {
   try {
-    const userId = await getUserId(storeId);
-    const storeRef = doc(db, 'users', userId as string);
+    const userId = await getUserId(storeId); 
+    const storeRef = doc(db, 'users', userId as string); 
     const storeSnap = await getDoc(storeRef);
 
     if (storeSnap.exists()) {
@@ -30,7 +31,7 @@ async function getStoreData(storeId: string): Promise<StoreData | null> {
   }
 }
 
-// Metadata generation function for dynamic metadata
+// Correctly type the props for the `generateMetadata` function
 export async function generateMetadata({ params }: { params: { storeId: string } }): Promise<Metadata> {
   const { storeId } = params;
 
