@@ -1,8 +1,13 @@
 "use client";
 
+import { getUserId } from "@/helpers/getUserId";
+import { auth } from "@/lib/firebase";
 import { ProductType } from "@/type";
+import { onAuthStateChanged } from "firebase/auth";
+import { Delete, DeleteIcon, PencilIcon, Trash } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface ProductCardProps {
   product: ProductType;
@@ -11,6 +16,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, storeId }: ProductCardProps) => {
   const router = useRouter();
+  const [isStoreOnwer, setIsStoreOwner] = useState(false)
 
   console.log(product)
 
@@ -20,10 +26,10 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
     const discountPrice = Number(product?.discountPrice);
 
     if (
-      !isNaN(regularPrice) && 
-      !isNaN(discountPrice) && 
-      regularPrice > 0 && 
-      discountPrice >= 0 && 
+      !isNaN(regularPrice) &&
+      !isNaN(discountPrice) &&
+      regularPrice > 0 &&
+      discountPrice >= 0 &&
       discountPrice < regularPrice
     ) {
       const discount = ((regularPrice - discountPrice) / regularPrice) * 100;
@@ -35,10 +41,10 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
 
   // Calculate once to avoid multiple calculations
   const discountPercentage = calculateDiscount();
-  
+
   // Check if there's a valid discount
   const isDiscounted = discountPercentage > 0;
-  
+
   // Safely get the display price
   const getDisplayPrice = () => {
     if (isDiscounted) {
@@ -51,6 +57,42 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
   const getOriginalPrice = () => {
     return Number(product?.regularPrice).toLocaleString('en-IN');
   };
+
+
+  useEffect(() => {
+    const getStoreOwner = async () => {
+      try {
+
+        const userId = await getUserId(storeId)
+
+        onAuthStateChanged(auth, (user) => {
+
+          if (user) {
+            user.uid === userId
+            setIsStoreOwner(true)
+          }
+        })
+
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+
+    getStoreOwner()
+
+  }, [storeId])
+
+
+  const handleDelete = async (e: any) => {
+    try {
+      e.stopPropagation();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
 
   return (
     <div
@@ -112,12 +154,31 @@ const ProductCard = ({ product, storeId }: ProductCardProps) => {
       </div>
 
       <div className="absolute bottom-2 right-2 flex gap-2">
-        {product.isMostSelling  && (
+        {product.isMostSelling && (
           <span className="px-2 py-1 w-10 text-[8px] flex items-center justify-center text-center h-10 font-bold rounded-full bg-gray-700 text-white">
             Most Selling
           </span>
         )}
       </div>
+
+
+      {isStoreOnwer && (
+        <div className="flex h-16 items-center justify-center">
+          <div className="flex gap-3  bottom-0 py-4 absolute items-center justify-center">
+            <button onClick={(e) => handleDelete(e)} className="bg-red-600 py-2 px-2 rounded-md text-white">
+              <Trash />
+            </button>
+            <button onClick={(e) => {
+              e.stopPropagation()
+              router.push(`/store/${storeId}/edit/${product.id}`)
+            }} className="bg-blue-950 py-2 px-2 rounded-md text-white">
+              <PencilIcon />
+            </button>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 };

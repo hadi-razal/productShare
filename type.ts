@@ -15,7 +15,9 @@ export interface ProductType {
     rating: number;
     totalReviews?: number;
     ratingCount: number;
-    availableStock?: number;
+    availableStock?: string;
+    tags?: string;
+    isFeatured:boolean;
     isMostSelling?:boolean;
   }
   
