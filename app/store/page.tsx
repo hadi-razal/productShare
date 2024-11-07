@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Package, Plus, Users, TrendingUp, ShoppingCart } from 'lucide-react';
+import { Package, Plus, Users, ShoppingCart, DollarSign, Eye } from 'lucide-react';
+import { LineChart, Line, Tooltip, XAxis, YAxis } from 'recharts';
 import { getUsername } from '@/helpers/getUsername';
 
 // Stat Card Component
@@ -17,56 +18,27 @@ const StatCard = ({ title, value, trend, icon: Icon }:any) => (
         <Icon className="w-6 h-6 text-blue-900" />
       </div>
       {trend && (
-        <div className={`flex items-center text-sm ${
-          trend >= 0 ? 'text-green-600' : 'text-red-600'
-        }`}>
-          <TrendingUp className={`w-4 h-4 ${
-            trend >= 0 ? '' : 'transform rotate-180'
-          } mr-1`} />
+        <div className={`flex items-center text-sm ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
           <span>{Math.abs(trend)}%</span>
         </div>
       )}
     </div>
-    <h3 className="mt-4 text-2xl font-semibold text-gray-800">
-      {value ?? '...'}
-    </h3>
+    <h3 className="mt-4 text-2xl font-semibold text-gray-800">{value ?? '...'}</h3>
     <p className="mt-1 text-sm text-gray-500">{title}</p>
   </div>
 );
 
 // Action Card Component
 const ActionCard = ({ title, href, icon: Icon, description }:any) => (
-  <Link 
-    href={href}
-    className="block bg-white rounded-md shadow-md overflow-hidden"
-  >
+  <Link href={href} className="block bg-white rounded-md shadow-md overflow-hidden">
     <div className="p-6">
       <div className="flex items-center space-x-4">
         <div className="p-3 bg-gray-100 rounded-lg transition-colors duration-200 group-hover:bg-purple-100">
           <Icon className="w-6 h-6 text-blue-900" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-200 group-hover:text-blue-900">
-            {title}
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {description}
-          </p>
-        </div>
-        <div className="w-8 h-8 flex items-center justify-center rounded-full bg-purple-100 transition-colors duration-200 group-hover:bg-purple-200">
-          <svg
-            className="w-4 h-4 text-blue-900 transform group-hover:translate-x-1 transition-transform duration-200"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
+          <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-200 group-hover:text-blue-900">{title}</h3>
+          <p className="mt-1 text-sm text-gray-500">{description}</p>
         </div>
       </div>
     </div>
@@ -79,6 +51,10 @@ const StoreDashboard = () => {
     products: null,
     visitors: null,
     sales: null,
+    revenue: null,
+    visitorData: [],
+    mostVisitedProduct: null,
+    leastVisitedProduct: null,
   });
   const [username, setUsername] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -96,16 +72,33 @@ const StoreDashboard = () => {
           const fetchedUsername = await getUsername(user.uid);
           setUsername(fetchedUsername);
 
+          // Fetch products, users, and user data
           const productsSnapshot = await getDocs(collection(db, user.uid));
           const userDoc = await getDoc(doc(db, "users", user.uid));
           const userData = userDoc.exists() ? userDoc.data() : { visitCount: 0 };
 
+          // Get most and least visited products
+          const mostVisitedQuery = query(collection(db, user.uid), orderBy("views", "desc"), limit(1));
+          const leastVisitedQuery = query(collection(db, user.uid), orderBy("views", "asc"), limit(1));
+          const [mostVisitedSnapshot, leastVisitedSnapshot] = await Promise.all([
+            getDocs(mostVisitedQuery),
+            getDocs(leastVisitedQuery),
+          ]);
+
+          const mostVisitedProduct = mostVisitedSnapshot.docs[0]?.data() || null;
+          const leastVisitedProduct = leastVisitedSnapshot.docs[0]?.data() || null;
+
+          // Set stats
           setStats({
             products: productsSnapshot.size,
             visitors: userData.visitCount ?? 0,
             sales: userData.sales ?? 0,
+            revenue: userData.revenue ?? 0,
+            visitorData: userData.visitorData || [],
+            mostVisitedProduct,
+            leastVisitedProduct,
           });
-          
+
           setLoading(false);
         } catch (error) {
           console.error("Error fetching dashboard data:", error);
@@ -125,16 +118,45 @@ const StoreDashboard = () => {
         {/* Header */}
         <div className="mb-8 text-center md:text-left">
           <h1 className="text-3xl font-bold text-gray-900">Welcome back{username ? `, ${username}` : ''}!</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Here's what's happening with your store today
-          </p>
+          <p className="mt-2 text-sm text-gray-600">Here's what's happening with your store today</p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <StatCard title="Total Products" value={loading ? null : stats.products} trend={12} icon={Package} />
           <StatCard title="Store Visitors" value={loading ? null : stats.visitors} trend={8} icon={Users} />
-          <StatCard title="Buy Clicks" value={loading ? null : stats.sales} trend={15} icon={ShoppingCart} />
+          <StatCard title="Total Sales" value={loading ? null : stats.sales} trend={15} icon={ShoppingCart} />
+          <StatCard title="Revenue" value={`$${loading ? '...' : stats.revenue}`} trend={10} icon={DollarSign} />
+        </div>
+
+        {/* Visitors Chart */}
+        <div className="mb-12">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Visitors Trend</h2>
+          <LineChart width={600} height={300} data={stats.visitorData}>
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="visitors" stroke="#8884d8" />
+          </LineChart>
+        </div>
+
+        {/* Most and Least Visited Products */}
+        <div className="mb-12">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Insights</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <StatCard
+              title="Most Visited Product"
+              value={loading ? '...' : stats.mostVisitedProduct?.name || 'N/A'}
+              icon={Eye}
+              trend={stats.mostVisitedProduct?.views || 0}
+            />
+            <StatCard
+              title="Least Visited Product"
+              value={loading ? '...' : stats.leastVisitedProduct?.name || 'N/A'}
+              icon={Eye}
+              trend={stats.leastVisitedProduct?.views || 0}
+            />
+          </div>
         </div>
 
         {/* Quick Actions */}
@@ -143,6 +165,7 @@ const StoreDashboard = () => {
           <div className="grid gap-4 sm:grid-cols-2">
             <ActionCard title="Add New Product" href="/add-product" icon={Plus} description="List a new product in your showcase" />
             <ActionCard title="View Catalog" href={`/store/${username ?? ''}`} icon={Package} description="Browse and manage your product listings" />
+            <ActionCard title="Manage Orders" href="/manage-orders" icon={ShoppingCart} description="View and process recent orders" />
           </div>
         </div>
 
