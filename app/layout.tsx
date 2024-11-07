@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import ProgressBar from "@/components/ProgressBar";
 import { Toaster } from "react-hot-toast";
+import Footer from "@/components/Footer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -95,9 +96,10 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Header />
-        <Toaster/>
+        <Toaster />
         <ProgressBar />
         {children}
+        <Footer />
       </body>
     </html>
   );

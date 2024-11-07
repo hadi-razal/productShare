@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs} from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Package, Plus, Users, ShoppingCart, Eye, Settings, BarChart2, FileText, Box, Star, CheckCircle, Truck, Percent, Repeat, TrendingUp, AlertTriangle, DollarSign } from 'lucide-react';
+import { Package, Plus, Eye, Settings, BarChart2, Box, Star, TrendingUp, Users} from 'lucide-react';
 import { getUsername } from '@/helpers/getUsername';
 
 // Stat Card Component
