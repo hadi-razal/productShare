@@ -86,8 +86,8 @@ const CreateProduct = () => {
 
     const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const newCategory = e.target.value;
-        setProductData(prev => ({ 
-            ...prev, 
+        setProductData(prev => ({
+            ...prev,
             category: newCategory,
             sizes: newCategory !== 'clothing' ? [] : prev.sizes // Reset sizes if category is not clothing
         }));
@@ -117,7 +117,7 @@ const CreateProduct = () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setIsUploading(true);
-        
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 try {
@@ -127,7 +127,7 @@ const CreateProduct = () => {
                         const userData = userDocSnap.data();
                         try {
                             const imageUrls = await uploadImagesToFirebase();
-                            await addDoc(collection(db, `${userData.uid}`), { 
+                            await addDoc(collection(db, `${userData.uid}`), {
                                 ...productData,
                                 images: imageUrls,
                                 createdAt: serverTimestamp(),
@@ -167,7 +167,7 @@ const CreateProduct = () => {
                         <label className="block text-sm font-medium">Product Name</label>
                         <input type="text" disabled={isUploading} name="name" value={productData.name} onChange={handleInputChange} className="w-full px-3 py-2 border bg-gray-200 rounded-md" placeholder="Enter product name" />
                     </div>
-                    
+
                     {/* Description */}
                     <div className="space-y-2">
                         <label className="block text-sm font-medium">Description</label>
@@ -179,7 +179,7 @@ const CreateProduct = () => {
                         <label className="block text-sm font-medium">Regular Price</label>
                         <input type="text" disabled={isUploading} name="regularPrice" value={productData.regularPrice} onChange={handleInputChange} className="w-full px-3 py-2 border bg-gray-200 rounded-md" placeholder="₹0.00" />
                     </div>
-                    
+
                     <div className="space-y-2">
                         <label className="block text-sm font-medium">Discount Price</label>
                         <input disabled={isUploading} type="text" name="discountPrice" value={productData.discountPrice} onChange={handleInputChange} className="w-full px-3 py-2 border bg-gray-200 rounded-md" placeholder="₹0.00" />
@@ -208,11 +208,10 @@ const CreateProduct = () => {
                                         key={size}
                                         type="button"
                                         onClick={() => handleSizeChange(size)}
-                                        className={`px-4 py-2 border rounded-md ${
-                                            productData.sizes.includes(size)
+                                        className={`px-4 py-2 border rounded-md ${productData.sizes.includes(size)
                                                 ? 'bg-gray-950 text-white'
                                                 : 'bg-gray-200 text-gray-700'
-                                        }`}
+                                            }`}
                                     >
                                         {size}
                                     </button>
@@ -242,7 +241,7 @@ const CreateProduct = () => {
                             <input disabled={isUploading} type="text" value={currentColor} onChange={(e) => setCurrentColor(e.target.value)} placeholder="enter color code eg:#fefefe" className="w-2/3 px-3 py-2 border rounded-l-md bg-gray-200" />
                             <button type="button" onClick={handleAddColor} className="text-sm w-1/3 font-medium px-3 py-3 text-white rounded-r-md bg-gray-950">Add Color</button>
                         </div>
-                        
+
                         {/* Display added colors */}
                         <div className='flex items-center gap-2 justify-start flex-wrap'>
                             {productData.colors.map((color, index) => (
@@ -282,7 +281,7 @@ const CreateProduct = () => {
                                     </button>
                                 </div>
                             ))}
-                            
+
                             <label className="flex items-center justify-center w-24 h-24 border rounded-md cursor-pointer hover:bg-gray-200">
                                 <Plus className="w-8 h-8 text-gray-400" />
                                 <input disabled={isUploading} type='file' multiple onChange={handleImageUpload} className='hidden' />
@@ -291,9 +290,13 @@ const CreateProduct = () => {
                     </div>
 
                     {/* Submit Button */}
-                    <div>
-                        <button type='submit' className='w-full px-4 py-2 text-white bg-gray-950 rounded-md hover:bg-gray-950/90'>
-                            {isUploading ? "Uploading..." : "Create Product"}
+                    <div className="pt-4">
+                        <button
+                            type="submit"
+                            className={`w-full py-2 px-4 rounded-md text-white ${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-950'}`}
+                            disabled={isUploading}
+                        >
+                            {isUploading ? 'Creating...' : 'Create Product'}
                         </button>
                     </div>
                 </form>
