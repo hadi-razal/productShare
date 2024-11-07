@@ -7,32 +7,18 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { db, storage } from '@/lib/firebase';
 import { getUserId } from '@/helpers/getUserId';
+import { ProductType } from '@/type';
 
-interface ProductData {
-    name: string;
-    description: string;
-    regularPrice: string;
-    discountPrice: string;
-    colors: string[];
-    category: string;
-    sizes: string[];
-    isInStock: boolean;
-    availableStock: string;
-    images: string[];
-    tags: string;
-    isFeatured: boolean;
-    isMostSelling: boolean;
-    createdAt?: Date;
-}
 
 const EditProduct = () => {
     const router = useRouter();
     const { storeId, productId } = useParams()
-    const [productData, setProductData] = useState<ProductData>({
+    const [productData, setProductData] = useState<ProductType>({
+        id: '',
         name: '',
         description: '',
-        regularPrice: '',
-        discountPrice: '',
+        regularPrice: 1,
+        discountPrice: 1,
         colors: [],
         category: '',
         sizes: [],
@@ -41,7 +27,8 @@ const EditProduct = () => {
         images: [],
         tags: '',
         isFeatured: false,
-        isMostSelling: false
+        isMostSelling: false,
+        isHidden:false
     });
 
     const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
@@ -69,7 +56,7 @@ const EditProduct = () => {
             const productSnap = await getDoc(productRef);
 
             if (productSnap.exists()) {
-                const data = productSnap.data() as ProductData;
+                const data = productSnap.data() as ProductType;
                 setProductData(data);
                 setPreviewImages(data.images || []);
                 setIsLoading(false)
@@ -385,6 +372,16 @@ const EditProduct = () => {
                             className="form-checkbox"
                         />
                         <span>Best Selling</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                        <input
+                            type="checkbox"
+                            name="isHidden"
+                            checked={productData.isHidden}
+                            onChange={handleCheckboxChange}
+                            className="form-checkbox"
+                        />
+                        <span>Hide Product</span>
                     </label>
                 </div>
 

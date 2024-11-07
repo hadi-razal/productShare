@@ -1,6 +1,6 @@
 export interface ProductType {
     id: string; 
-    createdAt:any;
+    createdAt?:any;
     name: string;
     description: string;
     category: string;
@@ -9,14 +9,15 @@ export interface ProductType {
     images: string[];
     regularPrice: number;
     discountPrice: number;
-    isNew: boolean;
-    isInStock: boolean;
+    isNew?: boolean;
+    isInStock?: boolean;
     isBestSelling?: boolean;
-    rating: number;
+    rating?: number;
     totalReviews?: number;
-    ratingCount: number;
+    ratingCount?: number;
     availableStock?: string;
     tags?: string;
+    isHidden?: boolean;
     isFeatured:boolean;
     isMostSelling?:boolean;
   }

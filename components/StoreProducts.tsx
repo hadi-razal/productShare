@@ -55,7 +55,8 @@ const StoreProducts = ({ storeId }: any) => {
             isMostSelling: data.isMostSelling,
             createdAt: data.createdAt,
             tags: data.tags,
-            isFeatured: data.isFeatured
+            isFeatured: data.isFeatured,
+            isHidden: data.isHidden
           };
         });
 

@@ -14,10 +14,10 @@ import toast from "react-hot-toast";
 interface ProductCardProps {
   product: ProductType;
   storeId: string;
-  refetchProducts: ()=>void;
+  refetchProducts: () => void;
 }
 
-const ProductCard = ({ product, storeId , refetchProducts }: ProductCardProps) => {
+const ProductCard = ({ product, storeId, refetchProducts }: ProductCardProps) => {
   const router = useRouter();
   const [isStoreOwner, setIsStoreOwner] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -74,7 +74,7 @@ const ProductCard = ({ product, storeId , refetchProducts }: ProductCardProps) =
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = async (e:any) => {
+  const confirmDelete = async (e: any) => {
     try {
       e.stopPropagation();
       const userId = await getUserId(storeId);
@@ -92,12 +92,25 @@ const ProductCard = ({ product, storeId , refetchProducts }: ProductCardProps) =
     }
   };
 
+  console.log(product)
+
+  if(product.isHidden && !isStoreOwner){
+    return
+  }
+
   return (
     <div
       onClick={() => router.push(`/store/${storeId}/${product.id}`)}
       className="cursor-pointer relative w-full rounded-md border bg-gray-50 shadow-sm transition-all duration-300 hover:shadow-lg"
     >
       <div className="relative">
+
+        {product.isHidden && isStoreOwner && (
+          <div className="bg-black/75 absolute flex flex-col items-center justify-center w-full h-full">
+            <span className="text-white text-sm font-medium px-3">This product is hidden</span>
+          </div>
+        )}
+
         <Image
           quality={50}
           unoptimized={true}
