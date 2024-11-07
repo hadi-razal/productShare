@@ -6,12 +6,12 @@ import { collection, doc, getDoc, getDocs, query, orderBy, limit } from 'firebas
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Package, Plus, Users, ShoppingCart, DollarSign, Eye } from 'lucide-react';
-import { LineChart, Line, Tooltip, XAxis, YAxis } from 'recharts';
+import { Package, Plus, Users, ShoppingCart, DollarSign, Eye, Settings, BarChart2, FileText, Box, Star, CheckCircle, Truck, Percent, Repeat, TrendingUp, AlertTriangle } from 'lucide-react';
+import { LineChart, Line, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { getUsername } from '@/helpers/getUsername';
 
 // Stat Card Component
-const StatCard = ({ title, value, trend, icon: Icon }:any) => (
+const StatCard = ({ title, value, trend, icon: Icon }: any) => (
   <div className="bg-white rounded-md shadow-md p-6">
     <div className="flex items-center justify-between">
       <div className="p-3 bg-purple-100 rounded-lg">
@@ -29,8 +29,17 @@ const StatCard = ({ title, value, trend, icon: Icon }:any) => (
 );
 
 // Action Card Component
-const ActionCard = ({ title, href, icon: Icon, description }:any) => (
-  <Link href={href} className="block bg-white rounded-md shadow-md overflow-hidden">
+const ActionCard = ({ title, href = "#", icon: Icon, description }: any) => (
+  <Link
+    href={href}
+    className="block bg-white rounded-md shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
+    onClick={(e) => {
+      if (href === "#") {
+        e.preventDefault();
+        // Optional: Add a toast notification here for features under development
+      }
+    }}
+  >
     <div className="p-6">
       <div className="flex items-center space-x-4">
         <div className="p-3 bg-gray-100 rounded-lg transition-colors duration-200 group-hover:bg-purple-100">
@@ -45,6 +54,20 @@ const ActionCard = ({ title, href, icon: Icon, description }:any) => (
   </Link>
 );
 
+// Define available routes and feature status
+const actionCards = [
+  { title: "Add New Product", href: "/add-product", icon: Plus, description: "List a new product in your showcase" },
+  { title: "View Catalog", href: "/store", icon: Package, description: "Browse and manage your product listings" },
+  { title: "Manage Orders", href: "/orders", icon: ShoppingCart, description: "View and process recent orders" },
+  { title: "Store Settings", href: "/settings", icon: Settings, description: "Adjust your store preferences and settings" },
+  { title: "Customer Reviews", href: "/reviews", icon: Star, description: "View and manage customer feedback" },
+  { title: "Product Analytics", href: "/analytics", icon: BarChart2, description: "View product performance and trends" },
+  { title: "Share Catalog", href: "#", icon: Eye, description: "Share your product catalog with customers" },
+  { title: "Marketing Campaigns", href: "/marketing", icon: TrendingUp, description: "Create and monitor marketing campaigns" },
+  { title: "Customer Support", href: "/support", icon: AlertTriangle, description: "Provide support for customer inquiries" },
+  { title: "Store Themes", href: "/settings/themes", icon: Settings, description: "Customize your store's visual appearance" },
+];
+
 // Main Dashboard Component
 const StoreDashboard = () => {
   const [stats, setStats] = useState({
@@ -52,9 +75,17 @@ const StoreDashboard = () => {
     visitors: null,
     sales: null,
     revenue: null,
+    orders: null,
+    returningCustomers: null,
+    reviews: null,
+    averageOrderValue: null,
+    conversionRate: null,
+    lowStockItems: null,
+    topCategory: null,
+    discountsUsed: null,
+    refundsProcessed: null,
+    outOfStockProducts: null,
     visitorData: [],
-    mostVisitedProduct: null,
-    leastVisitedProduct: null,
   });
   const [username, setUsername] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -72,31 +103,27 @@ const StoreDashboard = () => {
           const fetchedUsername = await getUsername(user.uid);
           setUsername(fetchedUsername);
 
-          // Fetch products, users, and user data
+          // Fetch various stats and data
           const productsSnapshot = await getDocs(collection(db, user.uid));
           const userDoc = await getDoc(doc(db, "users", user.uid));
           const userData = userDoc.exists() ? userDoc.data() : { visitCount: 0 };
 
-          // Get most and least visited products
-          const mostVisitedQuery = query(collection(db, user.uid), orderBy("views", "desc"), limit(1));
-          const leastVisitedQuery = query(collection(db, user.uid), orderBy("views", "asc"), limit(1));
-          const [mostVisitedSnapshot, leastVisitedSnapshot] = await Promise.all([
-            getDocs(mostVisitedQuery),
-            getDocs(leastVisitedQuery),
-          ]);
-
-          const mostVisitedProduct = mostVisitedSnapshot.docs[0]?.data() || null;
-          const leastVisitedProduct = leastVisitedSnapshot.docs[0]?.data() || null;
-
-          // Set stats
           setStats({
             products: productsSnapshot.size,
             visitors: userData.visitCount ?? 0,
             sales: userData.sales ?? 0,
             revenue: userData.revenue ?? 0,
+            orders: 120,
+            returningCustomers: 35,
+            reviews: 290,
+            averageOrderValue: 34.5,
+            conversionRate: 2.5,
+            lowStockItems: 15,
+            topCategory: "Electronics",
+            discountsUsed: 43,
+            refundsProcessed: 3,
+            outOfStockProducts: 7,
             visitorData: userData.visitorData || [],
-            mostVisitedProduct,
-            leastVisitedProduct,
           });
 
           setLoading(false);
@@ -126,59 +153,33 @@ const StoreDashboard = () => {
           <StatCard title="Total Products" value={loading ? null : stats.products} trend={12} icon={Package} />
           <StatCard title="Store Visitors" value={loading ? null : stats.visitors} trend={8} icon={Users} />
           <StatCard title="Total Sales" value={loading ? null : stats.sales} trend={15} icon={ShoppingCart} />
-          <StatCard title="Revenue" value={`$${loading ? '...' : stats.revenue}`} trend={10} icon={DollarSign} />
+          <StatCard title="Orders" value={loading ? '...' : stats.orders} trend={5} icon={CheckCircle} />
         </div>
 
         {/* Visitors Chart */}
         <div className="mb-12">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Visitors Trend</h2>
-          <LineChart width={600} height={300} data={stats.visitorData}>
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="visitors" stroke="#8884d8" />
-          </LineChart>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={stats.visitorData}>
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="visitors" stroke="#8884d8" />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
 
-        {/* Most and Least Visited Products */}
-        <div className="mb-12">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Insights</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <StatCard
-              title="Most Visited Product"
-              value={loading ? '...' : stats.mostVisitedProduct?.name || 'N/A'}
-              icon={Eye}
-              trend={stats.mostVisitedProduct?.views || 0}
+        {/* Action Cards Grid */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {actionCards.map((card, index) => (
+            <ActionCard
+              key={index}
+              title={card.title}
+              href={card.href}
+              icon={card.icon}
+              description={card.description}
             />
-            <StatCard
-              title="Least Visited Product"
-              value={loading ? '...' : stats.leastVisitedProduct?.name || 'N/A'}
-              icon={Eye}
-              trend={stats.leastVisitedProduct?.views || 0}
-            />
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="mb-12">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <ActionCard title="Add New Product" href="/add-product" icon={Plus} description="List a new product in your showcase" />
-            <ActionCard title="View Catalog" href={`/store/${username ?? ''}`} icon={Package} description="Browse and manage your product listings" />
-            <ActionCard title="Manage Orders" href="/manage-orders" icon={ShoppingCart} description="View and process recent orders" />
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
-          <div className="space-y-4">
-            {loading ? (
-              <p className="text-sm text-gray-500">Loading activity...</p>
-            ) : (
-              <p className="text-sm text-gray-500">No recent activity</p>
-            )}
-          </div>
+          ))}
         </div>
       </div>
     </div>
