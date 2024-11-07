@@ -239,7 +239,7 @@ const CreateProduct = () => {
                         <label className="block text-sm font-medium">Color (optional)</label>
                         <div className='flex items-center justify-center pb-3'>
                             <input disabled={isUploading} type="text" value={currentColor} onChange={(e) => setCurrentColor(e.target.value)} placeholder="enter color code eg:#fefefe" className="w-2/3 px-3 py-2 border rounded-l-md bg-gray-200" />
-                            <button type="button" onClick={handleAddColor} className="text-sm w-1/3 font-medium px-3 py-3 text-white rounded-r-md bg-gray-950">Add Color</button>
+                            <button type="button" onClick={handleAddColor} className="text-sm w-1/3 font-medium px-3 py-3 text-white rounded-r-md bg-blue-950">Add Color</button>
                         </div>
 
                         {/* Display added colors */}
