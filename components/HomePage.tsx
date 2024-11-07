@@ -3,8 +3,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Lottie from 'lottie-react';
-import { Star, Award, ThumbsUp, Clock, Globe, Shield, TrendingUp, ShoppingCart, User } from 'lucide-react';
+import { Star, ThumbsUp, Clock, Globe, Shield, TrendingUp, ShoppingCart, User } from 'lucide-react';
 import heroAnimation from "@/public/hero.json";
+import Image from 'next/image';
 
 // Types for props
 interface FeatureCardProps {
@@ -16,6 +17,8 @@ interface FeatureCardProps {
 interface TestimonialCardProps {
   content: string;
   author: string;
+  authorRole: string;
+  authorImage: string;
 }
 
 const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
@@ -26,12 +29,53 @@ const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
   </div>
 );
 
-const TestimonialCard = ({ content, author }: TestimonialCardProps) => (
-  <div className="p-6 bg-gray-50 rounded-md shadow">
-    <p className="text-gray-700 mb-2">{content}</p>
-    <footer className="text-sm text-gray-500">— {author}</footer>
+
+
+const TestimonialCard = ({ content, author, authorRole, authorImage }: TestimonialCardProps) => (
+  <div className="bg-white p-8 cursor-pointer rounded-xl shadow-xl transform transition-all duration-300 hover:shadow-2xl">
+    <p className="text-lg text-gray-700 italic mb-4">{content}</p>
+    <div className="flex items-center justify-center">
+      <Image
+        unoptimized={true}
+        width={0}
+        height={0}
+        className="w-12 h-12 rounded-full object-cover mr-4"
+        src={authorImage}
+        alt={author}
+      />
+      <div className="text-left">
+        <p className="font-semibold text-gray-900">{author}</p>
+        <p className="text-gray-600">{authorRole}</p>
+      </div>
+    </div>
   </div>
 );
+
+
+const testimonials = [
+  {
+    content: '"Product Share has transformed our business!"',
+    author: 'Praveen Prasad',
+    authorRole: 'Retailer',
+    authorImage: '/praveen.jpeg',
+  },
+  {
+    content: '"A must-have for online sellers. So easy to use!"',
+    author: 'Arjun K',
+    authorRole: 'Small Business Owner',
+    authorImage: '/arjun.jpg',
+  },
+  {
+    content: '"Increased our reach and made sharing simple."',
+    author: 'Shiyadh',
+    authorRole: 'Online Reseller',
+    authorImage: '/arjun.jpg',
+  },
+];
+
+
+
+
 
 const premiumPlan = {
   name: "Premium Plan",
@@ -128,19 +172,27 @@ const HomePage = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-blue-950 mb-8">What Our Customers Say</h2>
+      <section className="py-16 bg-gradient-to-br from-blue-50 via-gray-100 to-blue-50">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-4xl font-extrabold text-blue-950 mb-12">What Our Customers Say</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <TestimonialCard content='"Product Share has transformed our business!"' author="Sarah J., Retailer" />
-            <TestimonialCard content='"A must-have for online sellers. So easy to use!"' author="John K., Small Business Owner" />
-            <TestimonialCard content='"Increased our reach and made sharing simple."' author="Emily T., Artisan" />
+            {testimonials.map((testimonial, index) => (
+              <TestimonialCard
+                key={index}
+                content={testimonial.content}
+                author={testimonial.author}
+                authorRole={testimonial.authorRole}
+                authorImage={testimonial.authorImage}
+              />
+            ))}
           </div>
         </div>
       </section>
+
+
       {/* Premium Plan Section */}
       <section className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 text-center">
+        <div className="max-w-6xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-extrabold text-blue-950 mb-8">Premium Plan</h2>
           <p className="text-lg text-gray-600 mb-12">
             Experience all premium features for 3 days, absolutely free! After the trial, subscribe to continue enjoying exclusive tools and support.
