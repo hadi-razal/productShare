@@ -130,7 +130,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
   if (loading) return (
 
     <div className='flex items-center justify-center h-[calc(100vh-90px)]'>
-     <p className='text-lg text-gray-400 animate-pulse'>Loading product details...</p>
+      <p className='text-lg text-gray-400 animate-pulse'>Loading product details...</p>
     </div>
 
   )
@@ -183,6 +183,31 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
             {productData.discountPrice && <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm">{calculateDiscount()}% OFF</span>}
           </div>
 
+          {productData.colors.length > 0 && <div className='flex flex-col items-start gap-2 justify-start flex-wrap'>
+            <span className="block text-sm font-thin ">Available Colors</span>
+            <div className='flex items-center justify-center flex-wrap gap-1'>
+              {productData.colors.map((color, index) => (
+                <span key={index} style={{ background: color }} className="relative cursor-pointer h-[35px] w-[35px] rounded-[50%] flex items-center justify-center shadow-lg" />
+              ))}
+            </div>
+          </div>}
+
+
+          {productData.sizes.length > 0 && <div className="space-y-2">
+            <span className="block text-sm font-thin ">Available Sizes</span>
+            <div className="flex flex-wrap gap-2">
+              {productData.sizes.map((size, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  className={`px-4 py-2 border rounded-md bg-gray-200 text-gray-700`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+          }
           <div className="flex gap-4 mt-6">
             <button
               onClick={handleBuyNow}

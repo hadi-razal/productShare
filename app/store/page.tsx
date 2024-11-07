@@ -6,8 +6,7 @@ import { collection, doc, getDoc, getDocs, query, orderBy, limit } from 'firebas
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Package, Plus, Users, ShoppingCart, DollarSign, Eye, Settings, BarChart2, FileText, Box, Star, CheckCircle, Truck, Percent, Repeat, TrendingUp, AlertTriangle } from 'lucide-react';
-import { LineChart, Line, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { Package, Plus, Users, ShoppingCart, Eye, Settings, BarChart2, FileText, Box, Star, CheckCircle, Truck, Percent, Repeat, TrendingUp, AlertTriangle, DollarSign } from 'lucide-react';
 import { getUsername } from '@/helpers/getUsername';
 
 // Stat Card Component
@@ -57,14 +56,12 @@ const ActionCard = ({ title, href = "#", icon: Icon, description }: any) => (
 // Define available routes and feature status
 const actionCards = [
   { title: "Add New Product", href: "/add-product", icon: Plus, description: "List a new product in your showcase" },
-  { title: "View Catalog", href: "/store", icon: Package, description: "Browse and manage your product listings" },
-  { title: "Manage Orders", href: "/orders", icon: ShoppingCart, description: "View and process recent orders" },
+  { title: "View Catalog", href: `/store/username`, icon: Package, description: "Browse and manage your product listings" },
   { title: "Store Settings", href: "/settings", icon: Settings, description: "Adjust your store preferences and settings" },
   { title: "Customer Reviews", href: "/reviews", icon: Star, description: "View and manage customer feedback" },
   { title: "Product Analytics", href: "/analytics", icon: BarChart2, description: "View product performance and trends" },
   { title: "Share Catalog", href: "#", icon: Eye, description: "Share your product catalog with customers" },
   { title: "Marketing Campaigns", href: "/marketing", icon: TrendingUp, description: "Create and monitor marketing campaigns" },
-  { title: "Customer Support", href: "/support", icon: AlertTriangle, description: "Provide support for customer inquiries" },
   { title: "Store Themes", href: "/settings/themes", icon: Settings, description: "Customize your store's visual appearance" },
 ];
 
@@ -152,30 +149,17 @@ const StoreDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <StatCard title="Total Products" value={loading ? null : stats.products} trend={12} icon={Package} />
           <StatCard title="Store Visitors" value={loading ? null : stats.visitors} trend={8} icon={Users} />
-          <StatCard title="Total Sales" value={loading ? null : stats.sales} trend={15} icon={ShoppingCart} />
-          <StatCard title="Orders" value={loading ? '...' : stats.orders} trend={5} icon={CheckCircle} />
-        </div>
-
-        {/* Visitors Chart */}
-        <div className="mb-12">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Visitors Trend</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={stats.visitorData}>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="visitors" stroke="#8884d8" />
-            </LineChart>
-          </ResponsiveContainer>
+          <StatCard title="Customer Reviews" value={loading ? null : stats.reviews} trend={stats.reviews ? (stats.reviews > 200 ? 10 : 2) : null} icon={Star} />
         </div>
 
         {/* Action Cards Grid */}
+        <h2 className="text-lg font-semibold text-gray-900 mb-4 ">Quick Actions</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {actionCards.map((card, index) => (
             <ActionCard
               key={index}
               title={card.title}
-              href={card.href}
+              href={card.href === "/store/username" ? `/store/${username}` : card.href}
               icon={card.icon}
               description={card.description}
             />
