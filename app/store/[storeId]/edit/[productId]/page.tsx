@@ -182,7 +182,7 @@ const EditProduct = () => {
                     <input
                         type="text"
                         name="name"
-                        value={productData.name}
+                        value={productData.name || ""}
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 border bg-gray-200 rounded-md"
                         placeholder="Enter product name"
@@ -194,7 +194,7 @@ const EditProduct = () => {
                     <label className="block text-sm font-medium">Description</label>
                     <textarea
                         name="description"
-                        value={productData.description}
+                        value={productData.description || ""}
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 border rounded-md h-32 bg-gray-200" 
                         placeholder="Enter product description"
@@ -207,7 +207,7 @@ const EditProduct = () => {
                     <input
                         type="number"
                         name="regularPrice"
-                        value={productData.regularPrice}
+                        value={productData.regularPrice || ""}
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 border bg-gray-200 rounded-md"
                         placeholder="Enter regular price"
@@ -220,7 +220,7 @@ const EditProduct = () => {
                     <input
                         type="number"
                         name="discountPrice"
-                        value={productData.discountPrice}
+                        value={productData.discountPrice || ""}
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 border bg-gray-200 rounded-md"
                         placeholder="Enter discount price"
@@ -232,7 +232,7 @@ const EditProduct = () => {
                     <label className="block text-sm font-medium">Category</label>
                     <select
                         name="category"
-                        value={productData.category}
+                        value={productData.category || ""}
                         onChange={handleCategoryChange}
                         className="w-full px-3 py-2 border bg-gray-200 rounded-md"
                     >
