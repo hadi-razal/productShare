@@ -256,7 +256,7 @@ const HomePage = () => {
 
 
       {/* FAQ Section */}
-      <section className="py-12 bg-white">
+      <section className="py-12 bg-white pb-20">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-extrabold text-blue-950 mb-8">Frequently Asked Questions</h2>
           <div className="space-y-6 text-left max-w-2xl mx-auto">
