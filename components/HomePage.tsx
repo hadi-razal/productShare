@@ -6,8 +6,9 @@ import Lottie from 'lottie-react';
 import { Star, ThumbsUp, Clock, Globe, Shield, TrendingUp, ShoppingCart, User, Check, ArrowRight, Sparkles } from 'lucide-react';
 import heroAnimation from "@/public/hero.json";
 import Image from 'next/image';
+import { AiOutlineBulb } from 'react-icons/ai';
+import { FaGlobe, FaHandsHelping, FaRegChartBar } from 'react-icons/fa';
 
-// Enhanced interface definitions
 interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
@@ -24,7 +25,6 @@ interface TestimonialCardProps {
 
 const FeatureCard = ({ icon, title, description, gradient }: FeatureCardProps) => (
   <motion.div
-    whileHover={{ y: -5, scale: 1.02 }}
     className={`flex flex-col items-center p-8 rounded-2xl backdrop-blur-sm ${gradient} border border-white/20 shadow-xl`}
   >
     <div className="p-3 bg-white/90 rounded-xl shadow-inner">
@@ -37,7 +37,6 @@ const FeatureCard = ({ icon, title, description, gradient }: FeatureCardProps) =
 
 const TestimonialCard = ({ content, author, authorRole, authorImage }: TestimonialCardProps) => (
   <motion.div
-    whileHover={{ scale: 1.02 }}
     className="bg-white/90 p-8 rounded-2xl shadow-xl backdrop-blur-sm border border-gray-100"
   >
     <div className="flex items-center mb-6">
@@ -47,9 +46,9 @@ const TestimonialCard = ({ content, author, authorRole, authorImage }: Testimoni
     <div className="flex items-center">
       <Image
         unoptimized={true}
-        width={48}
-        height={48}
-        className="rounded-full object-cover mr-4 border-2 border-blue-500"
+        width={0}
+        height={0}
+        className="rounded-full h-16 w-16 object-cover mr-4 border-2 border-blue-500"
         src={authorImage}
         alt={author}
       />
@@ -94,7 +93,6 @@ const HomePage = () => {
       {/* Hero Section with Geometric Patterns */}
       <section className="relative flex items-center justify-center min-h-screen overflow-hidden bg-gradient-to-b from-gray-900 to-blue-900">
         <div className="absolute inset-0 overflow-hidden">
-          {/* Animated background patterns */}
           <motion.div
             animate={{
               rotate: 360,
@@ -132,7 +130,6 @@ const HomePage = () => {
               {/* Trust badge */}
               <motion.div
                 className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-medium mb-8"
-                whileHover={{ scale: 1.05 }}
               >
                 <Sparkles className="w-5 h-5" />
                 <span>Trusted by 1000+ Global Sellers</span>
@@ -151,17 +148,21 @@ const HomePage = () => {
               </p>
 
               {/* Feature badges */}
-              <div className="mt-12 grid grid-cols-2 gap-4">
-                {['AI-Powered Analytics', 'Smart Catalog', 'Global Reach', 'Premium Support'].map((feature) => (
+              <div className="mt-10 grid grid-cols-2 gap-4">
+                {[
+                  { label: "AI-Driven Insights", icon: AiOutlineBulb },
+                  { label: "Catalog Optimization", icon: FaRegChartBar },
+                  { label: "Global Connectivity", icon: FaGlobe },
+                  { label: "Dedicated Support", icon: FaHandsHelping },
+                ].map(({ label, icon: Icon }) => (
                   <motion.div
-                    key={feature}
-                    whileHover={{ scale: 1.05 }}
-                    className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-lg p-4"
+                    key={label}
+                    className="flex items-center gap-3 bg-white/10 rounded-lg p-4 backdrop-blur-sm shadow-md"
                   >
-                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                      <Check className="w-5 h-5 text-blue-400" />
+                    <div className="w-8 h-8 bg-blue-500/30 rounded-full flex items-center justify-center">
+                      <Icon className="w-5 h-5 text-blue-400" />
                     </div>
-                    <span className="text-white font-medium">{feature}</span>
+                    <span className="text-white font-medium">{label}</span>
                   </motion.div>
                 ))}
               </div>
@@ -170,8 +171,6 @@ const HomePage = () => {
               <div className="mt-12 flex flex-col sm:flex-row gap-6">
                 <motion.a
                   href="/register"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-xl transition-all duration-200"
                 >
                   Start Free Trial
@@ -179,8 +178,6 @@ const HomePage = () => {
                 </motion.a>
                 <motion.a
                   href="/demo"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white border-2 border-white/20 rounded-xl hover:bg-white/10 transition-all duration-200 backdrop-blur-sm"
                 >
                   Watch Demo
@@ -196,114 +193,64 @@ const HomePage = () => {
               className="flex-1 relative"
             >
               <div className="relative w-full aspect-square max-w-lg mx-auto">
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-purple-600/20 rounded-3xl blur-2xl" />
-                <Lottie
-                  animationData={heroAnimation}
-                  loop={true}
-                  className="w-full h-full"
-                />
+                <div className="absolute right-10 inset-0 bg-gradient-to-tr from-purple-400 to-blue-600 opacity-60 blur-2xl rounded-full" />
+                <Lottie animationData={heroAnimation} className="w-full h-full relative" loop />
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-24 bg-gradient-to-b from-gray-900 to-blue-900">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-4xl font-bold text-white mb-6"
-            >
-              Why Choose Product Share?
-            </motion.h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Experience the future of product management with our cutting-edge features
+      {/* Feature Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">Why Choose Us</h2>
+            <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+              Discover the reasons why our clients love us and why you will too.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <FeatureCard {...feature} />
-              </motion.div>
+              <FeatureCard key={index} {...feature} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Premium Plan Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">Start Growing Today</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Try all premium features free for 3 days. No credit card required.
-            </p>
-          </motion.div>
+      {/* Testimonials Section */}
+      <section className="py-16 bg-gradient-to-t from-blue-900 to-blue-600">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-white sm:text-4xl">What Our Clients Say</h2>
+          <p className="mt-4 max-w-2xl mx-auto text-lg text-blue-100">
+            See how we've helped businesses grow and succeed with our innovative platform.
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-blue-600 to-indigo-700 p-1 rounded-2xl shadow-xl"
-          >
-            <div className="bg-white p-8 rounded-xl">
-              <div className="flex flex-col lg:flex-row gap-8 items-center">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-6">
-                    <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
-                    <span className="text-lg font-semibold text-gray-900">Premium Plan</span>
-                  </div>
-                  <div className="mb-8">
-                    <span className="text-5xl font-bold text-gray-900">₹99</span>
-                    <span className="text-xl text-gray-600">/month</span>
-                  </div>
-                  <ul className="space-y-4 mb-8">
-                    {[
-                      'Unlimited Products',
-                      'Advanced Analytics',
-                      'Priority Support',
-                      'Custom Branding',
-                      'API Access'
-                    ].map((feature, index) => (
-                      <li key={index} className="flex items-center gap-3">
-                        <Check className="w-5 h-5 text-blue-600" />
-                        <span className="text-gray-700">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="flex-1 w-full">
-                  <div className="bg-gray-50 p-6 rounded-xl">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Start Your Free Trial</h3>
-                    <p className="text-gray-600 mb-6">
-                      Get full access to all premium features for 3 days. No credit card required.
-                    </p>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg shadow-lg"
-                    >
-                      Start Free Trial
-                    </motion.button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+          <div className="mt-16 grid gap-8 lg:grid-cols-3 sm:grid-cols-2">
+            {[
+              {
+                content: "This platform revolutionized our business approach!",
+                author: "Jane Doe",
+                authorRole: "CEO of BestCo",
+                authorImage: "/praveen.jpeg",
+              },
+              {
+                content: "Exceptional customer service and functionality.",
+                author: "John Smith",
+                authorRole: "Manager at WestWare",
+                authorImage: "/arjun.jpg",
+              },
+              {
+                content: "An essential tool for growth and insights.",
+                author: "Emily Lee",
+                authorRole: "Director at GlobalLink",
+                authorImage: "/arjun.jpg",
+              },
+            ].map((testimonial, index) => (
+              <TestimonialCard key={index} {...testimonial} />
+            ))}
+          </div>
         </div>
       </section>
     </div>
