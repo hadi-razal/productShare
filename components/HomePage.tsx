@@ -3,15 +3,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Lottie from 'lottie-react';
-import { Star, ThumbsUp, Clock, Globe, Shield, TrendingUp, ShoppingCart, User } from 'lucide-react';
+import { Star, ThumbsUp, Clock, Globe, Shield, TrendingUp, ShoppingCart, User, Check, ArrowRight, Sparkles } from 'lucide-react';
 import heroAnimation from "@/public/hero.json";
 import Image from 'next/image';
 
-// Types for props
+// Enhanced interface definitions
 interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
+  gradient: string;
 }
 
 interface TestimonialCardProps {
@@ -21,258 +22,288 @@ interface TestimonialCardProps {
   authorImage: string;
 }
 
-const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
-  <div className="flex flex-col items-center p-6 bg-white shadow-md rounded-lg">
-    {icon}
-    <h3 className="mt-4 text-lg font-semibold text-gray-900">{title}</h3>
-    <p className="mt-2 text-gray-600 text-sm">{description}</p>
-  </div>
+const FeatureCard = ({ icon, title, description, gradient }: FeatureCardProps) => (
+  <motion.div
+    whileHover={{ y: -5, scale: 1.02 }}
+    className={`flex flex-col items-center p-8 rounded-2xl backdrop-blur-sm ${gradient} border border-white/20 shadow-xl`}
+  >
+    <div className="p-3 bg-white/90 rounded-xl shadow-inner">
+      {icon}
+    </div>
+    <h3 className="mt-6 text-xl font-bold text-white">{title}</h3>
+    <p className="mt-3 text-white/90 text-center">{description}</p>
+  </motion.div>
 );
 
-
-
 const TestimonialCard = ({ content, author, authorRole, authorImage }: TestimonialCardProps) => (
-  <div className="bg-white p-8 cursor-pointer rounded-xl shadow-xl transform transition-all duration-300 hover:shadow-2xl">
-    <p className="text-lg text-gray-700 italic mb-4">{content}</p>
-    <div className="flex items-center justify-center">
+  <motion.div
+    whileHover={{ scale: 1.02 }}
+    className="bg-white/90 p-8 rounded-2xl shadow-xl backdrop-blur-sm border border-gray-100"
+  >
+    <div className="flex items-center mb-6">
+      <div className="w-2 h-12 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full mr-4" />
+      <p className="text-xl text-gray-800 font-medium">{content}</p>
+    </div>
+    <div className="flex items-center">
       <Image
         unoptimized={true}
-        width={0}
-        height={0}
-        className="w-12 h-12 rounded-full object-cover mr-4"
+        width={48}
+        height={48}
+        className="rounded-full object-cover mr-4 border-2 border-blue-500"
         src={authorImage}
         alt={author}
       />
-      <div className="text-left">
-        <p className="font-semibold text-gray-900">{author}</p>
-        <p className="text-gray-600">{authorRole}</p>
+      <div>
+        <p className="font-bold text-gray-900">{author}</p>
+        <p className="text-blue-600">{authorRole}</p>
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
-
-const testimonials = [
+const features = [
   {
-    content: '"Product Share has transformed our business!"',
-    author: 'Praveen Prasad',
-    authorRole: 'Retailer',
-    authorImage: '/praveen.jpeg',
+    icon: <Star className="w-8 h-8 text-yellow-500" />,
+    title: "Premium Support",
+    description: "24/7 dedicated assistance from our expert team",
+    gradient: "bg-gradient-to-br from-yellow-500/90 to-orange-600/90"
   },
   {
-    content: '"A must-have for online sellers. So easy to use!"',
-    author: 'Arjun K',
-    authorRole: 'Small Business Owner',
-    authorImage: '/arjun.jpg',
+    icon: <User className="w-8 h-8 text-blue-500" />,
+    title: "User-Centric Design",
+    description: "Intuitive interface with stunning customization options",
+    gradient: "bg-gradient-to-br from-blue-500/90 to-indigo-600/90"
   },
   {
-    content: '"Increased our reach and made sharing simple."',
-    author: 'Shiyadh',
-    authorRole: 'Online Reseller',
-    authorImage: '/arjun.jpg',
+    icon: <Globe className="w-8 h-8 text-emerald-500" />,
+    title: "Global Reach",
+    description: "Connect with customers worldwide instantly",
+    gradient: "bg-gradient-to-br from-emerald-500/90 to-teal-600/90"
   },
+  {
+    icon: <TrendingUp className="w-8 h-8 text-purple-500" />,
+    title: "Smart Analytics",
+    description: "Data-driven insights to boost your business",
+    gradient: "bg-gradient-to-br from-purple-500/90 to-pink-600/90"
+  }
 ];
-
-
-
-
-
-const premiumPlan = {
-  name: "Premium Plan",
-  price: "₹99",
-  duration: "/month",
-  features: [
-    "Advanced Analytics & Reports",
-    "Unlimited Products",
-    "24/7 Premium Support",
-    "Upto 100 Products",
-    "Custom Logo",
-    "Dedicated Account Manager",
-    "Integration with External Platforms"
-  ],
-  buttonText: "Start Free Trial",
-  trial: "3-day free trial",
-  trialInfo: "No charges during the trial. After 3 days, ₹99/month for full access."
-};
 
 const HomePage = () => {
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="relative min-h-screen pb-10 flex flex-col md:flex-row max-w-7xl mx-auto items-center justify-between px-6 text-center md:text-left pt-24 space-y-12 md:space-y-0">
-        <motion.div
-          className="z-10 w-full md:w-3/5 text-blue-950"
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1 }}
-        >
-          <h1 className="text-6xl font-extrabold mt-6 tracking-tight leading-tight text-gray-900">
-            Elevate Your Sales with <span className="text-blue-900">Product Share</span>
-          </h1>
-          <h2 className="text-2xl font-medium text-gray-700 mt-4">
-            The premium platform for showcasing and selling your products online.
-          </h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-lg mx-auto md:mx-0">
-            Create, share, and manage your online product catalog with unparalleled ease and style. Reach more customers and boost your brand presence through a simple, customizable link.
-          </p>
-          <ul className="mt-6 flex flex-col space-y-3 md:space-y-0 md:space-x-6 md:flex-row text-blue-900">
-            <li className="flex items-center">
-              <span className="mr-2 text-2xl font-semibold">✓</span>Seamless Product Listings
-            </li>
-            <li className="flex items-center">
-              <span className="mr-2 text-2xl font-semibold">✓</span>Shareable Catalog Links
-            </li>
-            <li className="flex items-center">
-              <span className="mr-2 text-2xl font-semibold">✓</span>Personalized Branding
-            </li>
-            <li className="flex items-center">
-              <span className="mr-2 text-2xl font-semibold">✓</span>Advanced Analytics
-            </li>
-          </ul>
-          <div className="mt-8 flex flex-col md:flex-row items-center md:space-x-4">
-            <a href="/register" className="inline-block px-14 py-4 bg-blue-950 text-white font-semibold rounded-md shadow-lg transition duration-300 hover:bg-blue-900 w-full md:w-auto">
-              Create Your Store
-            </a>
-            <a href="/about-us" className="inline-block px-8 py-4 mt-4 md:mt-0 bg-gray-200 text-blue-950 font-semibold rounded-md shadow-lg transition duration-300 hover:bg-gray-300 w-full md:w-auto">
-              Learn More
-            </a>
-          </div>
-          <div className="mt-4 text-center md:text-left">
-            <p className="text-gray-500 text-sm">Trusted by over 1000 sellers worldwide</p>
-          </div>
-        </motion.div>
-        <motion.div
-          className="w-full md:w-2/5 mt-10 md:mt-0 flex justify-center items-center"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1 }}
-        >
-          <Lottie animationData={heroAnimation} loop={true} style={{ width: '100%', maxWidth: 600, height: 'auto' }} />
-        </motion.div>
-      </section>
+    <div className="bg-gray-50">
+      {/* Hero Section with Geometric Patterns */}
+      <section className="relative flex items-center justify-center min-h-screen overflow-hidden bg-gradient-to-b from-gray-900 to-blue-900">
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Animated background patterns */}
+          <motion.div
+            animate={{
+              rotate: 360,
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            className="absolute top-1/4 -left-1/4 w-[800px] h-[800px] bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              rotate: -360,
+              scale: [1.2, 1, 1.2],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            className="absolute -top-1/4 -right-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-3xl"
+          />
+        </div>
 
-      {/* Features Section */}
-      <section className="bg-gray-50 py-12">
-        <div className="max-w-6xl mx-auto text-center px-6">
-          <h2 className="text-4xl font-bold text-blue-950 mb-6">Why Choose Product Share?</h2>
-          <p className="text-lg text-gray-600 mb-12">
-            Discover the premium features that make us the best choice for growing your online presence.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <FeatureCard icon={<Star className="w-12 h-12 text-yellow-500" />} title="Top-Rated Support" description="Get help anytime from our dedicated support team." />
-            <FeatureCard icon={<User className="w-12 h-12 text-blue-500" />} title="User Friendly" description="Stunning, fully customizable catalog pages." />
-            <FeatureCard icon={<ThumbsUp className="w-12 h-12 text-green-500" />} title="Customer Satisfaction" description="Join thousands of satisfied users who trust us." />
-            <FeatureCard icon={<Clock className="w-12 h-12 text-purple-500" />} title="24/7 Availability" description="Manage your catalog anytime, anywhere." />
-            <FeatureCard icon={<Globe className="w-12 h-12 text-teal-500" />} title="Global Reach" description="Easily share your products with a worldwide audience." />
-            <FeatureCard icon={<Shield className="w-12 h-12 text-gray-500" />} title="Secure Platform" description="Your data is safe with our advanced security features." />
-            <FeatureCard icon={<TrendingUp className="w-12 h-12 text-indigo-500" />} title="Analytics Insights" description="Track sales and engagement with in-depth analytics." />
-            <FeatureCard icon={<ShoppingCart className="w-12 h-12 text-red-500" />} title="E-commerce Ready" description="Easily set up your online shop and start selling." />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="flex-1 text-center lg:text-left"
+            >
+              {/* Trust badge */}
+              <motion.div
+                className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-medium mb-8"
+                whileHover={{ scale: 1.05 }}
+              >
+                <Sparkles className="w-5 h-5" />
+                <span>Trusted by 1000+ Global Sellers</span>
+              </motion.div>
+
+              {/* Main heading with gradient text */}
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
+                Transform Your
+                <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                  Digital Store
+                </span>
+              </h1>
+
+              <p className="text-xl text-gray-300 max-w-2xl">
+                Create stunning product catalogs, share instantly, and grow your business with our powerful platform.
+              </p>
+
+              {/* Feature badges */}
+              <div className="mt-12 grid grid-cols-2 gap-4">
+                {['AI-Powered Analytics', 'Smart Catalog', 'Global Reach', 'Premium Support'].map((feature) => (
+                  <motion.div
+                    key={feature}
+                    whileHover={{ scale: 1.05 }}
+                    className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-lg p-4"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                      <Check className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <span className="text-white font-medium">{feature}</span>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* CTA buttons */}
+              <div className="mt-12 flex flex-col sm:flex-row gap-6">
+                <motion.a
+                  href="/register"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-xl transition-all duration-200"
+                >
+                  Start Free Trial
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </motion.a>
+                <motion.a
+                  href="/demo"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white border-2 border-white/20 rounded-xl hover:bg-white/10 transition-all duration-200 backdrop-blur-sm"
+                >
+                  Watch Demo
+                </motion.a>
+              </div>
+            </motion.div>
+
+            {/* Hero animation */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="flex-1 relative"
+            >
+              <div className="relative w-full aspect-square max-w-lg mx-auto">
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-purple-600/20 rounded-3xl blur-2xl" />
+                <Lottie
+                  animationData={heroAnimation}
+                  loop={true}
+                  className="w-full h-full"
+                />
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 via-gray-100 to-blue-50">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-extrabold text-blue-950 mb-12">What Our Customers Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <TestimonialCard
+      {/* Features Section */}
+      <section className="py-24 bg-gradient-to-b from-gray-900 to-blue-900">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-4xl font-bold text-white mb-6"
+            >
+              Why Choose Product Share?
+            </motion.h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Experience the future of product management with our cutting-edge features
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <motion.div
                 key={index}
-                content={testimonial.content}
-                author={testimonial.author}
-                authorRole={testimonial.authorRole}
-                authorImage={testimonial.authorImage}
-              />
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <FeatureCard {...feature} />
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-
       {/* Premium Plan Section */}
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-extrabold text-blue-950 mb-8">Premium Plan</h2>
-          <p className="text-lg text-gray-600 mb-12">
-            Experience all premium features for 3 days, absolutely free! After the trial, subscribe to continue enjoying exclusive tools and support.
-          </p>
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">Start Growing Today</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Try all premium features free for 3 days. No credit card required.
+            </p>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Premium Plan Card */}
-            <div className="p-8 bg-white rounded-lg shadow-lg border border-gray-200">
-              <h3 className="text-3xl font-semibold text-gray-900 mb-4">{premiumPlan.name}</h3>
-              <div className="flex justify-center items-baseline my-4">
-                <span className="text-5xl font-bold text-gray-900">{premiumPlan.price}</span>
-                <span className="text-xl text-gray-500 ml-2">{premiumPlan.duration}</span>
-              </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-br from-blue-600 to-indigo-700 p-1 rounded-2xl shadow-xl"
+          >
+            <div className="bg-white p-8 rounded-xl">
+              <div className="flex flex-col lg:flex-row gap-8 items-center">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
+                    <span className="text-lg font-semibold text-gray-900">Premium Plan</span>
+                  </div>
+                  <div className="mb-8">
+                    <span className="text-5xl font-bold text-gray-900">₹99</span>
+                    <span className="text-xl text-gray-600">/month</span>
+                  </div>
+                  <ul className="space-y-4 mb-8">
+                    {[
+                      'Unlimited Products',
+                      'Advanced Analytics',
+                      'Priority Support',
+                      'Custom Branding',
+                      'API Access'
+                    ].map((feature, index) => (
+                      <li key={index} className="flex items-center gap-3">
+                        <Check className="w-5 h-5 text-blue-600" />
+                        <span className="text-gray-700">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-              <p className="text-sm text-gray-600 mb-6">{premiumPlan.trialInfo}</p>
-
-              <h4 className="text-lg font-semibold text-gray-700 mb-4">Features Included:</h4>
-              <ul className="text-gray-600 text-left space-y-2 mb-6">
-                {premiumPlan.features.map((feature, index) => (
-                  <li key={index} className="flex items-center">
-                    <svg
-                      className="w-6 h-6 text-blue-500 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                <div className="flex-1 w-full">
+                  <div className="bg-gray-50 p-6 rounded-xl">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Start Your Free Trial</h3>
+                    <p className="text-gray-600 mb-6">
+                      Get full access to all premium features for 3 days. No credit card required.
+                    </p>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg shadow-lg"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 13l4 4L19 7"
-                      ></path>
-                    </svg>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Start Free Trial Button */}
-              <button
-                className="mt-6 w-full px-6 py-3 bg-blue-950 text-white font-semibold rounded-md transition-transform transform hover:scale-105 shadow-md"
-                onClick={() => alert("Free trial started successfully!")}
-              >
-                {premiumPlan.buttonText}
-              </button>
+                      Start Free Trial
+                    </motion.button>
+                  </div>
+                </div>
+              </div>
             </div>
-
-            {/* Trial Information */}
-            <div className="bg-blue-50 p-8 rounded-lg shadow-lg border border-gray-200">
-              <h3 className="text-2xl font-semibold text-blue-950 mb-4">How the Trial Works</h3>
-              <p className="text-lg text-gray-700 mb-4">
-                Start your 3-day free trial to unlock all premium features with no charges. After the trial period ends, you'll need to subscribe to continue using the features. You can cancel anytime before the trial ends without any cost.
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-semibold">No hidden charges:</span> The free trial gives you access to the full range of premium features for 3 days. Afterward, ₹99/month will be charged for full access to all features.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      {/* FAQ Section */}
-      <section className="py-12 bg-white pb-20">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-extrabold text-blue-950 mb-8">Frequently Asked Questions</h2>
-          <div className="space-y-6 text-left max-w-2xl mx-auto">
-            <div className="bg-gray-100 p-6 rounded-md shadow-md">
-              <h3 className="font-semibold text-lg text-gray-900">How does the free trial work?</h3>
-              <p className="text-gray-600 mt-2">You can use all premium features for free for the first 3 days. After the trial, you will be charged ₹99/month unless you cancel.</p>
-            </div>
-            <div className="bg-gray-100 p-6 rounded-md shadow-md">
-              <h3 className="font-semibold text-lg text-gray-900">Can I cancel my subscription anytime?</h3>
-              <p className="text-gray-600 mt-2">Yes, you can cancel your subscription at any time from your account settings. There are no hidden fees.</p>
-            </div>
-            <div className="bg-gray-100 p-6 rounded-md shadow-md">
-              <h3 className="font-semibold text-lg text-gray-900">Are there any setup fees?</h3>
-              <p className="text-gray-600 mt-2">No, there are no setup fees. You can start using the platform right away.</p>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </section>
     </div>
