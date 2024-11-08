@@ -125,7 +125,6 @@ const Header = () => {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 relative">
         <div className="flex items-center justify-between h-full">
           <motion.div
-            whileHover={{ scale: 1.05 }}
             onClick={handleLogoClick}
             className="flex items-center cursor-pointer space-x-3"
           >

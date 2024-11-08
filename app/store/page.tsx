@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs} from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Package, Plus, Eye, Settings, BarChart2, Box, Star, TrendingUp, Users} from 'lucide-react';
+import { Package, Plus, Eye, Settings, BarChart2, Box, Star, TrendingUp, Users, ArrowRight } from 'lucide-react';
 import { getUsername } from '@/helpers/getUsername';
 
 // Stat Card Component
@@ -27,30 +27,33 @@ const StatCard = ({ title, value, trend, icon: Icon }: any) => (
   </div>
 );
 
-// Action Card Component
-const ActionCard = ({ title, href = "#", icon: Icon, description }: any) => (
-  <Link
-    href={href}
-    className="block bg-white rounded-md shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
-    onClick={(e) => {
-      if (href === "#") {
-        e.preventDefault();
-        // Optional: Add a toast notification here for features under development
-      }
-    }}
-  >
-    <div className="p-6">
-      <div className="flex items-center space-x-4">
-        <div className="p-3 bg-gray-100 rounded-lg transition-colors duration-200 group-hover:bg-purple-100">
-          <Icon className="w-6 h-6 text-blue-900" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-gray-800 transition-colors duration-200 group-hover:text-blue-900">{title}</h3>
-          <p className="mt-1 text-sm text-gray-500">{description}</p>
+// Enhanced Action Card Component with hover effects
+const ActionCard = ({ title, href = "#", icon: Icon, description, gradient }: any) => (
+  <div>
+    <Link
+      href={href}
+      className={`block rounded-2xl overflow-hidden shadow-xl ${gradient}`}
+      onClick={(e) => {
+        if (href === "#") {
+          e.preventDefault();
+        }
+      }}
+    >
+      <div className="relative p-6">
+        <div className="absolute inset-0 bg-white/90 backdrop-blur-sm" />
+        <div className="relative flex items-center space-x-4">
+          <div className="p-3 bg-white/80 rounded-xl shadow-inner">
+            <Icon className="w-6 h-6 text-blue-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+            <p className="mt-1 text-sm text-gray-600">{description}</p>
+          </div>
+          <ArrowRight className="w-5 h-5 text-gray-400" />
         </div>
       </div>
-    </div>
-  </Link>
+    </Link>
+  </div>
 );
 
 // Define available routes and feature status
