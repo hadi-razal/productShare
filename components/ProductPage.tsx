@@ -113,7 +113,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
         shareUrl = `https://www.instagram.com/`;
         alert("Instagram does not support direct sharing. Copy the following details to share:\n\n" + message);
       }
-
       window.open(shareUrl, '_blank');
     }
   };
@@ -166,7 +165,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
               <p>No image available</p>
             )}
 
-            {productData.images.length < 1 && (
+            {productData.images.length > 1 && (
               <>
                 <button onClick={prevImage} className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md">
                   <ChevronLeft className="w-5 h-5" />
