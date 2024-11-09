@@ -17,27 +17,6 @@ interface NavLinkProps {
   onClick?: () => void;
 }
 
-const NavLink = ({ href, children, onClick }: NavLinkProps) => (
-  <motion.div
-    whileHover={{ y: -2 }}
-    className="relative"
-  >
-    <Link
-      href={href}
-      onClick={onClick}
-      className="group relative block px-4 py-2 text-gray-300 hover:text-white transition-colors duration-200"
-    >
-      <span className="relative z-10">{children}</span>
-      <motion.span
-        className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 transform origin-left"
-        initial={{ scaleX: 0 }}
-        whileHover={{ scaleX: 1 }}
-        transition={{ duration: 0.3 }}
-      />
-    </Link>
-  </motion.div>
-);
-
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUser, setIsUser] = useState(false);
@@ -127,7 +106,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-full">
           <motion.div
             onClick={handleLogoClick}
-            className="flex items-center cursor-pointer space-x-3"
+            className="flex items-center cursor-pointer space-x-1"
           >
             <div className="p-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-md backdrop-blur-sm">
               <Share2 className="h-7 w-7 text-white" />
@@ -147,23 +126,19 @@ const Header = () => {
             </div>
           </motion.div>
 
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center">
             {!isUser ? (
-              <>
-                <NavLink href="/about-us">About</NavLink>
-                <NavLink href="/contact">Contact</NavLink>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+              <div className="flex gap-4 items-center justify-center">
+                <Link className="text-white" href="/about-us">About</Link>
+                <Link className="text-white" href="/contact">Contact</Link>
+
+                <Link
+                  href="/login"
+                  className="px-6 py-2.5 rounded-md border border-gray-300 text-white hover:shadow-lg  transition-all duration-200 font-medium"
                 >
-                  <Link
-                    href="/login"
-                    className="px-6 py-2.5 rounded-md bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-200 font-medium"
-                  >
-                    Login
-                  </Link>
-                </motion.div>
-              </>
+                  Login
+                </Link>
+              </div>
             ) : (
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -198,14 +173,9 @@ const Header = () => {
         >
           <div className="p-4 space-y-4">
             {!isUser && (
-              <div className="flex flex-col space-y-4">
-
-                <NavLink href="/about-us" onClick={() => setIsOpen(false)}>
-                  About
-                </NavLink>
-                <NavLink href="/contact" onClick={() => setIsOpen(false)}>
-                  Contact
-                </NavLink>
+              <div className="flex flex-col space-y-2">
+                <Link className="text-white" href="/about-us">About</Link>
+                <Link className="text-white" href="/contact">Contact</Link>
               </div>
             )}
             {!isUser ? (

@@ -226,7 +226,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
           <div className="flex gap-1 mt-6">
             <button
               onClick={handleBuyNow}
-              className="bg-gradient-to-r from-violet-600 to-purple-600 flex items-center gap-2 justify-center text-white py-3 px-6 rounded-lg font-medium"
+              className="bg-blue-950 flex items-center gap-2 justify-center text-white py-3 px-6 rounded-lg font-medium"
             >
               <FiShoppingCart className="text-white" />
               Buy Now
