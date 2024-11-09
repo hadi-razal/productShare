@@ -156,12 +156,18 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
             ) : (
               <p>No image available</p>
             )}
-            <button onClick={prevImage} className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md">
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button onClick={nextImage} className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md">
-              <ChevronRight className="w-5 h-5" />
-            </button>
+
+            {productData.images.length < 1 && (
+              <>
+                <button onClick={prevImage} className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md">
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button onClick={nextImage} className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md">
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </>
+            )}
+
           </div>
 
           <div className="flex gap-2 overflow-x-auto">
@@ -208,13 +214,20 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
             </div>
           </div>
           }
-          <div className="flex gap-4 mt-6">
+          <div className="flex gap-2 mt-6">
             <button
               onClick={handleBuyNow}
               className="bg-blue-950 flex items-center gap-2 justify-center text-white py-3 px-6 rounded-lg font-medium"
             >
               <FiShoppingCart className="text-white" />
               Buy Now
+            </button>
+            <button
+              className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-2 rounded-lg font-medium"
+              onClick={handleShare}
+            >
+              <FiShare2 className="text-black" />
+              Know More
             </button>
             <button
               className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-6 rounded-lg font-medium"

@@ -87,7 +87,7 @@ const HomePage = () => {
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
-      <section className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-blue-900">
+      <section className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-blue-900 pt-10">
         <div className="relative max-w-7xl mx-auto px-6 py-16 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -119,7 +119,7 @@ const HomePage = () => {
               </motion.a>
             </div>
           </motion.div>
-          <div className="relative mt-12">
+          <div className="relative mt-3 flex items-center justify-center">
             <Lottie animationData={heroAnimation} className="w-full max-w-md mx-auto" loop />
           </div>
         </div>
