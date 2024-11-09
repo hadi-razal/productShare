@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { FiFacebook, FiTwitter, FiShoppingCart, FiShare2, FiX} from 'react-icons/fi';
+import { FiFacebook, FiTwitter, FiShoppingCart, FiShare2, FiX } from 'react-icons/fi';
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { getUserId } from '@/helpers/getUserId';
 import { db } from '@/lib/firebase';
@@ -118,6 +118,15 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     }
   };
 
+  const handleKnowMore = () => {
+    if (productData) {
+      const message = `Hi, I'm interested in knowing more about this product:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n*${window.location.href}*`;
+      const whatsappUrl = `https://wa.me/919074063723?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    }
+  };
+
+
   const handleBuyNow = () => {
     if (productData) {
       const message = `Hi, I'm interested in purchasing:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n*${currentUrl}*`;
@@ -224,7 +233,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
             </button>
             <button
               className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-2 rounded-lg font-medium"
-              onClick={handleShare}
+              onClick={handleKnowMore}
             >
               <Info className="text-black" />
               Know More
