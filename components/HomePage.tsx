@@ -3,11 +3,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Lottie from 'lottie-react';
-import { Star, ThumbsUp, Clock, Globe, Shield, TrendingUp, ShoppingCart, User, Check, ArrowRight, Sparkles } from 'lucide-react';
+import { Star, ShoppingCart } from 'lucide-react';
 import heroAnimation from "@/public/hero.json";
 import Image from 'next/image';
-import { AiOutlineBulb } from 'react-icons/ai';
-import { FaGlobe, FaHandsHelping, FaRegChartBar } from 'react-icons/fa';
+import {  FaUserFriends, FaChartLine } from 'react-icons/fa';
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -25,36 +24,33 @@ interface TestimonialCardProps {
 
 const FeatureCard = ({ icon, title, description, gradient }: FeatureCardProps) => (
   <motion.div
-    className={`flex flex-col items-center p-8 rounded-2xl backdrop-blur-sm ${gradient} border border-white/20 shadow-xl`}
+    className={`flex flex-col items-center p-6 rounded-2xl shadow-lg ${gradient} border border-white/10`}
+    whileHover={{ scale: 1.05 }}
   >
-    <div className="p-3 bg-white/90 rounded-xl shadow-inner">
-      {icon}
-    </div>
-    <h3 className="mt-6 text-xl font-bold text-white">{title}</h3>
-    <p className="mt-3 text-white/90 text-center">{description}</p>
+    <div className="p-3 bg-white/80 rounded-xl shadow-inner">{icon}</div>
+    <h3 className="mt-4 text-xl font-semibold text-gray-800">{title}</h3>
+    <p className="mt-2 text-gray-600 text-center">{description}</p>
   </motion.div>
 );
 
 const TestimonialCard = ({ content, author, authorRole, authorImage }: TestimonialCardProps) => (
   <motion.div
-    className="bg-white/90 p-8 rounded-2xl shadow-xl backdrop-blur-sm border border-gray-100"
+    className="bg-white p-6 rounded-xl shadow-md"
+    whileHover={{ scale: 1.05 }}
   >
-    <div className="flex items-center mb-6">
-      <div className="w-2 h-12 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full mr-4" />
-      <p className="text-xl text-gray-800 font-medium">{content}</p>
-    </div>
+    <p className="text-lg text-gray-700 mb-4">"{content}"</p>
     <div className="flex items-center">
       <Image
         unoptimized={true}
-        width={0}
-        height={0}
-        className="rounded-full h-16 w-16 object-cover mr-4 border-2 border-blue-500"
+        width={48}
+        height={48}
+        className="rounded-full object-cover mr-3"
         src={authorImage}
         alt={author}
       />
       <div>
-        <p className="font-bold text-gray-900">{author}</p>
-        <p className="text-blue-600">{authorRole}</p>
+        <p className="font-bold text-gray-800">{author}</p>
+        <p className="text-sm text-gray-500">{authorRole}</p>
       </div>
     </div>
   </motion.div>
@@ -62,156 +58,79 @@ const TestimonialCard = ({ content, author, authorRole, authorImage }: Testimoni
 
 const features = [
   {
-    icon: <Star className="w-8 h-8 text-yellow-500" />,
-    title: "Premium Support",
-    description: "24/7 dedicated assistance from our expert team",
-    gradient: "bg-gradient-to-br from-yellow-500/90 to-orange-600/90"
+    icon: <Star className="w-6 h-6 text-yellow-500" />,
+    title: "Seamless Catalog Creation",
+    description: "Build catalogs in minutes and keep them organized.",
+    gradient: "bg-gradient-to-br from-yellow-100 to-orange-200"
   },
   {
-    icon: <User className="w-8 h-8 text-blue-500" />,
-    title: "User-Centric Design",
-    description: "Intuitive interface with stunning customization options",
-    gradient: "bg-gradient-to-br from-blue-500/90 to-indigo-600/90"
+    icon: <ShoppingCart className="w-6 h-6 text-blue-500" />,
+    title: "Product Share Links",
+    description: "Share product catalogs directly with customers.",
+    gradient: "bg-gradient-to-br from-blue-100 to-indigo-200"
   },
   {
-    icon: <Globe className="w-8 h-8 text-emerald-500" />,
-    title: "Global Reach",
-    description: "Connect with customers worldwide instantly",
-    gradient: "bg-gradient-to-br from-emerald-500/90 to-teal-600/90"
+    icon: <FaUserFriends className="w-6 h-6 text-green-500" />,
+    title: "Customer Engagement",
+    description: "Stay connected with instant messaging and updates.",
+    gradient: "bg-gradient-to-br from-green-100 to-teal-200"
   },
   {
-    icon: <TrendingUp className="w-8 h-8 text-purple-500" />,
-    title: "Smart Analytics",
-    description: "Data-driven insights to boost your business",
-    gradient: "bg-gradient-to-br from-purple-500/90 to-pink-600/90"
+    icon: <FaChartLine className="w-6 h-6 text-purple-500" />,
+    title: "Advanced Analytics",
+    description: "Track performance metrics to maximize sales.",
+    gradient: "bg-gradient-to-br from-purple-100 to-pink-200"
   }
 ];
 
 const HomePage = () => {
   return (
     <div className="bg-gray-50">
-      {/* Hero Section with Geometric Patterns */}
-      <section className="relative flex items-center justify-center min-h-screen overflow-hidden bg-gradient-to-b from-gray-900 to-blue-900">
-        <div className="absolute inset-0 overflow-hidden">
+      {/* Hero Section */}
+      <section className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-blue-900">
+        <div className="relative max-w-7xl mx-auto px-6 py-16 text-center">
           <motion.div
-            animate={{
-              rotate: 360,
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute top-1/4 -left-1/4 w-[800px] h-[800px] bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{
-              rotate: -360,
-              scale: [1.2, 1, 1.2],
-            }}
-            transition={{
-              duration: 25,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute -top-1/4 -right-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-3xl"
-          />
-        </div>
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            className="text-white"
+          >
+            <div className="text-4xl font-bold">
+              <h1>Build & Share Your <span className="text-blue-300">Product Catalog</span> with Ease</h1>
+            </div>
+            <p className="mt-6 max-w-2xl mx-auto text-lg text-gray-300">
+              Create captivating product catalogs, instantly share them with customers, and expand your reach with Product Share.
+            </p>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
-          <div className="flex flex-col lg:flex-row items-center gap-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="flex-1 text-center lg:text-left"
-            >
-              {/* Trust badge */}
-              <motion.div
-                className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-medium mb-8"
+            <div className="mt-10 flex justify-center gap-4">
+              <motion.a
+                href="/register"
+                className="px-6 py-3 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition-all"
+                whileHover={{ scale: 1.05 }}
               >
-                <Sparkles className="w-5 h-5" />
-                <span>Trusted by 1000+ Global Sellers</span>
-              </motion.div>
-
-              {/* Main heading with gradient text */}
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
-                Transform Your
-                <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-                  Digital Store
-                </span>
-              </h1>
-
-              <p className="text-xl text-gray-300 max-w-2xl">
-                Create stunning product catalogs, share instantly, and grow your business with our powerful platform.
-              </p>
-
-              {/* Feature badges */}
-              <div className="mt-10 grid grid-cols-2 gap-4">
-                {[
-                  { label: "AI-Driven Insights", icon: AiOutlineBulb },
-                  { label: "Catalog Optimization", icon: FaRegChartBar },
-                  { label: "Global Connectivity", icon: FaGlobe },
-                  { label: "Dedicated Support", icon: FaHandsHelping },
-                ].map(({ label, icon: Icon }) => (
-                  <motion.div
-                    key={label}
-                    className="flex items-center gap-3 bg-white/10 rounded-lg p-4 backdrop-blur-sm shadow-md"
-                  >
-                    <div className="w-8 h-8 bg-blue-500/30 rounded-full flex items-center justify-center">
-                      <Icon className="w-5 h-5 text-blue-400" />
-                    </div>
-                    <span className="text-white font-medium">{label}</span>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* CTA buttons */}
-              <div className="mt-12 flex flex-col sm:flex-row gap-6">
-                <motion.a
-                  href="/register"
-                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-xl transition-all duration-200"
-                >
-                  Start Free Trial
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </motion.a>
-                <motion.a
-                  href="/demo"
-                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white border-2 border-white/20 rounded-xl hover:bg-white/10 transition-all duration-200 backdrop-blur-sm"
-                >
-                  Watch Demo
-                </motion.a>
-              </div>
-            </motion.div>
-
-            {/* Hero animation */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="flex-1 relative"
-            >
-              <div className="relative w-full aspect-square max-w-lg mx-auto">
-                <div className="absolute right-10 inset-0 bg-gradient-to-tr from-purple-400 to-blue-600 opacity-60 blur-2xl rounded-full" />
-                <Lottie animationData={heroAnimation} className="w-full h-full relative" loop />
-              </div>
-            </motion.div>
+                Start Free Trial
+              </motion.a>
+              <motion.a
+                href="/demo"
+                className="px-6 py-3 border border-gray-300 text-white rounded-md hover:bg-white/10 transition-all"
+                whileHover={{ scale: 1.05 }}
+              >
+                Watch Demo
+              </motion.a>
+            </div>
+          </motion.div>
+          <div className="relative mt-12">
+            <Lottie animationData={heroAnimation} className="w-full max-w-md mx-auto" loop />
           </div>
         </div>
       </section>
 
-      {/* Feature Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">Why Choose Us</h2>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-              Discover the reasons why our clients love us and why you will too.
-            </p>
-          </div>
-
-          <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Features Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">Why Choose Product Share?</h2>
+          <p className="text-lg text-gray-500 mb-12">Empowering sellers with tools to showcase, share, and succeed.</p>
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, index) => (
               <FeatureCard key={index} {...feature} />
             ))}
@@ -220,32 +139,29 @@ const HomePage = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 bg-gradient-to-t from-blue-900 to-blue-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white sm:text-4xl">What Our Clients Say</h2>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-blue-100">
-            See how we've helped businesses grow and succeed with our innovative platform.
-          </p>
-
-          <div className="mt-16 grid gap-8 lg:grid-cols-3 sm:grid-cols-2">
+      <section className="py-20 bg-gray-100">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">What Our Clients Say</h2>
+          <p className="text-lg text-gray-500 mb-12">Trusted by sellers worldwide to power their growth.</p>
+          <div className="grid gap-8 lg:grid-cols-3 sm:grid-cols-2">
             {[
               {
-                content: "This platform revolutionized our business approach!",
-                author: "Jane Doe",
-                authorRole: "CEO of BestCo",
-                authorImage: "/praveen.jpeg",
+                content: "Product Share is a game-changer! My customers love the easy access to my products.",
+                author: "Alice Monroe",
+                authorRole: "Owner of Trendy Boutique",
+                authorImage: "/alice.jpg",
               },
               {
-                content: "Exceptional customer service and functionality.",
-                author: "John Smith",
-                authorRole: "Manager at WestWare",
-                authorImage: "/arjun.jpg",
+                content: "The catalog builder is so simple and fast. It saves me hours every week!",
+                author: "David Lee",
+                authorRole: "Founder of SmartMart",
+                authorImage: "/david.jpg",
               },
               {
-                content: "An essential tool for growth and insights.",
-                author: "Emily Lee",
-                authorRole: "Director at GlobalLink",
-                authorImage: "/arjun.jpg",
+                content: "I've seen my sales grow by 50% since using this platform. A must-have for sellers!",
+                author: "Sarah Kim",
+                authorRole: "CEO of Luxe Shop",
+                authorImage: "/sarah.jpg",
               },
             ].map((testimonial, index) => (
               <TestimonialCard key={index} {...testimonial} />
