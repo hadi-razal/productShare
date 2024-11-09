@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { FiFacebook, FiTwitter, FiLinkedin, FiShoppingCart, FiShare2, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiFacebook, FiTwitter, FiShoppingCart, FiShare2, FiX} from 'react-icons/fi';
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { getUserId } from '@/helpers/getUserId';
 import { db } from '@/lib/firebase';
 import { ProductType } from '@/type';
 import Head from 'next/head';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Info } from 'lucide-react';
 
 interface ProductPageProps {
   productId: string;
@@ -226,7 +226,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
               className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-2 rounded-lg font-medium"
               onClick={handleShare}
             >
-              <FiShare2 className="text-black" />
+              <Info className="text-black" />
               Know More
             </button>
             <button
