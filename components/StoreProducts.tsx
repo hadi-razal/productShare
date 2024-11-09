@@ -180,7 +180,7 @@ const StoreProducts = ({ storeId }: any) => {
 
           <button
             onClick={handleSearchClick}
-            className="p-2 text-white bg-blue-950 rounded-md hover:bg-blue-900 
+            className="p-2 text-white bg-gradient-to-r from-violet-600 to-purple-600 rounded-md
                        transition-colors duration-200 px-4 py-3 flex items-center justify-center"
             aria-label="Search"
           >
@@ -196,7 +196,7 @@ const StoreProducts = ({ storeId }: any) => {
           className="px-4 py-2 focus:outline-none rounded-md border border-gray-200"
           value={sortOption} // This sets the current value based on state
         >
-          <option value="" disabled>Select sort option</option> // Placeholder for default selection
+          <option value="" disabled>sort by</option>
           <option value="newest">Newly Added</option>
           <option value="price-low-high">Price: Low to High</option>
           <option value="price-high-low">Price: High to Low</option>

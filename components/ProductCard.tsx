@@ -186,7 +186,7 @@ const ProductCard = ({ product, storeId, refetchProducts }: ProductCardProps) =>
                 e.stopPropagation();
                 router.push(`/store/${storeId}/edit/${product.id}`);
               }}
-              className="flex items-center justify-center bg-blue-950 w-full py-2 px-3 rounded-md text-white gap-1"
+              className="flex items-center justify-center bg-gray-500 w-full py-2 px-3 rounded-md text-white gap-1"
             >
               <PencilIcon className="w-4 h-4" />
               <span>Edit</span>
