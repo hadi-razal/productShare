@@ -180,7 +180,7 @@ const StoreProducts = ({ storeId }: any) => {
 
           <button
             onClick={handleSearchClick}
-            className="p-2 text-white bg-gradient-to-r from-violet-600 to-purple-600 rounded-md
+            className="p-2 text-white bg-blue-950 rounded-md
                        transition-colors duration-200 px-4 py-3 flex items-center justify-center"
             aria-label="Search"
           >
