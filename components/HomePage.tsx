@@ -34,25 +34,31 @@ const FeatureCard = ({ icon, title, description, gradient }: FeatureCardProps) =
 
 const TestimonialCard = ({ content, author, authorRole, authorImage }: TestimonialCardProps) => (
   <motion.div
-    className="bg-white p-6 rounded-xl shadow-md"
+    className="bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center justify-between"
   >
-    <p className="text-lg text-gray-700 mb-4">"{content}"</p>
-    <div className="flex items-center">
-      <Image
-        unoptimized={true}
-        width={48}
-        height={48}
-        className="rounded-full object-cover mr-3"
-        src={authorImage}
-        alt={author}
-      />
+    <div className='flex flex-1 '>
+
+    <p className="text-lg text-gray-700 italic mb-6 flex-1">"{content}"</p>
+    </div>
+    <div className="flex items-center justify-center">
+      <div className="w-16 h-16">
+        <Image
+          unoptimized={true}
+          width={0}
+          height={0}
+          className="rounded-full w-14 h-14 object-cover"
+          src={authorImage}
+          alt={author}
+        />
+      </div>
       <div>
-        <p className="font-bold text-gray-800">{author}</p>
-        <p className="text-sm text-gray-500">{authorRole}</p>
+        <p className="font-semibold text-gray-900 text-xl">{author}</p>
+        <p className="text-sm text-gray-500 mt-1">{authorRole}</p>
       </div>
     </div>
   </motion.div>
 );
+
 
 const features = [
   {
@@ -143,19 +149,19 @@ const HomePage = () => {
             {[
               {
                 content: "Product Share is a game-changer! My customers love the easy access to my products.",
-                author: "Praveen Prasad",
+                author: "Alice Monroe",
                 authorRole: "Owner of Trendy Boutique",
                 authorImage: "/praveen.jpeg",
               },
               {
                 content: "The catalog builder is so simple and fast. It saves me hours every week!",
-                author: "Arjun K",
+                author: "David Lee",
                 authorRole: "Founder of SmartMart",
                 authorImage: "/arjun.jpg",
               },
               {
                 content: "I've seen my sales grow by 50% since using this platform. A must-have for sellers!",
-                author: "S Kim",
+                author: "Sarah Kim",
                 authorRole: "CEO of Luxe Shop",
                 authorImage: "/praveen.jpeg",
               },
@@ -165,97 +171,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
-
-
-      <section className="py-20 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Choose Your Plan</h2>
-            <p className="text-lg text-slate-600">
-              Select the perfect plan to grow your business
-            </p>
-          </div>
-
-          <div className="flex flex-col md:flex-row gap-8 justify-center items-stretch max-w-5xl mx-auto">
-            {/* Premium Plan */}
-            <div className="flex-1 bg-white p-8 rounded-2xl shadow-lg border border-slate-200 hover:border-indigo-200 transition-all duration-300 hover:shadow-xl">
-              <h3 className="text-2xl font-bold text-slate-900 mb-4">Premium Plan</h3>
-              <div className="mb-8">
-                <div className="mb-2">
-                  <span className="text-3xl font-bold text-slate-900">&#8377;99</span>
-                  <span className="text-slate-600">/month</span>
-                </div>
-                <p className="text-indigo-600 font-medium mb-2">&#8377;1069/year (10% off)</p>
-                <p className="text-sm text-slate-500">14-day free trial included</p>
-              </div>
-
-              <ul className="space-y-4 mb-8">
-                {[
-                  "Unlimited product listings",
-                  "Advanced analytics and reporting",
-                  "Add videos to product listings",
-                  "Custom branding options",
-                  "Priority customer support",
-                  "Dedicated account manager"
-                ].map((feature) => (
-                  <li key={feature} className="flex items-center text-slate-700">
-                    <svg className="w-5 h-5 text-indigo-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="flex flex-col gap-3">
-                <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition-colors">
-                  Choose Monthly
-                </button>
-                <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition-colors">
-                  Choose Yearly
-                </button>
-              </div>
-            </div>
-
-            {/* Custom Features Card */}
-            <div className="flex-1 bg-white p-8 rounded-2xl shadow-lg border border-slate-200 hover:border-indigo-200 transition-all duration-300 hover:shadow-xl">
-              <h3 className="text-2xl font-bold text-slate-900 mb-4">Custom Features</h3>
-              <div className="mb-8">
-                <div className="mb-2">
-                  <span className="text-3xl font-bold text-slate-900">Custom</span>
-                </div>
-                <p className="text-indigo-600 font-medium mb-2">Tailored to your needs</p>
-                <p className="text-sm text-slate-500">Get in touch for custom pricing</p>
-              </div>
-
-              <ul className="space-y-4 mb-8">
-                {[
-                  "All Premium features included",
-                  "Custom feature development",
-                  "Dedicated support team",
-                  "Custom integration options",
-                  "Enterprise-grade security",
-                  "Service level agreement"
-                ].map((feature) => (
-                  <li key={feature} className="flex items-center text-slate-700">
-                    <svg className="w-5 h-5 text-indigo-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
-              <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition-colors">
-                Contact Sales
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
     </div>
   );
 };

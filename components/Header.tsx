@@ -149,7 +149,6 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-6">
             {!isUser ? (
               <>
-                <NavLink href="/pricing">Buy Premium</NavLink>
                 <NavLink href="/about-us">About</NavLink>
                 <NavLink href="/contact">Contact</NavLink>
                 <motion.div
@@ -199,9 +198,7 @@ const Header = () => {
           <div className="p-4 space-y-4">
             {!isUser && (
               <div className="flex flex-col space-y-4">
-                <NavLink href="/pricing" onClick={() => setIsOpen(false)}>
-                  Pricing
-                </NavLink>
+                
                 <NavLink href="/about-us" onClick={() => setIsOpen(false)}>
                   About
                 </NavLink>
