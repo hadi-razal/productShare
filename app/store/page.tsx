@@ -29,7 +29,6 @@ const StatCard = ({ title, value, trend, icon: Icon }: any) => (
 
 // Enhanced Action Card Component with hover effects
 const ActionCard = ({ title, href = "#", icon: Icon, description, gradient }: any) => (
-  <div>
     <Link
       href={href}
       className={`block rounded-2xl overflow-hidden shadow-xl ${gradient}`}
@@ -53,7 +52,6 @@ const ActionCard = ({ title, href = "#", icon: Icon, description, gradient }: an
         </div>
       </div>
     </Link>
-  </div>
 );
 
 // Define available routes and feature status

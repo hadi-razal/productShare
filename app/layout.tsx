@@ -24,11 +24,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ProductShare by Hadi Razal - Showcase Your Products",
     description: "Founded by Hadi Razal, ProductShare is designed for small businesses to easily share product catalogs.",
-    url: "https://yourwebsite.com",  // Replace with your actual URL
+    url: "https://productshare.vercel.app", 
     type: "website",
     images: [
       {
-        url: "https://yourwebsite.com/image.jpg",  // Replace with an actual image URL
+        url: "https://productshare.vercel.app/logo.png",
         width: 800,
         height: 600,
         alt: "ProductShare - Showcase Your Products",
@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     creator: "@Hadi_Razal",
   },
   robots: "index, follow",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -54,6 +57,12 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+        {/* Add favicon or app icon */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" href="/favicon-16x16.png" sizes="16x16" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -61,8 +70,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "ProductShare",
-              url: "https://yourwebsite.com",  // Replace with your actual URL
-              logo: "https://yourwebsite.com/logo.jpg",  // Replace with your actual logo URL
+              url: "https://productshare.vercel.app",  // Updated to your actual URL
+              logo: "https://productshare.vercel.app/logo.png",  // Replace with your actual logo URL
               description:
                 "ProductShare helps small businesses easily create and share product catalogs. Founded by Hadi Razal, the app brings simple catalog management to small businesses.",
               founder: {
@@ -104,4 +113,3 @@ export default function RootLayout({
     </html>
   );
 }
-
