@@ -6,7 +6,7 @@ import Lottie from 'lottie-react';
 import { Star, ShoppingCart } from 'lucide-react';
 import heroAnimation from "@/public/hero.json";
 import Image from 'next/image';
-import {  FaUserFriends, FaChartLine } from 'react-icons/fa';
+import { FaUserFriends, FaChartLine } from 'react-icons/fa';
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -25,7 +25,6 @@ interface TestimonialCardProps {
 const FeatureCard = ({ icon, title, description, gradient }: FeatureCardProps) => (
   <motion.div
     className={`flex flex-col items-center p-6 rounded-2xl shadow-lg ${gradient} border border-white/10`}
-    whileHover={{ scale: 1.05 }}
   >
     <div className="p-3 bg-white/80 rounded-xl shadow-inner">{icon}</div>
     <h3 className="mt-4 text-xl font-semibold text-gray-800">{title}</h3>
@@ -36,7 +35,6 @@ const FeatureCard = ({ icon, title, description, gradient }: FeatureCardProps) =
 const TestimonialCard = ({ content, author, authorRole, authorImage }: TestimonialCardProps) => (
   <motion.div
     className="bg-white p-6 rounded-xl shadow-md"
-    whileHover={{ scale: 1.05 }}
   >
     <p className="text-lg text-gray-700 mb-4">"{content}"</p>
     <div className="flex items-center">
@@ -106,14 +104,12 @@ const HomePage = () => {
               <motion.a
                 href="/register"
                 className="px-6 py-3 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition-all"
-                whileHover={{ scale: 1.05 }}
               >
                 Start Free Trial
               </motion.a>
               <motion.a
                 href="/demo"
                 className="px-6 py-3 border border-gray-300 text-white rounded-md hover:bg-white/10 transition-all"
-                whileHover={{ scale: 1.05 }}
               >
                 Watch Demo
               </motion.a>
@@ -147,21 +143,21 @@ const HomePage = () => {
             {[
               {
                 content: "Product Share is a game-changer! My customers love the easy access to my products.",
-                author: "Alice Monroe",
+                author: "Praveen Prasad",
                 authorRole: "Owner of Trendy Boutique",
-                authorImage: "/alice.jpg",
+                authorImage: "/praveen.jpeg",
               },
               {
                 content: "The catalog builder is so simple and fast. It saves me hours every week!",
-                author: "David Lee",
+                author: "Arjun K",
                 authorRole: "Founder of SmartMart",
-                authorImage: "/david.jpg",
+                authorImage: "/arjun.jpg",
               },
               {
                 content: "I've seen my sales grow by 50% since using this platform. A must-have for sellers!",
-                author: "Sarah Kim",
+                author: "S Kim",
                 authorRole: "CEO of Luxe Shop",
-                authorImage: "/sarah.jpg",
+                authorImage: "/praveen.jpeg",
               },
             ].map((testimonial, index) => (
               <TestimonialCard key={index} {...testimonial} />
@@ -169,6 +165,97 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+
+
+      <section className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">Choose Your Plan</h2>
+            <p className="text-lg text-slate-600">
+              Select the perfect plan to grow your business
+            </p>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-8 justify-center items-stretch max-w-5xl mx-auto">
+            {/* Premium Plan */}
+            <div className="flex-1 bg-white p-8 rounded-2xl shadow-lg border border-slate-200 hover:border-indigo-200 transition-all duration-300 hover:shadow-xl">
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">Premium Plan</h3>
+              <div className="mb-8">
+                <div className="mb-2">
+                  <span className="text-3xl font-bold text-slate-900">&#8377;99</span>
+                  <span className="text-slate-600">/month</span>
+                </div>
+                <p className="text-indigo-600 font-medium mb-2">&#8377;1069/year (10% off)</p>
+                <p className="text-sm text-slate-500">14-day free trial included</p>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {[
+                  "Unlimited product listings",
+                  "Advanced analytics and reporting",
+                  "Add videos to product listings",
+                  "Custom branding options",
+                  "Priority customer support",
+                  "Dedicated account manager"
+                ].map((feature) => (
+                  <li key={feature} className="flex items-center text-slate-700">
+                    <svg className="w-5 h-5 text-indigo-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="flex flex-col gap-3">
+                <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition-colors">
+                  Choose Monthly
+                </button>
+                <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition-colors">
+                  Choose Yearly
+                </button>
+              </div>
+            </div>
+
+            {/* Custom Features Card */}
+            <div className="flex-1 bg-white p-8 rounded-2xl shadow-lg border border-slate-200 hover:border-indigo-200 transition-all duration-300 hover:shadow-xl">
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">Custom Features</h3>
+              <div className="mb-8">
+                <div className="mb-2">
+                  <span className="text-3xl font-bold text-slate-900">Custom</span>
+                </div>
+                <p className="text-indigo-600 font-medium mb-2">Tailored to your needs</p>
+                <p className="text-sm text-slate-500">Get in touch for custom pricing</p>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {[
+                  "All Premium features included",
+                  "Custom feature development",
+                  "Dedicated support team",
+                  "Custom integration options",
+                  "Enterprise-grade security",
+                  "Service level agreement"
+                ].map((feature) => (
+                  <li key={feature} className="flex items-center text-slate-700">
+                    <svg className="w-5 h-5 text-indigo-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+
+              <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition-colors">
+                Contact Sales
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
     </div>
   );
 };
