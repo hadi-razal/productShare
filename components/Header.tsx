@@ -128,7 +128,7 @@ const Header = () => {
             onClick={handleLogoClick}
             className="flex items-center cursor-pointer space-x-3"
           >
-            <div className="p-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl backdrop-blur-sm">
+            <div className="p-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-md backdrop-blur-sm">
               <Share2 className="h-7 w-7 text-white" />
             </div>
             <div className="text-2xl font-bold tracking-tight text-white">
@@ -158,7 +158,7 @@ const Header = () => {
                 >
                   <Link
                     href="/login"
-                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-200 font-medium"
+                    className="px-6 py-2.5 rounded-md bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-200 font-medium"
                   >
                     Login
                   </Link>
@@ -169,7 +169,7 @@ const Header = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleLogout}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 text-white hover:shadow-lg hover:shadow-red-500/25 transition-all duration-200 font-medium"
+                className="px-6 py-2.5 rounded-md bg-gradient-to-r from-red-500 to-pink-600 text-white hover:shadow-lg hover:shadow-red-500/25 transition-all duration-200 font-medium"
               >
                 Logout
               </motion.button>
@@ -214,14 +214,14 @@ const Header = () => {
               <Link
                 href="/login"
                 onClick={() => setIsOpen(false)}
-                className="block w-full text-center px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-200 font-medium"
+                className="block w-full text-center px-6 py-3 rounded-md bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-200 font-medium"
               >
                 Login
               </Link>
             ) : (
               <button
                 onClick={handleLogout}
-                className="block w-full text-center px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 text-white hover:shadow-lg hover:shadow-red-500/25 transition-all duration-200 font-medium"
+                className="block w-full text-center px-6 py-3 rounded-md bg-gradient-to-r from-red-500 to-pink-600 text-white hover:shadow-lg hover:shadow-red-500/25 transition-all duration-200 font-medium"
               >
                 Logout
               </button>
