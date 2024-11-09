@@ -156,6 +156,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
+
         {/* Product Images */}
         <div className="space-y-4 ounded-md relative">
           <div className="relative rounded-md overflow-hidden w-full h-96">

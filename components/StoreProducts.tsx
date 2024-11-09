@@ -7,6 +7,7 @@ import { getUserId } from "@/helpers/getUserId";
 import { db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
+import AlertMessageSlider from "./AlertSlider";
 
 const StoreProducts = ({ storeId }: any) => {
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -151,73 +152,83 @@ const StoreProducts = ({ storeId }: any) => {
   }, [sortOption]);
 
   return (
-    <div className="container min-h-screen max-w-7xl mx-auto px-3 pb-8 pt-[100px]">
-      <div className="relative flex items-center w-full pb-3">
-        <input
-          type="text"
-          value={searchInput}
-          onChange={handleSearchInputChange}
-          onKeyDown={handleKeyPress}
-          placeholder="Search products or categories..."
-          className="w-full px-4 py-3 pr-12 text-sm border rounded-lg border-gray-200 
+    <div className="container min-h-screen max-w-7xl mx-auto pb-8 pt-[100px]">
+
+      <AlertMessageSlider />
+
+      <div className="px-4">
+
+
+        <div className="relative flex items-center w-full pb-3">
+          <input
+            type="text"
+            value={searchInput}
+            onChange={handleSearchInputChange}
+            onKeyDown={handleKeyPress}
+            placeholder="Search products or categories..."
+            className="w-full px-4 py-3 pr-12 text-sm border rounded-lg border-gray-200 
                      focus:outline-none
                      placeholder:text-gray-400"
-          aria-label="Search input"
-        />
+            aria-label="Search input"
+          />
 
-        <div className="absolute right-0 flex items-center justify-center h-full space-x-1">
-          {searchInput && (
+          <div className="absolute right-0 flex items-center justify-center h-full space-x-1">
+            {searchInput && (
+              <button
+                onClick={clearSearchInput}
+                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Clear search"
+              >
+                <X size={18} />
+              </button>
+            )}
+
             <button
-              onClick={clearSearchInput}
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Clear search"
-            >
-              <X size={18} />
-            </button>
-          )}
-
-          <button
-            onClick={handleSearchClick}
-            className="p-2 text-white bg-blue-950 rounded-md hover:bg-blue-900 
+              onClick={handleSearchClick}
+              className="p-2 text-white bg-blue-950 rounded-md hover:bg-blue-900 
                        transition-colors duration-200 px-4 py-3 flex items-center justify-center"
-            aria-label="Search"
+              aria-label="Search"
+            >
+              <Search size={18} />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-1 pb-2">
+          <select
+            name="sort"
+            onChange={handleSortChange}
+            className="px-4 py-2 focus:outline-none rounded-md border border-gray-200"
+            value={sortOption} // This sets the current value based on state
           >
-            <Search size={18} />
-          </button>
+            <option value="" disabled>Select sort option</option> // Placeholder for default selection
+            <option value="newest">Newly Added</option>
+            <option value="price-low-high">Price: Low to High</option>
+            <option value="price-high-low">Price: High to Low</option>
+          </select>
         </div>
-      </div>
-
-      <div className="flex items-center justify-end gap-1 pb-2">
-        <select
-          name="sort"
-          onChange={handleSortChange}
-          className="px-4 py-2 focus:outline-none rounded-md border border-gray-200"
-          value={sortOption} // This sets the current value based on state
-        >
-          <option value="" disabled>Select sort option</option> // Placeholder for default selection
-          <option value="newest">Newly Added</option>
-          <option value="price-low-high">Price: Low to High</option>
-          <option value="price-high-low">Price: High to Low</option>
-        </select>
-      </div>
 
 
-      {isLoading ? (
-        <div className="flex justify-center items-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-              <ProductCard key={product.id} refetchProducts={fetchProducts} storeId={storeId as string} product={product} />
-            ))
+        {
+          isLoading ? (
+            <div className="flex justify-center items-center h-96">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+            </div>
           ) : (
-            <div className="col-span-full text-center">No products found.</div>
-          )}
-        </div>
-      )}
-    </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
+                  <ProductCard key={product.id} refetchProducts={fetchProducts} storeId={storeId as string} product={product} />
+                ))
+              ) : (
+                <div className="col-span-full text-center">No products found.</div>
+              )}
+            </div>
+          )
+        }
+      </div>
+
+    </div >
   );
 };
 
