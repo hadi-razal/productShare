@@ -13,7 +13,7 @@ const TermsAndConditions = () => {
       <section>
         <h2 className="text-2xl font-semibold text-gray-700 mt-6">2. Intellectual Property</h2>
         <p className="text-gray-600 mt-2">
-          All content, trademarks, and data on this website, including but not limited to text, graphics, logos, and software, are the property of [Your Company Name] or its content suppliers. You may not use, copy, distribute, or reproduce any content without prior written permission.
+          All content, trademarks, and data on this website, including but not limited to text, graphics, logos, and software, are the property of Product Share or its content suppliers. You may not use, copy, distribute, or reproduce any content without prior written permission.
         </p>
       </section>
 
@@ -34,7 +34,7 @@ const TermsAndConditions = () => {
       <section>
         <h2 className="text-2xl font-semibold text-gray-700 mt-6">5. Governing Law</h2>
         <p className="text-gray-600 mt-2">
-          These terms and conditions are governed by and construed in accordance with the laws of [Your Country]. Any disputes arising from or related to these terms will be subject to the exclusive jurisdiction of the courts of [Your Country].
+          These terms and conditions are governed by and construed in accordance with the laws of India. Any disputes arising from or related to these terms will be subject to the exclusive jurisdiction of the courts of India.
         </p>
       </section>
 

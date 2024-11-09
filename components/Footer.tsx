@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, ExternalLink } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   const path = usePathname();
 
   // Show the footer only if the path is one of these specific routes
-  if (path !== "/" && path !== "/contact" && path !== "/about-us" && path !== "/terms-and-conditions") {
+  if (path !== "/" && path !== "/contact" && path !== "/about-us" && path !== "/terms-and-conditions" && path !== "/privacy-policy") {
     return null;
   }
 
@@ -34,19 +34,19 @@ const Footer = () => {
               <li>
                 <a href="mailto:support@productshare.com" className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-2 text-sm">
                   <Mail className="w-4 h-4" />
-                  support@productshare.com
+                  hadhirasal22@gmail.com
                 </a>
               </li>
               <li>
                 <a href="tel:+1234567890" className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-2 text-sm">
                   <Phone className="w-4 h-4" />
-                  +1 (234) 567-890
+                  +91 9074063723
                 </a>
               </li>
               <li>
                 <span className="text-gray-400 flex items-center gap-2 text-sm">
                   <MapPin className="w-4 h-4" />
-                  123 Business Avenue, Suite 100
+                  Calicut,India
                 </span>
               </li>
             </ul>
