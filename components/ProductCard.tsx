@@ -94,7 +94,7 @@ const ProductCard = ({ product, storeId, refetchProducts }: ProductCardProps) =>
 
   console.log(product)
 
-  if(product.isHidden && !isStoreOwner){
+  if (product.isHidden && !isStoreOwner) {
     return
   }
 
@@ -139,6 +139,16 @@ const ProductCard = ({ product, storeId, refetchProducts }: ProductCardProps) =>
             </span>
           )}
         </div>
+
+        <div className="absolute bottom-0 right-0 flex gap-2">
+          {product.isMostSelling && (
+            <span className="px-3 py-1 text-xs flex items-center font-semibold rounded-md bg-red-700 text-white">
+              🌟 Most Selling
+            </span>
+          )}
+        </div>
+
+
       </div>
 
       <div className="p-2">
@@ -157,25 +167,29 @@ const ProductCard = ({ product, storeId, refetchProducts }: ProductCardProps) =>
         </div>
       </div>
 
-      <div className="absolute bottom-2 right-2 flex gap-2">
-        {product.isMostSelling && (
-          <span className="px-2 py-1 w-10 text-[8px] flex items-center justify-center text-center h-10 font-bold rounded-full bg-gray-700 text-white">
-            Most Selling
-          </span>
-        )}
-      </div>
+
 
       {isStoreOwner && (
-        <div className="flex h-16 items-center justify-center">
-          <div className="flex gap-3 bottom-0 py-4 absolute items-center justify-center">
-            <button onClick={(e) => handleDelete(e)} className="bg-red-600 py-2 px-2 rounded-md text-white">
-              <Trash />
+        <div className="flex h-12 items-center justify-center w-full px-3">
+          <div className="flex gap-3 bottom-0 py-4 absolute items-center justify-center w-full px-3">
+            <button
+              onClick={(e) => {
+                handleDelete(e);
+              }}
+              className="flex items-center justify-center bg-red-600  py-2 px-3 w-full rounded-md text-white gap-1"
+            >
+              <Trash className="w-4 h-4" />
+              <span>Delete</span>
             </button>
-            <button onClick={(e) => {
-              e.stopPropagation();
-              router.push(`/store/${storeId}/edit/${product.id}`);
-            }} className="bg-blue-950 py-2 px-2 rounded-md text-white">
-              <PencilIcon />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(`/store/${storeId}/edit/${product.id}`);
+              }}
+              className="flex items-center justify-center bg-blue-950 w-full py-2 px-3 rounded-md text-white gap-1"
+            >
+              <PencilIcon className="w-4 h-4" />
+              <span>Edit</span>
             </button>
           </div>
         </div>

@@ -9,6 +9,7 @@ import { auth, db } from "@/lib/firebase";
 import Link from "next/link";
 import { doc, getDoc } from "firebase/firestore";
 import { getUserId } from "@/helpers/getUserId";
+import AlertMessageSlider from "./AlertSlider";
 
 interface NavLinkProps {
   href: string;
@@ -198,7 +199,7 @@ const Header = () => {
           <div className="p-4 space-y-4">
             {!isUser && (
               <div className="flex flex-col space-y-4">
-                
+
                 <NavLink href="/about-us" onClick={() => setIsOpen(false)}>
                   About
                 </NavLink>
@@ -226,6 +227,7 @@ const Header = () => {
           </div>
         </motion.div>
       </nav>
+      {path === "/store/123" && <AlertMessageSlider />}
     </motion.header>
   );
 };

@@ -32,17 +32,14 @@ const AlertMessageSlider = () => {
     ];
 
     return (
-        <div className="relative top-[-20px] w-full group">
-            {/* Gradient overlay effects */}
-            <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-red-600 to-transparent z-10" />
-            <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-red-600 to-transparent z-10" />
+        <div className="relative  w-full group">
+    
 
             {/* Main marquee content */}
             <div className="bg-red-600 w-full overflow-hidden">
                 <Marquee
                     loop={0}
-                    speed={40}
-                    pauseOnHover={true}
+                    speed={50}
                     gradient={false}
                     className="py-2"
                 >
