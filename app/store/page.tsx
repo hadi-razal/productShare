@@ -2,13 +2,15 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { arrayUnion, collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Package, Plus, Eye, Settings, BarChart2, Box, Star, TrendingUp, Users, ArrowRight } from 'lucide-react';
 import { getUsername } from '@/helpers/getUsername';
 import { SiMarketo } from 'react-icons/si';
+import { getUserId } from '@/helpers/getUserId';
+import PaymentButton from '@/components/PaymentButton';
 
 // Stat Card Component
 const StatCard = ({ title, value, trend, icon: Icon }: any) => (
@@ -88,19 +90,27 @@ const StoreDashboard = () => {
   });
   const [username, setUsername] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userId,setUserId]=useState<string>()
+
   const router = useRouter();
 
   useEffect(() => {
+
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+
       if (!user) {
         router.push('/login');
         return;
       }
 
+
+
       const fetchData = async () => {
         try {
           const fetchedUsername = await getUsername(user.uid);
           setUsername(fetchedUsername);
+          setUserId(user.uid);
 
           // Fetch various stats and data
           const productsSnapshot = await getDocs(collection(db, user.uid));
@@ -135,16 +145,25 @@ const StoreDashboard = () => {
       fetchData();
     });
 
+
     return () => unsubscribe();
   }, [router]);
+
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
-        <div className="mb-8 text-center md:text-left">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome back{username ? `, ${username}` : ''}!</h1>
-          <p className="mt-2 text-sm text-gray-600">Here's what's happening with your store today</p>
+        <div className="mb-8 flex gap-3 flex-col md:flex-row items-center justify-between text-center md:text-left">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Welcome back{username ? `, ${username}` : ''}!</h1>
+            <p className="mt-2 text-sm text-gray-600">Here's what's happening with your store today</p>
+          </div>
+
+          <div className='flex items-center justify-center'>
+            <PaymentButton userId={userId} />
+          </div>
+
         </div>
 
         {/* Stats Grid */}

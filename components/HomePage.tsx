@@ -1,12 +1,17 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Lottie from 'lottie-react';
-import { Star, ShoppingCart } from 'lucide-react';
+import { Star, ShoppingCart, Router } from 'lucide-react';
 import heroAnimation from "@/public/hero.json";
 import Image from 'next/image';
 import { FaUserFriends, FaChartLine } from 'react-icons/fa';
+import { userType } from '@/type';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth, db } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -38,7 +43,7 @@ const TestimonialCard = ({ content, author, authorRole, authorImage }: Testimoni
   >
     <div className='flex flex-1 '>
 
-    <p className="text-lg text-gray-700 italic mb-6 flex-1">"{content}"</p>
+      <p className="text-lg text-gray-700 italic mb-6 flex-1">"{content}"</p>
     </div>
     <div className="flex items-center justify-center">
       <div className="w-16 h-16">
@@ -87,7 +92,43 @@ const features = [
   }
 ];
 
+
+
+
+
 const HomePage = () => {
+
+  const [user, setUser] = useState<userType | null>(null);
+  const router = useRouter()
+
+  useEffect(() => {
+    const setCurrentUser = async () => {
+      onAuthStateChanged(auth, async (firebaseUser: User | null) => {
+        if (firebaseUser) {
+          const userDocRef = doc(db, "users", firebaseUser.uid);
+          const userSnapshot = await getDoc(userDocRef);
+
+          if (userSnapshot.exists()) {
+            setUser({ uid: firebaseUser.uid, ...userSnapshot.data() } as userType);
+          } else {
+            console.log("No such user document!");
+          }
+        } else {
+          setUser(null);
+        }
+      });
+    };
+
+    setCurrentUser();
+  }, []);
+
+
+  if (user) {
+    router.push("/login")
+  }
+
+
+
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
@@ -108,6 +149,7 @@ const HomePage = () => {
 
             <div className="mt-10 flex justify-center gap-4">
               <motion.a
+                // onClick={handleRazorpayPayment}
                 href="/register"
                 className="px-6 py-3 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition-all"
               >

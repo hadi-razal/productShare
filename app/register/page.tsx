@@ -25,6 +25,7 @@ const RegisterPage: React.FC = () => {
         });
         return () => unsubscribe();
       }, [router]);
+      
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,6 +40,7 @@ const RegisterPage: React.FC = () => {
                 name,
                 username,
                 email,
+                premiumUser : false
             });
 
             console.log('Account created successfully:', user);
@@ -46,6 +48,7 @@ const RegisterPage: React.FC = () => {
             console.error('Error creating account:', error);
         }
     };
+
 
     return (
         <div className="min-h-screen flex items-center justify-center">

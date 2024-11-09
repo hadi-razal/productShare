@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ProductShare by Hadi Razal - Showcase Your Products",
     description: "Founded by Hadi Razal, ProductShare is designed for small businesses to easily share product catalogs.",
-    url: "https://productshare.vercel.app", 
+    url: "https://productshare.vercel.app",
     type: "website",
     images: [
       {
@@ -102,6 +102,7 @@ export default function RootLayout({
             }),
           }}
         />
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Header />
