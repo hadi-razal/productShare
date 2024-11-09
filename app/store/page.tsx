@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Package, Plus, Eye, Settings, BarChart2, Box, Star, TrendingUp, Users, ArrowRight } from 'lucide-react';
 import { getUsername } from '@/helpers/getUsername';
+import { SiMarketo } from 'react-icons/si';
 
 // Stat Card Component
 const StatCard = ({ title, value, trend, icon: Icon }: any) => (
@@ -29,29 +30,29 @@ const StatCard = ({ title, value, trend, icon: Icon }: any) => (
 
 // Enhanced Action Card Component with hover effects
 const ActionCard = ({ title, href = "#", icon: Icon, description, gradient }: any) => (
-    <Link
-      href={href}
-      className={`block rounded-2xl overflow-hidden shadow-xl ${gradient}`}
-      onClick={(e) => {
-        if (href === "#") {
-          e.preventDefault();
-        }
-      }}
-    >
-      <div className="relative p-6">
-        <div className="absolute inset-0 bg-white/90 backdrop-blur-sm" />
-        <div className="relative flex items-center space-x-4">
-          <div className="p-3 bg-white/80 rounded-xl shadow-inner">
-            <Icon className="w-6 h-6 text-blue-600" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-            <p className="mt-1 text-sm text-gray-600">{description}</p>
-          </div>
-          <ArrowRight className="w-5 h-5 text-gray-400" />
+  <Link
+    href={href}
+    className={`block rounded-2xl overflow-hidden shadow-xl ${gradient}`}
+    onClick={(e) => {
+      if (href === "#") {
+        e.preventDefault();
+      }
+    }}
+  >
+    <div className="relative p-6">
+      <div className="absolute inset-0 bg-white/90 backdrop-blur-sm" />
+      <div className="relative flex items-center space-x-4">
+        <div className="p-3 bg-white/80 rounded-xl shadow-inner">
+          <Icon className="w-6 h-6 text-blue-600" />
         </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+          <p className="mt-1 text-sm text-gray-600">{description}</p>
+        </div>
+        <ArrowRight className="w-5 h-5 text-gray-400" />
       </div>
-    </Link>
+    </div>
+  </Link>
 );
 
 // Define available routes and feature status
@@ -153,6 +154,18 @@ const StoreDashboard = () => {
           <StatCard title="Customer Reviews" value={loading ? null : stats.reviews} trend={stats.reviews ? (stats.reviews > 200 ? 10 : 2) : null} icon={Star} />
         </div>
 
+
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Products</h2>
+        <div className="grid gap-4 sm:grid-cols-2 pb-10">
+          {[...Array(2)].map((_, index) => (
+            <div key={index} className="bg-white rounded-md shadow-md p-6">
+              <span className="text-gray-700">Most Viewed Product</span>
+            </div>
+          ))}
+        </div>
+
+
+
         {/* Action Cards Grid */}
         <h2 className="text-lg font-semibold text-gray-900 mb-4 ">Quick Actions</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -167,7 +180,7 @@ const StoreDashboard = () => {
           ))}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
