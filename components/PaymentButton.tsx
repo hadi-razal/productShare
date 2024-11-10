@@ -83,28 +83,36 @@ const Badge: React.FC<BadgeProps> = ({ children, variant = 'default' }) => {
     return <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${variants[variant]}`}>{children}</span>;
 };
 
-// Main Component
+
 interface PricingButtonProps {
     userId: string;
 }
 
 const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
+
     const [isOpen, setIsOpen] = useState(false);
     const [isYearly, setIsYearly] = useState(false);
 
     const plan = {
         name: 'Pro Plan',
-        monthlyPrice: 29900,
-        yearlyPrice: 299900,
+        monthlyPrice: 9900,
+        yearlyPrice: 99999,
         features: [
-            'Up to 1000 products',
+            'Up to 100 products',
             'Advanced analytics & reporting',
-            'Multiple storefronts',
-            'Unlimited tracking links',
+            'Videos can be added to the product display',
             'Priority support',
-            'Custom domain',
-            'Inventory management',
-        ],
+            'Unlimited product images per item',
+            'Shareable catalog link for easy distribution',
+            'User-friendly product search and filtering',
+            'Integration with social media sharing',
+            'Add-to-cart or wishlist options for users',
+            'Customer feedback and review section',
+            'SEO-friendly URLs for better online visibility',
+            'Password-protected catalog for privacy',
+            'Display sale and discount tags on products'
+        ]
+
     };
 
     const handlePayment = async () => {
