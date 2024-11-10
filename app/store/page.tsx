@@ -2,14 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { arrayUnion, collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
+import {  collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Package, Plus, Eye, Settings, BarChart2, Box, Star, TrendingUp, Users, ArrowRight } from 'lucide-react';
+import { Package, Plus, Eye, Settings, Star, Users, ArrowRight } from 'lucide-react';
 import { getUsername } from '@/helpers/getUsername';
-import { SiMarketo } from 'react-icons/si';
-import { getUserId } from '@/helpers/getUserId';
 import PaymentButton from '@/components/PaymentButton';
 
 // Stat Card Component
@@ -63,10 +61,6 @@ const actionCards = [
   { title: "View Catalog", href: `/store/username`, icon: Package, description: "Browse and manage your product listings" },
   { title: "Store Settings", href: "/settings", icon: Settings, description: "Adjust your store preferences and settings" },
   { title: "Customer Reviews", href: "/reviews", icon: Star, description: "View and manage customer feedback" },
-  { title: "Product Analytics", href: "/analytics", icon: BarChart2, description: "View product performance and trends" },
-  { title: "Share Catalog", href: "#", icon: Eye, description: "Share your product catalog with customers" },
-  { title: "Marketing Campaigns", href: "/marketing", icon: TrendingUp, description: "Create and monitor marketing campaigns" },
-  { title: "Store Themes", href: "/settings/themes", icon: Settings, description: "Customize your store's visual appearance" },
 ];
 
 // Main Dashboard Component
@@ -88,14 +82,16 @@ const StoreDashboard = () => {
     outOfStockProducts: null,
     visitorData: [],
   });
+
   const [username, setUsername] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userId,setUserId]=useState<string>()
 
   const router = useRouter();
 
-  useEffect(() => {
 
+
+  useEffect(() => {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
 
@@ -103,8 +99,6 @@ const StoreDashboard = () => {
         router.push('/login');
         return;
       }
-
-
 
       const fetchData = async () => {
         try {
