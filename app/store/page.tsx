@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import {  collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -85,7 +85,7 @@ const StoreDashboard = () => {
 
   const [username, setUsername] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [userId,setUserId]=useState<string>()
+  const [userId, setUserId] = useState<string>()
 
   const router = useRouter();
 
@@ -110,6 +110,7 @@ const StoreDashboard = () => {
           const productsSnapshot = await getDocs(collection(db, user.uid));
           const userDoc = await getDoc(doc(db, "users", user.uid));
           const userData = userDoc.exists() ? userDoc.data() : { visitCount: 0 };
+
 
           setStats({
             products: productsSnapshot.size,
@@ -154,9 +155,14 @@ const StoreDashboard = () => {
             <p className="mt-2 text-sm text-gray-600">Here's what's happening with your store today</p>
           </div>
 
-          <div className='flex items-center justify-center'>
-            <PaymentButton userId={userId} />
-          </div>
+
+          
+            <div className='flex items-center justify-center'>
+              <PaymentButton userId={userId} />
+            </div>
+          
+
+
 
         </div>
 

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Check, X, Zap } from 'lucide-react';
+import { arrayUnion, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { arrayUnion, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import toast from 'react-hot-toast';
 
 // Custom Dialog Component
 interface DialogProps {
@@ -83,7 +84,6 @@ const Badge: React.FC<BadgeProps> = ({ children, variant = 'default' }) => {
     return <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${variants[variant]}`}>{children}</span>;
 };
 
-
 interface PricingButtonProps {
     userId: string;
 }
@@ -92,6 +92,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [isYearly, setIsYearly] = useState(false);
+    const [isPremiumUser, setIsPremiumUser] = useState<boolean>(false);
 
     const plan = {
         name: 'Pro Plan',
@@ -112,20 +113,22 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
             'Password-protected catalog for privacy',
             'Display sale and discount tags on products'
         ]
-
     };
 
     const handlePayment = async () => {
+
         const amount = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
 
         const options = {
-            key: 'rzp_test_rCILEJykWqLnh9',
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
             amount,
             currency: 'INR',
-            name: 'CatalogPro Builder',
+            name: 'Product Share',
             description: `${plan.name} - ${isYearly ? 'Annual' : 'Monthly'} Subscription`,
             image: '/logo.png',
             handler: async (response: { razorpay_payment_id: string }) => {
+                toast.success("Account Upgraded to premium")
+                setIsPremiumUser(true)
                 const userDocRef = doc(db, 'users', userId);
                 try {
                     await updateDoc(userDocRef, {
@@ -148,6 +151,31 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
         const razorpay = new (window as any).Razorpay(options);
         razorpay.open();
     };
+
+
+    useEffect(() => {
+        if (!userId) {
+            console.warn("userId is undefined");
+            return;
+        }
+
+        const getUser = async () => {
+            try {
+                const userDoc = await getDoc(doc(db, "users", userId));
+                const userData = userDoc.exists() ? userDoc.data() : { isPremiumUser: false };
+                setIsPremiumUser(userData.isPremiumUser);
+            } catch (error) {
+                console.error("Error fetching user data: ", error);
+            }
+        };
+
+        getUser();
+    }, [userId]);
+
+
+    if (isPremiumUser) {
+        return;
+    }
 
     return (
         <div>
@@ -202,11 +230,10 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
                                 ))}
                             </ul>
 
-                            <div className="flex flex-col sm:flex-row gap-3 justify-end">
-                                <Button variant="outline" onClick={() => setIsOpen(false)}>
-                                    Cancel
+                            <div className="text-center">
+                                <Button onClick={handlePayment} className="w-full">
+                                    Subscribe {isYearly ? 'Yearly' : 'Monthly'} - ₹{((isYearly ? plan.yearlyPrice : plan.monthlyPrice) / 100).toFixed(2)}
                                 </Button>
-                                <Button onClick={handlePayment}>Proceed to Payment</Button>
                             </div>
                         </div>
                     </div>
