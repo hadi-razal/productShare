@@ -103,7 +103,7 @@ const HomePage = () => {
   useEffect(() => {
     const setCurrentUser = async () => {
       onAuthStateChanged(auth, async (userData: User | null) => {
-        if (userData.uid) {
+        if (userData?.uid) {
           router.push("/store")
         }
       });

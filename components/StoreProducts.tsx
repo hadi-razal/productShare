@@ -153,7 +153,7 @@ const StoreProducts = ({ storeId }: any) => {
   }, [sortOption]);
 
   return (
-    <div className="container relative min-h-screen max-w-7xl mx-auto pb-8 pt-[150px] px-4">
+    <div className="container relative min-h-screen max-w-7xl mx-auto pb-8 pt-[130px] px-4">
 
       <div className="relative flex items-center w-full pb-3">
         <input
