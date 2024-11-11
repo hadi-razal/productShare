@@ -7,7 +7,6 @@ import { getUserId } from "@/helpers/getUserId";
 import { db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
-import AlertMessageSlider from "./AlertSlider";
 
 const StoreProducts = ({ storeId }: any) => {
   const [products, setProducts] = useState<ProductType[]>([]);

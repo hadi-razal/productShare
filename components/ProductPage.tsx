@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, increment, updateDoc } from 'firebase/firestore';
 import { FiFacebook, FiTwitter, FiShoppingCart, FiShare2, FiX } from 'react-icons/fi';
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { getUserId } from '@/helpers/getUserId';
@@ -26,7 +26,25 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
 
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
+
+  const addProductCount = async () => {
+    const userID = await getUserId(storeId as string);
+
+    const isCounted = sessionStorage.getItem(`MyShop_Product_${productId}_View`);
+
+    if (userID && !isCounted) {
+      const ProductDocRef = doc(db, userID, productId);
+      await updateDoc(ProductDocRef, {
+        views: increment(1),
+      });
+      sessionStorage.setItem(`MyShop_Product_${productId}_View`, 'true');
+    }
+
+  }
+
+
   useEffect(() => {
+    addProductCount()
     const fetchUserId = async () => {
       if (storeId) {
         const id = await getUserId(storeId);

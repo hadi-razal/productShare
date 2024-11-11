@@ -98,34 +98,22 @@ const features = [
 
 const HomePage = () => {
 
-  const [user, setUser] = useState<userType | null>(null);
   const router = useRouter()
 
   useEffect(() => {
     const setCurrentUser = async () => {
-      onAuthStateChanged(auth, async (firebaseUser: User | null) => {
-        if (firebaseUser) {
-          const userDocRef = doc(db, "users", firebaseUser.uid);
-          const userSnapshot = await getDoc(userDocRef);
-
-          if (userSnapshot.exists()) {
-            setUser({ uid: firebaseUser.uid, ...userSnapshot.data() } as userType);
-          } else {
-            console.log("No such user document!");
-          }
-        } else {
-          setUser(null);
+      onAuthStateChanged(auth, async (userData: User | null) => {
+        if (userData.uid) {
+          router.push("/store")
         }
       });
     };
 
     setCurrentUser();
+
   }, []);
 
 
-  if (user) {
-    router.push("/login")
-  }
 
 
 

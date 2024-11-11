@@ -2,13 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, limit, orderBy, query } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Package, Plus, Eye, Settings, Star, Users, ArrowRight } from 'lucide-react';
+import { Package, Plus, Settings, Star, Users, ArrowRight } from 'lucide-react';
 import { getUsername } from '@/helpers/getUsername';
 import PaymentButton from '@/components/PaymentButton';
+import Image from 'next/image';
 
 // Stat Card Component
 const StatCard = ({ title, value, trend, icon: Icon }: any) => (
@@ -29,10 +30,10 @@ const StatCard = ({ title, value, trend, icon: Icon }: any) => (
 );
 
 // Enhanced Action Card Component with hover effects
-const ActionCard = ({ title, href = "#", icon: Icon, description, gradient }: any) => (
+const ActionCard = ({ title, href = "#", icon: Icon, description }: any) => (
   <Link
     href={href}
-    className={`block rounded-2xl overflow-hidden shadow-xl ${gradient}`}
+    className={`block rounded-2xl overflow-hidden shadow-xl `}
     onClick={(e) => {
       if (href === "#") {
         e.preventDefault();
@@ -57,10 +58,10 @@ const ActionCard = ({ title, href = "#", icon: Icon, description, gradient }: an
 
 // Define available routes and feature status
 const actionCards = [
-  { title: "Add New Product", href: "/add-product", icon: Plus, description: "List a new product in your showcase" },
+  { title: "Add New Product", href: "/store/add-product", icon: Plus, description: "List a new product in your showcase" },
   { title: "View Catalog", href: `/store/username`, icon: Package, description: "Browse and manage your product listings" },
-  { title: "Store Settings", href: "/settings", icon: Settings, description: "Adjust your store preferences and settings" },
-  { title: "Customer Reviews", href: "/reviews", icon: Star, description: "View and manage customer feedback" },
+  { title: "Store Settings", href: "/store/settings", icon: Settings, description: "Adjust your store preferences and settings" },
+  { title: "Customer Reviews", href: "/store/reviews", icon: Star, description: "View and manage customer feedback" },
 ];
 
 // Main Dashboard Component
@@ -82,19 +83,16 @@ const StoreDashboard = () => {
     outOfStockProducts: null,
     visitorData: [],
   });
-
-  const [username, setUsername] = useState(null);
+  const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState<string>()
+  const [userId, setUserId] = useState<string | null>(null);
+  const [leastViewedProduct, setLeastViewedProduct] = useState(null);
+  const [mostViewedProduct, setMostViewedProduct] = useState(null);
 
   const router = useRouter();
 
-
-
   useEffect(() => {
-
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-
       if (!user) {
         router.push('/login');
         return;
@@ -110,7 +108,6 @@ const StoreDashboard = () => {
           const productsSnapshot = await getDocs(collection(db, user.uid));
           const userDoc = await getDoc(doc(db, "users", user.uid));
           const userData = userDoc.exists() ? userDoc.data() : { visitCount: 0 };
-
 
           setStats({
             products: productsSnapshot.size,
@@ -130,9 +127,11 @@ const StoreDashboard = () => {
             visitorData: userData.visitorData || [],
           });
 
+          await fetchLeastAndMostViewedProducts(user.uid);
+
           setLoading(false);
         } catch (error) {
-          console.error("Error fetching dashboard data:", error);
+          console.log("Error fetching dashboard data:", error);
           setLoading(false);
         }
       };
@@ -140,13 +139,41 @@ const StoreDashboard = () => {
       fetchData();
     });
 
-
     return () => unsubscribe();
-  }, [router]);
+  }, []);
 
+  const fetchLeastAndMostViewedProducts = async (userId: string) => {
+    try {
+      if (!userId) {
+        console.log("User ID is not defined. Cannot fetch product view data.");
+        return;
+      }
+
+      const leastViewedQuery = query(
+        collection(db, userId),
+        orderBy("views"),
+        limit(1)
+      );
+      const mostViewedQuery = query(
+        collection(db, userId),
+        orderBy("views", "desc"),
+        limit(1)
+      );
+
+      const [leastViewedSnapshot, mostViewedSnapshot] = await Promise.all([
+        getDocs(leastViewedQuery),
+        getDocs(mostViewedQuery),
+      ]);
+
+      setLeastViewedProduct(leastViewedSnapshot.docs[0]?.data() ?? null);
+      setMostViewedProduct(mostViewedSnapshot.docs[0]?.data() ?? null);
+    } catch (error) {
+      console.log("Error fetching product view data:", error);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
+    <div className="min-h-screen bg-gray-50 pt-24 pb-20">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8 flex gap-3 flex-col md:flex-row items-center justify-between text-center md:text-left">
@@ -155,15 +182,9 @@ const StoreDashboard = () => {
             <p className="mt-2 text-sm text-gray-600">Here's what's happening with your store today</p>
           </div>
 
-
-          
-            <div className='flex items-center justify-center'>
-              <PaymentButton userId={userId} />
-            </div>
-          
-
-
-
+          <div className='flex items-center justify-center'>
+            <PaymentButton userId={userId} />
+          </div>
         </div>
 
         {/* Stats Grid */}
@@ -174,32 +195,61 @@ const StoreDashboard = () => {
         </div>
 
 
+
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Products</h2>
         <div className="grid gap-4 sm:grid-cols-2 pb-10">
-          {[...Array(2)].map((_, index) => (
-            <div key={index} className="bg-white rounded-md shadow-md p-6">
-              <span className="text-gray-700">Most Viewed Product</span>
+          {/* Most Viewed Product */}
+          <div className="bg-white rounded-md shadow-md p-6 flex flex-col gap-3">
+            <span className="text-gray-700 font-bold">Most Viewed Product</span>
+            <div className='flex gap-3 items-center'>
+              {mostViewedProduct && mostViewedProduct.images && mostViewedProduct.images[0] && (
+                <Image
+                  alt="Most Viewed Product"
+                  src={mostViewedProduct.images[0]}
+                  width={100}  // Adjust width and height as needed
+                  height={100} // Adjust width and height as needed
+                  className="w-24 h-24 object-cover rounded-md" // Style for image
+                />
+              )}
+              <div>
+                <p className="font-semibold text-gray-800 line-clamp-3">{mostViewedProduct ? mostViewedProduct.name : 'Loading...'}</p>
+                {mostViewedProduct && <p className="text-sm text-gray-600">Views: {mostViewedProduct.views}</p>}
+              </div>
             </div>
-          ))}
+          </div>
+
+          {/* Least Viewed Product */}
+          <div className="bg-white rounded-md shadow-md p-6 flex flex-col gap-3">
+            <span className="text-gray-700 font-bold">Least Viewed Product</span>
+            <div className='flex gap-3 items-center'>
+              {leastViewedProduct && leastViewedProduct.images && leastViewedProduct.images[0] && (
+                <Image
+                  alt="Least Viewed Product"
+                  src={leastViewedProduct.images[0]}
+                  width={100}  // Adjust width and height as needed
+                  height={100} // Adjust width and height as needed
+                  className="w-24 h-24 object-cover rounded-md" // Style for image
+                />
+              )}
+              <div>
+                <p className="font-semibold text-gray-800 line-clamp-3">{leastViewedProduct ? leastViewedProduct.name : 'Loading...'}</p>
+                {leastViewedProduct && <p className="text-sm text-gray-600">Views: {leastViewedProduct.views}</p>}
+              </div>
+            </div>
+          </div>
         </div>
 
 
 
         {/* Action Cards Grid */}
-        <h2 className="text-lg font-semibold text-gray-900 mb-4 ">Quick Actions</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {actionCards.map((card, index) => (
-            <ActionCard
-              key={index}
-              title={card.title}
-              href={card.href === "/store/username" ? `/store/${username}` : card.href}
-              icon={card.icon}
-              description={card.description}
-            />
+            <ActionCard key={index} title={card.title} href={card.href} icon={card.icon} description={card.description} />
           ))}
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
