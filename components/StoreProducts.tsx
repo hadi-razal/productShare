@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { collection, doc, getDocs, increment, updateDoc } from "firebase/firestore";
-import { Search, X } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { getUserId } from "@/helpers/getUserId";
 import { db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
+import FilterModal from "./FilterModal";
 
 const StoreProducts = ({ storeId }: any) => {
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -14,6 +15,7 @@ const StoreProducts = ({ storeId }: any) => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
   const [sortOption, setSortOption] = useState<string>("");
+  const [isFilterModal, setIsFilterModal] = useState(false);
 
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -151,7 +153,7 @@ const StoreProducts = ({ storeId }: any) => {
   }, [sortOption]);
 
   return (
-    <div className="container min-h-screen max-w-7xl mx-auto pb-8 pt-[150px] px-4">
+    <div className="container relative min-h-screen max-w-7xl mx-auto pb-8 pt-[150px] px-4">
 
       <div className="relative flex items-center w-full pb-3">
         <input
@@ -220,6 +222,26 @@ const StoreProducts = ({ storeId }: any) => {
           </div>
         )
       }
+
+
+
+      {!isFilterModal ? (
+        <div
+          onClick={() => setIsFilterModal(true)}
+          className="fixed bottom-5 right-10 z-50"
+          role="button"
+          aria-label="Open Filter Modal"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && setIsFilterModal(true)}
+        >
+          <span className="p-3 rounded-full bg-blue-950 flex items-center justify-center">
+            <SlidersHorizontal className="text-white" />
+          </span>
+        </div>
+      ) : (<FilterModal isOpen={isFilterModal} onClose={()=>setIsFilterModal(false)} />)}
+
+
+
     </div>
 
   );

@@ -238,7 +238,7 @@ const StoreDashboard = () => {
             </div>
           </div>
 
-        <span className='text-center text-sm -pt-6 text-gray-400'>For more detailed product information, including view counts, visit each product's page.</span>
+        <span className='text-sm -pt-6 text-gray-400'>For more detailed product information, including view counts, visit each product's page.</span>
         </div>
 
 
