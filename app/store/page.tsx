@@ -201,7 +201,7 @@ const StoreDashboard = () => {
           {/* Most Viewed Product */}
           <div className="bg-white rounded-md shadow-md p-6 flex flex-col gap-3">
             <span className="text-gray-700 font-bold">Most Viewed Product</span>
-            <div className='flex gap-3 items-center'>
+            <div className='flex gap-3 items-center cursor-pointer'>
               {mostViewedProduct && mostViewedProduct.images && mostViewedProduct.images[0] && (
                 <Image
                   alt="Most Viewed Product"
@@ -221,7 +221,7 @@ const StoreDashboard = () => {
           {/* Least Viewed Product */}
           <div className="bg-white rounded-md shadow-md p-6 flex flex-col gap-3">
             <span className="text-gray-700 font-bold">Least Viewed Product</span>
-            <div className='flex gap-3 items-center'>
+            <div className='flex gap-3 items-center cursor-pointer'>
               {leastViewedProduct && leastViewedProduct.images && leastViewedProduct.images[0] && (
                 <Image
                   alt="Least Viewed Product"
@@ -237,7 +237,12 @@ const StoreDashboard = () => {
               </div>
             </div>
           </div>
+
+        <span className='text-center text-sm -pt-6 text-gray-400'>For more detailed product information, including view counts, visit each product's page.</span>
         </div>
+
+
+
 
 
 
