@@ -120,7 +120,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
         const amount = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
 
         const options = {
-            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+            key: process.env.RAZORPAY_KEY,
             amount,
             currency: 'INR',
             name: 'Product Share',
