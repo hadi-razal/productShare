@@ -120,7 +120,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
         const amount = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
 
         const options = {
-            key: process.env.NEXT_PRAZORPAY_KEY,
+            key: process.env.NEXT_PUBLIC_PRAZORPAY_KEY,
             amount,
             currency: 'INR',
             name: 'Product Share',
