@@ -1,12 +1,13 @@
 "use client"
 
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { Plus, X } from 'lucide-react';
+import { Plus, Router, X } from 'lucide-react';
 import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from '@/lib/firebase';
 import { ProductType } from '@/type';
+import { useRouter } from 'next/navigation';
 
 
 const CreateProduct = () => {
@@ -19,11 +20,10 @@ const CreateProduct = () => {
         category: '',
         sizes: [],
         isInStock: true,
-        availableStock: '',
         images: [],
         tags: '',
         views: 0,
-        isFeatured: false,
+        isFreeDelivery: false,
         isMostSelling: false
     });
 
@@ -32,6 +32,8 @@ const CreateProduct = () => {
     const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [previewImages, setPreviewImages] = useState<string[]>([]);
     const [isUploading, setIsUploading] = useState<boolean>(false);
+
+    const router = useRouter()
 
     useEffect(() => {
         return () => {
@@ -113,12 +115,13 @@ const CreateProduct = () => {
                         const userData = userDocSnap.data();
                         try {
                             const imageUrls = await uploadImagesToFirebase();
-                            await addDoc(collection(db, `${userData.uid}`), {
+                            await addDoc(collection(db, `${user.uid}`), {
                                 ...productData,
                                 images: imageUrls,
                                 createdAt: serverTimestamp(),
                             });
                             console.log('Product Data:', productData);
+                            router.push('/store')
                         } catch (error) {
                             console.error('Error adding document:', error);
                         }
@@ -212,14 +215,6 @@ const CreateProduct = () => {
                         <input type="checkbox" name="isInStock" checked={productData.isInStock} onChange={handleCheckboxChange} className="mr-2" />
                     </div>
 
-                    {/* Stock Quantity */}
-                    {productData.isInStock && (
-                        <div className="space-y-2">
-                            <label className="block text-sm font-medium">Stock Quantity (optional)</label>
-                            <input type="text" disabled={isUploading} name="availableStock" value={productData.availableStock} onChange={handleInputChange} className="w-full px-3 py-2 border bg-gray-200 rounded-md" placeholder="Enter stock quantity" />
-                        </div>
-                    )}
-
                     {/* Colors */}
                     <div className="space-y-2">
                         <label className="block text-sm font-medium">Color (optional)</label>
@@ -245,13 +240,12 @@ const CreateProduct = () => {
                     {/* Featured and Most Selling Toggles */}
                     <div className='flex space-x-4'>
                         <div className='flex items-center'>
-                            <input type='checkbox' name='isFeatured' checked={productData.isFeatured} onChange={handleCheckboxChange} id='featured' />
-                            <label htmlFor='featured' className='ml-2'>Mark as Featured</label>
-                        </div>
-
-                        <div className='flex items-center'>
                             <input type='checkbox' name='isMostSelling' checked={productData.isMostSelling} onChange={handleCheckboxChange} id='most-selling' />
                             <label htmlFor='most-selling' className='ml-2'>Most Selling</label>
+                        </div>
+                        <div className='flex items-center'>
+                            <input type='checkbox' name='isFreeDelivery' checked={productData.isFreeDelivery} onChange={handleCheckboxChange} id='free-delivery' />
+                            <label htmlFor='free-delivery' className='ml-2'>Free Delivery</label>
                         </div>
                     </div>
 

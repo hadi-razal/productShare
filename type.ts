@@ -19,8 +19,9 @@ export interface ProductType {
     availableStock?: string;
     tags?: string;
     isHidden?: boolean;
-    isFeatured:boolean;
+    isFeatured?:boolean;
     isMostSelling?:boolean;
+    isFreeDelivery?:boolean;
   }
   
 export interface userType {

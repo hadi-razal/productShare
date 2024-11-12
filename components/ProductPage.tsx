@@ -9,7 +9,7 @@ import { db } from '@/lib/firebase';
 import { ProductType } from '@/type';
 import Head from 'next/head';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, EyeIcon, Info } from 'lucide-react';
+import { ChevronLeft, ChevronRight, EyeIcon, Info, Truck } from 'lucide-react';
 
 interface ProductPageProps {
   productId: string;
@@ -210,9 +210,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
 
 
           <div className="flex items-center space-x-2">
-            <EyeIcon className="text-gray-600 w-5 h-5" />
-            <span className="text-md font-semibold text-gray-600">{productData.views} Views</span>
+            <EyeIcon className="text-gray-600 w-4 h-4" />
+            <span className="text-sm font-semibold text-gray-600">{productData.views} Views</span>
           </div>
+
+
 
 
           <h1 className="text-xl font-semibold">{productData.name}</h1>
@@ -220,7 +222,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
           <div className="flex items-center space-x-2">
             <span className="text-xl font-bold">₹{productData.discountPrice || productData.regularPrice}</span>
             {productData.discountPrice && <span className="line-through text-gray-500">₹{productData.regularPrice}</span>}
-            {productData.discountPrice && <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm">{calculateDiscount()}% OFF</span>}
+            {productData.discountPrice && <span className="bg-red-100 text-red-600  rounded-full text-sm">{calculateDiscount()}% OFF</span>}
+          </div>
+
+          <div className="flex gap-2 items-center rounded-md hover:bg-gray-50 transition-all duration-200">
+            <Truck className="text-gray-500 w-5 h-5" />
+            <span className="text-sm font-light  text-gray-500">Free Delivery Available</span>
           </div>
 
 
