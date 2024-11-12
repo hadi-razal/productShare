@@ -12,6 +12,7 @@ export interface ProductType {
     isNew?: boolean;
     isInStock?: boolean;
     isBestSelling?: boolean;
+    views?: string;
     rating?: number;
     totalReviews?: number;
     ratingCount?: number;

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import {  onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -17,12 +17,12 @@ const LoginPage: React.FC = () => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-          if (user) {
-            router.push('/store');
-          }
+            if (user) {
+                router.push('/store');
+            }
         });
         return () => unsubscribe();
-      }, [router]);
+    }, [router]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -34,7 +34,7 @@ const LoginPage: React.FC = () => {
             console.log("Login failed:", error);
             setError("Invalid email or password. Please try again.");
         }
-        
+
         console.log('Logging in with:', { email, password });
     };
 
@@ -54,7 +54,7 @@ const LoginPage: React.FC = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="block w-full bg-gray-300 p-3 border border-gray-600 rounded-md"
+                            className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
                             placeholder="Enter your email"
                         />
                     </div>
@@ -68,7 +68,7 @@ const LoginPage: React.FC = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="block w-full bg-gray-300 p-3 border border-gray-600 rounded-md"
+                            className="block w-full bg-gray-200 p-3 border focus:outline-none   rounded-md"
                             placeholder="Enter your password"
                         />
                     </div>

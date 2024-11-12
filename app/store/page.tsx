@@ -213,7 +213,7 @@ const StoreDashboard = () => {
               )}
               <div>
                 <p className="font-semibold text-gray-800 line-clamp-3">{mostViewedProduct ? mostViewedProduct.name : 'Loading...'}</p>
-                {mostViewedProduct && <p className="text-sm text-gray-600">Views: {mostViewedProduct.views}</p>}
+                {mostViewedProduct && <p className="text-sm text-gray-600">Views{" "}: {mostViewedProduct.views}</p>}
               </div>
             </div>
           </div>
@@ -233,12 +233,12 @@ const StoreDashboard = () => {
               )}
               <div>
                 <p className="font-semibold text-gray-800 line-clamp-3">{leastViewedProduct ? leastViewedProduct.name : 'Loading...'}</p>
-                {leastViewedProduct && <p className="text-sm text-gray-600">Views: {leastViewedProduct.views}</p>}
+                {leastViewedProduct && <p className="text-sm text-gray-600">Views{" "}: {leastViewedProduct.views}</p>}
               </div>
             </div>
           </div>
 
-        <span className='text-sm -pt-6 text-gray-400'>For more detailed product information, including view counts, visit each product's page.</span>
+          <span className='text-sm -pt-6 text-gray-400'>For more detailed product information, including view counts, visit each product's page.</span>
         </div>
 
 
@@ -250,7 +250,7 @@ const StoreDashboard = () => {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {actionCards.map((card, index) => (
-            <ActionCard key={index} title={card.title} href={card.href} icon={card.icon} description={card.description} />
+            <ActionCard key={index} title={card.title} href={card.href === '/store/username' ? `/store/${username}` : card.href} icon={card.icon} description={card.description} />
           ))}
         </div>
       </div>

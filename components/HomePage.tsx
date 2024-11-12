@@ -1,16 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Lottie from 'lottie-react';
-import { Star, ShoppingCart, Router } from 'lucide-react';
+import { Star, ShoppingCart } from 'lucide-react';
 import heroAnimation from "@/public/hero.json";
 import Image from 'next/image';
 import { FaUserFriends, FaChartLine } from 'react-icons/fa';
-import { userType } from '@/type';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth, db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 
 interface FeatureCardProps {
@@ -28,9 +26,7 @@ interface TestimonialCardProps {
 }
 
 const FeatureCard = ({ icon, title, description, gradient }: FeatureCardProps) => (
-  <motion.div
-    className={`flex flex-col items-center p-6 rounded-2xl shadow-lg ${gradient} border border-white/10`}
-  >
+  <motion.div className={`flex flex-col items-center p-6 rounded-2xl shadow-lg ${gradient} border border-white/10`}>
     <div className="p-3 bg-white/80 rounded-xl shadow-inner">{icon}</div>
     <h3 className="mt-4 text-xl font-semibold text-gray-800">{title}</h3>
     <p className="mt-2 text-gray-600 text-center">{description}</p>
@@ -38,32 +34,24 @@ const FeatureCard = ({ icon, title, description, gradient }: FeatureCardProps) =
 );
 
 const TestimonialCard = ({ content, author, authorRole, authorImage }: TestimonialCardProps) => (
-  <motion.div
-    className="bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center justify-between"
-  >
-    <div className='flex flex-1 '>
-
-      <p className="text-lg text-gray-700 italic mb-6 flex-1">"{content}"</p>
-    </div>
-    <div className="flex items-center justify-center">
-      <div className="w-16 h-16">
-        <Image
-          unoptimized={true}
-          width={0}
-          height={0}
-          className="rounded-full w-14 h-14 object-cover"
-          src={authorImage}
-          alt={author}
-        />
-      </div>
-      <div>
+  <motion.div className="bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center">
+    <p className="text-lg text-gray-700 italic mb-6">"{content}"</p>
+    <div className="flex items-center">
+      <Image
+        unoptimized
+        width={56}
+        height={56}
+        className="rounded-full w-14 h-14 object-cover"
+        src={authorImage}
+        alt={author}
+      />
+      <div className="ml-4">
         <p className="font-semibold text-gray-900 text-xl">{author}</p>
         <p className="text-sm text-gray-500 mt-1">{authorRole}</p>
       </div>
     </div>
   </motion.div>
 );
-
 
 const features = [
   {
@@ -75,7 +63,7 @@ const features = [
   {
     icon: <ShoppingCart className="w-6 h-6 text-blue-500" />,
     title: "Product Share Links",
-    description: "Share product catalogs directly with customers.",
+    description: "Share product catalogs directly with customers on WhatsApp.",
     gradient: "bg-gradient-to-br from-blue-100 to-indigo-200"
   },
   {
@@ -92,30 +80,16 @@ const features = [
   }
 ];
 
-
-
-
-
 const HomePage = () => {
-
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
-    const setCurrentUser = async () => {
-      onAuthStateChanged(auth, async (userData: User | null) => {
-        if (userData?.uid) {
-          router.push("/store")
-        }
-      });
-    };
-
-    setCurrentUser();
-
-  }, []);
-
-
-
-
+    onAuthStateChanged(auth, (userData: User | null) => {
+      if (userData?.uid) {
+        router.push("/store");
+      }
+    });
+  }, [router]);
 
   return (
     <div className="bg-gray-50">
@@ -128,16 +102,14 @@ const HomePage = () => {
             transition={{ duration: 1 }}
             className="text-white"
           >
-            <div className="text-4xl font-bold">
-              <h1>Build & Share Your <span className="text-blue-300">Product Catalog</span> with Ease</h1>
-            </div>
+            <h1 className="text-4xl font-bold">
+              Build & Share Your <span className="text-blue-300">Product Catalog</span> with Ease
+            </h1>
             <p className="mt-6 max-w-2xl mx-auto text-lg text-gray-300">
-              Create captivating product catalogs, instantly share them with customers, and expand your reach with Product Share.
+              Create captivating product catalogs, instantly share them with customers on WhatsApp, and expand your reach with Product Share.
             </p>
-
             <div className="mt-10 flex justify-center gap-4">
               <motion.a
-                // onClick={handleRazorpayPayment}
                 href="/register"
                 className="px-6 py-3 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition-all"
               >

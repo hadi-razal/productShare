@@ -9,7 +9,7 @@ import { db } from '@/lib/firebase';
 import { ProductType } from '@/type';
 import Head from 'next/head';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, Info } from 'lucide-react';
+import { ChevronLeft, ChevronRight, EyeIcon, Info } from 'lucide-react';
 
 interface ProductPageProps {
   productId: string;
@@ -208,6 +208,14 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
         </div>
 
         <div className="space-y-4">
+
+
+          <div className="flex items-center space-x-2">
+            <EyeIcon className="text-gray-600 w-5 h-5" />
+            <span className="text-md font-semibold text-gray-600">{productData.views} Views</span>
+          </div>
+
+
           <h1 className="text-xl font-semibold">{productData.name}</h1>
 
           <div className="flex items-center space-x-2">
@@ -215,6 +223,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
             {productData.discountPrice && <span className="line-through text-gray-500">₹{productData.regularPrice}</span>}
             {productData.discountPrice && <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm">{calculateDiscount()}% OFF</span>}
           </div>
+
+
+
 
           {productData.colors.length > 0 && <div className='flex flex-col items-start gap-2 justify-start flex-wrap'>
             <span className="block text-sm font-thin ">Available Colors</span>
