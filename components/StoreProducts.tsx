@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { collection, doc, getDocs, increment, updateDoc } from "firebase/firestore";
-import { Filter, Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { getUserId } from "@/helpers/getUserId";
 import { db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
-import FilterModal from "./FilterModal";
 
 const StoreProducts = ({ storeId }: any) => {
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -15,7 +14,7 @@ const StoreProducts = ({ storeId }: any) => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
   const [sortOption, setSortOption] = useState<string>("");
-  // const [isFilterModal, setIsFilterModal] = useState(false);
+  const [visibleProducts, setVisibleProducts] = useState(20); // Initial visible product count
 
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -31,7 +30,7 @@ const StoreProducts = ({ storeId }: any) => {
         await updateDoc(userDocRef, {
           visitCount: increment(1),
         });
-        sessionStorage.setItem(`MyShop_${storeId}_View`, 'true');
+        sessionStorage.setItem(`MyShop_${storeId}_View`, "true");
       }
 
       try {
@@ -58,7 +57,7 @@ const StoreProducts = ({ storeId }: any) => {
             createdAt: data.createdAt,
             tags: data.tags,
             isFeatured: data.isFeatured,
-            isHidden: data.isHidden
+            isHidden: data.isHidden,
           };
         });
 
@@ -72,17 +71,13 @@ const StoreProducts = ({ storeId }: any) => {
     setIsLoading(false);
   };
 
-
   useEffect(() => {
-
     fetchProducts();
-
     return () => {
       setProducts([]);
     };
   }, [storeId]);
 
-  // Search handler
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(event.target.value);
   };
@@ -90,15 +85,15 @@ const StoreProducts = ({ storeId }: any) => {
   const filterProducts = () => {
     let results = [...products];
     if (searchInput.trim() !== "") {
-      results = results.filter((product) =>
-        product.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchInput.toLowerCase()) ||
-        (product.colors && product.colors.some(color => color.toLowerCase().includes(searchInput.toLowerCase()))) ||
-        (product.category && product.category.toLowerCase().includes(searchInput.toLowerCase()))
+      results = results.filter(
+        (product) =>
+          product.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+          product.description.toLowerCase().includes(searchInput.toLowerCase()) ||
+          (product.colors && product.colors.some((color) => color.toLowerCase().includes(searchInput.toLowerCase()))) ||
+          (product.category && product.category.toLowerCase().includes(searchInput.toLowerCase()))
       );
     }
 
-    // Apply sorting
     switch (sortOption) {
       case "price-low-high":
         results.sort((a, b) => (a.discountPrice || a.regularPrice) - (b.discountPrice || b.regularPrice));
@@ -120,38 +115,36 @@ const StoreProducts = ({ storeId }: any) => {
     setFilteredProducts(results);
   };
 
-  // Handle search button click
   const handleSearchClick = () => {
     filterProducts();
   };
 
-  // Handle Enter key press
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       filterProducts();
     }
   };
 
-  // Clear search input
   const clearSearchInput = () => {
     setSearchInput("");
     setFilteredProducts(products);
   };
 
-  // Handle sort option change
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(event.target.value);
     filterProducts();
   };
 
-  // Effect to reapply sorting when sort option changes
   useEffect(() => {
     filterProducts();
   }, [sortOption]);
 
+  const handleLoadMore = () => {
+    setVisibleProducts((prevVisible) => prevVisible + 20);
+  };
+
   return (
     <div className="container relative min-h-screen max-w-7xl mx-auto pb-8 pt-[130px] px-4">
-
       <div className="relative flex items-center w-full pb-3">
         <input
           type="text"
@@ -159,27 +152,20 @@ const StoreProducts = ({ storeId }: any) => {
           onChange={handleSearchInputChange}
           onKeyDown={handleKeyPress}
           placeholder="Search products or categories..."
-          className="w-full px-4 py-3 pr-12 text-sm border rounded-lg border-gray-200 
-                     focus:outline-none
-                     placeholder:text-gray-400"
+          className="w-full px-4 py-3 pr-12 text-sm border rounded-lg border-gray-200 focus:outline-none placeholder:text-gray-400"
           aria-label="Search input"
         />
 
         <div className="absolute right-0 flex items-center justify-center h-full space-x-1">
           {searchInput && (
-            <button
-              onClick={clearSearchInput}
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Clear search"
-            >
+            <button onClick={clearSearchInput} className="p-2 text-gray-400 hover:text-gray-600 transition-colors" aria-label="Clear search">
               <X size={18} />
             </button>
           )}
 
           <button
             onClick={handleSearchClick}
-            className="p-2 text-white bg-blue-950 rounded-md
-                       transition-colors duration-200 px-4 py-3 flex items-center justify-center"
+            className="p-2 text-white bg-blue-950 rounded-md transition-colors duration-200 px-4 py-3 flex items-center justify-center"
             aria-label="Search"
           >
             <Search size={18} />
@@ -187,60 +173,42 @@ const StoreProducts = ({ storeId }: any) => {
         </div>
       </div>
 
-
       <div className="flex flex-row items-center justify-end gap-2 pb-2">
-        {/* <button
-          onClick={() => setIsFilterModal(true)}
-          aria-label="Open Filter Modal"
-          className="p-2 bg-gray-200 rounded-md hover:bg-gray-300 transition"
-        >
-          <Filter size={20} />
-        </button> */}
-
         <select
           name="sort"
           onChange={handleSortChange}
           className="px-4 py-2 focus:outline-none rounded-md border border-gray-200"
-          value={sortOption} // Sets the current value based on state
+          value={sortOption}
         >
-          <option value="" disabled>Sort by</option>
+          <option value="" disabled>
+            Sort by
+          </option>
           <option value="newest">Newly Added</option>
           <option value="price-low-high">Price: Low to High</option>
           <option value="price-high-low">Price: High to Low</option>
         </select>
       </div>
 
+      {isLoading ? (
+        <div className="flex justify-center items-center h-96">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
+          {filteredProducts.slice(0, visibleProducts).map((product) => (
+            <ProductCard key={product.id} refetchProducts={fetchProducts} storeId={storeId as string} product={product} />
+          ))}
+        </div>
+      )}
 
-
-      {
-        isLoading ? (
-          <div className="flex justify-center items-center h-96">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map((product) => (
-                <ProductCard key={product.id} refetchProducts={fetchProducts} storeId={storeId as string} product={product} />
-              ))
-            ) : (
-              <div className="col-span-full text-center">No products found.</div>
-            )}
-          </div>
-        )
-      }
-
-
-
-      {/* the product filter modal component */}
-      {/* {isFilterModal && (
-        <FilterModal isOpen={isFilterModal} onClose={() => setIsFilterModal(false)} />
-      )} */}
-
-
-
+      {visibleProducts < filteredProducts.length && (
+        <div className="flex justify-center mt-4">
+          <button onClick={handleLoadMore} className="px-6 py-2 text-white bg-blue-950 rounded-md">
+            Load More
+          </button>
+        </div>
+      )}
     </div>
-
   );
 };
 
