@@ -206,7 +206,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
 
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
 
 
           <div className="flex items-center space-x-2">
@@ -320,7 +320,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
               </div>
             </div>
           )}
-          <p className="text-gray-600 pb-10">{productData.description}</p>
+          <p className="text-gray-600 pb-10 font-normal">{productData.description}</p>
         </div>
       </div>
     </div >
