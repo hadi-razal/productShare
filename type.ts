@@ -1,5 +1,5 @@
 export interface ProductType {
-    id: string; 
+    id?: string; 
     createdAt?:any;
     name: string;
     description: string;
@@ -7,12 +7,12 @@ export interface ProductType {
     colors:string[];
     sizes:string[];
     images: string[];
-    regularPrice: number;
-    discountPrice: number;
+    regularPrice: any;
+    discountPrice: any;
     isNew?: boolean;
     isInStock?: boolean;
     isBestSelling?: boolean;
-    views?: string;
+    views?: any;
     rating?: number;
     totalReviews?: number;
     ratingCount?: number;

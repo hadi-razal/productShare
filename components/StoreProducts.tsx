@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { collection, doc, getDocs, increment, updateDoc } from "firebase/firestore";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Filter, Search, SlidersHorizontal, X } from "lucide-react";
 import { getUserId } from "@/helpers/getUserId";
 import { db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
@@ -90,8 +90,6 @@ const StoreProducts = ({ storeId }: any) => {
   // Function to filter and sort products
   const filterProducts = () => {
     let results = [...products]; // Create a new array to avoid mutating state directly
-
-    // Apply search filter
     if (searchInput.trim() !== "") {
       results = results.filter((product) =>
         product.name.toLowerCase().includes(searchInput.toLowerCase()) ||
@@ -190,19 +188,29 @@ const StoreProducts = ({ storeId }: any) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-1 pb-2">
+
+      <div className="flex flex-row items-center justify-end gap-2 pb-2">
+        <button
+          onClick={() => setIsFilterModal(true)}
+          aria-label="Open Filter Modal"
+          className="p-2 bg-gray-200 rounded-md hover:bg-gray-300 transition"
+        >
+          <Filter size={20} />
+        </button>
+
         <select
           name="sort"
           onChange={handleSortChange}
           className="px-4 py-2 focus:outline-none rounded-md border border-gray-200"
-          value={sortOption} // This sets the current value based on state
+          value={sortOption} // Sets the current value based on state
         >
-          <option value="" disabled>sort by</option>
+          <option value="" disabled>Sort by</option>
           <option value="newest">Newly Added</option>
           <option value="price-low-high">Price: Low to High</option>
           <option value="price-high-low">Price: High to Low</option>
         </select>
       </div>
+
 
 
       {
@@ -225,20 +233,10 @@ const StoreProducts = ({ storeId }: any) => {
 
 
 
-      {!isFilterModal ? (
-        <div
-          onClick={() => setIsFilterModal(true)}
-          className="fixed bottom-5 right-10 z-50"
-          role="button"
-          aria-label="Open Filter Modal"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && setIsFilterModal(true)}
-        >
-          <span className="p-3 rounded-full bg-blue-950 flex items-center justify-center">
-            <SlidersHorizontal className="text-white" />
-          </span>
-        </div>
-      ) : (<FilterModal isOpen={isFilterModal} onClose={()=>setIsFilterModal(false)} />)}
+      {/* the product filter modal component */}
+      {isFilterModal && (
+        <FilterModal isOpen={isFilterModal} onClose={() => setIsFilterModal(false)} />
+      )}
 
 
 

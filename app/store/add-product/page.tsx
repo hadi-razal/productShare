@@ -6,26 +6,11 @@ import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/fires
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from '@/lib/firebase';
+import { ProductType } from '@/type';
 
-interface ProductData {
-    name: string;
-    description: string;
-    regularPrice: string;
-    discountPrice: string;
-    colors: string[];
-    category: string;
-    sizes: string[];
-    isInStock: boolean;
-    availableStock: string;
-    images: string[];
-    tags: string;
-    isFeatured: boolean;
-    isMostSelling: boolean;
-    createdAt?: Date;
-}
 
 const CreateProduct = () => {
-    const [productData, setProductData] = useState<ProductData>({
+    const [productData, setProductData] = useState<ProductType>({
         name: '',
         description: '',
         regularPrice: '',
@@ -37,6 +22,7 @@ const CreateProduct = () => {
         availableStock: '',
         images: [],
         tags: '',
+        views: 0,
         isFeatured: false,
         isMostSelling: false
     });
@@ -209,8 +195,8 @@ const CreateProduct = () => {
                                         type="button"
                                         onClick={() => handleSizeChange(size)}
                                         className={`px-4 py-2 border rounded-md ${productData.sizes.includes(size)
-                                                ? 'bg-gray-950 text-white'
-                                                : 'bg-gray-200 text-gray-700'
+                                            ? 'bg-gray-950 text-white'
+                                            : 'bg-gray-200 text-gray-700'
                                             }`}
                                     >
                                         {size}

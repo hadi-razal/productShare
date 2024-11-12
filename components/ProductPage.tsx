@@ -103,7 +103,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     setModalOpen(true);
   };
 
-
   const handleCopyLink = () => {
     navigator.clipboard.writeText(currentUrl)
       .then(() => {
