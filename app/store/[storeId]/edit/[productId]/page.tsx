@@ -23,7 +23,6 @@ const EditProduct = () => {
         category: '',
         sizes: [],
         isInStock: true,
-        availableStock: '',
         images: [],
         tags: '',
         isFeatured: false,
@@ -185,7 +184,7 @@ const EditProduct = () => {
                         name="name"
                         value={productData.name || ""}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border bg-gray-200 rounded-md"
+                        className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
                         placeholder="Enter product name"
                     />
                 </div>
@@ -210,7 +209,7 @@ const EditProduct = () => {
                         name="regularPrice"
                         value={productData.regularPrice || ""}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border bg-gray-200 rounded-md"
+                        className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
                         placeholder="Enter regular price"
                     />
                 </div>
@@ -223,7 +222,7 @@ const EditProduct = () => {
                         name="discountPrice"
                         value={productData.discountPrice || ""}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border bg-gray-200 rounded-md"
+                        className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
                         placeholder="Enter discount price"
                     />
                 </div>
@@ -235,7 +234,7 @@ const EditProduct = () => {
                         name="category"
                         value={productData.category || ""}
                         onChange={handleCategoryChange}
-                        className="w-full px-3 py-2 border bg-gray-200 rounded-md"
+                        className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
                     >
                         <option value="">Select Category</option>
                         <option value="clothing">Clothing</option>
@@ -271,7 +270,7 @@ const EditProduct = () => {
                             type="text"
                             value={currentColor}
                             onChange={(e) => setCurrentColor(e.target.value)}
-                            className="w-full px-3 py-2 border bg-gray-200 rounded-md"
+                            className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
                             placeholder="Enter color hex code"
                         />
                         <button
@@ -309,23 +308,11 @@ const EditProduct = () => {
                         name="tags"
                         value={productData.tags}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border bg-gray-200 rounded-md"
-                        placeholder="Enter tags, separated by commas"
+                        className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
+                         placeholder="Enter tags, separated by commas"
                     />
                 </div>
 
-                {/* Stock Availability */}
-                <div className="space-y-2">
-                    <label className="block text-sm font-medium">Available Stock</label>
-                    <input
-                        type="number"
-                        name="availableStock"
-                        value={productData.availableStock}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border bg-gray-200 rounded-md"
-                        placeholder="Enter available stock quantity"
-                    />
-                </div>
 
                 {/* Image Upload */}
                 <div className="space-y-2">

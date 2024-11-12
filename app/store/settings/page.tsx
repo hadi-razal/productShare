@@ -6,28 +6,19 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { doc, getDoc, DocumentSnapshot, updateDoc } from "firebase/firestore";
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { userType } from '@/type';
 
-interface UserData {
-    username: string;
-    name: string;
-    themeColor: string;
-    allowReviews: boolean;
-    showFreeDeliveryIcon: boolean;
-    disableBuyNowBtn: boolean;
-    displayPrices: boolean;
-    additionalNotes: string;
-}
 
 const SettingsPage = () => {
     const [userId, setUserId] = useState<string | null>(null);
     const [username, setUsername] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [themeColor, setThemeColor] = useState<string>('#000000');
     const [additionalNotes, setAdditionalNotes] = useState<string>('');
 
     const router = useRouter()
 
-    // Fetch user data on auth state change
     useEffect(() => {
         onAuthStateChanged(auth, async (user: User | null) => {
             if (user) {
@@ -44,9 +35,10 @@ const SettingsPage = () => {
             const userDoc = doc(db, "users", userId);
             const docSnap: DocumentSnapshot = await getDoc(userDoc);
             if (docSnap.exists()) {
-                const data: UserData = docSnap.data() as UserData;
+                const data: userType = docSnap.data() as userType;
                 setUsername(data.username || '');
                 setName(data.name || '');
+                setEmail(data.email || '');
                 setAdditionalNotes(data.additionalNotes || '');
             }
         } catch (error) {
@@ -84,7 +76,7 @@ const SettingsPage = () => {
                         disabled
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-950"
+                        className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
                         placeholder="Enter new username"
                     />
                 </div>
@@ -94,7 +86,18 @@ const SettingsPage = () => {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-950"
+                        className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
+                        placeholder="Enter new shop name"
+                    />
+                </div>
+
+                <div className="mb-6">
+                    <label className="block text-gray-700 font-semibold mb-2">Email</label>
+                    <input
+                        type="text"
+                        value={email}
+                        disabled
+                        className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
                         placeholder="Enter new shop name"
                     />
                 </div>

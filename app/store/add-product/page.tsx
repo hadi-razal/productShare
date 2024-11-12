@@ -154,13 +154,14 @@ const CreateProduct = () => {
                     {/* Product Name */}
                     <div className="space-y-2">
                         <label className="block text-sm font-medium">Product Name</label>
-                        <input type="text" disabled={isUploading} name="name" value={productData.name} onChange={handleInputChange} className="w-full px-3 py-2 border bg-gray-200 rounded-md" placeholder="Enter product name" />
+                        <input type="text" disabled={isUploading} name="name" value={productData.name} onChange={handleInputChange} className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
+                            placeholder="Enter product name" />
                     </div>
 
                     {/* Description */}
                     <div className="space-y-2">
                         <label className="block text-sm font-medium">Description</label>
-                        <textarea name="description" disabled={isUploading} value={productData.description} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-md h-32 bg-gray-200" placeholder="Enter product description" />
+                        <textarea name="description" disabled={isUploading} value={productData.description} onChange={handleInputChange} className="w-full px-3 py-2 min-h-20  border bg-gray-200 focus:outline-none rounded-md" placeholder="Enter product description" />
                     </div>
 
                     {/* Pricing */}
@@ -171,13 +172,13 @@ const CreateProduct = () => {
 
                     <div className="space-y-2">
                         <label className="block text-sm font-medium">Discount Price</label>
-                        <input disabled={isUploading} type="text" name="discountPrice" value={productData.discountPrice} onChange={handleInputChange} className="w-full px-3 py-2 border bg-gray-200 rounded-md" placeholder="₹0.00" />
+                        <input disabled={isUploading} type="text" name="discountPrice" value={productData.discountPrice} onChange={handleInputChange} className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md" placeholder="₹0.00" />
                     </div>
 
                     {/* Category */}
                     <div className="space-y-2">
                         <label className="block text-sm font-medium">Category</label>
-                        <select name="category" disabled={isUploading} value={productData.category} onChange={handleCategoryChange} className="w-full px-3 py-2 border rounded-md bg-gray-200">
+                        <select name="category" disabled={isUploading} value={productData.category} onChange={handleCategoryChange} className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md">
                             <option value="">Select a category</option>
                             <option value="electronics">Electronics</option>
                             <option value="clothing">Clothing</option>
@@ -219,7 +220,7 @@ const CreateProduct = () => {
                     <div className="space-y-2">
                         <label className="block text-sm font-medium">Color (optional)</label>
                         <div className='flex items-center justify-center pb-3'>
-                            <input disabled={isUploading} type="text" value={currentColor} onChange={(e) => setCurrentColor(e.target.value)} placeholder="enter color code eg:#fefefe" className="w-2/3 px-3 py-2 border rounded-l-md bg-gray-200" />
+                            <input disabled={isUploading} type="text" value={currentColor} onChange={(e) => setCurrentColor(e.target.value)} placeholder="enter color code eg:#fefefe" className="w-2/3 px-3 py-2 border focus:outline-none rounded-l-md bg-gray-200" />
                             <button type="button" onClick={handleAddColor} className="text-sm w-1/3 font-medium px-3 py-3 text-white rounded-r-md bg-blue-950">Add Color</button>
                         </div>
 
@@ -234,7 +235,7 @@ const CreateProduct = () => {
                     {/* Tags */}
                     <div className="space-y-2">
                         <label className="block text-sm font-medium">Tags</label>
-                        <input type="text" disabled={isUploading} name='tags' value={productData.tags} onChange={handleInputChange} placeholder="Add tags" className="w-full px-3 py-2 border rounded-md bg-gray-200" />
+                        <input type="text" disabled={isUploading} name='tags' value={productData.tags} onChange={handleInputChange} placeholder="Add tags" className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md" />
                     </div>
 
                     {/* Featured and Most Selling Toggles */}

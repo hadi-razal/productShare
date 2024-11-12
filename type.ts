@@ -30,6 +30,8 @@ export interface userType {
     name: string;
     profile: string;
     email: string;
+    additionalNotes: string;
+    username: string;
     isVisitedCount: string;
 }
   
