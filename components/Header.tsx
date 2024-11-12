@@ -94,8 +94,6 @@ const Header = () => {
 
   return (
     <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
       className={`fixed w-full top-0 z-50 transition-all duration-300 ${isOpen ? "h-screen md:h-20" : "h-20"
         } ${isScrolled || path !== '/'
           ? "bg-gray-900/95 backdrop-blur-md shadow-lg"
