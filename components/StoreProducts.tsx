@@ -15,7 +15,7 @@ const StoreProducts = ({ storeId }: any) => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
   const [sortOption, setSortOption] = useState<string>("");
-  const [isFilterModal, setIsFilterModal] = useState(false);
+  // const [isFilterModal, setIsFilterModal] = useState(false);
 
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -189,13 +189,13 @@ const StoreProducts = ({ storeId }: any) => {
 
 
       <div className="flex flex-row items-center justify-end gap-2 pb-2">
-        <button
+        {/* <button
           onClick={() => setIsFilterModal(true)}
           aria-label="Open Filter Modal"
           className="p-2 bg-gray-200 rounded-md hover:bg-gray-300 transition"
         >
           <Filter size={20} />
-        </button>
+        </button> */}
 
         <select
           name="sort"
@@ -233,9 +233,9 @@ const StoreProducts = ({ storeId }: any) => {
 
 
       {/* the product filter modal component */}
-      {isFilterModal && (
+      {/* {isFilterModal && (
         <FilterModal isOpen={isFilterModal} onClose={() => setIsFilterModal(false)} />
-      )}
+      )} */}
 
 
 
