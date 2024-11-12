@@ -87,9 +87,8 @@ const StoreProducts = ({ storeId }: any) => {
     setSearchInput(event.target.value);
   };
 
-  // Function to filter and sort products
   const filterProducts = () => {
-    let results = [...products]; // Create a new array to avoid mutating state directly
+    let results = [...products];
     if (searchInput.trim() !== "") {
       results = results.filter((product) =>
         product.name.toLowerCase().includes(searchInput.toLowerCase()) ||

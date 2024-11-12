@@ -213,7 +213,7 @@ const StoreDashboard = () => {
               )}
               <div>
                 <p className="font-semibold text-gray-800 line-clamp-3">{mostViewedProduct ? mostViewedProduct.name : 'Loading...'}</p>
-                {mostViewedProduct && <p className="text-sm text-gray-600">Views{" "}: {mostViewedProduct.views}</p>}
+                {mostViewedProduct && <p className="text-sm text-gray-600">Views: {mostViewedProduct.views}</p>}
               </div>
             </div>
           </div>
@@ -233,7 +233,7 @@ const StoreDashboard = () => {
               )}
               <div>
                 <p className="font-semibold text-gray-800 line-clamp-3">{leastViewedProduct ? leastViewedProduct.name : 'Loading...'}</p>
-                {leastViewedProduct && <p className="text-sm text-gray-600">Views{" "}: {leastViewedProduct.views}</p>}
+                {leastViewedProduct && <p className="text-sm text-gray-600">Views: {leastViewedProduct.views}</p>}
               </div>
             </div>
           </div>
