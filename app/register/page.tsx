@@ -13,19 +13,20 @@ const RegisterPage: React.FC = () => {
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [whatsappNumber, setWhatsappNumber] = useState('');
 
 
     const router = useRouter()
-    
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-          if (user) {
-            router.push('/store');
-          }
+            if (user) {
+                router.push('/store');
+            }
         });
         return () => unsubscribe();
-      }, [router]);
-      
+    }, [router]);
+
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,8 +40,9 @@ const RegisterPage: React.FC = () => {
                 uid: user.uid,
                 name,
                 username,
+                whatsappNumber,
                 email,
-                premiumUser : false
+                premiumUser: false
             });
 
             console.log('Account created successfully:', user);
@@ -65,7 +67,7 @@ const RegisterPage: React.FC = () => {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
-                            className="block w-full bg-gray-300 p-3 border border-gray-600 rounded-md"
+                            className="block w-full  bg-gray-200 p-3 border focus:outline-none   rounded-md"
                             placeholder="Enter your full name"
                         />
                     </div>
@@ -79,7 +81,7 @@ const RegisterPage: React.FC = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="block w-full bg-gray-300 p-3 border border-gray-600 rounded-md"
+                            className="block w-full bg-gray-200 p-3 border focus:outline-none   rounded-md"
                             placeholder="Enter your email"
                         />
                     </div>
@@ -93,7 +95,21 @@ const RegisterPage: React.FC = () => {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
-                            className="block w-full bg-gray-300 p-3 border border-gray-600 rounded-md"
+                            className="block w-full  bg-gray-200 p-3 border focus:outline-none   rounded-md"
+                            placeholder="Enter your username"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="WhatsappNumber">
+                            Whatsapp Number
+                        </label>
+                        <input
+                            type="number"
+                            id="WhatsappNumber"
+                            value={whatsappNumber}
+                            onChange={(e) => setWhatsappNumber(e.target.value)}
+                            required
+                            className="block w-full  bg-gray-200 p-3 border focus:outline-none   rounded-md"
                             placeholder="Enter your username"
                         />
                     </div>
@@ -107,7 +123,7 @@ const RegisterPage: React.FC = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="block w-full bg-gray-300 p-3 border border-gray-600 rounded-md"
+                            className="block w-full  bg-gray-200 p-3 border focus:outline-none rounded-md"
                             placeholder="Enter your password"
                         />
                     </div>
