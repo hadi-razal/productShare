@@ -27,8 +27,9 @@ const EditProduct = () => {
         images: [],
         tags: '',
         isFeatured: false,
+        isFreeDelivery: false,
         isMostSelling: false,
-        isHidden:false
+        isHidden: false
     });
 
     const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
@@ -196,7 +197,7 @@ const EditProduct = () => {
                         name="description"
                         value={productData.description || ""}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border rounded-md h-32 bg-gray-200" 
+                        className="w-full px-3 py-2 border rounded-md h-32 bg-gray-200"
                         placeholder="Enter product description"
                     />
                 </div>
@@ -363,16 +364,20 @@ const EditProduct = () => {
                         />
                         <span>Featured</span>
                     </label>
+
+
                     <label className="flex items-center space-x-2">
                         <input
-                            type="checkbox"
-                            name="isMostSelling"
-                            checked={productData.isMostSelling}
+                            type='checkbox'
+                            name='isFreeDelivery'
+                            checked={productData.isFreeDelivery || false}
                             onChange={handleCheckboxChange}
-                            className="form-checkbox"
+                            id='free-delivery'
                         />
-                        <span>Best Selling</span>
+                        <span>Free Delivery</span>
                     </label>
+
+
                     <label className="flex items-center space-x-2">
                         <input
                             type="checkbox"
