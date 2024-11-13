@@ -4,22 +4,9 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { getUserId } from '@/helpers/getUserId';
 
-// Interface for store data
-interface StoreData {
-  name: string;
-  description: string;
-  image?: string;
-}
-
-// Define PageProps interface
-interface PageProps {
-  params: {
-    storeId: string;
-  };
-}
 
 // Function to fetch store data from Firestore
-async function getStoreData(storeId: string): Promise<StoreData | null> {
+async function getStoreData(storeId: string): Promise<any | null> {
   try {
     const userId = await getUserId(storeId);
 
@@ -32,7 +19,7 @@ async function getStoreData(storeId: string): Promise<StoreData | null> {
     const storeSnap = await getDoc(storeRef);
 
     if (storeSnap.exists()) {
-      return storeSnap.data() as StoreData;
+      return storeSnap.data();
     } else {
       console.error('Store not found');
       return null;
@@ -44,7 +31,7 @@ async function getStoreData(storeId: string): Promise<StoreData | null> {
 }
 
 // Metadata generation function with improved type safety and error handling
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: any): Promise<Metadata> {
   const { storeId } = params;
 
   const storeData = await getStoreData(storeId);
@@ -72,7 +59,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 // Page component with improved conditional rendering
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: any) {
   const { storeId } = params;
 
   const storeData = await getStoreData(storeId);
