@@ -5,11 +5,12 @@ import { doc, getDoc, increment, updateDoc } from 'firebase/firestore';
 import { FiFacebook, FiTwitter, FiShoppingCart, FiShare2, FiX } from 'react-icons/fi';
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { getUserId } from '@/helpers/getUserId';
-import { db } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { ProductType } from '@/type';
 import Head from 'next/head';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, EyeIcon, Info, Truck } from 'lucide-react';
+import { onAuthStateChanged } from 'firebase/auth';
 
 interface ProductPageProps {
   productId: string;
@@ -42,9 +43,19 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
 
   }
 
+  let isOwner = false;
 
   useEffect(() => {
     addProductCount()
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        isOwner = userId == user.uid;
+      } else {
+        isOwner = false;
+      }
+    });
+
     const fetchUserId = async () => {
       if (storeId) {
         const id = await getUserId(storeId);
@@ -162,6 +173,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
 
   if (!productData) return <h2 className="text-2xl font-semibold text-gray-800">Product not found</h2>;
 
+
+
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-7xl pt-24 ">
       <Head>
@@ -209,13 +223,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
         <div className="space-y-3">
 
 
-          <div className="flex items-center space-x-2">
-            <EyeIcon className="text-gray-600 w-4 h-4" />
-            <span className="text-sm font-semibold text-gray-600">{productData.views} Views</span>
-          </div>
-
-
-
+          {isOwner && (
+            <div className="flex items-center space-x-2">
+              <EyeIcon className="text-gray-600 w-4 h-4" />
+              <span className="text-sm font-semibold text-gray-600">{productData.views} Views</span>
+            </div>
+          )}
 
           <h1 className="text-xl font-semibold">{productData.name}</h1>
 
