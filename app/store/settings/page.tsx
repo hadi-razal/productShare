@@ -7,13 +7,15 @@ import { doc, getDoc, DocumentSnapshot, updateDoc } from "firebase/firestore";
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { userType } from '@/type';
+import toast from 'react-hot-toast';
 
 
 const SettingsPage = () => {
-    const [userId, setUserId] = useState<string | null>(null);
+    const [userId, setUserId] = useState<string | null>();
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [name, setName] = useState<string>('');
+    const [whatsappNumber, setWhatsappNumber] = useState<number | any>();
     const [themeColor, setThemeColor] = useState<string>('#000000');
     const [additionalNotes, setAdditionalNotes] = useState<string>('');
 
@@ -39,6 +41,7 @@ const SettingsPage = () => {
                 setUsername(data.username || '');
                 setName(data.name || '');
                 setEmail(data.email || '');
+                setWhatsappNumber(data?.whatsappNumber);
                 setAdditionalNotes(data.additionalNotes || '');
             }
         } catch (error) {
@@ -48,13 +51,21 @@ const SettingsPage = () => {
 
     const handleSaveChanges = async () => {
         if (!userId) return;
+
+
+        if (whatsappNumber < 10) {
+            toast.error("Whatsapp Number should be 10 digit")
+            return
+        }
+
         const userDoc = doc(db, "users", userId);
 
         try {
             await updateDoc(userDoc, {
                 name,
                 themeColor,
-                additionalNotes
+                additionalNotes,
+                whatsappNumber
             });
             router.push('/store')
             console.log("Changes saved successfully");
@@ -80,6 +91,19 @@ const SettingsPage = () => {
                         placeholder="Enter new username"
                     />
                 </div>
+
+                <div className="mb-6 ">
+                    <label className="block text-gray-700 font-semibold mb-2">Email</label>
+                    <input
+                        type="text"
+                        value={email}
+                        disabled
+                        className="block w-full bg-gray-200 cursor-not-allowed p-3 border focus:outline-none rounded-md"
+                        placeholder="Enter new shop name"
+                    />
+                </div>
+
+
                 <div className="mb-6">
                     <label className="block text-gray-700 font-semibold mb-2">Shop Name</label>
                     <input
@@ -92,15 +116,16 @@ const SettingsPage = () => {
                 </div>
 
                 <div className="mb-6">
-                    <label className="block text-gray-700 font-semibold mb-2">Email</label>
+                    <label className="block text-gray-700 font-semibold mb-2">Whatsapp Number</label>
                     <input
-                        type="text"
-                        value={email}
-                        disabled
+                        type="phone"
+                        value={whatsappNumber}
+                        onChange={(e) => setWhatsappNumber(e.target.value)}
                         className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
-                        placeholder="Enter new shop name"
+                        placeholder="Enter Whatsapp Number"
                     />
                 </div>
+
 
                 {/* Theme Color Picker */}
                 <div className="mb-6">

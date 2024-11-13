@@ -30,6 +30,7 @@ export interface userType {
     name: string;
     profile: string;
     email: string;
+    whatsappNumber?: number;
     additionalNotes: string;
     username: string;
     isVisitedCount: string;
