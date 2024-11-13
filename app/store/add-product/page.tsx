@@ -92,16 +92,22 @@ const CreateProduct = () => {
     };
 
     const uploadImagesToFirebase = async () => {
-        const urls: string[] = [];
-        for (const file of imageFiles) {
-            const storageRef = ref(storage, `products/${file.name}`);
-            await uploadBytes(storageRef, file);
-            const downloadURL = await getDownloadURL(storageRef);
-            urls.push(downloadURL);
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}_${String(currentDate.getHours()).padStart(2, '0')}-${String(currentDate.getMinutes()).padStart(2, '0')}-${String(currentDate.getSeconds()).padStart(2, '0')}`;
+        try {
+            const uploadPromises = imageFiles.map(async (file) => {
+                const storageRef = ref(storage, `products/${formattedDate}_${file.name}`);
+                await uploadBytes(storageRef, file);
+                return getDownloadURL(storageRef);
+            });
+            const urls = await Promise.all(uploadPromises);
+            return urls;
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            throw error;
         }
-        return urls;
     };
-
+    
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setIsUploading(true);

@@ -27,6 +27,10 @@ const AlertMessageSlider = () => {
         fetchPromoMessages();
     }, [storeId]);
 
+    if (promoMessage === "") {
+        return null;
+    }
+
     return (
         <div className="relative w-full group">
             <div className="bg-red-600 w-full overflow-hidden">

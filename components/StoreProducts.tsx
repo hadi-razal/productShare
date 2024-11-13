@@ -90,7 +90,8 @@ const StoreProducts = ({ storeId }: any) => {
           product.name.toLowerCase().includes(searchInput.toLowerCase()) ||
           product.description.toLowerCase().includes(searchInput.toLowerCase()) ||
           (product.colors && product.colors.some((color) => color.toLowerCase().includes(searchInput.toLowerCase()))) ||
-          (product.category && product.category.toLowerCase().includes(searchInput.toLowerCase()))
+          (product.category && product.category.toLowerCase().includes(searchInput.toLowerCase())) ||
+          (product.tags && product.tags.toLowerCase().includes(searchInput.toLowerCase()))
       );
     }
 
@@ -194,12 +195,21 @@ const StoreProducts = ({ storeId }: any) => {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
-          {filteredProducts.slice(0, visibleProducts).map((product) => (
-            <ProductCard key={product.id} refetchProducts={fetchProducts} storeId={storeId as string} product={product} />
-          ))}
-        </div>
+        <>
+          {filteredProducts.length === 0 ? (
+            <div className="flex items-center justify-center w-full h-[300px]">
+              <span className="text-center text-gray-500">No Products Available</span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
+              {filteredProducts.slice(0, visibleProducts).map((product) => (
+                <ProductCard key={product.id} refetchProducts={fetchProducts} storeId={storeId as string} product={product} />
+              ))}
+            </div>
+          )}
+        </>
       )}
+
 
       {visibleProducts < filteredProducts.length && (
         <div className="flex justify-center mt-4">

@@ -179,7 +179,7 @@ const ProductCard = ({ product, storeId, refetchProducts }: ProductCardProps) =>
               className="flex items-center justify-center bg-red-600  py-2 px-3 w-full rounded-md text-white gap-1"
             >
               <Trash className="w-4 h-4" />
-              <span>Delete</span>
+              <span className="hidden sm:flex">Delete</span>
             </button>
             <button
               onClick={(e) => {
@@ -189,7 +189,7 @@ const ProductCard = ({ product, storeId, refetchProducts }: ProductCardProps) =>
               className="flex items-center justify-center bg-gray-500 w-full py-2 px-3 rounded-md text-white gap-1"
             >
               <PencilIcon className="w-4 h-4" />
-              <span>Edit</span>
+              <span className="hidden sm:flex">Edit</span>
             </button>
           </div>
         </div>
