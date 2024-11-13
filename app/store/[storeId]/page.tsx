@@ -32,8 +32,7 @@ async function getStoreData(storeId: string): Promise<StoreData | null> {
     const storeSnap = await getDoc(storeRef);
 
     if (storeSnap.exists()) {
-      const storeData = storeSnap.data() as StoreData;
-      return storeData;
+      return storeSnap.data() as StoreData;
     } else {
       console.error('Store not found');
       return null;
@@ -44,8 +43,9 @@ async function getStoreData(storeId: string): Promise<StoreData | null> {
   }
 }
 
-export async function generateMetadata({ params }: any): Promise<Metadata> {
-  const { storeId } = await params;
+// Metadata generation function with improved type safety and error handling
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { storeId } = params;
 
   const storeData = await getStoreData(storeId);
 
@@ -59,19 +59,30 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: storeData?.image ? [storeData.image] : [],
+      images: [
+        {
+          url: storeData?.image || "https://productshare.vercel.app/logo.png",
+          width: 800,
+          height: 600,
+          alt: storeData?.name || "ProductShare - Showcase Your Products",
+        },
+      ],
     },
   };
 }
 
-export default async function Page({ params }: any) {
-  const { storeId } = await params;
+// Page component with improved conditional rendering
+export default async function Page({ params }: PageProps) {
+  const { storeId } = params;
 
   const storeData = await getStoreData(storeId);
 
+  if (!storeData) {
+    return <p>Store not found.</p>;
+  }
+
   return (
     <>
-      {/* Render the store's products */}
       <StoreProducts storeId={storeId} />
     </>
   );
