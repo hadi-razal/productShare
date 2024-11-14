@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 
 
 const SettingsPage = () => {
+    
     const [userId, setUserId] = useState<string | null>();
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');

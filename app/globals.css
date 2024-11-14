@@ -1,38 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-background: #f3f4f6;
+  --font-poppins: "Poppins", sans-serif;
+  background: #f3f4f6;
 }
 
+body {
+  font-family: var(--font-poppins);
+}
 
 .marquee {
-    overflow: hidden;
-    white-space: nowrap;
-    box-sizing: border-box;
-  }
-  
-  .marquee-content {
-    display: inline-block;
-    animation: marquee 500s linear infinite;
-  }
-  
-  @keyframes marquee {
-    0% {
-      transform: translate(0);
-    }
-    100% {
-      transform: translate(-100%);
-    }
-  }
-  
-  .stat-card {
-    display: inline-block;
-    margin-right: 20px; /* Space between items */
-  }
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
 
-  /* styles/globals.css or a dedicated CSS file */
+.marquee-content {
+  display: inline-block;
+  animation: marquee 500s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0);
+  }
+  100% {
+    transform: translate(-100%);
+  }
+}
+
+.stat-card {
+  display: inline-block;
+  margin-right: 20px; /* Space between items */
+}
+
+/* styles/globals.css or a dedicated CSS file */
 .snowflake {
   position: absolute;
   top: -10%;
