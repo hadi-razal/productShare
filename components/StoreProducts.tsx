@@ -8,6 +8,8 @@ import { db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
 
+import { Rings } from 'react-loader-spinner';
+
 const StoreProducts = ({ storeId }: any) => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -192,7 +194,7 @@ const StoreProducts = ({ storeId }: any) => {
 
       {isLoading ? (
         <div className="flex justify-center items-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+          <Rings color="#172554" />
         </div>
       ) : (
         <>
