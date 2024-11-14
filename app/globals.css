@@ -14,7 +14,7 @@ body {
 }
 
 .marquee {
-  overflow: hidden;
+overflow: hidden;
   white-space: nowrap;
   box-sizing: border-box;
 }

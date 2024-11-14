@@ -185,7 +185,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
         <meta property="og:description" content={productData.description || "Check out this product!"} />
       </Head>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pb-10">
 
 
         {/* Product Images */}
@@ -274,24 +274,17 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
           <div className="flex gap-1 mt-6">
             <button
               onClick={handleBuyNow}
-              className="bg-blue-950 flex items-center gap-2 justify-center text-white py-3 px-6 rounded-lg font-medium"
+              className="bg-blue-950 flex items-center gap-2 justify-center text-white py-3 px-6 rounded-md font-medium"
             >
               <FiShoppingCart className="text-white" />
               Buy Now
             </button>
             <button
-              className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-2 rounded-lg font-medium"
+              className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-2 rounded-md font-medium"
               onClick={handleKnowMore}
             >
               <Info className="text-black" />
               Know More
-            </button>
-            <button
-              className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-6 rounded-lg font-medium"
-              onClick={handleShare}
-            >
-              <FiShare2 className="text-black" />
-              Share
             </button>
           </div>
 
@@ -333,7 +326,21 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
               </div>
             </div>
           )}
-          <p className="text-gray-600 pb-10 font-normal">{productData.description}</p>
+          <p className="text-gray-600  font-normal">{productData.description}</p>
+
+
+          <div className=' flex w-full items-center justify-end'>
+            <button
+              className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-6 rounded-md font-medium"
+              onClick={handleShare}
+            >
+              <FiShare2 className="text-black" />
+            </button>
+          </div>
+
+
+
+
         </div>
       </div>
     </div >
