@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
       description,
       images: [
         {
-          url: storeData?.image || "https://productshare.vercel.app/logo.png",
+          url: storeData?.image || "https://productshare.in/logo.png",
           width: 800,
           height: 600,
           alt: storeData?.name || "ProductShare - Showcase Your Products",
