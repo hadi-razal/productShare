@@ -24,11 +24,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ProductShare by Hadi Razal - Showcase Your Products",
     description: "Founded by Hadi Razal, ProductShare is designed for small businesses to easily share product catalogs.",
-    url: "https://productshare.vercel.app",
+    url: "https://productshare.in",
     type: "website",
     images: [
       {
-        url: "https://productshare.vercel.app/logo.png",
+        url: "https://productshare.in/logo.png",
         width: 800,
         height: 600,
         alt: "ProductShare - Showcase Your Products",
@@ -70,8 +70,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "ProductShare",
-              url: "https://productshare.vercel.app",  // Updated to your actual URL
-              logo: "https://productshare.vercel.app/logo.png",  // Replace with your actual logo URL
+              url: "https://productshare.in",  // Updated to your actual URL
+              logo: "https://productshare.in/logo.png",  // Replace with your actual logo URL
               description:
                 "ProductShare helps small businesses easily create and share product catalogs. Founded by Hadi Razal, the app brings simple catalog management to small businesses.",
               founder: {

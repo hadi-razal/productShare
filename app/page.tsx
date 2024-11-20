@@ -11,11 +11,11 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
       title: "ProductShare by Hadi Razal - Showcase Your Products",
       description:
         "Empowering small business owners to create and share product catalogs effortlessly. Boost your brand with a simple, shareable link.",
-      url: "https://productshare.vercel.app",
+      url: "https://productshare.in",
       type: "website",
       images: [
         {
-          url: "https://productshare.vercel.app/logo.png",
+          url: "https://productshare.in/logo.png",
           width: 800,
           height: 600,
           alt: "ProductShare - Showcase Your Products",
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
     },
     robots: "index, follow",
     icons: {
-      icon: "/icon.ico",
+      icon: "/public/icon.ico",
     },
   };
 }
