@@ -205,7 +205,7 @@ const StoreProducts: React.FC<StoreProductsProps> = ({ storeId }) => {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {isLoading
-          ? Array.from({ length: 10 }).map((_, idx) => (
+          ? Array.from({ length: 20 }).map((_, idx) => (
             <ProductCard
             key={idx}
             isLoading={true} // Pass the actual loading state
