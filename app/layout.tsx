@@ -18,32 +18,37 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "ProductShare by Hadi Razal | Showcase Your Products",
-  description: "Founded by Hadi Razal, ProductShare helps small business owners create and share product catalogs easily with customers.",
-  keywords: "ProductShare, Hadi Razal, product catalog, small business app, product sharing, online catalog, Hadi Razal CEO",
+  title: "Product Share | Create and Share Online Product Catalogs Effortlessly",
+  description:
+    "Product Share by Hadi Razal is the ultimate tool for small businesses. Easily create, manage, and share online product catalogs with your customers.",
+  keywords:
+    "Product Share, online product catalog, small business solutions, product sharing tool, digital catalog creator, business catalog app, product management software, Hadi Razal, catalog sharing platform",
   openGraph: {
-    title: "ProductShare by Hadi Razal - Showcase Your Products",
-    description: "Founded by Hadi Razal, ProductShare is designed for small businesses to easily share product catalogs.",
+    title: "Product Share - The Best Catalog Sharing Platform for Small Businesses",
+    description:
+      "Product Share makes it simple for small business owners to showcase and share their products online. Start creating catalogs today!",
     url: "https://productshare.in",
     type: "website",
     images: [
       {
-        url: "https://productshare.in/logo.png",
-        width: 800,
-        height: 600,
-        alt: "ProductShare - Showcase Your Products",
+        url: "https://productshare.in/icon.ico",
+        width: 1200,
+        height: 630,
+        alt: "ProductShare - The Best Catalog Sharing Platform for Small Businesses",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ProductShare by Hadi Razal - Showcase Your Products",
-    description: "ProductShare, founded by Hadi Razal, allows easy catalog sharing for small business owners.",
+    title: "Product Share | Showcase Your Products",
+    description:
+      "Simplify your business with Product Share. Create stunning online catalogs and share them easily with customers. Perfect for small business owners!",
     creator: "@Hadi_Razal",
   },
   robots: "index, follow",
   icons: {
-    icon: "/icon.ico",
+    icon: "/public/icon.ico",
+    shortcut: "/public/favicon-32x32.png",
   },
 };
 
@@ -57,23 +62,24 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        {/* Add favicon or app icon */}
-        <link rel="icon" href="/public/icon.ico" sizes="any" />
-        <link rel="icon" href="/public/favicon-32x32.png" sizes="32x32" />
-        <link rel="icon" href="/public/favicon-16x16.png" sizes="16x16" />
-        <link rel="apple-touch-icon" href="/public/apple-touch-icon.png" />
+        {/* Favicons */}
+        <link rel="icon" href="/icon.ico" sizes="any" />
+        <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" href="/favicon-16x16.png" sizes="16x16" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
+        {/* Schema.org JSON-LD */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "ProductShare",
-              url: "https://productshare.in",  // Updated to your actual URL
-              logo: "https://productshare.in/logo.png",  // Replace with your actual logo URL
+              "@type": "SoftwareApplication",
+              name: "Product Share",
+              url: "https://productshare.in",
+              logo: "https://productshare.in/logo.png",
               description:
-                "ProductShare helps small businesses easily create and share product catalogs. Founded by Hadi Razal, the app brings simple catalog management to small businesses.",
+                "Product Share is an intuitive platform that empowers small businesses to create and share product catalogs. Founded by Hadi Razal.",
               founder: {
                 "@type": "Person",
                 name: "Hadi Razal",
@@ -83,28 +89,32 @@ export default function RootLayout({
                   "https://github.com/hadi-razal",
                   "https://twitter.com/Hadi_Razal",
                   "https://www.instagram.com/hadi_razal/",
-                  "https://www.linkedin.com/in/hadi-razal-690b22228/"
-                ]
+                  "https://www.linkedin.com/in/hadi-razal-690b22228/",
+                ],
               },
-              contactPoint: {
-                "@type": "ContactPoint",
-                email: "hadhirasal22@gmail.com",
-                telephone: "+919074063723",
-                contactType: "Customer Support",
-              },
-              applicationCategory: "BusinessApplication",
               operatingSystem: "Web",
+              applicationCategory: "BusinessApplication",
               aggregateRating: {
                 "@type": "AggregateRating",
                 ratingValue: "4.9",
                 ratingCount: "321",
               },
+              contactPoint: {
+                "@type": "ContactPoint",
+                email: "hadhirasal22@gmail.com",
+                telephone: "+91-9074063723",
+                contactType: "Customer Support",
+              },
             }),
           }}
         />
+
+        {/* Razorpay Script */}
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <Header />
         <Toaster />
         <ProgressBar />
