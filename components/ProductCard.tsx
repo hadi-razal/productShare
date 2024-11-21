@@ -12,12 +12,13 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface ProductCardProps {
-  product: ProductType;
-  storeId: string;
-  refetchProducts: () => void;
+  product?: ProductType;
+  storeId?: string;
+  isLoading?: boolean;
+  refetchProducts?: () => void;
 }
 
-const ProductCard = ({ product, storeId, refetchProducts }: ProductCardProps) => {
+const ProductCard = ({ product, storeId, refetchProducts,isLoading }: ProductCardProps) => {
   const router = useRouter();
   const [isStoreOwner, setIsStoreOwner] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -93,6 +94,22 @@ const ProductCard = ({ product, storeId, refetchProducts }: ProductCardProps) =>
   };
 
   console.log(product)
+
+  if (isLoading) {
+    return (
+      <div className="cursor-pointer relative w-full rounded-md border bg-gray-200 animate-pulse shadow-sm">
+        <div className="w-full h-48 bg-gray-300 rounded-t-md"></div>
+        <div className="p-2">
+          <div className="h-4 w-3/4 bg-gray-300 rounded-md mb-2"></div>
+          <div className="h-4 w-1/2 bg-gray-300 rounded-md mb-2"></div>
+          <div className="flex gap-2">
+            <div className="h-4 w-1/4 bg-gray-300 rounded-md"></div>
+            <div className="h-4 w-1/4 bg-gray-300 rounded-md"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (product.isHidden && !isStoreOwner) {
     return
