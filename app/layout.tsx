@@ -34,7 +34,7 @@ export const metadata: Metadata = {
         url: "https://productshare.in/icon.ico",
         width: 1200,
         height: 630,
-        alt: "ProductShare - The Best Catalog Sharing Platform for Small Businesses",
+        alt: "Product Share - The Best Catalog Sharing Platform for Small Businesses",
       },
     ],
   },
@@ -44,12 +44,17 @@ export const metadata: Metadata = {
     description:
       "Simplify your business with Product Share. Create stunning online catalogs and share them easily with customers. Perfect for small business owners!",
     creator: "@Hadi_Razal",
+    // image: "https://productshare.in/share-image.png", // Add an image link for Twitter cards
   },
   robots: "index, follow",
   icons: {
     icon: "https://productshare.in/icon.ico",
     shortcut: "https://productshare.in/favicon-32x32.png",
   },
+  // // Add canonical link
+  // link: [
+  //   { rel: "canonical", href: "https://productshare.in" },
+  // ],
 };
 
 export default function RootLayout({
@@ -61,12 +66,16 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+        
         {/* Favicons */}
         <link rel="icon" href="/icon.ico" sizes="any" />
         <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" href="/favicon-16x16.png" sizes="16x16" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+        {/* Preload Fonts */}
+        <link rel="preload" href="./fonts/GeistVF.woff" as="font" type="font/woff2"  />
+        <link rel="preload" href="./fonts/GeistMonoVF.woff" as="font" type="font/woff2" />
 
         {/* Schema.org JSON-LD */}
         <script
@@ -108,9 +117,9 @@ export default function RootLayout({
             }),
           }}
         />
-
-        {/* Razorpay Script */}
-        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        
+        {/* Razorpay Script with defer */}
+        <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
