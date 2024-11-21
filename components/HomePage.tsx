@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
-import Lottie from 'lottie-react';
-import { Star, ShoppingCart } from 'lucide-react';
+import React, { useEffect } from "react";
+import { motion } from "framer-motion";
+import Lottie from "lottie-react";
+import { Star, ShoppingCart } from "lucide-react";
 import heroAnimation from "@/public/hero.json";
-import Image from 'next/image';
-import { FaUserFriends, FaChartLine } from 'react-icons/fa';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
+import Image from "next/image";
+import { FaUserFriends, FaChartLine } from "react-icons/fa";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -26,7 +26,12 @@ interface TestimonialCardProps {
 }
 
 const FeatureCard = ({ icon, title, description, gradient }: FeatureCardProps) => (
-  <motion.div className={`flex flex-col items-center p-6 rounded-2xl shadow-lg ${gradient} border border-white/10`}>
+  <motion.div
+    className={`flex flex-col items-center p-6 rounded-2xl shadow-lg ${gradient} border border-white/10`}
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+  >
     <div className="p-3 bg-white/80 rounded-xl shadow-inner">{icon}</div>
     <h3 className="mt-4 text-xl font-semibold text-gray-800">{title}</h3>
     <p className="mt-2 text-gray-600 text-center">{description}</p>
@@ -34,7 +39,12 @@ const FeatureCard = ({ icon, title, description, gradient }: FeatureCardProps) =
 );
 
 const TestimonialCard = ({ content, author, authorRole, authorImage }: TestimonialCardProps) => (
-  <motion.div className="bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center">
+  <motion.div
+    className="bg-white p-8 rounded-2xl shadow-lg flex flex-col items-center"
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+  >
     <p className="text-lg text-gray-700 italic mb-6">"{content}"</p>
     <div className="flex items-center">
       <Image
@@ -58,41 +68,64 @@ const features = [
     icon: <Star className="w-6 h-6 text-yellow-500" />,
     title: "Seamless Catalog Creation",
     description: "Build catalogs in minutes and keep them organized.",
-    gradient: "bg-gradient-to-br from-yellow-100 to-orange-200"
+    gradient: "bg-gradient-to-br from-yellow-100 to-orange-200",
   },
   {
     icon: <ShoppingCart className="w-6 h-6 text-blue-500" />,
     title: "Product Share Links",
     description: "Share product catalogs directly with customers on WhatsApp.",
-    gradient: "bg-gradient-to-br from-blue-100 to-indigo-200"
+    gradient: "bg-gradient-to-br from-blue-100 to-indigo-200",
   },
   {
     icon: <FaUserFriends className="w-6 h-6 text-green-500" />,
     title: "Customer Engagement",
     description: "Stay connected with instant messaging and updates.",
-    gradient: "bg-gradient-to-br from-green-100 to-teal-200"
+    gradient: "bg-gradient-to-br from-green-100 to-teal-200",
   },
   {
     icon: <FaChartLine className="w-6 h-6 text-purple-500" />,
     title: "Advanced Analytics",
     description: "Track performance metrics to maximize sales.",
-    gradient: "bg-gradient-to-br from-purple-100 to-pink-200"
-  }
+    gradient: "bg-gradient-to-br from-purple-100 to-pink-200",
+  },
+];
+
+const testimonials = [
+  {
+    content: "This tool transformed the way I manage my products!",
+    author: "John Doe",
+    authorRole: "Entrepreneur",
+    authorImage: "/praveen.jpeg",
+  },
+  {
+    content: "Simple and effective for growing your online sales.",
+    author: "Jane Smith",
+    authorRole: "Business Owner",
+    authorImage: "/arjun.jpg",
+  },
+  {
+    content: "The analytics feature is a game-changer!",
+    author: "Mark Wilson",
+    authorRole: "E-commerce Specialist",
+    authorImage: "/praveen.jpeg",
+  },
 ];
 
 const HomePage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    onAuthStateChanged(auth, (userData: User | null) => {
+    const unsubscribe = onAuthStateChanged(auth, (userData: User | null) => {
       if (userData?.uid) {
         router.push("/store");
       }
     });
+
+    return () => unsubscribe(); // Clean up the listener
   }, [router]);
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 ">
       {/* Hero Section */}
       <section className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-blue-900 pt-10">
         <div className="relative max-w-7xl mx-auto px-6 py-16 text-center">
@@ -130,11 +163,11 @@ const HomePage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Why Choose Product Share?</h2>
-          <p className="text-lg text-gray-500 mb-12">Empowering sellers with tools to showcase, share, and succeed.</p>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="py-20 bg-gray-100 px-3">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl font-bold">Why Choose Product Share?</h2>
+          <p className="mt-4 text-gray-600">Empowering sellers with tools to showcase, share, and succeed.</p>
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
               <FeatureCard key={index} {...feature} />
             ))}
@@ -143,31 +176,12 @@ const HomePage = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gray-100">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">What Our Clients Say</h2>
-          <p className="text-lg text-gray-500 mb-12">Trusted by sellers worldwide to power their growth.</p>
-          <div className="grid gap-8 lg:grid-cols-3 sm:grid-cols-2">
-            {[
-              {
-                content: "Product Share is a game-changer! My customers love the easy access to my products.",
-                author: "Alice Monroe",
-                authorRole: "Owner of Trendy Boutique",
-                authorImage: "/praveen.jpeg",
-              },
-              {
-                content: "The catalog builder is so simple and fast. It saves me hours every week!",
-                author: "David Lee",
-                authorRole: "Founder of SmartMart",
-                authorImage: "/arjun.jpg",
-              },
-              {
-                content: "I've seen my sales grow by 50% since using this platform. A must-have for sellers!",
-                author: "Sarah Kim",
-                authorRole: "CEO of Luxe Shop",
-                authorImage: "/praveen.jpeg",
-              },
-            ].map((testimonial, index) => (
+      <section className="py-20 bg-white px-3">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl font-bold">What Our Clients Say</h2>
+          <p className="mt-4 text-gray-600">Trusted by sellers worldwide to power their growth.</p>
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {testimonials.map((testimonial, index) => (
               <TestimonialCard key={index} {...testimonial} />
             ))}
           </div>
