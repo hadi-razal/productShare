@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
           url: "https://productshare.in/logo.png",
           width: 1200,
           height: 630,
-          alt: "ProductShare - Simplify Your Product Showcase",
+          alt: "Product Share - Simplify Your Product Showcase",
         },
       ],
     },
