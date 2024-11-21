@@ -2,21 +2,21 @@ import React from 'react';
 
 const Page = () => {
   return (
-    <div className='mx-auto max-w-6xl py-24'>
-     <h2 className="text-3xl font-bold text-gray-800 mb-4">Cancellation Policy</h2>
+    <div className='mx-auto max-w-6xl py-24 px-3'>
+      <h2 className="text-3xl font-bold text-gray-800 mb-4">Cancellation Policy</h2>
       <p>
-        Product Share is committed to providing a seamless experience for our customers, offering a digital catalogue builder to manage online stores. Below are the details of our cancellation policy:
+        Product Share aims to offer a smooth experience for all customers using our digital catalogue builder. Below are the terms of our cancellation policy, applicable to both our monthly and yearly plans:
       </p>
       <ul>
-        <li><strong>Cancellation Window:</strong> Cancellation requests will only be considered within 1-2 days of purchasing or subscribing to our service.</li>
-        <li><strong>Non-refundable Items:</strong> As our service involves providing access to the online catalogue builder, we do not accept cancellations for services that have already been used to create a digital storefront.</li>
-        <li><strong>Subscription Service:</strong> If you have subscribed to our premium features, you may cancel the subscription at any time, but no refunds will be provided for any time already used.</li>
-        <li><strong>Service Issues:</strong> If you encounter any technical issues, such as problems with accessing or using the catalogue builder, please contact our Customer Service Team within 1-2 days of the issue.</li>
-        <li><strong>Product Listing Issues:</strong> If you experience issues with the products you have listed on your store, such as discrepancies between your listing and the live store, contact us within 1-2 days, and we will work to resolve them.</li>
-        <li><strong>Refund Processing:</strong> In cases where a refund is deemed appropriate for an issue related to our service (such as technical failures preventing access to your store), the refund will be processed within 1-2 days and credited back to the payment method used during the purchase.</li>
+        <li><strong>Cancellation Window:</strong> Cancellation requests will be accepted only if made within 1-2 days of the purchase of either the monthly or yearly plan.</li>
+        <li><strong>Non-refundable Purchases:</strong> Since our service provides immediate access to the catalogue builder upon payment, cancellations will not be accepted for any services already accessed, including products created using the tool.</li>
+        <li><strong>Subscription Cancellations:</strong> Both the monthly and yearly plans are one-time purchases, and no recurring charges are applied. However, if you wish to cancel or discontinue using the service before the end of your plan’s duration, we will not provide a refund for any unused period.</li>
+        <li><strong>Refunds & Issues:</strong> In cases where you experience technical difficulties that prevent access to your digital store, or if there are significant issues preventing usage, please contact our Customer Service Team within 1-2 days of the problem. Refunds may be issued after an investigation if deemed appropriate.</li>
+        <li><strong>Technical Issues:</strong> If you encounter technical issues related to accessing or using the catalogue builder, please inform our Customer Service Team within 1-2 days, and we will work to resolve the issue promptly.</li>
+        <li><strong>Refund Processing:</strong> If a refund is approved based on the conditions outlined, the refund will be processed within 1-2 business days and credited to the original payment method used for the purchase.</li>
       </ul>
       <p>
-        If you have any further questions or need assistance, please don't hesitate to reach out to our Customer Service Team. We are here to help!
+        For any additional questions or support, please contact our Customer Service Team. We are available to assist you with any concerns.
       </p>
     </div>
   );

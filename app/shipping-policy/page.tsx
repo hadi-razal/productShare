@@ -2,7 +2,7 @@ import React from 'react';
 
 const ShippingPolicy = () => {
   return (
-    <div className='mx-auto max-w-6xl py-24'>
+    <div className='mx-auto max-w-6xl py-24 px-3'>
       <h2 className="text-3xl font-bold text-gray-800 mb-4">Shipping Policy</h2>
       <p>
         At Product Share, we strive to provide a seamless experience for our customers who create and showcase their online stores. As our service focuses on digital storefronts and catalogue building, there are no physical products shipped. Instead, we provide easy-to-use tools for creating your personalized online store and managing your product listings.
