@@ -96,7 +96,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
 
     const plan = {
         name: 'Pro Plan',
-        monthlyPrice: 9900,
+        monthlyPrice: 100,
         yearlyPrice: 99999,
         features: [
             'Up to 100 products',
