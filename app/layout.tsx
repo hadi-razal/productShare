@@ -40,15 +40,15 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Product Share | Showcase Your Products",
+    title: "Product Share | Create and Share Online Product Catalogs Effortlessly",
     description:
       "Simplify your business with Product Share. Create stunning online catalogs and share them easily with customers. Perfect for small business owners!",
     creator: "@Hadi_Razal",
   },
   robots: "index, follow",
   icons: {
-    icon: "/public/icon.ico",
-    shortcut: "/public/favicon-32x32.png",
+    icon: "https://productshare.in/icon.ico",
+    shortcut: "https://productshare.in/favicon-32x32.png",
   },
 };
 
