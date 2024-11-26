@@ -30,8 +30,8 @@ const Header = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleLogoClick = () => {
@@ -40,7 +40,7 @@ const Header = () => {
         router.push("/store");
         return;
       }
-      if (!isUser && path?.startsWith('/store/') && storeId) {
+      if (!isUser && path?.startsWith("/store/") && storeId) {
         router.push(`/store/${storeId}`);
         return;
       }
@@ -94,11 +94,9 @@ const Header = () => {
 
   return (
     <motion.header
-      className={`fixed w-full top-0 z-50 transition-all duration-300 ${isOpen ? "h-screen md:h-20" : "h-20"
-        } ${isScrolled || path !== '/'
-          ? "bg-gray-900/95"
-          : "bg-transparent"
-        }`}
+      className={`fixed w-full top-0 z-50 transition-all duration-300 ${
+        isOpen ? "h-screen md:h-20" : "h-20"
+      } ${isScrolled || path !== "/" ? "bg-gray-900/95" : "bg-transparent"}`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 relative">
         <div className="flex items-center justify-between h-full">
@@ -116,7 +114,9 @@ const Header = () => {
                     Product Share
                     <Sparkles className="w-5 h-5 text-blue-400" />
                   </span>
-                  <span className="text-xs text-gray-300">Your customers can see this as your store name</span>
+                  <span className="text-xs text-gray-300">
+                    Your customers can see this as your store name
+                  </span>
                 </div>
               ) : (
                 <span>{storeName || "Product Share"}</span>
@@ -127,8 +127,31 @@ const Header = () => {
           <div className="hidden md:flex items-center">
             {!isUser ? (
               <div className="flex gap-4 items-center justify-center">
-                <Link className="text-white" href="/about-us">About</Link>
-                <Link className="text-white" href="/contact">Contact</Link>
+                <Link
+                  className="text-white"
+                  href={`${path === "/" ? "#testimonials" : "/#testimonials"}`}
+                >
+                  Testimonials
+                </Link>
+                <Link
+                  className="text-white"
+                  href={`${path === "/" ? "#features" : "/#features"}`}
+                >
+                  Features
+                </Link>
+                <Link
+                  className="text-white"
+                  href={`${path === "/" ? "#pricing" : "/#pricing"}`}
+                >
+                  Pricing
+                </Link>
+
+                <Link className="text-white" href="/about-us">
+                  About
+                </Link>
+                <Link className="text-white" href="/contact">
+                  Contact
+                </Link>
 
                 <Link
                   href="/login"
@@ -166,14 +189,19 @@ const Header = () => {
             opacity: isOpen ? 1 : 0,
             y: isOpen ? 0 : -20,
           }}
-          className={`md:hidden absolute inset-x-0 top-20 bg-gray-900/95 backdrop-blur-md transition-all duration-300 ${isOpen ? "pointer-events-auto" : "pointer-events-none"
-            }`}
+          className={`md:hidden absolute inset-x-0 top-20 bg-gray-900/95 backdrop-blur-md transition-all duration-300 ${
+            isOpen ? "pointer-events-auto" : "pointer-events-none"
+          }`}
         >
           <div className="p-4 space-y-4">
             {!isUser && (
               <div className="flex flex-col space-y-2">
-                <Link className="text-white" href="/about-us">About</Link>
-                <Link className="text-white" href="/contact">Contact</Link>
+                <Link className="text-white" href="/about-us">
+                  About
+                </Link>
+                <Link className="text-white" href="/contact">
+                  Contact
+                </Link>
               </div>
             )}
             {!isUser ? (
