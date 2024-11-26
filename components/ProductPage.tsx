@@ -24,6 +24,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [isModalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
+
 
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
@@ -43,28 +45,31 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
 
   }
 
-  let isOwner = false;
 
+  // To get total views of the product to visible only for the store owner
   useEffect(() => {
-    addProductCount()
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        isOwner = userId == user.uid;
-      } else {
-        isOwner = false;
-      }
-    });
-
     const fetchUserId = async () => {
       if (storeId) {
         const id = await getUserId(storeId);
         setUserId(id);
       }
     };
-    fetchUserId();
-  }, [storeId]);
 
+    fetchUserId();
+
+    // Monitor authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsOwner(userId === user?.uid);
+      } else {
+        setIsOwner(false);
+      }
+
+    });
+
+    // Cleanup function to unsubscribe from auth state listener
+    return () => unsubscribe();
+  }, [storeId, userId]);
 
 
   useEffect(() => {
@@ -137,22 +142,10 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
         shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
       } else if (platform === 'whatsapp') {
         shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-      } else if (platform === 'instagram') {
-        shareUrl = `https://www.instagram.com/`;
-        alert("Instagram does not support direct sharing. Copy the following details to share:\n\n" + message);
       }
       window.open(shareUrl, '_blank');
     }
   };
-
-  // const handleKnowMore = () => {
-  //   if (productData) {
-  //     const message = `Hi, I'm interested in knowing more about this product:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n*${window.location.href}*`;
-  //     const whatsappUrl = `https://wa.me/919074063723?text=${encodeURIComponent(message)}`;
-  //     window.open(whatsappUrl, '_blank');
-  //   }
-  // };
-
 
   const handleLiveChat = () => {
     if (productData) {
@@ -271,13 +264,20 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
             </div>
           </div>
           }
-          <div className="flex gap-1 mt-6">
+
+          <div className="flex gap-2 mt-6">
             <button
               onClick={handleLiveChat}
               className="bg-blue-950 flex items-center gap-2 justify-center text-white py-3 px-6 rounded-md font-medium"
             >
               <FaWhatsapp className="text-white" />
               Live Chat
+            </button>
+            <button
+              className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-6 rounded-md font-medium"
+              onClick={handleShare}
+            >
+              <FiShare2 className="text-black" />
             </button>
           </div>
 
@@ -302,9 +302,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
                     <button onClick={() => shareOnPlatform('whatsapp')} className="bg-green-500 text-white p-3 rounded-lg hover:bg-green-600">
                       <FaWhatsapp className="w-6 h-6" />
                     </button>
-                    <button onClick={() => shareOnPlatform('instagram')} className="bg-red-500 text-white p-3 rounded-lg hover:bg-red-600">
-                      <FaInstagram className="w-6 h-6" />
-                    </button>
+                    
                   </div>
                 </div>
 
@@ -320,19 +318,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
             </div>
           )}
           <p className="text-gray-600  font-normal">{productData.description}</p>
-
-
-          <div className=' flex w-full items-center justify-end'>
-            <button
-              className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-6 rounded-md font-medium"
-              onClick={handleShare}
-            >
-              <FiShare2 className="text-black" />
-            </button>
-          </div>
-
-
-
 
         </div>
       </div>
