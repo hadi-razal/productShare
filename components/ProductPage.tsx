@@ -145,18 +145,18 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     }
   };
 
-  const handleKnowMore = () => {
-    if (productData) {
-      const message = `Hi, I'm interested in knowing more about this product:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n*${window.location.href}*`;
-      const whatsappUrl = `https://wa.me/919074063723?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
-    }
-  };
+  // const handleKnowMore = () => {
+  //   if (productData) {
+  //     const message = `Hi, I'm interested in knowing more about this product:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n*${window.location.href}*`;
+  //     const whatsappUrl = `https://wa.me/919074063723?text=${encodeURIComponent(message)}`;
+  //     window.open(whatsappUrl, '_blank');
+  //   }
+  // };
 
 
-  const handleBuyNow = () => {
+  const handleLiveChat = () => {
     if (productData) {
-      const message = `Hi, I'm interested in purchasing:\n\n*${productData.name}*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n*${currentUrl}*`;
+      const message = `Hi, I'm interested in purchasing:\n\n*| ${productData.name}|*\nPrice: ₹${productData.discountPrice || productData.regularPrice}\n\n*${currentUrl}*`;
       const whatsappUrl = `https://wa.me/919074063723?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
     }
@@ -273,18 +273,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
           }
           <div className="flex gap-1 mt-6">
             <button
-              onClick={handleBuyNow}
+              onClick={handleLiveChat}
               className="bg-blue-950 flex items-center gap-2 justify-center text-white py-3 px-6 rounded-md font-medium"
             >
-              <FiShoppingCart className="text-white" />
-              Buy Now
-            </button>
-            <button
-              className="flex border bg-gray-300 text-gray-700 items-center gap-2 justify-center py-3 px-2 rounded-md font-medium"
-              onClick={handleKnowMore}
-            >
-              <Info className="text-black" />
-              Know More
+              <FaWhatsapp className="text-white" />
+              Live Chat
             </button>
           </div>
 

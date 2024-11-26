@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
-import { Star, ShoppingCart, Zap, CheckCircle, Globe, TrendingUp } from "lucide-react";
+import { Star, Zap, CheckCircle, Globe, TrendingUp } from "lucide-react";
 import heroAnimation from "@/public/hero.json";
 import Image from "next/image";
-import { FaUserFriends, FaChartLine, FaCheckCircle, FaQuestionCircle, FaRocket, FaMobile } from "react-icons/fa";
+import { FaMobile } from "react-icons/fa";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
@@ -137,8 +137,6 @@ const PricingPlan = ({ title, price, description, features, isMostPopular }: Pri
 
 const HomePage = () => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('features');
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (userData: User | null) => {
       if (userData?.uid) {
@@ -202,7 +200,7 @@ const HomePage = () => {
         "This platform transformed my e-commerce business! I can now manage marketing campaigns effortlessly and see results in real-time.",
       author: "Elena Rodriguez",
       authorRole: "E-commerce Entrepreneur",
-      authorImage: "/elena.jpg",
+      authorImage: "/praveen.jpeg",
       rating: 5,
     },
     {
@@ -210,7 +208,7 @@ const HomePage = () => {
         "As a small business owner, this tool has been a game-changer. It's intuitive, affordable, and delivers professional results every time.",
       author: "Michael Chen",
       authorRole: "Small Business Owner",
-      authorImage: "/michael.jpg",
+      authorImage: "/parker.webp",
       rating: 5,
     },
     {
@@ -218,7 +216,7 @@ const HomePage = () => {
         "With this platform, I've boosted customer engagement significantly. The email templates and automation features are top-notch!",
       author: "Sarah Johnson",
       authorRole: "Marketing Consultant",
-      authorImage: "/sarah.jpg",
+      authorImage: "/arjun.jpg",
       rating: 5,
     },
     {
@@ -226,7 +224,7 @@ const HomePage = () => {
         "The built-in analytics helped me understand customer behavior and tailor my campaigns more effectively. Highly recommend it!",
       author: "David Thompson",
       authorRole: "Digital Strategist",
-      authorImage: "/david.jpg",
+      authorImage: "/praveen.jpeg",
       rating: 4,
     }
   ];
@@ -262,49 +260,37 @@ const HomePage = () => {
   return (
     <div className="bg-gray-50">
       {/* Hero Section with Enhanced Design */}
-      <section className="relative bg-gradient-to-b from-gray-900 to-blue-900 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-900/20 opacity-75"></div>
-        <div className="relative max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 items-center gap-12">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-b from-gray-900 to-blue-900 text-white">
+        <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 items-center gap-12">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-5xl font-extrabold mb-6">
-              Transform Your <span className="text-blue-300">Product Catalog</span> Experience
+              Transform Your <span className="text-blue-300">Catalog</span> Experience
             </h1>
             <p className="text-xl text-gray-300 mb-8">
-              Create, share, and track product catalogs with unprecedented ease and intelligence.
+              Share and track product catalogs with ease.
             </p>
             <div className="flex space-x-4">
-              <motion.a
-                href="/register"
-                whileHover={{ scale: 1.05 }}
-                className="px-8 py-4 bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 transition-all"
-              >
+              <motion.a href="/register" className="px-8 py-4 bg-blue-600 rounded-lg">
                 Start Free Trial
               </motion.a>
-              <motion.a
-                href="/demo"
-                whileHover={{ scale: 1.05 }}
-                className="px-8 py-4 border border-white/30 rounded-lg hover:bg-white/10 transition-all"
-              >
+              <motion.a href="/demo" className="px-8 py-4 border rounded-lg">
                 Watch Demo
               </motion.a>
             </div>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Lottie animationData={heroAnimation} className="w-full max-w-md mx-auto" loop />
+          <motion.div>
+            <Lottie animationData={heroAnimation} className="w-full max-w-md" />
           </motion.div>
         </div>
       </section>
 
       {/* Enhanced Features Section */}
-      <section className="py-20 bg-gray-50 px-6">
+      <section id="features" className="py-20 bg-gray-50 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-6">Supercharge Your Product Sharing</h2>
@@ -321,7 +307,7 @@ const HomePage = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 bg-gray-100 px-6">
+      <section id="pricing" className="py-20 bg-gray-100 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-6">Flexible Pricing for Every Business</h2>
@@ -338,7 +324,7 @@ const HomePage = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-blue-50 px-6">
+      <section id="testimonials" className="py-20 bg-blue-50 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-6">Success Stories</h2>

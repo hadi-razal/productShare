@@ -1,94 +1,106 @@
-import Image from 'next/image';
 import React from 'react';
 import Head from 'next/head';
+import { Target, Layers, Users, Trophy, Globe, Lock } from 'lucide-react';
+
+const FeatureCard = ({ icon: Icon, title, description }:any) => (
+  <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform">
+    <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+      <Icon className="w-8 h-8 text-blue-900" />
+    </div>
+    <h3 className="text-xl font-bold text-blue-900 mb-3">{title}</h3>
+    <p className="text-gray-600">{description}</p>
+  </div>
+);
 
 const AboutUs = () => {
+  const features = [
+    {
+      icon: Layers,
+      title: 'Collaborative Workspace',
+      description: 'A unified platform where product teams can seamlessly collaborate and manage their workflows.'
+    },
+    {
+      icon: Users,
+      title: 'Team Communication',
+      description: 'Real-time updates and integrated communication tools to keep everyone aligned.'
+    },
+    {
+      icon: Target,
+      title: 'Product Lifecycle Tracking',
+      description: 'Intuitive tracking from initial concept to final product launch and beyond.'
+    },
+    {
+      icon: Globe,
+      title: 'Scalable Solutions',
+      description: 'Customizable workflows that adapt to teams of any size and industry.'
+    },
+    {
+      icon: Lock,
+      title: 'Robust Security',
+      description: 'Enterprise-grade security and data protection to keep your innovative ideas safe.'
+    },
+    {
+      icon: Trophy,
+      title: 'Continuous Innovation',
+      description: 'Constant improvements based on user feedback and cutting-edge product management research.'
+    }
+  ];
+
   return (
     <>
       <Head>
         <title>About Product Share - Revolutionizing Product Management</title>
-        <meta name="description" content="Product Share is a revolutionary SaaS platform that simplifies product management and collaboration, founded by Hadi Razal to enhance team productivity." />
-        <meta name="keywords" content="SaaS, product management, collaboration, product lifecycle, innovation, teamwork, Hadi Razal" />
-        <meta name="author" content="Hadi Razal" />
+        <meta name="description" content="Product Share is a revolutionary SaaS platform that simplifies product management and collaboration, enhancing team productivity and streamlining workflows." />
+        <meta name="keywords" content="SaaS, product management, collaboration, product lifecycle, innovation, teamwork" />
+        <meta name="author" content="Product Share" />
       </Head>
-      
-      <section className="py-16 px-6 text-gray-800 flex items-center justify-center flex-col bg-gray-100 pt-24">
-        <div className="max-w-7xl flex items-center justify-center flex-col mx-auto text-center">
 
-          {/* About Us Header */}
-          <div className="mb-10 opacity-100 transform transition-all duration-1000">
-            <h1 className="text-4xl md:text-5xl font-bold text-blue-900">
+      <div className="bg-gradient-to-br  min-h-screen py-16">
+        <div className="container mx-auto px-6 py-16">
+          {/* Hero Section */}
+          <section className="text-center mb-16">
+            <h1 className="text-5xl font-bold text-blue-900 mb-6 tracking-tight">
               About Product Share
             </h1>
-            <p className="mt-4 text-lg max-w-2xl mx-auto text-gray-700">
-              Product Share is a revolutionary SaaS platform that simplifies product management and collaboration. Founded by developer and entrepreneur Hadi Razal, it aims to transform how teams handle the entire product lifecycle, fostering innovation, enhancing productivity, and streamlining processes.
+            <p className="max-w-3xl mx-auto text-xl text-gray-700 leading-relaxed">
+              We're transforming product management with an innovative SaaS platform designed to simplify collaboration, 
+              enhance productivity, and streamline the entire product lifecycle.
             </p>
-          </div>
+          </section>
 
-          {/* Product Features Section */}
-          <div className="mt-16 max-w-4xl mx-auto text-left">
-            <h2 className="text-2xl font-semibold text-blue-900 mb-6">Product Features</h2>
-            <ul className="list-disc pl-5 text-lg text-gray-700">
-              <li>Collaborative workspace for product teams</li>
-              <li>Real-time updates and seamless communication</li>
-              <li>Efficient product lifecycle tracking from idea to launch</li>
-              <li>Intuitive tools that make product management accessible</li>
-              <li>Customizable workflows for teams of any size</li>
-              <li>Secure cloud-based platform with robust data protection</li>
-            </ul>
-          </div>
-
-          {/* Founder Section */}
-          <div className="mt-10 flex flex-col md:flex-row items-center justify-between w-full">
-            <div className="w-full md:w-1/2 text-left mb-8 md:mb-0">
-              <div className="opacity-100 transform transition-all duration-1000">
-                <h2 className="text-2xl font-semibold text-blue-900 mb-4">
-                  Meet the Founder: Hadi Razal
-                </h2>
-                <p className="text-lg mb-6 text-gray-700">
-                  Hadi Razal, a full-stack developer and product enthusiast, created Product Share after identifying common challenges in product development workflows. With years of experience in development and team leadership, Hadi designed Product Share to streamline collaboration and enhance productivity in product teams worldwide.
-                </p>
-                <p className="text-lg text-gray-700">
-                  His mission is to make Product Share the go-to platform for seamless product management, empowering teams to focus on innovation without being hindered by complex workflows. Hadi’s expertise ensures that the platform evolves with industry trends and user needs, offering a scalable and adaptable solution.
-                </p>
-              </div>
+          {/* Features Grid */}
+          <section className="mb-16">
+            <h2 className="text-3xl font-bold text-blue-900 text-center mb-12">
+              Our Core Features
+            </h2>
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {features.map((feature, index) => (
+                <FeatureCard 
+                  key={index}
+                  icon={feature.icon}
+                  title={feature.title}
+                  description={feature.description}
+                />
+              ))}
             </div>
-            <div className="w-full md:w-1/2 flex justify-center">
-              <Image
-                src="/no.jpg"
-                unoptimized={true}
-                width={290}
-                height={290}
-                alt="Hadi Razal, Founder of Product Share"
-                className="rounded-full shadow-lg object-cover"
-              />
-            </div>
-          </div>
+          </section>
 
           {/* Vision Section */}
-          <div className="mt-16">
-            <div className="opacity-100 transform transition-all duration-1000">
-              <h2 className="text-2xl font-semibold text-blue-900 mb-6">
-                Our Vision
+          <section className=" p-12 mb-5">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-3xl font-bold text-blue-900 mb-6">
+                Our Visionary Mission
               </h2>
-              <p className="text-lg max-w-3xl mx-auto mb-10 text-gray-700">
-                Product Share envisions a future where every product team can collaborate effortlessly and drive innovation. We aim to revolutionize how teams work together on products, providing intuitive tools that make product management accessible, efficient, and engaging.
+              <p className="text-xl text-gray-700 leading-relaxed">
+                Product Share envisions a world where product teams can collaborate without friction. 
+                We're committed to creating tools that make product management intuitive, 
+                efficient, and genuinely enjoyable for teams of all sizes and industries.
               </p>
             </div>
-          </div>
+          </section>
 
-          {/* Achievements Section */}
-          <div className="mt-16 max-w-4xl mx-auto text-left">
-            <h2 className="text-2xl font-semibold text-blue-900 mb-6">Our Achievements</h2>
-            <p className="text-lg text-gray-700 mb-6">
-              Since its inception, Product Share has garnered positive feedback from early adopters, empowering product teams across various industries to improve their workflows and enhance their productivity. We are proud to be recognized by leading industry experts as a top-tier product management tool.
-            </p>
-            <p className="text-lg text-gray-700">
-              Our platform is trusted by over 500 product teams, and we are continuously improving and adding new features based on user feedback. As we grow, our vision remains clear: to simplify product management and make it universally accessible.
-            </p>
-          </div>
         </div>
-      </section>
+      </div>
     </>
   );
 };
