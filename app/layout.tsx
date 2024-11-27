@@ -18,15 +18,15 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Product Share | Create and Share Online Product Catalogs Effortlessly",
+  title: "Product Share India | Create & Share Product Catalogs Effortlessly",
   description:
-    "Product Share by Hadi Razal is the ultimate tool for small businesses. Easily create, manage, and share online product catalogs with your customers.",
+    "Product Share is India's leading platform for small businesses to create, manage, and share digital product catalogs. Showcase your products online with ease.",
   keywords:
-    "Product Share, online product catalog, small business solutions, product sharing tool, digital catalog creator, business catalog app, product management software, Hadi Razal, catalog sharing platform",
+    "Product Share India, online product catalog India, Indian small business solutions, digital catalog tool, product management app India, catalog sharing platform India, business catalog creator, product showcase tool India",
   openGraph: {
-    title: "Product Share - The Best Catalog Sharing Platform for Small Businesses",
+    title: "Product Share India | Create & Share Product Catalogs Easily",
     description:
-      "Product Share makes it simple for small business owners to showcase and share their products online. Start creating catalogs today!",
+      "Empowering Indian small businesses to create and share stunning digital catalogs. Join Product Share today and simplify your product management!",
     url: "https://productshare.in",
     type: "website",
     images: [
@@ -34,27 +34,22 @@ export const metadata: Metadata = {
         url: "https://productshare.in/icon.ico",
         width: 1200,
         height: 630,
-        alt: "Product Share - The Best Catalog Sharing Platform for Small Businesses",
+        alt: "Product Share India - Digital Catalog Sharing Platform",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Product Share | Create and Share Online Product Catalogs Effortlessly",
+    title: "Product Share India | Create & Share Digital Product Catalogs",
     description:
-      "Simplify your business with Product Share. Create stunning online catalogs and share them easily with customers. Perfect for small business owners!",
+      "Product Share is the ultimate platform for Indian businesses to create and share digital catalogs effortlessly. Perfect for small and medium enterprises!",
     creator: "@Hadi_Razal",
-    // image: "https://productshare.in/share-image.png", // Add an image link for Twitter cards
   },
   robots: "index, follow",
   icons: {
     icon: "https://productshare.in/icon.ico",
     shortcut: "https://productshare.in/favicon-32x32.png",
   },
-  // // Add canonical link
-  // link: [
-  //   { rel: "canonical", href: "https://productshare.in" },
-  // ],
 };
 
 export default function RootLayout({
@@ -66,7 +61,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
+
         {/* Favicons */}
         <link rel="icon" href="/icon.ico" sizes="any" />
         <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
@@ -74,8 +69,18 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
         {/* Preload Fonts */}
-        <link rel="preload" href="./fonts/GeistVF.woff" as="font" type="font/woff2"  />
-        <link rel="preload" href="./fonts/GeistMonoVF.woff" as="font" type="font/woff2" />
+        <link
+          rel="preload"
+          href="./fonts/GeistVF.woff"
+          as="font"
+          type="font/woff"
+        />
+        <link
+          rel="preload"
+          href="./fonts/GeistMonoVF.woff"
+          as="font"
+          type="font/woff"
+        />
 
         {/* Schema.org JSON-LD */}
         <script
@@ -88,7 +93,7 @@ export default function RootLayout({
               url: "https://productshare.in",
               logo: "https://productshare.in/logo.png",
               description:
-                "Product Share is an intuitive platform that empowers small businesses to create and share product catalogs. Founded by Hadi Razal.",
+                "Product Share is an intuitive platform that empowers Indian small businesses to create and share product catalogs effortlessly. Founded by Hadi Razal.",
               founder: {
                 "@type": "Person",
                 name: "Hadi Razal",
@@ -103,6 +108,17 @@ export default function RootLayout({
               },
               operatingSystem: "Web",
               applicationCategory: "BusinessApplication",
+              location: {
+                "@type": "PostalAddress",
+                addressCountry: "IN",
+                addressRegion: "Kerala",
+                addressLocality: "Kochi",
+                postalCode: "682001",
+              },
+              areaServed: {
+                "@type": "Country",
+                name: "India",
+              },
               aggregateRating: {
                 "@type": "AggregateRating",
                 ratingValue: "4.9",
@@ -117,9 +133,12 @@ export default function RootLayout({
             }),
           }}
         />
-        
+
         {/* Razorpay Script with defer */}
-        <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+        <script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          defer
+        ></script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
