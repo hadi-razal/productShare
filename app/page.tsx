@@ -2,45 +2,110 @@ import HomePage from "@/components/HomePage";
 import { Metadata } from "next";
 
 export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const baseUrl = "https://productshare.in";
+  
   return {
-    title: "Product Share |  Create and Share Online Product Catalogs Effortlessly",
-    description:
-      "Discover Product Share, founded by Hadi Razal, the ultimate tool for small business owners to create, share, and manage product catalogs. Simplify your business, boost sales, and reach more customers with ease.",
-    keywords:
-      "Product Share, Hadi Razal, product catalog, small business app, online catalog creator, product sharing platform, digital catalog, business tools, product showcase, ProductShare app",
+    metadataBase: new URL(baseUrl),
+    title: {
+      default: "Product Share | #1 Catalog Builder for Indian Businesses | Hadi Razal",
+      template: "%s | Product Share"
+    },
+    description: "Revolutionize your business with Product Share - India's most powerful AI-driven catalog creation and sharing platform. Founded by Hadi Razal, empowering small businesses to showcase products professionally.",
+    keywords: [
+      "Product Share",
+      "Hadi Razal",
+      "catalog builder india",
+      "product catalog software",
+      "small business app",
+      "online catalog creator",
+      "digital product sharing",
+      "catalog management",
+      "business marketing tool",
+      "e-commerce solution"
+    ],
+    applicationName: "Product Share",
+    authors: [{ name: "Hadi Razal", url: baseUrl }],
+    generator: "Next.js",
+    referrer: "origin",
+    
     openGraph: {
-      title: "Product Share - Create and Share Online Product Catalogs Effortlessly",
-      description:
-        "Transform how you showcase your products with ProductShare, the platform designed for small business owners. Create professional catalogs and share them effortlessly with your customers.",
-      url: "https://productshare.in",
+      title: "Product Share - Revolutionary Catalog Management Platform",
+      description: "Transform your business with AI-powered catalog creation. Easy, professional, and designed for Indian entrepreneurs.",
+      url: baseUrl,
+      siteName: "Product Share",
+      locale: "en_IN",
       type: "website",
       images: [
         {
-          url: "https://productshare.in/logo.png",
+          url: `${baseUrl}/og-image.png`,
           width: 1200,
           height: 630,
-          alt: "Product Share",
-        },
-      ],
+          alt: "Product Share - Catalog Builder for Indian Businesses"
+        }
+      ]
     },
+    
     twitter: {
       card: "summary_large_image",
-      title: "Product Share - Create and Share Online Product Catalogs Effortlessly",
-      description:
-        "Product Share is the go-to platform for small businesses. Easily create, manage, and share product catalogs online. Boost your brand's visibility today!",
+      title: "Product Share | AI Catalog Builder for Indian Businesses",
+      description: "Create stunning product catalogs in minutes. Designed for Indian entrepreneurs by Hadi Razal.",
       creator: "@Hadi_Razal",
+      site: "@ProductShare",
+      images: [`${baseUrl}/twitter-image.png`]
     },
-    robots: "index, follow",
+    
+    verification: {
+      google: "your-google-site-verification-code",
+      yandex: "your-yandex-verification-code",
+      other: {
+        "facebook-domain-verification": "your-facebook-domain-verification"
+      }
+    },
+    
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: false,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1
+      }
+    },
+    
     icons: {
-      icon: "/https://productshare.in/icon.ico",
-      apple: "/https://productshare.in/apple-touch-icon.png",
+      icon: [
+        { url: `${baseUrl}/favicon.ico` },
+        { url: `${baseUrl}/favicon-16x16.png`, sizes: "16x16", type: "image/png" },
+        { url: `${baseUrl}/favicon-32x32.png`, sizes: "32x32", type: "image/png" }
+      ],
+      apple: [
+        { url: `${baseUrl}/apple-touch-icon.png` }
+      ],
+      other: [
+        {
+          rel: "apple-touch-icon-precomposed",
+          url: `${baseUrl}/apple-touch-icon.png`
+        }
+      ]
     },
+    
     alternates: {
-      canonical: "https://productshare.in",
+      canonical: baseUrl,
       languages: {
-        "en-US": "https://productshare.in/en-us",
-      },
+        "en-IN": `${baseUrl}/en-in`,
+        "en-US": `${baseUrl}/en-us`
+      }
     },
+    
+    category: "Business Productivity Tools",
+    
+    appleWebApp: {
+      title: "Product Share",
+      statusBarStyle: "black-translucent"
+    }
   };
 }
 
