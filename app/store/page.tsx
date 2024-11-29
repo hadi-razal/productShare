@@ -1,15 +1,23 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs, limit, orderBy, query } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Package, Plus, Settings, Star, Users, ArrowRight } from 'lucide-react';
-import { getUsername } from '@/helpers/getUsername';
-import PaymentButton from '@/components/PaymentButton';
-import Image from 'next/image';
+import React, { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Package, Plus, Settings, Star, Users, ArrowRight } from "lucide-react";
+import { getUsername } from "@/helpers/getUsername";
+import PaymentButton from "@/components/PaymentButton";
+import Image from "next/image";
 
 // Stat Card Component
 const StatCard = ({ title, value, trend, icon: Icon }: any) => (
@@ -19,12 +27,18 @@ const StatCard = ({ title, value, trend, icon: Icon }: any) => (
         <Icon className="w-6 h-6 text-blue-900" />
       </div>
       {trend && (
-        <div className={`flex items-center text-sm ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+        <div
+          className={`flex items-center text-sm ${
+            trend >= 0 ? "text-green-600" : "text-red-600"
+          }`}
+        >
           <span>{Math.abs(trend)}%</span>
         </div>
       )}
     </div>
-    <h3 className="mt-4 text-2xl font-semibold text-gray-800">{value ?? '...'}</h3>
+    <h3 className="mt-4 text-2xl font-semibold text-gray-800">
+      {value ?? "..."}
+    </h3>
     <p className="mt-1 text-sm text-gray-500">{title}</p>
   </div>
 );
@@ -58,10 +72,30 @@ const ActionCard = ({ title, href = "#", icon: Icon, description }: any) => (
 
 // Define available routes and feature status
 const actionCards = [
-  { title: "Add New Product", href: "/store/add-product", icon: Plus, description: "List a new product in your showcase" },
-  { title: "View Catalog", href: `/store/username`, icon: Package, description: "Browse and manage your product listings" },
-  { title: "Store Settings", href: "/store/settings", icon: Settings, description: "Adjust your store preferences and settings" },
-  { title: "Customer Reviews", href: "/store/reviews", icon: Star, description: "View and manage customer feedback" },
+  {
+    title: "Add New Product",
+    href: "/store/add-product",
+    icon: Plus,
+    description: "List a new product in your showcase",
+  },
+  {
+    title: "View Catalog",
+    href: `/store/username`,
+    icon: Package,
+    description: "Browse and manage your product listings",
+  },
+  {
+    title: "Store Settings",
+    href: "/store/settings",
+    icon: Settings,
+    description: "Adjust your store preferences and settings",
+  },
+  {
+    title: "Customer Reviews",
+    href: "/store/reviews",
+    icon: Star,
+    description: "View and manage customer feedback",
+  },
 ];
 
 // Main Dashboard Component
@@ -94,7 +128,7 @@ const StoreDashboard = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        router.push('/login');
+        router.push("/login");
         return;
       }
 
@@ -107,7 +141,9 @@ const StoreDashboard = () => {
           // Fetch various stats and data
           const productsSnapshot = await getDocs(collection(db, user.uid));
           const userDoc = await getDoc(doc(db, "users", user.uid));
-          const userData = userDoc.exists() ? userDoc.data() : { visitCount: 0 };
+          const userData = userDoc.exists()
+            ? userDoc.data()
+            : { visitCount: 0 };
 
           setStats({
             products: productsSnapshot.size,
@@ -178,79 +214,137 @@ const StoreDashboard = () => {
         {/* Header */}
         <div className="mb-8 flex gap-3 flex-col md:flex-row items-center justify-between text-center md:text-left">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Welcome back{username ? `, ${username}` : ''}!</h1>
-            <p className="mt-2 text-sm text-gray-600">Here's what's happening with your store today</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Welcome back{username ? `, ${username}` : ""}!
+            </h1>
+            <p className="mt-2 text-sm text-gray-600">
+              Here's what's happening with your store today
+            </p>
           </div>
 
-          <div className='flex items-center justify-center'>
+          <div className="flex items-center justify-center">
             <PaymentButton userId={userId} />
           </div>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <StatCard title="Total Products" value={loading ? null : stats.products} trend={12} icon={Package} />
-          <StatCard title="Store Visitors" value={loading ? null : stats.visitors} trend={8} icon={Users} />
-          <StatCard title="Customer Reviews" value={loading ? null : stats.reviews} trend={stats.reviews ? (stats.reviews > 200 ? 10 : 2) : null} icon={Star} />
+          <StatCard
+            title="Total Products"
+            value={loading ? null : stats.products}
+            trend={12}
+            icon={Package}
+          />
+          <StatCard
+            title="Store Visitors"
+            value={loading ? null : stats.visitors}
+            trend={8}
+            icon={Users}
+          />
+          <StatCard
+            title="Customer Reviews"
+            value={loading ? null : stats.reviews}
+            trend={stats.reviews ? (stats.reviews > 200 ? 10 : 2) : null}
+            icon={Star}
+          />
         </div>
 
-
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Latest Searched Keywords
+        </h2>
+        <div className="bg-white rounded-md shadow-md p-6 mb-10 flex gap-2 flex-wrap">
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Shirt</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Best mac book under 7k</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Blue Jeans for users</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Fancy LED Bulb</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">PS5</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">GTA 5 PS5</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">XBox S Series</span>
+        </div>
 
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Products</h2>
         <div className="grid gap-4 sm:grid-cols-2 pb-10">
           {/* Most Viewed Product */}
           <div className="bg-white rounded-md shadow-md p-6 flex flex-col gap-3">
             <span className="text-gray-700 font-bold">Most Viewed Product</span>
-            <div className='flex gap-3 items-center cursor-pointer'>
-              {mostViewedProduct && mostViewedProduct.images && mostViewedProduct.images[0] && (
-                <Image
-                  alt="Most Viewed Product"
-                  src={mostViewedProduct.images[0]}
-                  width={100}  // Adjust width and height as needed
-                  height={100} // Adjust width and height as needed
-                  className="w-24 h-24 object-cover rounded-md" // Style for image
-                />
-              )}
+            <div className="flex gap-3 items-center cursor-pointer">
+              {mostViewedProduct &&
+                mostViewedProduct.images &&
+                mostViewedProduct.images[0] && (
+                  <Image
+                    alt="Most Viewed Product"
+                    src={mostViewedProduct.images[0]}
+                    width={100} // Adjust width and height as needed
+                    height={100} // Adjust width and height as needed
+                    className="w-24 h-24 object-cover rounded-md" // Style for image
+                  />
+                )}
               <div>
-                <p className="font-semibold text-gray-800 line-clamp-3">{mostViewedProduct ? mostViewedProduct.name : 'Loading...'}</p>
-                {mostViewedProduct && <p className="text-sm text-gray-600">Views: {mostViewedProduct.views}</p>}
+                <p className="font-semibold text-gray-800 line-clamp-3">
+                  {mostViewedProduct ? mostViewedProduct.name : "Loading..."}
+                </p>
+                {mostViewedProduct && (
+                  <p className="text-sm text-gray-600">
+                    Views: {mostViewedProduct.views}
+                  </p>
+                )}
               </div>
             </div>
           </div>
 
           {/* Least Viewed Product */}
           <div className="bg-white rounded-md shadow-md p-6 flex flex-col gap-3">
-            <span className="text-gray-700 font-bold">Least Viewed Product</span>
-            <div className='flex gap-3 items-center cursor-pointer'>
-              {leastViewedProduct && leastViewedProduct.images && leastViewedProduct.images[0] && (
-                <Image
-                  alt="Least Viewed Product"
-                  src={leastViewedProduct.images[0]}
-                  width={100}  // Adjust width and height as needed
-                  height={100} // Adjust width and height as needed
-                  className="w-24 h-24 object-cover rounded-md" // Style for image
-                />
-              )}
+            <span className="text-gray-700 font-bold">
+              Least Viewed Product
+            </span>
+            <div className="flex gap-3 items-center cursor-pointer">
+              {leastViewedProduct &&
+                leastViewedProduct.images &&
+                leastViewedProduct.images[0] && (
+                  <Image
+                    alt="Least Viewed Product"
+                    src={leastViewedProduct.images[0]}
+                    width={100} // Adjust width and height as needed
+                    height={100} // Adjust width and height as needed
+                    className="w-24 h-24 object-cover rounded-md" // Style for image
+                  />
+                )}
               <div>
-                <p className="font-semibold text-gray-800 line-clamp-3">{leastViewedProduct ? leastViewedProduct.name : 'Loading...'}</p>
-                {leastViewedProduct && <p className="text-sm text-gray-600">Views: {leastViewedProduct.views}</p>}
+                <p className="font-semibold text-gray-800 line-clamp-3">
+                  {leastViewedProduct ? leastViewedProduct.name : "Loading..."}
+                </p>
+                {leastViewedProduct && (
+                  <p className="text-sm text-gray-600">
+                    Views: {leastViewedProduct.views}
+                  </p>
+                )}
               </div>
             </div>
           </div>
 
-          <span className='text-sm -pt-6 text-gray-400'>For more detailed product information, including view counts, visit each product's page.</span>
+          <span className="text-sm -pt-6 text-gray-400">
+            For more detailed product information, including view counts, visit
+            each product's page.
+          </span>
         </div>
 
-
-
-
-
-
         {/* Action Cards Grid */}
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Quick Actions
+        </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {actionCards.map((card, index) => (
-            <ActionCard key={index} title={card.title} href={card.href === '/store/username' ? `/store/${username}` : card.href} icon={card.icon} description={card.description} />
+            <ActionCard
+              key={index}
+              title={card.title}
+              href={
+                card.href === "/store/username"
+                  ? `/store/${username}`
+                  : card.href
+              }
+              icon={card.icon}
+              description={card.description}
+            />
           ))}
         </div>
       </div>
