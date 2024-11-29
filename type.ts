@@ -24,15 +24,15 @@ export interface ProductType {
     isFreeDelivery?:boolean;
   }
   
-export interface userType {
-    id?: string; 
-    uid?: string; 
+  export interface userType {
+    id?: string;
+    uid?: string;
     name: string;
-    profile: string;
+    logoImage?: string;
     email: string;
-    whatsappNumber?: number;
+    whatsappNumber?: string;
     additionalNotes: string;
     username: string;
-    isVisitedCount: string;
-}
-  
+    isVisitedCount?: string;
+    themeColor:string
+  }
