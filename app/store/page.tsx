@@ -247,6 +247,12 @@ const StoreDashboard = () => {
             trend={stats.reviews ? (stats.reviews > 200 ? 10 : 2) : null}
             icon={Star}
           />
+          <StatCard
+            title="Customer Reviews"
+            value={loading ? null : stats.reviews}
+            trend={stats.reviews ? (stats.reviews > 200 ? 10 : 2) : null}
+            icon={Star}
+          />
         </div>
 
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -259,7 +265,11 @@ const StoreDashboard = () => {
           <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Fancy LED Bulb</span>
           <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">PS5</span>
           <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">GTA 5 PS5</span>
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">XBox S Series</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Women saree under 5000</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">toys</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">gaming pc</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Best laptop for students</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Kurta men</span>
         </div>
 
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Products</h2>
