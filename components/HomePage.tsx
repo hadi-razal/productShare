@@ -14,12 +14,13 @@ import {
 } from "lucide-react";
 import heroAnimation from "@/public/hero.json";
 import { FaMobile } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
-// SEO Optimization: Structured Components with Clear Semantics
 const HomePage = () => {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
-    "monthly"
-  );
+
+  const router = useRouter()
 
   const plan = {
     title: "Subscription Plan",
@@ -69,6 +70,16 @@ const HomePage = () => {
       document.head.removeChild(script);
     };
   }, []);
+
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/store");
+      }
+    });
+    return () => unsubscribe();
+  }, [auth, router]);
 
   return (
     <>
