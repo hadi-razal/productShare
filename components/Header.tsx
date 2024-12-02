@@ -75,7 +75,7 @@ const Header: React.FC = () => {
         const data = userDoc.data();
         setStoreDetails({
           name: data.name || "Product Share",
-          themeColor: data.themeColor || "#172554",
+          themeColor: data.themeColor || "#1e3a8a",
           logoImage: data.logoImage,
         });
       }

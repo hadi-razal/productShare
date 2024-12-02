@@ -19,8 +19,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 const HomePage = () => {
-
-  const router = useRouter()
+  const router = useRouter();
 
   const plan = {
     title: "Subscription Plan",
@@ -70,7 +69,6 @@ const HomePage = () => {
       document.head.removeChild(script);
     };
   }, []);
-
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -124,32 +122,33 @@ const HomePage = () => {
 
       {/* Hero Section with Localized Optimization */}
       <main className="bg-gray-50">
-        <section className="bg-gradient-to-b from-blue-900 to-blue-700 text-white">
-          <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 items-center gap-12">
+        <section className="bg-gradient-to-b from-blue-900 to-blue-700 text-white min-h-screen flex flex-col justify-center items-center">
+          <div className="max-w-7xl mx-auto px-8 py-20 grid md:grid-cols-2 items-center gap-16">
+            {/* Content Section */}
             <div>
-              <h1 className="text-5xl font-bold mb-6 text-white">
+              <h1 className="text-5xl md:text-6xl font-extrabold leading-tight mb-6">
                 India's <span className="text-blue-300">Smartest</span> Catalog
                 Builder
               </h1>
-              <p className="text-xl text-gray-200 mb-8">
+              <p className="text-lg md:text-xl text-gray-200 mb-8">
                 Empower Your Business with AI-Driven Catalog Solutions
               </p>
-              <div className="flex space-x-4">
+              <div className="flex flex-wrap gap-4">
                 <Link
                   href="/register"
-                  className="px-8 py-4 bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+                  className="px-6 py-3 md:px-8 md:py-4 bg-blue-600 rounded-lg hover:bg-blue-700 transition shadow-md"
                 >
                   Start Free Trial
                 </Link>
                 <Link
                   href="/demo"
-                  className="px-8 py-4 border-2 border-white rounded-lg hover:bg-white hover:text-blue-700 transition"
+                  className="px-6 py-3 md:px-8 md:py-4 border-2 border-white rounded-lg hover:bg-white hover:text-blue-700 transition shadow-md"
                 >
                   Watch Demo
                 </Link>
               </div>
-              {/* Local Trust Signals */}
-              <div className="mt-8 flex items-center space-x-4">
+              {/* Trust Signals */}
+              <div className="mt-8 flex items-center gap-4">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -158,13 +157,16 @@ const HomePage = () => {
                     />
                   ))}
                 </div>
-                <span>Trusted by 500+ Indian Businesses</span>
+                <span className="text-sm md:text-base">
+                  Trusted by 500+ Indian Businesses
+                </span>
               </div>
             </div>
-            <div>
+            {/* Animation Section */}
+            <div className="flex justify-center">
               <Lottie
                 animationData={heroAnimation}
-                className="w-full max-w-md"
+                className="w-full max-w-lg"
               />
             </div>
           </div>
