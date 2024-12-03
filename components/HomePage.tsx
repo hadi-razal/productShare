@@ -18,7 +18,7 @@ const AnimatedHomePage = () => {
       opacity: 1, 
       y: 0,
       transition: { 
-        duration: 0.8,
+        duration: 1.7,
         delayChildren: 0.3,
         staggerChildren: 0.2
       }
@@ -136,8 +136,8 @@ const AnimatedHomePage = () => {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ 
-                      duration: 0.5, 
-                      delay: item * 0.1,
+                      duration: 3, 
+                      delay: item * 0.2,
                       type: "spring"
                     }}
                     className="bg-white/30 rounded-md h-16 animate-pulse"
