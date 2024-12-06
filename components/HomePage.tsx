@@ -10,8 +10,12 @@ import {
   Quote,
   MessageCircle,
   Cog,
+  Layers,
+  Activity,
+  Sparkles,
 } from "lucide-react";
 import Marquee from "react-fast-marquee";
+import HeroSection from "./HeroSection";
 
 const Home = () => {
   const features = [
@@ -80,46 +84,10 @@ const Home = () => {
   ];
 
   return (
-    <div className="bg-white text-gray-900 min-h-screen">
-      {/* Navigation */}
-      <nav className="container mx-auto px-6 py-5 flex justify-between items-center">
-        <div className="text-2xl font-bold text-blue-600">ProductShare</div>
-        <div className="space-x-6">
-          <a href="#" className="text-gray-600 hover:text-blue-600">
-            Features
-          </a>
-          <a href="#" className="text-gray-600 hover:text-blue-600">
-            Testimonials
-          </a>
-          <a href="#" className="text-gray-600 hover:text-blue-600">
-            Pricing
-          </a>
-        </div>
-        <button className="bg-blue-600 text-white px-5 py-2 rounded-md">
-          Get Started
-        </button>
-      </nav>
-
-      {/* Hero Section */}
-      <div className="container mx-auto px-6 py-16 text-center">
-        <h1 className="text-5xl font-bold mb-6 text-gray-900">
-          Elevate Your Product Catalog
-        </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
-          Intelligent catalog creation and marketing solutions for modern
-          businesses
-        </p>
-        <div className="flex justify-center space-x-4">
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-md flex items-center">
-            Start Free Trial <ArrowRight className="ml-2" />
-          </button>
-          <button className="border border-gray-300 text-gray-700 px-8 py-3 rounded-md">
-            Learn More
-          </button>
-        </div>
-      </div>
-
-      <div className="w-full flex flex-col gap-2 bg-gray-100 py-4">
+    <div className="bg-white text-gray-900 min-h-screen pt-20">
+      <HeroSection />
+      <div className="w-full flex flex-col gap-3 bg-gray-50 py-6">
+        {/* First Marquee: Benefits/Features */}
         <Marquee
           loop={0}
           speed={50}
@@ -127,27 +95,66 @@ const Home = () => {
           className="flex items-center"
         >
           {[
-            "TechNova",
-            "Skyline Solutions",
-            "Pixel Perfect",
-            "CodeCraft",
-            "CloudWorks",
-            "BlueWave",
-            "InnoSphere",
-            "BrightPath",
-            "CyberCore",
-            "NextGen Soft",
-          ].map((company, index) => (
+            "Boost Your Sales with Ease",
+            "Create Stunning E-Store Websites",
+            "Effortless Catalog Management",
+            "Marketing Made Simple",
+            "Sell Smarter, Not Harder",
+            "Your Online Store, Our Priority",
+            "Seamless Product Organization",
+            "AI-Powered Marketing Tools",
+            "Your Growth, Our Mission",
+            "Build Your Catalog in Minutes",
+          ].map((message, index) => (
             <div
               key={index}
-              className="border border-gray-300 shadow-md rounded-lg px-5 mx-3 h-10 flex items-center justify-center"
+              className="bg-white border border-gray-300 shadow-lg rounded-lg px-6 mx-4 h-12 flex items-center justify-center "
             >
-              <h1 className="text-gray-400 font-semibold text-lg text-center">
-                {company}
+              <h1 className="text-gray-400 font-medium text-lg text-center">
+                {message}
               </h1>
             </div>
           ))}
         </Marquee>
+
+        {/* Second Marquee: More Benefits/Features */}
+        <Marquee
+          loop={0}
+          speed={50}
+          direction="right"
+          gradient={false}
+          className="flex items-center"
+        >
+          {[
+            "Maximize Your Revenue Potential",
+            "Effortless Product Uploads",
+            "Your Catalog, Your Brand",
+            "Customize Your Online Store",
+            "Unlock the Power of Digital Marketing",
+            "Transform How You Sell Online",
+            "Optimize Your Product Listings",
+            "Sell Anywhere, Anytime",
+            "Reach More Customers Faster",
+            "Increase Visibility and Engagement",
+          ].map((message, index) => (
+            <div
+              key={index}
+              className="bg-white border border-gray-300 shadow-lg rounded-lg px-6 mx-4 h-12 flex items-center justify-center "
+            >
+              <h1 className="text-gray-400 font-medium text-lg text-center">
+                {message}
+              </h1>
+            </div>
+          ))}
+        </Marquee>
+
+        {/* Decorative Elements */}
+        <div className="flex justify-center mt-4">
+          <p className="text-gray-500 text-sm">
+            Let us help you grow your business with a powerful, easy-to-use
+            catalog builder.
+          </p>
+        </div>
       </div>
 
       {/* Features Section */}
