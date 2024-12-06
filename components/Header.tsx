@@ -34,7 +34,7 @@ const MAIN_NAVIGATION_LINKS: NavigationLink[] = [
 
 const DEFAULT_STORE_DETAILS: StoreDetails = {
   name: "Product Share",
-  themeColor: "#172554",
+  themeColor: "#2563eb",
 };
 
 const Header: React.FC = () => {
@@ -66,6 +66,11 @@ const Header: React.FC = () => {
       if (!headerState.isAuthenticated && pathname?.startsWith("/store/") && storeId) {
         router.push(`/store/${storeId}`);
       }
+
+      if(!headerState.isAuthenticated && !storeId){
+        router.push(`/`);
+      }
+
     } catch (error) {
       handleError("Navigation", error);
     }
@@ -153,7 +158,7 @@ const Header: React.FC = () => {
 
   return (
     <motion.header
-      className="fixed w-full top-0 z-50 transition-all duration-300"
+      className="fixed w-full top-0 z-50 transition-all duration-300 "
       style={{ backgroundColor: headerState.storeDetails.themeColor }}
     >
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-20 relative">

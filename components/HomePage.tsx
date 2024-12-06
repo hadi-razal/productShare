@@ -1,239 +1,199 @@
-"use client"
+"use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  Rocket, 
-  Globe, 
-  Target, 
-  Check, 
+  Rocket,
+  Globe,
+  Target,
+  PieChart,
+  Shield,
+  ArrowRight,
+  Quote,
 } from "lucide-react";
+import Marquee from "react-fast-marquee";
 
-const AnimatedHomePage = () => {
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
-
-  const heroVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 1.7,
-        delayChildren: 0.3,
-        staggerChildren: 0.2
-      }
-    }
-  };
+const Home = () => {
+  const [activeTab, setActiveTab] = useState(0);
 
   const features = [
     {
-      icon: <Rocket className="w-12 h-12 text-blue-500" />,
-      title: "Lightning-Fast Catalog Creation",
-      description: "Transform your product showcase in seconds with AI-powered design",
-      details: [
-        "AI-Driven Template Generation",
-        "Instant Brand Customization",
-        "One-Click Publishing"
-      ],
-      color: "from-blue-500 to-indigo-600"
+      icon: <Rocket className="w-10 h-10 text-blue-600" />,
+      title: "Rapid Catalog Creation",
+      description:
+        "Streamline your product showcase with intelligent design tools",
     },
     {
-      icon: <Globe className="w-12 h-12 text-green-500" />,
-      title: "Unlimited Market Reach",
-      description: "Expand beyond boundaries with multi-platform integration",
-      details: [
-        "15+ Sharing Platforms",
-        "Localized Language Support",
-        "Global Visibility"
-      ],
-      color: "from-green-500 to-teal-600"
+      icon: <Globe className="w-10 h-10 text-green-600" />,
+      title: "Global Reach",
+      description: "Expand your market presence across multiple platforms",
     },
     {
-      icon: <Target className="w-12 h-12 text-purple-500" />,
-      title: "Smart Analytics Engine",
-      description: "Real-time insights that drive business growth",
-      details: [
-        "Predictive Trend Analysis",
-        "Competitor Benchmarking",
-        "Personalized Recommendations"
-      ],
-      color: "from-purple-500 to-pink-600"
-    }
+      icon: <PieChart className="w-10 h-10 text-purple-600" />,
+      title: "Smart Analytics",
+      description: "Data-driven insights to optimize your business strategy",
+    },
+    {
+      icon: <Shield className="w-10 h-10 text-teal-600" />,
+      title: "Secure Platform",
+      description: "Enterprise-grade security and data protection",
+    },
   ];
 
   const testimonials = [
     {
       name: "Priya Sharma",
       role: "E-commerce Entrepreneur",
-      quote: "Product Share revolutionized how I present my products online!",
+      quote:
+        "This platform transformed our product marketing approach completely.",
       location: "Mumbai",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg"
     },
     {
       name: "Rahul Gupta",
       role: "Small Business Owner",
-      quote: "The AI-powered tools are game-changing for my marketing strategy.",
+      quote: "Incredibly intuitive and powerful marketing solution.",
       location: "Delhi",
-      avatar: "https://randomuser.me/api/portraits/men/79.jpg"
-    }
+    },
+    {
+      name: "Aisha Khan",
+      role: "Digital Strategist",
+      quote: "Unparalleled efficiency in catalog management and marketing.",
+      location: "Bangalore",
+    },
   ];
 
   return (
-    <div className="bg-gradient-to-br from-blue-900 to-indigo-800 text-white overflow-hidden">
-      {/* Hero Section with Enhanced Interactivity */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        className="mx-auto max-w-7xl px-4 py-20 md:pl-10 min-h-screen flex items-center"
-      >
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <motion.h1 
-              initial={{ x: -50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              className="text-5xl font-bold mb-6 leading-tight"
-            >
-              Revolutionize Your <span className="text-blue-300">Business Catalog</span>
-            </motion.h1>
-            <motion.p
-              initial={{ x: -50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-xl text-gray-300 mb-8"
-            >
-              AI-Powered Catalog Solutions for Modern Indian Entrepreneurs
-            </motion.p>
-            <div className="flex space-x-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 px-8 py-3 rounded-lg hover:shadow-xl transition"
-              >
-                Start Free Trial
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-2 border-white px-8 py-3 rounded-lg hover:bg-white hover:text-blue-800 transition"
-              >
-                Watch Demo
-              </motion.button>
-            </div>
-          </div>
-          <motion.div 
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="flex justify-center"
-          >
-            <div className="w-full max-w-md bg-white/10 backdrop-blur-lg rounded-lg p-8 shadow-2xl">
-              <div className="grid grid-cols-3 gap-4">
-                {[1,2,3,4,5,6].map((item) => (
-                  <motion.div 
-                    key={item} 
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ 
-                      duration: 3, 
-                      delay: item * 0.2,
-                      type: "spring"
-                    }}
-                    className="bg-white/30 rounded-md h-16 animate-pulse"
-                  />
-                ))}
-              </div>
-            </div>
-          </motion.div>
+    <div className="bg-white text-gray-900 min-h-screen">
+      {/* Navigation */}
+      <nav className="container mx-auto px-6 py-5 flex justify-between items-center">
+        <div className="text-2xl font-bold text-blue-600">ProductShare</div>
+        <div className="space-x-6">
+          <a href="#" className="text-gray-600 hover:text-blue-600">
+            Features
+          </a>
+          <a href="#" className="text-gray-600 hover:text-blue-600">
+            Testimonials
+          </a>
+          <a href="#" className="text-gray-600 hover:text-blue-600">
+            Pricing
+          </a>
         </div>
-      </motion.div>
+        <button className="bg-blue-600 text-white px-5 py-2 rounded-md">
+          Get Started
+        </button>
+      </nav>
 
-      {/* Features Section with Hover Effects */}
-      <section className="container mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <motion.div 
+      {/* Hero Section */}
+      <div className="container mx-auto px-6 py-16 text-center">
+        <h1 className="text-5xl font-bold mb-6 text-gray-900">
+          Elevate Your Product Catalog
+        </h1>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
+          Intelligent catalog creation and marketing solutions for modern
+          businesses
+        </p>
+        <div className="flex justify-center space-x-4">
+          <button className="bg-blue-600 text-white px-8 py-3 rounded-md flex items-center">
+            Start Free Trial <ArrowRight className="ml-2" />
+          </button>
+          <button className="border border-gray-300 text-gray-700 px-8 py-3 rounded-md">
+            Learn More
+          </button>
+        </div>
+      </div>
+
+      <div className="w-full flex flex-col gap-2 bg-gray-300 py-4">
+        <Marquee
+          loop={0}
+          speed={50}
+          gradient={false}
+          className="flex items-center "
+        >
+          {[
+            "TechNova",
+            "Skyline Solutions",
+            "Pixel Perfect",
+            "CodeCraft",
+            "CodeCraft",
+            "CloudWorks",
+            "CodeCraft",
+            "BlueWave",
+            "InnoSphere",
+            "BrightPath",
+            "CyberCore",
+            "NextGen Soft",
+          ].map((company, index) => (
+            <div
               key={index}
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ 
-                duration: 0.6, 
-                delay: index * 0.2,
-                type: "spring"
-              }}
-              whileHover={{ 
-                scale: 1.05,
-                background: `linear-gradient(to right, ${feature.color})`
-              }}
-              className="bg-white/10 backdrop-blur-lg p-6 rounded-xl transition-all duration-300 hover:shadow-2xl"
+              className="border b border-white shadow-md rounded-lg w-full px-5 mx-3 h-10 flex items-center justify-center"
             >
-              {feature.icon}
-              <h3 className="text-xl font-bold mt-4">{feature.title}</h3>
-              <p className="text-gray-300 mt-2">{feature.description}</p>
-              <ul className="mt-4 space-y-2">
-                {feature.details.map((detail, idx) => (
-                  <li key={idx} className="flex items-center text-blue-200">
-                    <Check className="mr-2 text-green-400" size={16} />
-                    {detail}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+              <h1 className="text-white font-semibold text-lg text-center">
+                {company}
+              </h1>
+            </div>
+          ))}
+        </Marquee>
+      </div>
+
+      {/* Features Section */}
+      <section className="container mx-auto px-6 py-16">
+        <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-8">
+          {features.map((feature, index) => (
+            <div key={index} className="text-center p-6 bg-gray-50 rounded-lg">
+              <div className="flex justify-center mb-4">{feature.icon}</div>
+              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+              <p className="text-gray-600">{feature.description}</p>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* Interactive Testimonials Section */}
-      <section className="container mx-auto px-6 py-16">
-        <h2 className="text-4xl font-bold text-center mb-12">
-          Success Stories from Entrepreneurs
+      {/* Testimonials Section */}
+      <section className="container mx-auto px-6 py-16 bg-gray-50">
+        <h2 className="text-3xl font-bold text-center mb-12">
+          What Our Clients Say
         </h2>
-        <div className="max-w-4xl mx-auto">
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={activeTestimonial}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white/10 backdrop-blur-lg p-8 rounded-xl relative"
-            >
-              <p className="italic text-gray-300 mb-6 text-xl">
-                "{testimonials[activeTestimonial].quote}"
-              </p>
-              <div className="flex items-center">
-                <img 
-                  src={testimonials[activeTestimonial].avatar} 
-                  alt={testimonials[activeTestimonial].name}
-                  className="w-16 h-16 rounded-full mr-4 object-cover"
-                />
-                <div>
-                  <h4 className="font-bold text-lg">{testimonials[activeTestimonial].name}</h4>
-                  <p className="text-blue-200">
-                    {testimonials[activeTestimonial].role}, {testimonials[activeTestimonial].location}
-                  </p>
-                </div>
-              </div>
-              <div className="absolute bottom-4 right-4 flex space-x-2">
-                {testimonials.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setActiveTestimonial(index)}
-                    className={`w-3 h-3 rounded-full ${
-                      index === activeTestimonial 
-                        ? 'bg-blue-500' 
-                        : 'bg-white/30'
-                    }`}
-                  />
-                ))}
-              </div>
-            </motion.div>
-          </AnimatePresence>
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white shadow-lg rounded-lg p-8">
+            <Quote className="text-blue-600 w-12 h-12 mx-auto mb-6" />
+            <p className="text-xl text-center text-gray-700 mb-6">
+              "{testimonials[activeTab].quote}"
+            </p>
+            <div className="text-center">
+              <h4 className="text-lg font-semibold">
+                {testimonials[activeTab].name}
+              </h4>
+              <p className="text-gray-500">{testimonials[activeTab].role}</p>
+            </div>
+          </div>
+          <div className="flex justify-center mt-6 space-x-3">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveTab(index)}
+                className={`w-3 h-3 rounded-full ${
+                  activeTab === index ? "bg-blue-600" : "bg-gray-300"
+                }`}
+              />
+            ))}
+          </div>
         </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="container mx-auto px-6 py-16 text-center">
+        <h2 className="text-4xl font-bold mb-6">
+          Ready to Transform Your Business?
+        </h2>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
+          Start your journey with our AI-powered catalog solutions today
+        </p>
+        <button className="bg-blue-600 text-white px-10 py-4 rounded-md text-lg">
+          Get Started Now
+        </button>
       </section>
     </div>
   );
 };
 
-export default AnimatedHomePage;
+export default Home;
