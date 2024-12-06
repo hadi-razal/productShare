@@ -108,9 +108,9 @@ const Home = () => {
           ].map((message, index) => (
             <div
               key={index}
-              className="bg-white border border-gray-300 shadow-lg rounded-lg px-6 mx-4 h-12 flex items-center justify-center "
+              className="bg-white border border-gray-300 shadow-lg rounded-lg px-6 mx-4 py-1 flex items-center justify-center "
             >
-              <h1 className="text-gray-400 font-medium text-lg text-center">
+              <h1 className="text-gray-400 font-[100px] text-base text-center ">
                 {message}
               </h1>
             </div>
@@ -139,9 +139,9 @@ const Home = () => {
           ].map((message, index) => (
             <div
               key={index}
-              className="bg-white border border-gray-300 shadow-lg rounded-lg px-6 mx-4 h-12 flex items-center justify-center "
+              className="bg-white border border-gray-300 shadow-lg rounded-lg px-6 mx-4 py-1 flex items-center justify-center "
             >
-              <h1 className="text-gray-400 font-medium text-lg text-center">
+              <h1 className="text-gray-400 font-[100px] text-base text-center ">
                 {message}
               </h1>
             </div>
@@ -149,8 +149,8 @@ const Home = () => {
         </Marquee>
 
         {/* Decorative Elements */}
-        <div className="flex justify-center mt-4">
-          <p className="text-gray-500 text-sm">
+        <div className="flex items-center justify-center mt-4 px-3">
+          <p className="text-gray-500 text-sm text-center">
             Let us help you grow your business with a powerful, easy-to-use
             catalog builder.
           </p>
@@ -164,7 +164,9 @@ const Home = () => {
             <div key={index} className="text-center p-6 bg-gray-50 rounded-lg">
               <div className="flex justify-center mb-4">{feature.icon}</div>
               <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <p className="text-gray-600 text-base leading-4">
+                {feature.description}
+              </p>
             </div>
           ))}
         </div>
@@ -179,15 +181,15 @@ const Home = () => {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center text-center"
+              className="bg-white shadow-lg  rounded-lg p-6 flex flex-col items-center text-center"
             >
               <Quote className="text-primaryColor w-12 h-12 mb-4" />
-              <p className="text-lg text-gray-700 mb-4">
+              <p className="text-base text-gray-700 mb-4 leading-5 font-extralight">
                 "{testimonial.quote}"
               </p>
               <div>
                 <h4 className="text-lg font-semibold">{testimonial.name}</h4>
-                <p className="text-gray-500">{testimonial.role}</p>
+                <p className="text-gray-500 ">{testimonial.role}</p>
               </div>
             </div>
           ))}
@@ -196,10 +198,10 @@ const Home = () => {
 
       {/* Call to Action */}
       <section className="container mx-auto px-6 py-16 text-center">
-        <h2 className="text-4xl font-bold mb-6">
+        <h2 className="text-4xl font-bold mb-6 leading-10">
           Ready to Transform Your Business?
         </h2>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-5">
           Start your journey with our AI-powered catalog solutions today
         </p>
         <button className="bg-primaryColor text-white px-10 py-4 rounded-md text-lg">

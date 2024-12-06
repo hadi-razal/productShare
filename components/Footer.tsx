@@ -22,7 +22,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="space-y-4">
             <h3 className="text-white font-bold text-lg mb-4">Product Share</h3>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm leading-5">
               Empowering businesses to showcase and share their products globally.
             </p>
           </div>
