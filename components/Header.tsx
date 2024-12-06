@@ -25,9 +25,6 @@ interface NavigationLink {
 }
 
 const MAIN_NAVIGATION_LINKS: NavigationLink[] = [
-  { href: "#testimonials", label: "Testimonials" },
-  { href: "#features", label: "Features" },
-  { href: "#pricing", label: "Pricing" },
   { href: "/about-us", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
@@ -161,7 +158,7 @@ const Header: React.FC = () => {
       className="fixed w-full top-0 z-50 transition-all duration-300 "
       style={{ backgroundColor: headerState.storeDetails.themeColor }}
     >
-      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-20 relative">
+    <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-20 relative">
         <div className="flex items-center justify-between h-full">
           {/* Logo Section */}
           <motion.div
