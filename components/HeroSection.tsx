@@ -12,6 +12,7 @@ import {
   Briefcase,
   CreditCard,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const AnimatedIcon = ({
   Icon,
@@ -42,6 +43,8 @@ const AnimatedIcon = ({
 };
 
 const HeroSection = () => {
+  const router = useRouter();
+
   const iconConfigurations = [
     {
       Icon: ShoppingCart,
@@ -195,6 +198,7 @@ const HeroSection = () => {
           {/* Buttons */}
           <div className="sm:flex items-center justify-center grid gap-2 grid-cols-2 px-5">
             <button
+              onClick={() => router.push("/register")}
               className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white 
               px-5 py-3 md:py-4 text-base flex items-center justify-center rounded-md"
             >
@@ -202,6 +206,7 @@ const HeroSection = () => {
             </button>
 
             <button
+              onClick={() => router.push("/learn-more")}
               className="border-2 border-gray-300 text-gray-700 
               px-5 py-3 md:py-4
               hover:bg-gray-100  text-base flex items-center justify-center rounded-md"
