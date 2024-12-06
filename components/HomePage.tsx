@@ -1,21 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React from "react";
 import {
   Rocket,
   Globe,
-  Target,
   PieChart,
   Shield,
   ArrowRight,
   Quote,
+  MessageCircle,
+  Cog,
 } from "lucide-react";
 import Marquee from "react-fast-marquee";
 
 const Home = () => {
-  const [activeTab, setActiveTab] = useState(0);
-
   const features = [
     {
       icon: <Rocket className="w-10 h-10 text-blue-600" />,
@@ -38,6 +36,16 @@ const Home = () => {
       title: "Secure Platform",
       description: "Enterprise-grade security and data protection",
     },
+    {
+      icon: <Cog className="w-10 h-10 text-orange-600" />,
+      title: "Customizable Solutions",
+      description: "Tailor-made features to fit your unique business needs",
+    },
+    {
+      icon: <MessageCircle className="w-10 h-10 text-red-600" />,
+      title: "24/7 Support",
+      description: "Round-the-clock assistance for uninterrupted operations",
+    },
   ];
 
   const testimonials = [
@@ -45,21 +53,30 @@ const Home = () => {
       name: "Priya Sharma",
       role: "E-commerce Entrepreneur",
       quote:
-        "This platform transformed our product marketing approach completely.",
+        "This platform completely revolutionized the way we showcase and market our products. Highly recommended!",
       location: "Mumbai",
     },
     {
       name: "Rahul Gupta",
       role: "Small Business Owner",
-      quote: "Incredibly intuitive and powerful marketing solution.",
+      quote:
+        "An incredibly intuitive and powerful marketing solution that helped boost my sales dramatically.",
       location: "Delhi",
     },
-    {
-      name: "Aisha Khan",
-      role: "Digital Strategist",
-      quote: "Unparalleled efficiency in catalog management and marketing.",
-      location: "Bangalore",
-    },
+    // {
+    //   name: "Aisha Khan",
+    //   role: "Digital Strategist",
+    //   quote:
+    //     "With its efficiency in catalog management and marketing, it’s become an indispensable tool for our campaigns.",
+    //   location: "Bangalore",
+    // },
+    // {
+    //   name: "Arjun Mehta",
+    //   role: "Startup Founder",
+    //   quote:
+    //     "A game-changer for startups like ours, simplifying marketing tasks and delivering outstanding results.",
+    //   location: "Hyderabad",
+    // },
   ];
 
   return (
@@ -102,21 +119,19 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="w-full flex flex-col gap-2 bg-gray-300 py-4">
+      <div className="w-full flex flex-col gap-2 bg-gray-100 py-4">
         <Marquee
           loop={0}
           speed={50}
           gradient={false}
-          className="flex items-center "
+          className="flex items-center"
         >
           {[
             "TechNova",
             "Skyline Solutions",
             "Pixel Perfect",
             "CodeCraft",
-            "CodeCraft",
             "CloudWorks",
-            "CodeCraft",
             "BlueWave",
             "InnoSphere",
             "BrightPath",
@@ -125,9 +140,9 @@ const Home = () => {
           ].map((company, index) => (
             <div
               key={index}
-              className="border b border-white shadow-md rounded-lg w-full px-5 mx-3 h-10 flex items-center justify-center"
+              className="border border-gray-300 shadow-md rounded-lg px-5 mx-3 h-10 flex items-center justify-center"
             >
-              <h1 className="text-white font-semibold text-lg text-center">
+              <h1 className="text-gray-400 font-semibold text-lg text-center">
                 {company}
               </h1>
             </div>
@@ -136,8 +151,8 @@ const Home = () => {
       </div>
 
       {/* Features Section */}
-      <section className="container mx-auto px-6 py-16">
-        <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-8">
+      <section id="features" className="mx-auto max-w-7xl px-6 py-16">
+        <div className="grid  md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-8">
           {features.map((feature, index) => (
             <div key={index} className="text-center p-6 bg-gray-50 rounded-lg">
               <div className="flex justify-center mb-4">{feature.icon}</div>
@@ -149,34 +164,26 @@ const Home = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="container mx-auto px-6 py-16 bg-gray-50">
+      <section className="mx-auto max-w-7xl px-6 py-16">
         <h2 className="text-3xl font-bold text-center mb-12">
           What Our Clients Say
         </h2>
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white shadow-lg rounded-lg p-8">
-            <Quote className="text-blue-600 w-12 h-12 mx-auto mb-6" />
-            <p className="text-xl text-center text-gray-700 mb-6">
-              "{testimonials[activeTab].quote}"
-            </p>
-            <div className="text-center">
-              <h4 className="text-lg font-semibold">
-                {testimonials[activeTab].name}
-              </h4>
-              <p className="text-gray-500">{testimonials[activeTab].role}</p>
+        <div className="grid gap-8  grid-cols-1  md:grid-cols-2 ">
+          {testimonials.map((testimonial, index) => (
+            <div
+              key={index}
+              className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center text-center"
+            >
+              <Quote className="text-blue-600 w-12 h-12 mb-4" />
+              <p className="text-lg text-gray-700 mb-4">
+                "{testimonial.quote}"
+              </p>
+              <div>
+                <h4 className="text-lg font-semibold">{testimonial.name}</h4>
+                <p className="text-gray-500">{testimonial.role}</p>
+              </div>
             </div>
-          </div>
-          <div className="flex justify-center mt-6 space-x-3">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveTab(index)}
-                className={`w-3 h-3 rounded-full ${
-                  activeTab === index ? "bg-blue-600" : "bg-gray-300"
-                }`}
-              />
-            ))}
-          </div>
+          ))}
         </div>
       </section>
 
