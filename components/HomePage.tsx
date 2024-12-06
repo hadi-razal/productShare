@@ -108,23 +108,17 @@ const Home = () => {
           ].map((message, index) => (
             <div
               key={index}
-              className="bg-white border border-gray-300 shadow-lg rounded-lg px-6 mx-4 py-1 flex items-center justify-center "
+              className="bg-white border border-gray-300  rounded-md px-6 mx-4 py-1 flex items-center justify-center "
             >
-              <h1 className="text-gray-400 font-[100px] text-base text-center ">
+              <span className="text-gray-400 font-[100px] text-base text-center ">
                 {message}
-              </h1>
+              </span>
             </div>
           ))}
         </Marquee>
 
         {/* Second Marquee: More Benefits/Features */}
-        <Marquee
-          loop={0}
-          speed={50}
-          direction="right"
-          gradient={false}
-          className="flex items-center"
-        >
+        <Marquee loop={0} speed={50} direction="right" gradient={false}>
           {[
             "Maximize Your Revenue Potential",
             "Effortless Product Uploads",
@@ -139,11 +133,11 @@ const Home = () => {
           ].map((message, index) => (
             <div
               key={index}
-              className="bg-white border border-gray-300 shadow-lg rounded-lg px-6 mx-4 py-1 flex items-center justify-center "
+              className="bg-white border border-gray-300 rounded-md px-6 mx-4 py-1 flex items-center justify-center "
             >
-              <h1 className="text-gray-400 font-[100px] text-base text-center ">
+              <span className="text-gray-400 font-[100px] text-base text-center ">
                 {message}
-              </h1>
+              </span>
             </div>
           ))}
         </Marquee>

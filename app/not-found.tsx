@@ -25,7 +25,7 @@ const NotFoundPage = () => {
                 {/* Interactive button */}
                 <button
                     onClick={() => router.push('/')}
-                    className="mt-8 px-8 py-4 bg-blue-950 text-white rounded-lg font-medium hover:bg-blue-900 transition-all duration-300"
+                    className="mt-8 px-8 py-4 bg-primaryColor text-white rounded-lg font-medium hover:bg-primaryColor/90 transition-all duration-300"
                 >
                     Go Back to Home
                 </button>

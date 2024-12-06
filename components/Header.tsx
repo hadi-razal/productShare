@@ -88,7 +88,7 @@ const Header: React.FC = () => {
         damping: 20 
       }}
       className={`
-        fixed z-50 sm:w-full max-w-5xl px-4 py-3 
+        fixed z-50 lg:w-full max-w-5xl px-4 py-3 
         rounded-md top-3 mx-auto w-[calc(100vw-30px)]  left-0 right-0
          -translate-x-1/2 
         transition-all duration-300 ease-in-out
