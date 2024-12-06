@@ -129,7 +129,7 @@ const RegisterPage: React.FC = () => {
                     </div>
                     <button
                         type="submit"
-                        className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-blue-950 hover:bg-blue-900 text-white shadow-lg"
+                        className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-primaryColor hover:bg-primaryColor/90 text-white shadow-lg"
                     >
                         Register
                         <ArrowRight className="w-5 h-5 ml-2" />
