@@ -31,7 +31,7 @@ const MAIN_NAVIGATION_LINKS: NavigationLink[] = [
 
 const DEFAULT_STORE_DETAILS: StoreDetails = {
   name: "Product Share",
-  themeColor: "#2563eb",
+  themeColor: "#6e41e8",
 };
 
 const Header: React.FC = () => {
