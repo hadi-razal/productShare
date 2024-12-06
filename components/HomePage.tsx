@@ -181,7 +181,7 @@ const Home = () => {
               key={index}
               className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center text-center"
             >
-              <Quote className="text-blue-600 w-12 h-12 mb-4" />
+              <Quote className="text-primaryColor w-12 h-12 mb-4" />
               <p className="text-lg text-gray-700 mb-4">
                 "{testimonial.quote}"
               </p>
@@ -202,7 +202,7 @@ const Home = () => {
         <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
           Start your journey with our AI-powered catalog solutions today
         </p>
-        <button className="bg-blue-600 text-white px-10 py-4 rounded-md text-lg">
+        <button className="bg-primaryColor text-white px-10 py-4 rounded-md text-lg">
           Get Started Now
         </button>
       </section>

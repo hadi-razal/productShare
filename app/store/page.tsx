@@ -229,7 +229,7 @@ const StoreDashboard = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <StatCard
+        <StatCard
             title="Total Products"
             value={loading ? null : stats.products}
             trend={12}

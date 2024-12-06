@@ -171,15 +171,16 @@ const Header: React.FC = () => {
               </div>
             )}
             <div className="text-2xl font-bold tracking-tight text-white flex items-center">
-              {headerState.storeDetails.logoImage && (
+              {/* {headerState.storeDetails.logoImage && (
                 <Image
                   src={headerState.storeDetails.logoImage}
                   alt="Store logo"
                   width={40}
+                  sizes="cover"
                   height={40}
                   className="mr-2 object-cover rounded"
                 />
-              )}
+              )} */}
               <span>{headerState.storeDetails.name}</span>
             </div>
           </motion.div>
@@ -270,7 +271,7 @@ const Header: React.FC = () => {
             ) : (
               <button
                 onClick={handleLogout}
-                className="block w-full text-center px-6 py-3 rounded-md bg-gradient-to-r from-red-500 to-pink-600 text-white hover:shadow-lg hover:shadow-red-500/25 transition-all duration-200 font-medium"
+                className="block w-full text-center px-6 py-3 rounded-md bg-red-600 text-white hover:shadow-lg hover:shadow-red-500/25 transition-all duration-200 font-medium"
               >
                 Logout
               </button>

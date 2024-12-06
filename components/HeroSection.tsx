@@ -196,18 +196,16 @@ const HeroSection = () => {
           <div className="sm:flex items-center justify-center grid gap-2 grid-cols-2">
             <button
               className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white 
-              px-3 py-3 md:py-4 text-base flex items-center justify-center rounded-md"
+              px-5 py-3 md:py-4 text-base flex items-center justify-center rounded-md"
             >
-              Start Free Trial
-              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+              Get Started
             </button>
 
             <button
               className="border-2 border-gray-300 text-gray-700 
-              px-3 py-3 md:py-4
+              px-5 py-3 md:py-4
               hover:bg-gray-100  text-base flex items-center justify-center rounded-md"
             >
-              <Sparkles className="mr-2 text-blue-500" />
               Learn More
             </button>
           </div>
