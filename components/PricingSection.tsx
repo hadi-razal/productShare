@@ -46,7 +46,7 @@ const PricingSection = () => {
             }`}
           >
             Yearly
-            <span className="ml-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+            <span className="ml-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
               Save 17%
             </span>
           </button>
