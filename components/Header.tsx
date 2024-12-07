@@ -155,12 +155,12 @@ const Header: React.FC = () => {
           </div>
 
           {/* Right-side Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 ">
             {!headerState.isAuthenticated ? (
               <Link
                 href="/login"
                 className={`
-                px-4 py-2 rounded-md 
+                  md:flex items-center hidden px-4 py-2 rounded-md 
                 ${
                   headerState.isScrolled
                     ? "border border-purple-300 text-purple-600 hover:bg-purple-50"
@@ -177,7 +177,7 @@ const Header: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={`
-                flex items-center gap-2 px-4 py-2 rounded-md
+                md:flex items-center hidden  gap-2 px-4 py-2 rounded-md
                 ${
                   headerState.isScrolled
                     ? "bg-red-100 text-red-600 hover:bg-red-200"
@@ -211,7 +211,7 @@ const Header: React.FC = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="md:hidden absolute top-full w-full bg-white shadow-lg rounded-b-xl overflow-hidden mt-2"
+                className="md:hidden absolute mx-auto w-[calc(100vw-30px)] top-full  left-0 right-0 bg-white shadow-lg rounded-b-xl overflow-hidden mt-2"
               >
                 <div className="flex flex-col p-4 space-y-3">
                   {NAVIGATION_LINKS.map((link) => (
@@ -219,7 +219,7 @@ const Header: React.FC = () => {
                       key={link.href}
                       href={link.href}
                       onClick={toggleMenu}
-                      className="text-gray-700 py-2 border-b border-gray-200 hover:bg-gray-100"
+                      className="text-gray-700 px-3 py-2 border-b border-gray-200 hover:bg-gray-100"
                     >
                       {link.label}
                     </Link>
