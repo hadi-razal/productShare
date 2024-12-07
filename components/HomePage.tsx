@@ -105,21 +105,7 @@ const Home = () => {
       quote:
         "An incredibly intuitive and powerful marketing solution that helped boost my sales dramatically.",
       location: "Delhi",
-    },
-    // {
-    //   name: "Aisha Khan",
-    //   role: "Digital Strategist",
-    //   quote:
-    //     "With its efficiency in catalog management and marketing, it’s become an indispensable tool for our campaigns.",
-    //   location: "Bangalore",
-    // },
-    // {
-    //   name: "Arjun Mehta",
-    //   role: "Startup Founder",
-    //   quote:
-    //     "A game-changer for startups like ours, simplifying marketing tasks and delivering outstanding results.",
-    //   location: "Hyderabad",
-    // },
+    }
   ];
 
   return (
