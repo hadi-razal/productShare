@@ -13,6 +13,7 @@ import { getUserId } from "@/helpers/getUserId";
 import { db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
+import AlertMessageSlider from "./AlertSlider";
 
 interface StoreProductsProps {
   storeId: string | undefined;
@@ -159,7 +160,7 @@ const StoreProducts: React.FC<StoreProductsProps> = ({ storeId }) => {
   const handleLoadMore = () => setVisibleProducts((prev) => prev + 20);
 
   return (
-    <div className="container relative min-h-screen max-w-7xl mx-auto pb-8 pt-[130px] px-4">
+    <div className="container relative min-h-screen max-w-7xl mx-auto pb-8 pt-32 px-4">
       <div className="relative flex items-center w-full pb-3">
         <input
           type="text"
@@ -180,7 +181,7 @@ const StoreProducts: React.FC<StoreProductsProps> = ({ storeId }) => {
           )}
           <button
             onClick={handleSearchClick}
-            className="p-2 text-white bg-blue-950 rounded-md px-4 py-3"
+            className="p-2 text-white bg-primaryColor rounded-md px-4 py-3"
           >
             <Search size={18} />
           </button>
