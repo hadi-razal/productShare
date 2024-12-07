@@ -1,15 +1,23 @@
 import React, { useState } from "react";
+import {
+  CheckCircle,
+  BarChart,
+  Paintbrush,
+  Headphones,
+  Bell,
+  PieChart,
+} from "lucide-react";
 
 const PricingSection = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
 
   const pricingDetails: any = {
     monthly: {
-      price: 29,
+      price: 199,
       description: "Ideal for businesses looking for short-term flexibility",
     },
     yearly: {
-      price: Math.round(29 * 12 * 0.83), // 17% discount
+      price: Math.round(199 * 12 * 0.83), // 17% discount
       description: "Best value - save 17% compared to monthly billing",
     },
   };
@@ -63,20 +71,38 @@ const PricingSection = () => {
             {pricingDetails[billingCycle].description}
           </p>
           <div className="text-4xl font-bold mb-6">
-            ${pricingDetails[billingCycle].price}
+          &#8377;{pricingDetails[billingCycle].price}
             <span className="text-lg text-gray-600">
               {billingCycle === "monthly" ? "/month" : "/year"}
             </span>
           </div>
-          <ul className="text-gray-600 text-base mb-6 space-y-2">
-            <li>✔ Create and manage catalogs</li>
-            <li>✔ 50 product listings per month</li>
-            <li>✔ Basic analytics</li>
-            <li>✔ Email support</li>
+
+          <ul className="text-gray-600 text-base mb-6 w-full max-w-7xl space-y-1">
+            <li className="flex  md:justify-center text-start">
+              <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+              Unlimited product listings
+            </li>
+            <li className="flex  md:justify-center text-start">
+              <BarChart className="w-5 h-5 text-blue-500 mr-2" />
+              Advanced analytics with detailed customer behavior insights
+            </li>
+            <li className="flex  md:justify-center text-start">
+              <Paintbrush className="w-5 h-5 text-yellow-500 mr-2" />
+              Custom website theme
+            </li>
+            <li className="flex  md:justify-center text-start">
+              <Headphones className="w-5 h-5 text-purple-500 mr-2" />
+              Priority customer support (24/7 email and chat)
+            </li>
+            <li className="flex  md:justify-center text-start">
+              <Bell className="w-5 h-5 text-orange-500 mr-2" />
+              Custom alert banners
+            </li>
+            <li className="flex  md:justify-center text-start">
+              <PieChart className="w-5 h-5 text-pink-500 mr-2" />
+              Detailed analytics feature
+            </li>
           </ul>
-          <button className="bg-primaryColor text-white px-6 py-3 rounded-md font-semibold hover:bg-primaryColor/90">
-            Choose Plan
-          </button>
         </div>
       </div>
     </section>
