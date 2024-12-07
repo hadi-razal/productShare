@@ -43,7 +43,7 @@ const AlertMessageSlider = () => {
 
 
     return (
-        <div className="absolute pt-[80px] md:w-full group mx-auto w-[calc(100vw-30px)]  left-0 right-0">
+        <div className="fixed z-50 pt-[76px] md:w-full group mx-auto w-[calc(100vw-30px)]  left-0 right-0">
             <div className="bg-red-600 w-full overflow-hidden max-w-7xl mx-auto rounded-md">
                 <Marquee loop={0} speed={50} gradient={false} className="py-2 w-full max-w-7xl mx-auto">
                     <div className="flex gap-16  ">

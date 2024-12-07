@@ -37,7 +37,7 @@ const Button: React.FC<ButtonProps> = ({ children, variant = 'default', classNam
     const baseStyles = 'inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50';
 
     const variants = {
-        default: 'bg-blue-950 text-white',
+        default: 'bg-primaryColor text-white',
         outline: 'border border-gray-200 bg-white hover:bg-gray-100 text-gray-900',
     };
 
