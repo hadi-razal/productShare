@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Marquee from "react-fast-marquee";
 import HeroSection from "./HeroSection";
+import PricingSection from "./PricingSection";
 
 const Home = () => {
   const features = [
@@ -49,6 +50,44 @@ const Home = () => {
       icon: <MessageCircle className="w-10 h-10 text-red-600" />,
       title: "24/7 Support",
       description: "Round-the-clock assistance for uninterrupted operations",
+    },
+  ];
+
+  const pricingPlans = [
+    {
+      name: "Basic",
+      monthlyPrice: "19",
+      yearlyPrice: "199",
+      description: "Ideal for individuals just starting out.",
+      features: ["1 User", "Basic Support", "Up to 100 Products"],
+      popular: false,
+    },
+    {
+      name: "Pro",
+      monthlyPrice: "49",
+      yearlyPrice: "499",
+      description: "Perfect for growing teams and businesses.",
+      features: [
+        "5 Users",
+        "Priority Support",
+        "Up to 500 Products",
+        "Advanced Analytics",
+      ],
+      popular: true,
+    },
+    {
+      name: "Enterprise",
+      monthlyPrice: "99",
+      yearlyPrice: "999",
+      description: "Tailored for large-scale operations.",
+      features: [
+        "Unlimited Users",
+        "24/7 Support",
+        "Unlimited Products",
+        "Custom Integrations",
+        "Dedicated Account Manager",
+      ],
+      popular: false,
     },
   ];
 
@@ -108,7 +147,7 @@ const Home = () => {
           ].map((message, index) => (
             <div
               key={index}
-              className="bg-white border border-gray-300  rounded-md px-6 mx-4 py-1 flex items-center justify-center "
+              className="bg-white border border-gray-300 rounded-md px-6 mx-[3px] py-1 flex items-center justify-center "
             >
               <span className="text-gray-400 font-[100px] text-base text-center ">
                 {message}
@@ -133,7 +172,7 @@ const Home = () => {
           ].map((message, index) => (
             <div
               key={index}
-              className="bg-white border border-gray-300 rounded-md px-6 mx-4 py-1 flex items-center justify-center "
+              className="bg-white border border-gray-300 rounded-md px-6 mx-[3px] py-1 flex items-center justify-center "
             >
               <span className="text-gray-400 font-[100px] text-base text-center ">
                 {message}
@@ -150,7 +189,6 @@ const Home = () => {
           </p>
         </div>
       </div>
-
       {/* Features Section */}
       <section id="features" className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid  md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-8">
@@ -165,6 +203,9 @@ const Home = () => {
           ))}
         </div>
       </section>
+
+      {/* Pricing Section */}
+      <PricingSection />
 
       {/* Testimonials Section */}
       <section className="mx-auto max-w-7xl px-6 py-16">
@@ -189,7 +230,6 @@ const Home = () => {
           ))}
         </div>
       </section>
-
       {/* Call to Action */}
       <section className="container mx-auto px-6 py-16 text-center">
         <h2 className="text-4xl font-bold mb-6 leading-10">
