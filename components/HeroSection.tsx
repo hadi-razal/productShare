@@ -181,7 +181,7 @@ const HeroSection = () => {
       <div className="container relative mx-auto px-6 py-24 text-center">
         <div className="relative z-10">
           {/* Headline */}
-          <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 leading-10 mb-6">
+          <h1 className="text-5xl font-sans f md:text-6xl font-extrabold text-gray-900 leading-10 mb-6">
             Transform Your{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
               Product Catalog
@@ -189,7 +189,7 @@ const HeroSection = () => {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg font-thin leading-5  md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <p className="text-lg  font-sans leading-5  md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             Unlock the power of intelligent catalog creation and AI-driven
             marketing solutions tailored for modern businesses with cutting-edge
             technology.
