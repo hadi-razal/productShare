@@ -5,9 +5,9 @@ import { Target, Layers, Users, Trophy, Globe, Lock } from 'lucide-react';
 const FeatureCard = ({ icon: Icon, title, description }:any) => (
   <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform">
     <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-      <Icon className="w-8 h-8 text-blue-900" />
+      <Icon className="w-8 h-8 text-[#2D3436]" />
     </div>
-    <h3 className="text-xl font-bold text-blue-900 mb-3">{title}</h3>
+    <h3 className="text-xl font-bold text-[#2D3436] mb-3">{title}</h3>
     <p className="text-gray-600">{description}</p>
   </div>
 );
@@ -59,7 +59,7 @@ const AboutUs = () => {
         <div className="container mx-auto px-6 py-16">
           {/* Hero Section */}
           <section className="text-center mb-16">
-            <h1 className="text-5xl font-bold text-blue-900 mb-6 tracking-tight">
+            <h1 className="text-5xl font-bold text-[#2D3436] mb-6 tracking-tight">
               About Product Share
             </h1>
             <p className="max-w-3xl mx-auto text-xl text-gray-700 leading-relaxed">
@@ -70,7 +70,7 @@ const AboutUs = () => {
 
           {/* Features Grid */}
           <section className="mb-16">
-            <h2 className="text-3xl font-bold text-blue-900 text-center mb-12">
+            <h2 className="text-3xl font-bold text-[#2D3436] text-center mb-12">
               Our Core Features
             </h2>
             <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -88,7 +88,7 @@ const AboutUs = () => {
           {/* Vision Section */}
           <section className=" p-12 mb-5">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl font-bold text-blue-900 mb-6">
+              <h2 className="text-3xl font-bold text-[#2D3436] mb-6">
                 Our Visionary Mission
               </h2>
               <p className="text-xl text-gray-700 leading-relaxed">
