@@ -13,7 +13,7 @@ const HeroSection = () => {
       </div>
 
       {/* Content container */}
-      <div className="relative z-10 max-w-screen-xl mx-auto px-6 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-2 items-center gap-10 overflow-hidden">
+      <div className="relative z-10 max-w-screen-xl mx-auto px-6 pt-10 pb-16 md:pb-24 grid grid-cols-1 lg:grid-cols-2 items-center gap-10 overflow-hidden">
         {/* Text section */}
         <div className="space-y-6 text-center lg:text-left">
           <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-gray-900">
