@@ -1,5 +1,6 @@
 "use client";
 
+
 import React, { useState, useEffect } from "react";
 import Marquee from "react-fast-marquee";
 import { getDoc, doc } from "firebase/firestore";
