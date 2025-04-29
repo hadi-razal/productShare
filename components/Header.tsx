@@ -1,253 +1,151 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { Menu, X, Share2, LogOut } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { useParams, usePathname, useRouter } from "next/navigation";
-import { auth } from "@/lib/firebase";
 import Link from "next/link";
-import AlertMessageSlider from "./AlertSlider";
+import { useRouter, usePathname } from "next/navigation";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
-const NAVIGATION_LINKS = [
+const links = [
   { href: "/", label: "Home" },
   { href: "/about-us", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
-const Header: React.FC = () => {
-  const [headerState, setHeaderState] = useState({
-    isMenuOpen: false,
-    isAuthenticated: false,
-    isScrolled: false,
-    themeColor: "#6e41e8",
-  });
-
+const Header = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { storeId } = useParams();
-
-  const handleNavigation = useCallback(() => {
-    try {
-      const destination = headerState.isAuthenticated
-        ? "/store"
-        : storeId
-        ? `/store/${storeId}`
-        : "/";
-      router.push(destination);
-    } catch (error) {
-      console.error("Navigation error:", error);
-    }
-  }, [headerState.isAuthenticated, storeId, router]);
-
-  const handleLogout = useCallback(async () => {
-    try {
-      await signOut(auth);
-      router.push("/login");
-      setHeaderState((prev) => ({ ...prev, isMenuOpen: false }));
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  }, [router]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setHeaderState((prev) => ({
-        ...prev,
-        isScrolled: window.scrollY > 50,
-      }));
-    };
-
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      setHeaderState((prev) => ({ ...prev, isAuthenticated: !!user }));
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAuthenticated(!!user);
     });
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
 
     window.addEventListener("scroll", handleScroll);
     return () => {
-      unsubscribeAuth();
+      unsubscribe();
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  const toggleMenu = useCallback(() => {
-    setHeaderState((prev) => ({ ...prev, isMenuOpen: !prev.isMenuOpen }));
-  }, []);
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push("/login");
+  };
 
   return (
     <>
       <motion.header
-        initial={{ y: -100, opacity: 0 }}
-        animate={{
-          y: 0,
-          opacity: 1,
-          boxShadow: headerState.isScrolled
-            ? "0 10px 15px rgba(0,0,0,0.1)"
-            : "0 4px 6px rgba(0,0,0,0.05)",
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 20,
-        }}
-        className={`
-        fixed z-50 lg:w-full max-w-7xl px-4 py-3 
-        rounded-md top-3 mx-auto w-[calc(100vw-30px)]  left-0 right-0
-         -translate-x-1/2 
-        transition-all duration-300 ease-in-out
-        ${
-          headerState.isScrolled ? "bg-white/90 backdrop-blur-md shadow-lg" : ""
-        }
-      `}
-        style={{
-          backgroundColor: headerState.isScrolled
-            ? "rgba(255,255,255,0.9)"
-            : headerState.themeColor,
-        }}
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+          isScrolled ? "bg-white shadow-md" : "bg-transparent"
+        }`}
       >
-        <div className="flex justify-between items-center">
-          {/* Logo Section */}
-          <motion.div
-            onClick={handleNavigation}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center cursor-pointer space-x-3"
-          >
-            <div
-              className={`
-            p-2 rounded-md 
-            ${headerState.isScrolled ? "bg-purple-100/50" : "bg-white/20"}
-          `}
-            >
-              <Share2
-                className={`
-              h-6 w-6 
-              ${headerState.isScrolled ? "text-purple-600" : "text-white"}
-            `}
-              />
-            </div>
-            <span
-              className={`
-            text-xl font-bold tracking-tight
-            ${headerState.isScrolled ? "text-gray-800" : "text-white"}
-          `}
-            >
-              Product Share
-            </span>
-          </motion.div>
+        <div className="max-w-screen-xl mx-auto px-6 py-4 flex justify-between items-center">
+          {/* Logo */}
+          <Link href="/" className="text-2xl font-bold text-purple-600">
+            ProductShare
+          </Link>
 
-          {/* Centered Navigation */}
-          <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-6">
-            {NAVIGATION_LINKS.map((link) => (
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-8">
+            {links.map(({ href, label }) => (
               <Link
-                key={link.href}
-                href={link.href}
-                className={`
-                transition-colors 
-                ${
-                  headerState.isScrolled
-                    ? "text-gray-700 hover:text-purple-600"
-                    : "text-white hover:opacity-75"
-                }
-              `}
+                key={href}
+                href={href}
+                className={`text-sm font-medium transition ${
+                  isScrolled ? "text-gray-800" : "text-white"
+                } hover:text-purple-600`}
               >
-                {link.label}
+                {label}
               </Link>
             ))}
-          </div>
-
-          {/* Right-side Actions */}
-          <div className="flex items-center space-x-4 ">
-            {!headerState.isAuthenticated ? (
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                className="text-sm bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition"
+              >
+                Logout
+              </button>
+            ) : (
               <Link
                 href="/login"
-                className={`
-                  md:flex items-center hidden px-4 py-2 rounded-md 
-                ${
-                  headerState.isScrolled
-                    ? "border border-purple-300 text-purple-600 hover:bg-purple-50"
-                    : "border border-white/30 text-white hover:bg-white/10"
-                }
-                transition-colors
-              `}
+                className="text-sm bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition"
               >
                 Login
               </Link>
-            ) : (
-              <motion.button
-                onClick={handleLogout}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`
-                md:flex items-center hidden  gap-2 px-4 py-2 rounded-md
-                ${
-                  headerState.isScrolled
-                    ? "bg-red-100 text-red-600 hover:bg-red-200"
-                    : "bg-red-500/20 text-white hover:bg-red-500/30"
-                }
-                transition-colors
-              `}
-              >
-                <LogOut size={16} />
-                Logout
-              </motion.button>
             )}
+          </nav>
 
-            {/* Mobile Menu Toggle */}
-            <motion.button
-              onClick={toggleMenu}
-              whileTap={{ scale: 0.9 }}
-              className={`
-              md:hidden 
-              ${headerState.isScrolled ? "text-gray-800" : "text-white"}
-            `}
-            >
-              {headerState.isMenuOpen ? <X /> : <Menu />}
-            </motion.button>
-          </div>
-
-          {/* Mobile Navigation Drawer */}
-          <AnimatePresence>
-            {headerState.isMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="md:hidden absolute mx-auto w-[calc(100vw-30px)] top-full  left-0 right-0 bg-white shadow-lg rounded-b-xl overflow-hidden mt-2"
-              >
-                <div className="flex flex-col p-4 space-y-3">
-                  {NAVIGATION_LINKS.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={toggleMenu}
-                      className="text-gray-700 px-3 py-2 border-b border-gray-200 hover:bg-gray-100"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-
-                  {!headerState.isAuthenticated ? (
-                    <Link
-                      href="/login"
-                      onClick={toggleMenu}
-                      className="w-full text-center py-3 bg-purple-600 text-white rounded-md"
-                    >
-                      Login
-                    </Link>
-                  ) : (
-                    <button
-                      onClick={handleLogout}
-                      className="w-full py-3 bg-red-600 text-white rounded-md"
-                    >
-                      Logout
-                    </button>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Hamburger Icon */}
+          <button
+            onClick={() => setMenuOpen((prev) => !prev)}
+            className="md:hidden text-gray-800"
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
+
+        {/* Mobile Drawer */}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              initial={{ height: 0 }}
+              animate={{ height: "auto" }}
+              exit={{ height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden bg-white shadow-md overflow-hidden"
+            >
+              <div className="flex flex-col px-6 py-4 gap-4">
+                {links.map(({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMenuOpen(false)}
+                    className="text-gray-800 text-base py-1 border-b hover:text-purple-600"
+                  >
+                    {label}
+                  </Link>
+                ))}
+                {isAuthenticated ? (
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMenuOpen(false);
+                    }}
+                    className="text-white bg-red-500 hover:bg-red-600 py-2 rounded-md"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="text-white bg-purple-600 hover:bg-purple-700 py-2 rounded-md text-center"
+                  >
+                    Login
+                  </Link>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.header>
-      <AlertMessageSlider />
+
+      {/* Spacer */}
+      <div className="h-[72px]" />
     </>
   );
 };
