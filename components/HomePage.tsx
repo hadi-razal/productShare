@@ -109,7 +109,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="bg-white text-gray-900 min-h-screen pt-20">
+    <div className="bg-white text-gray-900 min-h-screen">
       <HeroSection />
       <div className="w-full flex flex-col gap-3 bg-gray-50 py-6">
         {/* First Marquee: Benefits/Features */}
