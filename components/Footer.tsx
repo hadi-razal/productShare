@@ -34,7 +34,7 @@ const Footer = () => {
               <li>
                 <a href="mailto:support@productshare.com" className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-2 text-sm">
                   <Mail className="w-4 h-4" />
-                  hadhirasal22@gmail.com
+                  productshareindia@gmail.com
                 </a>
               </li>
               <li>
