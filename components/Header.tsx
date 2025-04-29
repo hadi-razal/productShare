@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
@@ -19,7 +19,6 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -47,26 +46,24 @@ const Header = () => {
       <motion.header
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.4 }}
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          isScrolled ? "bg-white shadow-md" : "bg-transparent"
+          isScrolled ? "bg-white shadow-sm" : "bg-white/90 backdrop-blur-md"
         }`}
       >
-        <div className="max-w-screen-xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div className="max-w-screen-xl mx-auto px-6 py-3 flex justify-between items-center">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-purple-600">
+          <Link href="/" className="text-xl font-semibold text-gray-800">
             ProductShare
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
             {links.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className={`text-sm font-medium transition ${
-                  isScrolled ? "text-gray-800" : "text-white"
-                } hover:text-purple-600`}
+                className="text-sm text-gray-700 hover:text-black transition"
               >
                 {label}
               </Link>
@@ -74,14 +71,14 @@ const Header = () => {
             {isAuthenticated ? (
               <button
                 onClick={handleLogout}
-                className="text-sm bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition"
+                className="text-sm text-red-600 border border-red-300 px-4 py-1.5 rounded hover:bg-red-50 transition"
               >
                 Logout
               </button>
             ) : (
               <Link
                 href="/login"
-                className="text-sm bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition"
+                className="text-sm text-white bg-gray-800 hover:bg-black px-4 py-1.5 rounded transition"
               >
                 Login
               </Link>
@@ -90,15 +87,15 @@ const Header = () => {
 
           {/* Hamburger Icon */}
           <button
-            onClick={() => setMenuOpen((prev) => !prev)}
+            onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-gray-800"
             aria-label="Toggle menu"
           >
-            {menuOpen ? <X size={28} /> : <Menu size={28} />}
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
-        {/* Mobile Drawer */}
+        {/* Mobile Menu */}
         <AnimatePresence>
           {menuOpen && (
             <motion.div
@@ -106,15 +103,15 @@ const Header = () => {
               animate={{ height: "auto" }}
               exit={{ height: 0 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden bg-white shadow-md overflow-hidden"
+              className="md:hidden bg-white border-t"
             >
-              <div className="flex flex-col px-6 py-4 gap-4">
+              <div className="flex flex-col px-6 py-4 gap-3">
                 {links.map(({ href, label }) => (
                   <Link
                     key={href}
                     href={href}
                     onClick={() => setMenuOpen(false)}
-                    className="text-gray-800 text-base py-1 border-b hover:text-purple-600"
+                    className="text-gray-700 text-base hover:text-black"
                   >
                     {label}
                   </Link>
@@ -125,7 +122,7 @@ const Header = () => {
                       handleLogout();
                       setMenuOpen(false);
                     }}
-                    className="text-white bg-red-500 hover:bg-red-600 py-2 rounded-md"
+                    className="text-red-600 border border-red-300 py-2 rounded hover:bg-red-50"
                   >
                     Logout
                   </button>
@@ -133,7 +130,7 @@ const Header = () => {
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="text-white bg-purple-600 hover:bg-purple-700 py-2 rounded-md text-center"
+                    className="bg-gray-800 text-white py-2 rounded text-center hover:bg-black"
                   >
                     Login
                   </Link>
@@ -144,8 +141,8 @@ const Header = () => {
         </AnimatePresence>
       </motion.header>
 
-      {/* Spacer */}
-      <div className="h-[72px]" />
+      {/* Prevent content from hiding behind header */}
+      <div className="h-[64px]" />
     </>
   );
 };
