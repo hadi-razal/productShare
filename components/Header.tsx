@@ -11,7 +11,7 @@ import AlertMessageSlider from "./AlertSlider";
 
 const NAVIGATION_LINKS = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
+  { href: "/about-us", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
