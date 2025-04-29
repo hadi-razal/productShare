@@ -13,6 +13,7 @@ import {
   CreditCard,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const AnimatedIcon = ({
   Icon,
@@ -178,10 +179,10 @@ const HeroSection = () => {
         [mask-image:linear-gradient(0deg,#fff,rgba(255,255,255,0.4))]"
       ></div>
 
-      <div className="container relative mx-auto px-6 py-24 text-center">
-        <div className="relative z-10">
+      <div className="container flex items-center pl-[100px] pr-[110px] relative mx-auto px-6 py-24 text-start">
+        <div className="relative  w-1/2 z-10">
           {/* Headline */}
-          <h1 className="text-5xl font-sans f md:text-6xl font-extrabold text-gray-900 leading-10 mb-6">
+          <h1 className="text-5xl font-sans f md:text-[70px] font-extrabold text-gray-900 leading-[.9] mb-6">
             Transform Your{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
               Product Catalog
@@ -189,18 +190,18 @@ const HeroSection = () => {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg  font-sans leading-5  md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <p className="text-[15px]  font-sans   md:text-[20px] text-gray-600 max-w-3xl mx-auto mb-8">
             Unlock the power of intelligent catalog creation and AI-driven
             marketing solutions tailored for modern businesses with cutting-edge
             technology.
           </p>
 
           {/* Buttons */}
-          <div className="sm:flex items-center justify-center grid gap-2 grid-cols-2 px-5">
+          <div className="sm:flex items-center justify-start grid gap-2 grid-cols-2 px-5">
             <button
               onClick={() => router.push("/register")}
               className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white 
-              px-5 py-3 md:py-4 text-base flex items-center justify-center rounded-md"
+              px-5 py-3 md:py-4 text-base flex items-center justify-center rounded-lg"
             >
               Get Started
             </button>
@@ -214,6 +215,15 @@ const HeroSection = () => {
               Learn More
             </button>
           </div>
+        </div>
+        <div className=" w-1/2 flex justify-end">
+          <Image
+            alt="Hero Skeleton"
+            src={"/Online shopping-bro.svg"}
+            width={400} // Adjust width and height as needed
+            height={400} // Adjust width and height as needed
+            className="w-[5 00px] h-[500px] object-cover rounded-md" // Style for image
+          />
         </div>
       </div>
     </div>
