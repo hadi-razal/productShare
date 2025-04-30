@@ -17,6 +17,7 @@ import {
 import Marquee from "react-fast-marquee";
 import HeroSection from "./HeroSection";
 import PricingSection from "./PricingSection";
+import Faq from "../components/Faq"
 
 const Home = () => {
   const features = [
@@ -189,6 +190,10 @@ const Home = () => {
           ))}
         </div>
       </section>
+
+      {/* faq Section  */}
+
+      <Faq/>
 
       {/* Pricing Section */}
       <PricingSection />
