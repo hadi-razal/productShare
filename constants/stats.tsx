@@ -1,5 +1,6 @@
 import { BarChart2, ShoppingBag, Store, Users } from "lucide-react";
 
+
 export const stats = [
     { icon: <Store size={24} />, value: '100+', label: 'Active Stores', subtext: '45% YoY Growth' },
     { icon: <ShoppingBag size={24} />, value: '500+', label: 'Products Listed', subtext: '100+ Categories' },
