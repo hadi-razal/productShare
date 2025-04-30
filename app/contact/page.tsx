@@ -37,12 +37,12 @@ const ContactPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-5xl bg-white rounded-2xl overflow-hidden flex">
           {/* Contact Information Section */}
-          <div className="w-1/2 hidden md:flex bg-blue-900 text-white p-12  flex-col justify-center">
+          <div className="w-1/2 hidden md:flex bg-[#6688cb] text-white p-12  flex-col justify-center">
             <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
             <div className="space-y-6">
               <div className="flex items-center space-x-4">
                 <Mail className="w-6 h-6" />
-                <span className="text-lg">hadhirasal22@gmail.com</span>
+                <span className="text-lg">productshareindia@gmail.com</span>
               </div>
               <div className="flex items-center space-x-4">
                 <Phone className="w-6 h-6" />
@@ -50,7 +50,7 @@ const ContactPage = () => {
               </div>
               <div className="flex items-center space-x-4">
                 <MapPin className="w-6 h-6" />
-                <span className="text-lg">Calicut , India</span>
+                <span className="text-lg">Kerala , India</span>
               </div>
             </div>
             <div className="mt-12 text-sm opacity-75">
@@ -60,7 +60,7 @@ const ContactPage = () => {
 
           {/* Contact Form Section */}
           <div className="md:w-1/2 w-full p-12">
-            <h1 className="text-3xl font-bold text-blue-900 mb-6">Get in Touch</h1>
+            <h1 className="text-3xl font-bold text-[#6688cb] mb-6">Get in Touch</h1>
             <p className="text-gray-600 mb-8">
               Have a question or feedback? Fill out the form below and we'll get back to you as soon as possible.
             </p>
@@ -125,7 +125,7 @@ const ContactPage = () => {
 
               <button
                 type="submit"
-                className="w-full py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform"
+                className="w-full py-3 bg-[#6688cb] text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform"
               >
                 Send Message
               </button>
