@@ -99,43 +99,41 @@ const Header = () => {
         <AnimatePresence>
           {menuOpen && (
             <motion.div
-              initial={{ height: 0 }}
-              animate={{ height: "auto" }}
-              exit={{ height: 0 }}
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
               transition={{ duration: 0.3 }}
-              className="md:hidden bg-white border-t"
+              className="fixed top-[64px] right-0 h-[calc(100vh-64px)] w-[80%] max-w-xs bg-white shadow-lg z-40 flex flex-col px-6 py-6 gap-4"
             >
-              <div className="flex flex-col px-6 py-4 gap-3">
-                {links.map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setMenuOpen(false)}
-                    className="text-gray-700 text-base hover:text-black"
-                  >
-                    {label}
-                  </Link>
-                ))}
-                {isAuthenticated ? (
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setMenuOpen(false);
-                    }}
-                    className="text-red-600 border border-red-300 py-2 rounded hover:bg-red-50"
-                  >
-                    Logout
-                  </button>
-                ) : (
-                  <Link
-                    href="/login"
-                    onClick={() => setMenuOpen(false)}
-                    className="bg-gray-800 text-white py-2 rounded text-center hover:bg-black"
-                  >
-                    Login
-                  </Link>
-                )}
-              </div>
+              {links.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-gray-700 text-base hover:text-black"
+                >
+                  {label}
+                </Link>
+              ))}
+              {isAuthenticated ? (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMenuOpen(false);
+                  }}
+                  className="text-red-600 border border-red-300 py-2 rounded hover:bg-red-50"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="bg-gray-800 text-white py-2 rounded text-center hover:bg-black"
+                >
+                  Login
+                </Link>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
