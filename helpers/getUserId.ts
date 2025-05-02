@@ -4,8 +4,11 @@ import { getDocs, query, collection, where } from "firebase/firestore";
 // Function to get user ID by username
 export const getUserId = async (username: string): Promise<string | null> => {
   try {
-    const userQuery = query(collection(db, "users"), where("username", "==", username));
+    const userQuery = await query(collection(db, "users"), where("username", "==", username));
+    console.log(username)
     const querySnapshot = await getDocs(userQuery);
+
+    console.log(querySnapshot)
 
     if (!querySnapshot.empty) {
       return querySnapshot.docs[0].id;
