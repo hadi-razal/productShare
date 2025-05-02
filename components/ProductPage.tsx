@@ -170,7 +170,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
 
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-7xl pt-24 ">
+    <div className="container mx-auto px-4 py-12 max-w-7xl pt-4 ">
       <Head>
         <title>{productData.name}</title>
         <meta property="og:title" content={productData.name} />
