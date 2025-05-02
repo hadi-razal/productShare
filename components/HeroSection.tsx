@@ -6,7 +6,7 @@ const HeroSection = () => {
   const router = useRouter();
 
   return (
-    <section className="relative bg-gradient-to-br from-blue-50 to-purple-100 min-h-[90vh] overflow-hidden">
+    <section className="relative bg-gradient-to-br from-blue-50 to-purple-100 min-h-[100vh] overflow-hidden">
       {/* Background flare */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[100vw] h-[100vh] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-200 via-blue-100 to-transparent opacity-40 blur-3xl" />
