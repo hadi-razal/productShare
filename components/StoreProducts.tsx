@@ -160,7 +160,7 @@ const StoreProducts: React.FC<StoreProductsProps> = ({ storeId }) => {
   const handleLoadMore = () => setVisibleProducts((prev) => prev + 20);
 
   return (
-    <div className="container relative min-h-screen max-w-7xl mx-auto pb-8 pt-32 px-4">
+    <div className="container relative min-h-screen max-w-7xl mx-auto pb-8 pt-5 px-4">
       <div className="relative flex items-center w-full pb-3">
         <input
           type="text"

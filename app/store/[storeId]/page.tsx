@@ -8,7 +8,10 @@ import { getUserId } from '@/helpers/getUserId';
 // Function to fetch store data from Firestore
 async function getStoreData(storeId: string): Promise<any | null> {
   try {
+
     const userId = await getUserId(storeId);
+
+    console.log(userId)
 
     if (!userId) {
       console.error("User ID not found");
@@ -32,7 +35,9 @@ async function getStoreData(storeId: string): Promise<any | null> {
 
 // Metadata generation function with improved type safety and error handling
 export async function generateMetadata({ params }: any): Promise<Metadata> {
-  const { storeId } = params;
+  const { storeId } = await params;
+
+  console.log(storeId)
 
   const storeData = await getStoreData(storeId);
 
