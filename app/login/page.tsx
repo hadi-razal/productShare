@@ -1,113 +1,125 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-    onAuthStateChanged,
-    signInWithEmailAndPassword,
-} from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const LoginPage: React.FC = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    const router = useRouter();
+  const router = useRouter();
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                router.push("/store");
-            }
-        });
-        return () => unsubscribe();
-    }, [router]);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/store");
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
 
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            console.log("Logged In Successfully", userCredential.user);
-            router.push("/store");
-        } catch (error) {
-            console.log("Login failed:", error);
-            setError("Invalid email or password. Please try again.");
-        }
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log("Logged In Successfully", userCredential.user);
+      router.push("/store");
+    } catch (error) {
+      console.log("Login failed:", error);
+      setError("Invalid email or password. Please try again.");
+    }
 
-        console.log("Logging in with:", { email, password });
-    };
+    console.log("Logging in with:", { email, password });
+  };
 
-    return (
-        <div className="min-h-screen flex items-center justify-center">
-            <div className="rounded-md p-8 max-w-md w-full">
-                <h2 className="text-2xl font-bold text-slate-950 text-center mb-6">Login to Your Account</h2>
-                <form onSubmit={handleLogin} className="space-y-6">
-                    {error && <p className="text-red-500 text-center">{error}</p>}
-                    <div>
-                        <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="email">
-                            Email Address
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
-                            placeholder="Enter your email"
-                        />
-                    </div>
-                    <div className="relative">
-                        <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="password">
-                            Password
-                        </label>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md pr-12"
-                            placeholder="Enter your password"
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-[42px] text-gray-600"
-                            aria-label="Toggle password visibility"
-                        >
-                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                        </button>
-                    </div>
-                    <button
-                        type="submit"
-                        className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-primaryColor hover:bg-primaryColor/90 text-white shadow-lg"
-                    >
-                        Login
-                        <ArrowRight className="w-5 h-5 ml-2" />
-                    </button>
-                </form>
-                <div className="mt-6 space-y-2 text-center">
-                    <p className="text-sm text-gray-700">
-                        Don’t have an account?{" "}
-                        <Link href={"/register"} className="text-blue-950 hover:underline">
-                            Register here
-                        </Link>
-                    </p>
-                    <p className="text-sm text-gray-700">
-                        Forgot password?{" "}
-                        <Link href={"/forgot-password"} className="text-blue-950 hover:underline">
-                            Click here
-                        </Link>
-                    </p>
-                </div>
-            </div>
+  return (
+    <div className="min-h-[calc(100vh-10vh)] flex items-center justify-center">
+      <div className="rounded-md p-8 max-w-md w-full">
+        <h2 className="text-2xl font-bold text-slate-950 text-center mb-6">
+          Login to Your Account
+        </h2>
+        <form onSubmit={handleLogin} className="space-y-6">
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          <div>
+            <label
+              className="block text-sm font-medium text-slate-950 mb-2"
+              htmlFor="email"
+            >
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
+              placeholder="Enter your email"
+            />
+          </div>
+          <div className="relative">
+            <label
+              className="block text-sm font-medium text-slate-950 mb-2"
+              htmlFor="password"
+            >
+              Password
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md pr-12"
+              placeholder="Enter your password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-[42px] text-gray-600"
+              aria-label="Toggle password visibility"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+          <button
+            type="submit"
+            className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-primaryColor hover:bg-primaryColor/90 text-white shadow-lg"
+          >
+            Login
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </button>
+        </form>
+        <div className="mt-6 space-y-2 text-center">
+          <p className="text-sm text-gray-700">
+            Don’t have an account?{" "}
+            <Link href={"/register"} className="text-blue-950 hover:underline">
+              Register here
+            </Link>
+          </p>
+          <p className="text-sm text-gray-700">
+            Forgot password?{" "}
+            <Link
+              href={"/forgot-password"}
+              className="text-blue-950 hover:underline"
+            >
+              Click here
+            </Link>
+          </p>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default LoginPage;
