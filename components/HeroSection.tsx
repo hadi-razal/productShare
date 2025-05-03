@@ -5,6 +5,16 @@ import Image from "next/image";
 const HeroSection = () => {
   const router = useRouter();
 
+  const IndiaFlag = () => (
+    <svg width="24" height="16" viewBox="0 0 3 2">
+      <rect width="3" height="2" fill="#FF9933" />
+      <rect y="0.67" width="3" height="0.66" fill="#FFFFFF" />
+      <rect y="1.33" width="3" height="0.67" fill="#138808" />
+      <circle cx="1.5" cy="1" r="0.25" fill="#000080" />
+    </svg>
+  );
+  
+
   return (
     <section className="relative bg-gradient-to-br from-blue-50 to-purple-100 min-h-screen overflow-hidden">
       {/* Background flare */}
@@ -20,7 +30,9 @@ const HeroSection = () => {
             Launch Your Storefront in Minutes
           </h1>
           <p className="text-gray-700 text-lg sm:text-xl max-w-2xl mx-auto lg:mx-0 leading-relaxed tracking-wide">
-            Empower your local business by creating a sleek, shareable online store. No coding required. Just add your products, customize your layout, and start selling anywhere.
+            Empower your local business by creating a sleek, shareable online
+            store. No coding required. Just add your products, customize your
+            layout, and start selling anywhere.
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-6">
@@ -50,8 +62,9 @@ const HeroSection = () => {
               className="w-full h-auto drop-shadow-2xl"
               priority
             />
-            <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-md px-4 py-2 rounded-md text-xs text-gray-600 shadow-md">
-              AI-generated visual content
+            <div className="absolute flex gap-2 bottom-4 right-4 bg-white/80 backdrop-blur-md px-4 py-2 rounded-md text-xs text-gray-600 shadow-md">
+            <IndiaFlag /> 
+            India &#39;s #1 Product Catalogue Builder 
             </div>
           </div>
         </div>
