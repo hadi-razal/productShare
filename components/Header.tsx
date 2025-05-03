@@ -71,14 +71,14 @@ const Header = () => {
             {isAuthenticated ? (
               <button
                 onClick={handleLogout}
-                className="text-sm font-medium text-red-600 border border-red-300 px-4 py-1.5 rounded-lg hover:bg-red-50 transition"
+                className="text-sm font-medium text-red-600 border border-red-300 px-4 py-1.5 rounded-md hover:bg-red-50 transition"
               >
                 Logout
               </button>
             ) : (
               <Link
                 href="/login"
-                className="text-sm font-medium text-white bg-gradient-to-r from-indigo-700 to-purple-700 px-4 py-1.5 rounded-lg hover:scale-105 transition-transform shadow"
+                className="text-sm font-medium text-white bg-gradient-to-r from-indigo-700 to-purple-700 px-4 py-1.5 rounded-md hover:scale-105 transition-transform shadow"
               >
                 Login
               </Link>
@@ -122,7 +122,7 @@ const Header = () => {
                   handleLogout();
                   setMenuOpen(false);
                 }}
-                className="text-red-600 border border-red-300 py-2 rounded-lg hover:bg-red-50 font-medium"
+                className="text-red-600 border border-red-300 py-2 rounded-md hover:bg-red-50 font-medium"
               >
                 Logout
               </button>
@@ -130,7 +130,7 @@ const Header = () => {
               <Link
                 href="/login"
                 onClick={() => setMenuOpen(false)}
-                className="bg-gradient-to-r from-indigo-700 to-purple-700 text-white py-2 rounded-lg text-center font-medium hover:scale-105 transition"
+                className="bg-gradient-to-r from-indigo-700 to-purple-700 text-white py-2 rounded-md text-center font-medium hover:scale-105 transition"
               >
                 Login
               </Link>

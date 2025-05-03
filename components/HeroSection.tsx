@@ -26,13 +26,13 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-6">
             <button
               onClick={() => router.push("/register")}
-              className="bg-gradient-to-r from-purple-700 to-indigo-600 text-white px-8 py-3 rounded-2xl font-semibold text-base shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300"
+              className="bg-gradient-to-r from-purple-700 to-indigo-600 text-white px-8 py-3 rounded-md font-semibold text-base shadow-xl  hover:shadow-2xl transition-all duration-300"
             >
               Create Your Store
             </button>
             <button
               onClick={() => router.push("/learn-more")}
-              className="text-indigo-700 border border-indigo-300 px-8 py-3 rounded-2xl font-medium text-base hover:bg-indigo-50/50 transition-all duration-300"
+              className="text-indigo-700 border border-indigo-300 px-8 py-3 rounded-md font-medium text-base hover:bg-indigo-50/50 transition-all duration-300"
             >
               Learn More
             </button>
@@ -50,7 +50,7 @@ const HeroSection = () => {
               className="w-full h-auto drop-shadow-2xl"
               priority
             />
-            <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-md px-4 py-2 rounded-xl text-xs text-gray-600 shadow-md">
+            <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-md px-4 py-2 rounded-md text-xs text-gray-600 shadow-md">
               AI-generated visual content
             </div>
           </div>
