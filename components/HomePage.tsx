@@ -10,14 +10,11 @@ import {
   Quote,
   MessageCircle,
   Cog,
-  Layers,
-  Activity,
-  Sparkles,
 } from "lucide-react";
 import Marquee from "react-fast-marquee";
 import HeroSection from "./HeroSection";
 import PricingSection from "./PricingSection";
-import Faq from "../components/Faq"
+import FaqSection from "./FaqSection";
 
 const Home = () => {
   const features = [
@@ -111,7 +108,9 @@ const Home = () => {
 
   return (
     <div className="bg-white text-gray-900 min-h-screen">
+
       <HeroSection />
+
       <div className="w-full flex flex-col gap-3 bg-gray-50 py-6">
         {/* First Marquee: Benefits/Features */}
         <Marquee
@@ -176,6 +175,7 @@ const Home = () => {
           </p>
         </div>
       </div>
+
       {/* Features Section */}
       <section id="features" className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid  md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-8">
@@ -193,7 +193,7 @@ const Home = () => {
 
       {/* faq Section  */}
 
-      <Faq/>
+      <FaqSection/>
 
       {/* Pricing Section */}
       <PricingSection />
