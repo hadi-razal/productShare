@@ -11,8 +11,10 @@ import { auth } from "@/lib/firebase";
 const links = [
   { href: "/", label: "Home" },
   { href: "/about-us", label: "About" },
+  { href: "/pricing", label: "Pricing" }, 
   { href: "/contact", label: "Contact" },
 ];
+
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);

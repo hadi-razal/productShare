@@ -1,11 +1,152 @@
-import React from 'react'
+"use client";
 
-function page() {
+import React, { useState } from "react";
+import {
+  CheckCircle,
+  BarChart,
+  Paintbrush,
+  Headphones,
+  Bell,
+  PieChart,
+} from "lucide-react";
+import Link from "next/link";
+
+const features = [
+  { icon: <CheckCircle className="text-green-500 w-5 h-5" />, text: "Unlimited product listings" },
+  { icon: <BarChart className="text-blue-500 w-5 h-5" />, text: "Customer behavior analytics" },
+  { icon: <Paintbrush className="text-yellow-500 w-5 h-5" />, text: "Theme customization tools" },
+  { icon: <Headphones className="text-purple-500 w-5 h-5" />, text: "24/7 priority support" },
+  { icon: <Bell className="text-orange-500 w-5 h-5" />, text: "Custom alert banners" },
+  { icon: <PieChart className="text-pink-500 w-5 h-5" />, text: "Sales & engagement charts" },
+];
+
+const pricingDetails: Record<string, { price: number; description: string }> = {
+  monthly: {
+    price: 199,
+    description: "Ideal for businesses looking for short-term flexibility",
+  },
+  yearly: {
+    price: Math.round(199 * 12 * 0.83),
+    description: "Best value – save 17% with yearly billing",
+  },
+};
+
+const PricingPage = () => {
+  const [billingCycle, setBillingCycle] = useState("monthly");
+
   return (
-    <div>
-      
-    </div>
-  )
-}
+    <main className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 px-4 md:px-16 py-20">
+      <section className="max-w-4xl mx-auto text-center mb-12">
+        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-indigo-700 via-purple-700 to-blue-600 bg-clip-text text-transparent">
+          Pricing Plans
+        </h1>
+        <p className="text-gray-700 text-lg">Choose a plan that scales with your growth.</p>
+      </section>
 
-export default page
+      {/* Mobile view – Toggle-based */}
+      <div className="md:hidden">
+        <div className="flex justify-center mb-8">
+          <div className="bg-gray-100 p-1 rounded-full inline-flex">
+            <button
+              onClick={() => setBillingCycle("monthly")}
+              className={`px-4 py-2 rounded-full transition-all ${
+                billingCycle === "monthly"
+                  ? "bg-indigo-600 text-white"
+                  : "text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingCycle("yearly")}
+              className={`px-4 py-2 rounded-full transition-all ${
+                billingCycle === "yearly"
+                  ? "bg-indigo-600 text-white"
+                  : "text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Yearly
+              <span className="ml-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">
+                Save 17%
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <PricingCard
+          title="Product Share Premium"
+          description={pricingDetails[billingCycle].description}
+          price={pricingDetails[billingCycle].price}
+          billingCycle={billingCycle}
+        />
+      </div>
+
+      {/* Desktop view – Two side-by-side */}
+      <div className="hidden md:grid grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <PricingCard
+          title="Monthly Plan"
+          description={pricingDetails.monthly.description}
+          price={pricingDetails.monthly.price}
+          billingCycle="monthly"
+        />
+        <PricingCard
+          title="Yearly Plan"
+          description={pricingDetails.yearly.description}
+          price={pricingDetails.yearly.price}
+          billingCycle="yearly"
+          badge="Best Value"
+        />
+      </div>
+    </main>
+  );
+};
+
+const PricingCard = ({
+  title,
+  description,
+  price,
+  billingCycle,
+  badge,
+}: {
+  title: string;
+  description: string;
+  price: number;
+  billingCycle: string;
+  badge?: string;
+}) => {
+  return (
+    <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-2xl shadow-md p-8 text-center relative">
+      {badge && (
+        <div className="absolute top-4 right-4 bg-yellow-400 text-white text-xs font-semibold px-3 py-1 rounded-full">
+          {badge}
+        </div>
+      )}
+      <h3 className="text-2xl font-bold text-indigo-700 mb-3">{title}</h3>
+      <p className="text-gray-600 mb-6 text-sm">{description}</p>
+      <div className="text-4xl font-bold text-gray-900 mb-6">
+        ₹{price}
+        <span className="text-lg text-gray-600 ml-1">
+          {billingCycle === "monthly" ? "/month" : "/year"}
+        </span>
+      </div>
+
+      <ul className="space-y-3 text-left mb-8">
+        {features.map((item, index) => (
+          <li key={index} className="flex items-start gap-2">
+            {item.icon}
+            <span>{item.text}</span>
+          </li>
+        ))}
+      </ul>
+
+      <Link
+        href="/register"
+        className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-3 rounded-xl transition"
+      >
+        Get Started →
+      </Link>
+    </div>
+  );
+};
+
+export default PricingPage;
