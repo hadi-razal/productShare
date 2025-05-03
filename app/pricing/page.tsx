@@ -35,9 +35,9 @@ const PricingPage = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 px-4 md:px-16 py-20">
+    <main className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 px-4 md:px-16 py-8">
       <section className="max-w-4xl mx-auto text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-indigo-700 via-purple-700 to-blue-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold mb-3 pb-2 bg-gradient-to-r from-indigo-700 via-purple-700 to-blue-600 bg-clip-text text-transparent">
           Pricing Plans
         </h1>
         <p className="text-gray-700 text-lg">Choose a plan that scales with your growth.</p>
