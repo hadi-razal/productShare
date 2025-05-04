@@ -125,7 +125,7 @@ const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen px-4 pb-10 pt-24">
+    <div className="min-h-screen px-4 pb-10 pt-7">
       <section className="max-w-2xl mx-auto">
         <h2 className="text-2xl font-bold text-blue-950 mb-6">
           Store Settings
