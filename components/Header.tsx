@@ -4,23 +4,16 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/about-us", label: "About" },
-  { href: "/pricing", label: "Pricing" }, 
-  { href: "/contact", label: "Contact" },
-];
-
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -42,6 +35,13 @@ const Header = () => {
     await signOut(auth);
     router.push("/login");
   };
+
+  const links = [
+    { href: isAuthenticated ? "/login" : "/", label: isAuthenticated ? "My Store" : "Home" },
+    { href: "/about-us", label: "About" },
+    { href: "/pricing", label: "Pricing" },
+    { href: "/contact", label: "Contact" },
+  ];
 
   return (
     <>
@@ -65,7 +65,11 @@ const Header = () => {
               <Link
                 key={href}
                 href={href}
-                className="text-sm font-medium text-gray-700 hover:text-indigo-700 transition-all"
+                className={`text-sm font-medium transition-all ${
+                  pathname === href
+                    ? "text-indigo-700 font-semibold"
+                    : "text-gray-700 hover:text-indigo-700"
+                }`}
               >
                 {label}
               </Link>
@@ -113,7 +117,11 @@ const Header = () => {
                 key={href}
                 href={href}
                 onClick={() => setMenuOpen(false)}
-                className="text-base text-gray-700 font-medium hover:text-indigo-700 transition"
+                className={`text-base font-medium transition ${
+                  pathname === href
+                    ? "text-indigo-700 font-semibold"
+                    : "text-gray-700 hover:text-indigo-700"
+                }`}
               >
                 {label}
               </Link>

@@ -1,34 +1,33 @@
-import { Metadata } from 'next';
-import StoreProducts from '@/components/StoreProducts';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { getUserId } from '@/helpers/getUserId';
-
+import { Metadata } from "next";
+import StoreProducts from "@/components/StoreProducts";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { getUserId } from "@/helpers/getUserId";
+import AlertMessageSlider from "@/components/AlertSlider";
 
 // Function to fetch store data from Firestore
 async function getStoreData(storeId: string): Promise<any | null> {
   try {
-
     const userId = await getUserId(storeId);
 
-    console.log(userId)
+    console.log(userId);
 
     if (!userId) {
       console.error("User ID not found");
       return null;
     }
 
-    const storeRef = doc(db, 'users', userId as string);
+    const storeRef = doc(db, "users", userId as string);
     const storeSnap = await getDoc(storeRef);
 
     if (storeSnap.exists()) {
       return storeSnap.data();
     } else {
-      console.error('Store not found');
+      console.error("Store not found");
       return null;
     }
   } catch (error) {
-    console.error('Error fetching store data:', error);
+    console.error("Error fetching store data:", error);
     return null;
   }
 }
@@ -37,17 +36,20 @@ async function getStoreData(storeId: string): Promise<any | null> {
 export async function generateMetadata({ params }: any): Promise<Metadata> {
   const { storeId } = await params;
 
-  console.log(storeId)
+  console.log(storeId);
 
   const storeData = await getStoreData(storeId);
 
-  const title = storeData?.name ?? 'Store Not Found';
-  const description = storeData?.description ?? 'This store offers a variety of products.';
+  const title = storeData?.name ?? "Store Not Found";
+  const description =
+    storeData?.description ?? "This store offers a variety of products.";
 
   return {
     title,
     description,
-    keywords: storeData ? `store, ${storeData.name}, products, shop` : 'store, shop',
+    keywords: storeData
+      ? `store, ${storeData.name}, products, shop`
+      : "store, shop",
     openGraph: {
       title,
       description,
@@ -75,6 +77,7 @@ export default async function Page({ params }: any) {
 
   return (
     <>
+      
       <StoreProducts storeId={storeId} />
     </>
   );
