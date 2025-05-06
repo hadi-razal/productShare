@@ -1,20 +1,23 @@
 import React from "react";
 import Head from "next/head";
 import {
-  Target,
-  Layers,
-  Users,
-  Trophy,
+  MonitorSmartphone,
+  ShoppingBag,
+  Wrench,
+  Handshake,
   Globe,
-  Lock,
+  Palette,
 } from "lucide-react";
+import Image from "next/image";
 
 const FeatureCard = ({ icon: Icon, title, description }: any) => (
   <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
     <div className="bg-gradient-to-tr from-indigo-100 to-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
       <Icon className="w-8 h-8 text-indigo-700" />
     </div>
-    <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">{title}</h3>
+    <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">
+      {title}
+    </h3>
     <p className="text-sm md:text-base text-gray-600">{description}</p>
   </div>
 );
@@ -22,40 +25,37 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
 const AboutUs = () => {
   const features = [
     {
-      icon: Layers,
-      title: "Collaborative Workspace",
-      description:
-        "A unified platform where product teams can seamlessly collaborate and manage their workflows.",
-    },
-    {
-      icon: Users,
-      title: "Team Communication",
-      description:
-        "Real-time updates and integrated communication tools to keep everyone aligned.",
-    },
-    {
-      icon: Target,
-      title: "Product Lifecycle Tracking",
-      description:
-        "Intuitive tracking from initial concept to final product launch and beyond.",
+      icon: ShoppingBag,
+      title: "Create a Product Catalog",
+      description: " Add photos, descriptions, and prices effortlessly",
     },
     {
       icon: Globe,
-      title: "Scalable Solutions",
+      title: " Share as a Website",
       description:
-        "Customizable workflows that adapt to teams of any size and industry.",
+        "Get a unique link for your catalog to share via WhatsApp, Instagram, or anywhere.",
     },
     {
-      icon: Lock,
-      title: "Robust Security",
+      icon: MonitorSmartphone,
+      title: "Mobile-First Design",
       description:
-        "Enterprise-grade security and data protection to keep your innovative ideas safe.",
+        "Your catalog looks perfect on all devices, especially smartphones.",
     },
     {
-      icon: Trophy,
-      title: "Continuous Innovation",
+      icon: Wrench,
+      title: "Easy to Use",
+      description: "No tech knowledge needed. Set up in minutes.",
+    },
+    {
+      icon: Handshake,
+      title: "Made for Small Businesses",
+      description: "Tailored features to help you look professional and grow.",
+    },
+    {
+      icon: Palette,
+      title: "Customize Your Catalog",
       description:
-        "Constant improvements based on user feedback and cutting-edge product management research.",
+        "Add your logo, choose colors, and make your catalog match your brand identity.",
     },
   ];
 
@@ -77,21 +77,41 @@ const AboutUs = () => {
       <div className="bg-gradient-to-br from-blue-50 to-purple-100 min-h-screen pb-16 pt-8">
         <div className="container mx-auto px-6">
           {/* Hero Section */}
-          <section className="text-center mb-20">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-6">
-              About Product Share
-            </h1>
-            <p className="max-w-3xl mx-auto text-base md:text-lg text-gray-700 leading-relaxed">
-              We're transforming product management with an innovative SaaS platform designed
-              to simplify collaboration, enhance productivity, and streamline the entire
-              product lifecycle.
-            </p>
-          </section>
+
+          <div className="flex flex-col pl-[10px] pr-[10px] pt-[50px] sm:pl-[100px] sm:pr-[100px] md:flex-row">
+            {/* image Section  */}
+            <section>
+              <Image
+                src="/about-us.svg"
+                alt="Online Store Illustration"
+                width={100}
+                height={100}
+                className="w-full h-auto drop-shadow-2xl"
+                priority
+              />
+            </section>
+
+            {/* content Section  */}
+            <section className="text-center mb-20">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-6">
+                About Product Share
+              </h1>
+              <p className="max-w-3xl mx-auto text-base text-justify md:text-lg text-gray-700 leading-relaxed">
+                At Product Share, we believe that every business—no matter how
+                small—deserves an easy, affordable way to showcase their
+                products online. We created Product Share to empower shop
+                owners, homepreneurs, and small entrepreneurs who can’t afford a
+                traditional website. Our platform lets you create a beautiful,
+                personalized product catalog and share it instantly as a link—no
+                coding, no design skills, and no hassle.
+              </p>
+            </section>
+          </div>
 
           {/* Features Grid */}
           <section className="mb-20">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12">
-              Our Core Features
+              What You Can Do With Product Share
             </h2>
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {features.map((feature, index) => (
@@ -111,10 +131,9 @@ const AboutUs = () => {
               Our Visionary Mission
             </h2>
             <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-              Product Share envisions a world where product teams can collaborate without
-              friction. We're committed to creating tools that make product management
-              intuitive, efficient, and genuinely enjoyable for teams of all sizes and
-              industries.
+              To make online product sharing simple, accessible, and affordable
+              for everyone. We’re here to help your business shine—whether
+              you're selling handmade crafts, clothing, food, or anything else.
             </p>
           </section>
         </div>
