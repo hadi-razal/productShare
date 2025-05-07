@@ -37,9 +37,12 @@ const Header = () => {
   };
 
   const links = [
-    { href: isAuthenticated ? "/login" : "/", label: isAuthenticated ? "My Store" : "Home" },
-    { href: "/about-us", label: "About" },
+    {
+      href: isAuthenticated ? "/login" : "/",
+      label: isAuthenticated ? "My Store" : "Home",
+    },
     { href: "/pricing", label: "Pricing" },
+    { href: "/about-us", label: "About" },
     { href: "/contact", label: "Contact" },
   ];
 
