@@ -24,8 +24,11 @@ const ProductCard = ({ product, storeId, refetchProducts,isLoading }: ProductCar
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const calculateDiscount = (): number => {
+
     const regularPrice = Number(product?.regularPrice);
     const discountPrice = Number(product?.discountPrice);
+
+
 
     if (
       !isNaN(regularPrice) &&
