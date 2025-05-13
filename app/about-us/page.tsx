@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-
 const FeatureCard = ({ icon: Icon, title, description }: any) => (
   <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
     <div className="bg-gradient-to-tr from-indigo-100 to-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
@@ -99,12 +98,17 @@ const AboutUs = () => {
               </h1>
               <p className="max-w-3xl mx-auto text-base text-justify md:text-lg text-gray-700 leading-relaxed">
                 At Product Share, we believe that every business—no matter how
-                small—deserves an easy, affordable way to showcase their
-                products online. We created Product Share to empower shop
-                owners, homepreneurs, and small entrepreneurs who can’t afford a
-                traditional website. Our platform lets you create a beautiful,
-                personalized product catalog and share it instantly as a link—no
-                coding, no design skills, and no hassle.
+                small—deserves an easy and affordable way to showcase their
+                products online. That’s why we created Product Share: a simple,
+                powerful platform designed to empower shop owners, homepreneurs,
+                and small entrepreneurs who can’t afford a traditional website.{" "}
+                <br /><br />
+                With Product Share, you can create a beautiful, personalized
+                product catalog and share it instantly as a link—no coding, no
+                design skills, and absolutely no hassle.
+                <br /><br /> Product Share is a sub-brand of Duoph Technologies and
+                was thoughtfully designed and developed by the Duoph team to
+                support the next generation of small business owners.
               </p>
             </section>
           </div>
