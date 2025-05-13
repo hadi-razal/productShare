@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
+
 const FeatureCard = ({ icon: Icon, title, description }: any) => (
   <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
     <div className="bg-gradient-to-tr from-indigo-100 to-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
