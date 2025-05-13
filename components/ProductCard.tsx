@@ -18,17 +18,19 @@ interface ProductCardProps {
   refetchProducts?: () => void;
 }
 
-const ProductCard = ({ product, storeId, refetchProducts,isLoading }: ProductCardProps) => {
+const ProductCard = ({
+  product,
+  storeId,
+  refetchProducts,
+  isLoading,
+}: ProductCardProps) => {
   const router = useRouter();
   const [isStoreOwner, setIsStoreOwner] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const calculateDiscount = (): number => {
-
     const regularPrice = Number(product?.regularPrice);
     const discountPrice = Number(product?.discountPrice);
-
-
 
     if (
       !isNaN(regularPrice) &&
@@ -83,11 +85,11 @@ const ProductCard = ({ product, storeId, refetchProducts,isLoading }: ProductCar
       e.stopPropagation();
       const userId = await getUserId(storeId);
       if (!userId) {
-        toast.success("Error")
+        toast.success("Error");
         return;
       }
       await deleteDoc(doc(db, userId, product.id));
-      refetchProducts()
+      refetchProducts();
       toast.success("Product deleted successfully!");
       setShowDeleteModal(false);
     } catch (error) {
@@ -96,7 +98,7 @@ const ProductCard = ({ product, storeId, refetchProducts,isLoading }: ProductCar
     }
   };
 
-  console.log(product)
+  console.log(product);
 
   if (isLoading) {
     return (
@@ -115,7 +117,7 @@ const ProductCard = ({ product, storeId, refetchProducts,isLoading }: ProductCar
   }
 
   if (product.isHidden && !isStoreOwner) {
-    return
+    return;
   }
 
   return (
@@ -124,10 +126,11 @@ const ProductCard = ({ product, storeId, refetchProducts,isLoading }: ProductCar
       className="cursor-pointer relative w-full rounded-md border bg-gray-50 shadow-sm transition-all duration-300 hover:shadow-lg"
     >
       <div className="relative">
-
         {product.isHidden && isStoreOwner && (
           <div className="bg-black/75 absolute flex flex-col items-center justify-center w-full h-full">
-            <span className="text-white text-sm font-medium px-3">This product is hidden</span>
+            <span className="text-white text-sm font-medium px-3">
+              This product is hidden
+            </span>
           </div>
         )}
 
@@ -163,12 +166,10 @@ const ProductCard = ({ product, storeId, refetchProducts,isLoading }: ProductCar
         <div className="absolute bottom-0 right-0 flex gap-2">
           {product.isMostSelling && (
             <span className="px-3 py-1 text-xs flex items-center font-semibold rounded-md bg-red-700 text-white">
-              🌟 Most Selling
+              🔥 Most Selling
             </span>
           )}
         </div>
-
-
       </div>
 
       <div className="p-2">
@@ -176,7 +177,11 @@ const ProductCard = ({ product, storeId, refetchProducts,isLoading }: ProductCar
           {product.name}
         </h3>
         <div className="flex items-center gap-2 my-2">
-          <span className={`text-md font-normal ${isDiscounted ? 'text-red-600' : 'text-black'}`}>
+          <span
+            className={`text-md font-normal ${
+              isDiscounted ? "text-red-600" : "text-black"
+            }`}
+          >
             ₹{getDisplayPrice()}
           </span>
           {isDiscounted && (
@@ -185,9 +190,18 @@ const ProductCard = ({ product, storeId, refetchProducts,isLoading }: ProductCar
             </span>
           )}
         </div>
+        <div className="flex justify-center items-center pt-[20px] pb-[20px]">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/store/${storeId}/${product.id}`);
+            }}
+            className="bg-[#5c84c8] w-[150px] h-[40px] rounded-[50px] text-white"
+          >
+            Enquire Now
+          </button>
+        </div>
       </div>
-
-
 
       {isStoreOwner && (
         <div className="flex h-12 items-center justify-center w-full px-3">
@@ -218,12 +232,20 @@ const ProductCard = ({ product, storeId, refetchProducts,isLoading }: ProductCar
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-4 rounded-lg shadow-lg">
-            <p className="mb-4 text-lg font-semibold">Are you sure you want to delete this product?</p>
+            <p className="mb-4 text-lg font-semibold">
+              Are you sure you want to delete this product?
+            </p>
             <div className="flex justify-end gap-4">
-              <button onClick={() => setShowDeleteModal(false)} className="px-4 py-2 rounded bg-gray-300">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 rounded bg-gray-300"
+              >
                 Cancel
               </button>
-              <button onClick={(e) => confirmDelete(e)} className="px-4 py-2 rounded bg-red-600 text-white">
+              <button
+                onClick={(e) => confirmDelete(e)}
+                className="px-4 py-2 rounded bg-red-600 text-white"
+              >
                 Delete
               </button>
             </div>
