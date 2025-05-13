@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { FaStar } from "react-icons/fa";
 
 interface ProductCardProps {
   product?: ProductType;
@@ -166,7 +167,7 @@ const ProductCard = ({
         <div className="absolute bottom-0 right-0 flex gap-2">
           {product.isMostSelling && (
             <span className="px-3 py-1 text-xs flex items-center font-semibold rounded-md bg-red-700 text-white">
-              🔥 Most Selling
+              <FaStar className="text-yellow-400 pr-[2px]" /> Most Selling
             </span>
           )}
         </div>
