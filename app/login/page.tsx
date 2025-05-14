@@ -1,23 +1,30 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { 
+  onAuthStateChanged, 
+  signInWithEmailAndPassword, 
+  fetchSignInMethodsForEmail 
+} from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Modal from "@/components/ModalProps";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+      if (user?.emailVerified) {
         router.push("/store");
       }
     });
@@ -26,20 +33,44 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log("Logged In Successfully", userCredential.user);
-      router.push("/store");
-    } catch (error) {
-      console.log("Login failed:", error);
-      setError("Invalid email or password. Please try again.");
-    }
+    setLoading(true);
+    setError(null);
 
-    console.log("Logging in with:", { email, password });
+    try {
+      // First check if email exists
+      const methods = await fetchSignInMethodsForEmail(auth, email);
+      
+      if (methods.length === 0) {
+        throw new Error("No account found with this email.");
+      }
+
+      // Check if email is verified before attempting login
+      // Note: This requires your Firebase security rules to allow checking verification status
+      // Alternatively, you can attempt login and check verification status after
+      
+      // Attempt to sign in
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Strict verification check - only allow verified users
+      if (!user.emailVerified) {
+        await auth.signOut(); // Immediately sign out unverified users
+        setShowVerificationModal(true);
+        throw new Error("Email not verified. Please verify your email first.");
+      }
+
+      console.log("Logged In Successfully", user);
+      router.push("/store");
+    } catch (error: any) {
+      console.log("Login failed:", error);
+      setError(error.message || "Invalid email or password. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const closeVerificationModal = () => {
+    setShowVerificationModal(false);
   };
 
   return (
@@ -51,10 +82,7 @@ const LoginPage: React.FC = () => {
         <form onSubmit={handleLogin} className="space-y-6">
           {error && <p className="text-red-500 text-center">{error}</p>}
           <div>
-            <label
-              className="block text-sm font-medium text-slate-950 mb-2"
-              htmlFor="email"
-            >
+            <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="email">
               Email Address
             </label>
             <input
@@ -68,10 +96,7 @@ const LoginPage: React.FC = () => {
             />
           </div>
           <div className="relative">
-            <label
-              className="block text-sm font-medium text-slate-950 mb-2"
-              htmlFor="password"
-            >
+            <label className="block text-sm font-medium text-slate-950 mb-2" htmlFor="password">
               Password
             </label>
             <input
@@ -94,30 +119,51 @@ const LoginPage: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-primaryColor hover:bg-primaryColor/90 text-white shadow-lg"
+            disabled={loading}
+            className={`flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 ${
+              loading ? "bg-gray-400" : "bg-primaryColor hover:bg-primaryColor/90"
+            } text-white shadow-lg`}
           >
-            Login
-            <ArrowRight className="w-5 h-5 ml-2" />
+            {loading ? "Logging in..." : "Login"}
+            {!loading && <ArrowRight className="w-5 h-5 ml-2" />}
           </button>
         </form>
         <div className="mt-6 space-y-2 text-center">
           <p className="text-sm text-gray-700">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link href={"/register"} className="text-blue-950 hover:underline">
               Register here
             </Link>
           </p>
           <p className="text-sm text-gray-700">
             Forgot password?{" "}
-            <Link
-              href={"/forgot-password"}
-              className="text-blue-950 hover:underline"
-            >
+            <Link href={"/forgot-password"} className="text-blue-950 hover:underline">
               Click here
             </Link>
           </p>
         </div>
       </div>
+
+      {/* Verification Modal */}
+      {showVerificationModal && (
+        <Modal onClose={closeVerificationModal}>
+          <div className="p-6 text-center">
+            <h3 className="text-xl font-bold mb-4">Email Verification Required</h3>
+            <p className="mb-4">
+              You must verify your email <span className="font-semibold">{email}</span> before logging in.
+            </p>
+            <p className="mb-4">
+              Please check your inbox (and spam folder) for the verification email we sent when you registered.
+            </p>
+            <button
+              onClick={closeVerificationModal}
+              className="px-4 py-2 bg-primaryColor text-white rounded-md hover:bg-primaryColor/90"
+            >
+              OK
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };
