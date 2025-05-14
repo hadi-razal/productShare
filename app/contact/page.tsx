@@ -52,7 +52,7 @@ const ContactPage = () => {
               </div>
               <div className="flex items-center space-x-4">
                 <Phone className="w-5 h-5" />
-                <span className="text-sm md:text-base">+91 9074063723</span>
+                <span className="text-sm md:text-base">+91 8589920409</span>
               </div>
               <div className="flex items-center space-x-4">
                 <MapPin className="w-5 h-5" />
