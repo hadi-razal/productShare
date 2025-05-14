@@ -8,25 +8,65 @@ import {
   Headphones,
   Bell,
   PieChart,
+  Smile,
+  Lock,
+  Globe,
 } from "lucide-react";
 import Link from "next/link";
 
 const features = [
-  { icon: <CheckCircle className="text-green-500 w-5 h-5" />, text: "Unlimited product listings" },
-  { icon: <BarChart className="text-blue-500 w-5 h-5" />, text: "Customer behavior analytics" },
-  { icon: <Paintbrush className="text-yellow-500 w-5 h-5" />, text: "Theme customization tools" },
-  { icon: <Headphones className="text-purple-500 w-5 h-5" />, text: "24/7 priority support" },
-  { icon: <Bell className="text-orange-500 w-5 h-5" />, text: "Custom alert banners" },
-  { icon: <PieChart className="text-pink-500 w-5 h-5" />, text: "Sales & engagement charts" },
+  {
+    icon: <CheckCircle className="text-green-500 w-5 h-5" />,
+    text: "Unlimited product listings",
+  },
+  {
+    icon: <BarChart className="text-blue-500 w-5 h-5" />,
+    text: "Customer behavior analytics",
+  },
+  {
+    icon: <Paintbrush className="text-yellow-500 w-5 h-5" />,
+    text: "Theme customization tools",
+  },
+  {
+    icon: <Headphones className="text-purple-500 w-5 h-5" />,
+    text: "24/7 priority support",
+  },
+  {
+    icon: <Bell className="text-orange-500 w-5 h-5" />,
+    text: "Custom alert banners",
+  },
+  {
+    icon: <PieChart className="text-pink-500 w-5 h-5" />,
+    text: "Sales & engagement charts",
+  },
+];
+
+const freeFeatures = [
+  {
+    icon: <Smile className="text-green-500 w-5 h-5" />,
+    text: "Up to 3 product listings",
+  },
+  {
+    icon: <Lock className="text-blue-500 w-5 h-5" />,
+    text: "Basic analytics dashboard",
+  },
+  {
+    icon: <Globe className="text-purple-500 w-5 h-5" />,
+    text: "Public sharing link",
+  },
 ];
 
 const pricingDetails: Record<string, { price: number; description: string }> = {
+  free: {
+    price: 0,
+    description: "Start for free and explore our platform",
+  },
   monthly: {
-    price: 199,
+    price: 249,
     description: "Ideal for businesses looking for short-term flexibility",
   },
   yearly: {
-    price: Math.round(199 * 12 * 0.83),
+    price: Math.round(249 * 12 * 0.83),
     description: "Best value – save 17% with yearly billing",
   },
 };
@@ -40,12 +80,22 @@ const PricingPage = () => {
         <h1 className="text-4xl font-bold mb-3 pb-2 bg-gradient-to-r from-indigo-700 via-purple-700 to-blue-600 bg-clip-text text-transparent">
           Pricing Plans
         </h1>
-        <p className="text-gray-700 text-lg">Choose a plan that scales with your growth.</p>
+        <p className="text-gray-700 text-lg">
+          Choose a plan that scales with your growth.
+        </p>
       </section>
 
-      {/* Mobile view – Toggle-based */}
-      <div className="md:hidden">
-        <div className="flex justify-center mb-8">
+      {/* Mobile view */}
+      <div className="md:hidden space-y-8">
+        <PricingCard
+          title="Free Plan"
+          description={pricingDetails.free.description}
+          price={pricingDetails.free.price}
+          billingCycle="free"
+          features={freeFeatures}
+        />
+
+        <div className="flex justify-center">
           <div className="bg-gray-100 p-1 rounded-full inline-flex">
             <button
               onClick={() => setBillingCycle("monthly")}
@@ -78,16 +128,25 @@ const PricingPage = () => {
           description={pricingDetails[billingCycle].description}
           price={pricingDetails[billingCycle].price}
           billingCycle={billingCycle}
+          features={features}
         />
       </div>
 
-      {/* Desktop view – Two side-by-side */}
-      <div className="hidden md:grid grid-cols-2 gap-6 max-w-5xl mx-auto">
+      {/* Desktop view */}
+      <div className="hidden md:grid grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <PricingCard
+          title="Free Plan"
+          description={pricingDetails.free.description}
+          price={pricingDetails.free.price}
+          billingCycle="free"
+          features={freeFeatures}
+        />
         <PricingCard
           title="Monthly Plan"
           description={pricingDetails.monthly.description}
           price={pricingDetails.monthly.price}
           billingCycle="monthly"
+          features={features}
         />
         <PricingCard
           title="Yearly Plan"
@@ -95,6 +154,7 @@ const PricingPage = () => {
           price={pricingDetails.yearly.price}
           billingCycle="yearly"
           badge="Best Value"
+          features={features}
         />
       </div>
     </main>
@@ -106,12 +166,14 @@ const PricingCard = ({
   description,
   price,
   billingCycle,
+  features,
   badge,
 }: {
   title: string;
   description: string;
   price: number;
   billingCycle: string;
+  features: { icon: JSX.Element; text: string }[];
   badge?: string;
 }) => {
   return (
@@ -124,10 +186,12 @@ const PricingCard = ({
       <h3 className="text-2xl font-bold text-indigo-700 mb-3">{title}</h3>
       <p className="text-gray-600 mb-6 text-sm">{description}</p>
       <div className="text-4xl font-bold text-gray-900 mb-6">
-        ₹{price}
-        <span className="text-lg text-gray-600 ml-1">
-          {billingCycle === "monthly" ? "/month" : "/year"}
-        </span>
+        {price === 0 ? "Free" : `₹${price}`}
+        {price !== 0 && (
+          <span className="text-lg text-gray-600 ml-1">
+            {billingCycle === "monthly" ? "/month" : billingCycle === "yearly" ? "/year" : ""}
+          </span>
+        )}
       </div>
 
       <ul className="space-y-3 text-left mb-8">
@@ -143,7 +207,7 @@ const PricingCard = ({
         href="/register"
         className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-3 rounded-xl transition"
       >
-        Get Started →
+        {price === 0 ? "Try for Free →" : "Get Started →"}
       </Link>
     </div>
   );
