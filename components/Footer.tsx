@@ -40,13 +40,13 @@ const Footer = () => {
               <li>
                 <a href="tel:+1234567890" className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-2 text-sm">
                   <Phone className="w-4 h-4" />
-                  +91 9074063723
+                  +91 8589920409
                 </a>
               </li>
               <li>
                 <span className="text-gray-400 flex items-center gap-2 text-sm">
                   <MapPin className="w-4 h-4" />
-                  Calicut , India
+                  Kerala ,India
                 </span>
               </li>
             </ul>
