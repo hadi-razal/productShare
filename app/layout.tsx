@@ -14,6 +14,7 @@ const geistSans = localFont({
   weight: "100 900",
   display: "swap",
 });
+
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
@@ -24,43 +25,126 @@ const geistMono = localFont({
 const poppins = Poppins({
   subsets: ["latin"],
   variable: "--font-poppins",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: [
+    "100",
+    "200",
+    "300",
+    "400",
+    "500",
+    "600",
+    "700",
+    "800",
+    "900",
+  ],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Product Share India | Create & Share Product Catalogs Effortlessly",
+  title:
+    "Product Share India - Free Digital Catalog Builder | Menu Creator for Restaurants, Stores & Dropshippers",
   description:
-    "Product Share is India's leading platform for small businesses to create, manage, and share digital product catalogs. Showcase your products online with ease.",
+    "Create stunning digital catalogs and menus instantly with Product Share India. Perfect for restaurants, retail stores, dropshippers, and small businesses. Build professional product catalogs, restaurant menus, and business listings in minutes. Free catalog maker with WhatsApp sharing, QR codes, and mobile-friendly design.",
   keywords:
-    "Product Share India, online product catalog India, Indian small business solutions, digital catalog tool, product management app India, catalog sharing platform India, business catalog creator, product showcase tool India",
-  robots: "index, follow",
-  icons: {
-    icon: "/icon.ico",
-    shortcut: "/favicon-32x32.png",
-    apple: "/apple-touch-icon.png",
+    [
+      "digital catalog builder India",
+      "restaurant menu creator",
+      "product catalog maker",
+      "dropshipping catalog tool",
+      "business catalog creator India",
+      "free online catalog builder for small business",
+      "restaurant digital menu maker India",
+      "WhatsApp catalog sharing tool",
+      "QR code menu generator",
+      "mobile catalog builder",
+      "catalog maker Mumbai Delhi Bangalore",
+      "Indian restaurant menu app",
+      "small business tools India",
+      "dropshipper product showcase",
+      "retail store catalog online",
+      "food menu digital creator",
+      "business listing maker",
+      "product showcase platform India",
+      "catalog with price list",
+      "shareable product catalog",
+      "professional menu design",
+      "inventory management tool",
+      "customer ordering system",
+    ].join(", "),
+  authors: [{ name: "Hadi Razal", url: "https://www.hadirazal.com/" }],
+  creator: "Hadi Razal",
+  publisher: "Product Share India",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  manifest: "/site.webmanifest",
   openGraph: {
-    title: "Product Share India | Create & Share Product Catalogs Easily",
+    title:
+      "Product Share India - Digital Catalog Builder for Restaurants & Stores",
     description:
-      "Empowering Indian small businesses to create and share stunning digital catalogs. Join Product Share today and simplify your product management!",
+      "Create professional digital catalogs and restaurant menus instantly. Perfect for Indian businesses, dropshippers, and food establishments. Free catalog maker with WhatsApp integration and QR code sharing.",
     url: "https://productshare.in",
+    siteName: "Product Share India",
     type: "website",
+    locale: "en_IN",
     images: [
       {
-        url: "https://productshare.in/icon.ico",
+        url: "https://productshare.in/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Product Share India - Digital Catalog Sharing Platform",
+        alt: "Product Share India - Digital Catalog Builder for Restaurants and Stores",
+        type: "image/jpeg",
+      },
+      {
+        url: "https://productshare.in/og-logo.png",
+        width: 800,
+        height: 600,
+        alt: "Product Share India Logo",
+        type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Product Share India | Create & Share Digital Product Catalogs",
-    description:
-      "Product Share is the ultimate platform for Indian businesses to create and share digital catalogs effortlessly. Perfect for small and medium enterprises!",
+    site: "@Hadi_Razal",
     creator: "@Hadi_Razal",
+    title: "Product Share India - Free Digital Catalog & Menu Builder",
+    description:
+      "Build stunning catalogs and restaurant menus in minutes. Perfect for Indian businesses, dropshippers, and food establishments. Start creating your digital catalog today!",
+    images: ["https://productshare.in/twitter-card.jpg"],
+  },
+  alternates: {
+    canonical: "https://productshare.in",
+    languages: {
+      "en-IN": "https://productshare.in",
+      "hi-IN": "https://productshare.in/hi",
+    },
+  },
+  category: "Business Tools",
+  classification: "Digital Catalog Builder",
+  other: {
+    "msapplication-TileColor": "#2563eb",
+    "theme-color": "#ffffff",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "format-detection": "telephone=no",
   },
 };
 
@@ -70,103 +154,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=5"
-        />
-        <meta name="robots" content="index, follow" />
-        <meta
-          name="google-site-verification"
-          content="ADD-YOUR-GSC-CODE-HERE"
-        />
-        <link rel="canonical" href="https://productshare.in/" />
-
-        {/* Icons */}
-        <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
-        <link rel="icon" href="/favicon-16x16.png" sizes="16x16" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
-        {/* Preload Fonts */}
-        <link
-          rel="preload"
-          href="/fonts/GeistVF.woff"
-          as="font"
-          type="font/woff"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/GeistMonoVF.woff"
-          as="font"
-          type="font/woff"
-          crossOrigin="anonymous"
-        />
-
-        {/* Schema.org Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "SoftwareApplication",
-              name: "Product Share",
-              url: "https://productshare.in",
-              logo: "https://productshare.in/logo.png",
-              description:
-                "Product Share is an intuitive platform that empowers Indian small businesses to create and share product catalogs effortlessly. Founded by Hadi Razal.",
-              founder: {
-                "@type": "Person",
-                name: "Hadi Razal",
-                jobTitle: "Founder & CEO",
-                url: "https://www.hadirazal.com/",
-                sameAs: [
-                  "https://github.com/hadi-razal",
-                  "https://twitter.com/Hadi_Razal",
-                  "https://www.instagram.com/hadi_razal/",
-                  "https://www.linkedin.com/in/hadi-razal-690b22228/",
-                ],
-              },
-              operatingSystem: "Web",
-              applicationCategory: "BusinessApplication",
-              location: {
-                "@type": "PostalAddress",
-                addressCountry: "IN",
-                addressRegion: "Kerala",
-                addressLocality: "Kochi",
-                postalCode: "682001",
-              },
-              areaServed: {
-                "@type": "Country",
-                name: "India",
-              },
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: "4.9",
-                ratingCount: "321",
-              },
-              contactPoint: {
-                "@type": "ContactPoint",
-                email: "hadhirasal22@gmail.com",
-                telephone: "+91-9074063723",
-                contactType: "Customer Support",
-              },
-            }),
-          }}
-        />
-
-        {/* Razorpay Script */}
-        <script src="https://checkout.razorpay.com/v1/checkout.js" defer />
-      </head>
+    <html lang="en-IN" dir="ltr">
+      <head />
       <body
         className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-blue-600 text-white p-2 z-50"
+        >
+          Skip to main content
+        </a>
         <Header />
         <Toaster />
         <ProgressBar />
-        {children}
+        <main id="main-content" role="main">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
