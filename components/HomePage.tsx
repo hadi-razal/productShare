@@ -196,7 +196,7 @@ const Home = () => {
       <FaqSection/>
 
       {/* Pricing Section */}
-      <PricingSection />
+      {/* <PricingSection /> */}
 
       {/* Testimonials Section */}
       <section className="mx-auto max-w-7xl px-6 py-16">
