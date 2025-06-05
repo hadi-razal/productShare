@@ -198,7 +198,6 @@ const Home = () => {
       {/* Pricing Section */}
       {/* <PricingSection /> */}
 
-      {/* Testimonials Section */}
       <section className="mx-auto max-w-7xl px-6 py-16">
         <h2 className="text-3xl font-bold text-center mb-12">
           What Our Clients Say

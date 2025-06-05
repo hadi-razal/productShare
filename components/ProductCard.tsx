@@ -191,17 +191,7 @@ const ProductCard = ({
             </span>
           )}
         </div>
-        <div className="flex justify-center items-center pt-[20px] pb-[20px]">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(`/store/${storeId}/${product.id}`);
-            }}
-            className="bg-[#5c84c8] w-[150px] h-[40px] rounded-[50px] text-white"
-          >
-            Enquire Now
-          </button>
-        </div>
+      
       </div>
 
       {isStoreOwner && (
