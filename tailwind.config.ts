@@ -10,17 +10,27 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-poppins)", ...fontFamily.sans], // Default sans-serif as Poppins
-        geistSans: ["var(--font-geist-sans)", "sans-serif"], // GeistSans custom font
-        geistMono: ["var(--font-geist-mono)", "monospace"],  // GeistMono custom font
+        sans: ["var(--font-poppins)", ...fontFamily.sans],
+        geist: ["var(--font-geist-sans)", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "monospace"],
       },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        'primaryColor': '#6e41e8',
+        primary: "#6e41e8",
+      },
+      animation: {
+        "fade-in": "fadeIn 1.2s ease-out forwards",
+      },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
     },
   },
   plugins: [],
 };
+
 export default config;
