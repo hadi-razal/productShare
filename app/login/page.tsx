@@ -1,18 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { ArrowRight, Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { FcGoogle } from "react-icons/fc";
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const router = useRouter();
 
   useEffect(() => {
@@ -24,22 +23,16 @@ const LoginPage: React.FC = () => {
     return () => unsubscribe();
   }, [router]);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleGoogleLogin = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log("Logged In Successfully", userCredential.user);
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      console.log("Google login successful", result.user);
       router.push("/store");
     } catch (error) {
-      console.log("Login failed:", error);
-      setError("Invalid email or password. Please try again.");
+      console.error("Google login failed:", error);
+      setError("Google login failed. Please try again.");
     }
-
-    console.log("Logging in with:", { email, password });
   };
 
   return (
@@ -48,73 +41,25 @@ const LoginPage: React.FC = () => {
         <h2 className="text-2xl font-bold text-slate-950 text-center mb-6">
           Login to Your Account
         </h2>
-        <form onSubmit={handleLogin} className="space-y-6">
-          {error && <p className="text-red-500 text-center">{error}</p>}
-          <div>
-            <label
-              className="block text-sm font-medium text-slate-950 mb-2"
-              htmlFor="email"
-            >
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
-              placeholder="Enter your email"
-            />
-          </div>
-          <div className="relative">
-            <label
-              className="block text-sm font-medium text-slate-950 mb-2"
-              htmlFor="password"
-            >
-              Password
-            </label>
-            <input
-              type={showPassword ? "text" : "password"}
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md pr-12"
-              placeholder="Enter your password"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-[42px] text-gray-600"
-              aria-label="Toggle password visibility"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-          <button
-            type="submit"
-            className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-primaryColor hover:bg-primaryColor/90 text-white shadow-lg"
-          >
-            Login
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </button>
-        </form>
-        <div className="mt-6 space-y-2 text-center">
+
+        {error && (
+          <p className="text-red-500 text-center text-sm mb-4">{error}</p>
+        )}
+
+        <button
+          onClick={handleGoogleLogin}
+          className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 shadow-lg"
+        >
+          <FcGoogle className="w-5 h-5 mr-2" />
+          Continue with Google
+        </button>
+
+        <div className="mt-6 text-center">
           <p className="text-sm text-gray-700">
-            Don’t have an account?{" "}
-            <Link href={"/register"} className="text-blue-950 hover:underline">
+            Don't have an account?{" "}
+            <a href="/register" className="text-blue-950 hover:underline">
               Register here
-            </Link>
-          </p>
-          <p className="text-sm text-gray-700">
-            Forgot password?{" "}
-            <Link
-              href={"/forgot-password"}
-              className="text-blue-950 hover:underline"
-            >
-              Click here
-            </Link>
+            </a>
           </p>
         </div>
       </div>
