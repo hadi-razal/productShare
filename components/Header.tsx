@@ -90,7 +90,7 @@ const Header = () => {
             ) : (
               <Link
                 href="/login"
-                className="text-sm font-medium text-white bg-gradient-to-r from-indigo-700 to-purple-700 px-4 py-1.5 rounded-md hover:scale-105 transition-transform shadow"
+                className="text-sm font-medium text-white bg-primary px-4 py-1.5 rounded-md hover:scale-105 transition-transform shadow"
               >
                 Login
               </Link>
@@ -146,7 +146,7 @@ const Header = () => {
               <Link
                 href="/login"
                 onClick={() => setMenuOpen(false)}
-                className="bg-gradient-to-r from-indigo-700 to-purple-700 text-white py-2 rounded-md text-center font-medium hover:scale-105 transition"
+                className="bg-primary text-white py-2 rounded-md text-center font-medium hover:scale-105 transition"
               >
                 Login
               </Link>
