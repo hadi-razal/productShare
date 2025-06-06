@@ -17,7 +17,7 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        primary: "#6e41e8",
+        primary: "#6c64cb",
       },
       animation: {
         "fade-in": "fadeIn 1.2s ease-out forwards",
