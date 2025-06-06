@@ -1,22 +1,37 @@
+/* Import Google Font for optional fallback */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* === Custom Font Face === */
+@font-face {
+  font-family: "Clover Display";
+  src: url("/fonts/CloverDisplay-Medium.ttf") format("truetype");
+  /* font-weight: 900; */
+  font-style: normal;
+  font-display: swap;
+}
+
+/* === CSS Variables === */
 :root {
+  --font-clover: "Clover Display", sans-serif;
   --font-poppins: "Poppins", sans-serif;
+
   background: #f3f4f6;
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
 }
 
+/* === Default Font Application === */
 body {
-  font-family: var(--font-poppins);
+  font-family: var(--font-clover);
 }
 
+/* === Marquee Styles === */
 .marquee {
-overflow: hidden;
+  overflow: hidden;
   white-space: nowrap;
   box-sizing: border-box;
 }
@@ -40,12 +55,12 @@ overflow: hidden;
   margin-right: 20px; /* Space between items */
 }
 
-/* styles/globals.css or a dedicated CSS file */
+/* === Snowflake Animation === */
 .snowflake {
   position: absolute;
   top: -10%;
-  width: 10px; /* Size of snowflake */
-  height: 10px; /* Size of snowflake */
+  width: 10px;
+  height: 10px;
   background: white;
   border-radius: 50%;
   opacity: 0.8;
