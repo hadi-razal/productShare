@@ -89,9 +89,9 @@ export const metadata: Metadata = {
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
     ],
-    shortcut: "/favicon.ico",
+    shortcut: "/favicon-32x32.png",
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/apple-icon-114x114.png", sizes: "180x180", type: "image/png" },
     ],
   },
   manifest: "/site.webmanifest",
@@ -106,14 +106,14 @@ export const metadata: Metadata = {
     locale: "en_IN",
     images: [
       {
-        url: "https://productshare.in/og-image.jpg",
+        url: "https://productshare.in/favicon-32x32.png",
         width: 1200,
         height: 630,
         alt: "Product Share India - Digital Catalog Builder for Restaurants and Stores",
         type: "image/jpeg",
       },
       {
-        url: "https://productshare.in/og-logo.png",
+        url: "https://productshare.in/favicon-32x32.png",
         width: 800,
         height: 600,
         alt: "Product Share India Logo",
@@ -172,7 +172,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
-      </body>
+      </body>  
     </html>
   );
 }

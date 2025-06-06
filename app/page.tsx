@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
       "product catalog software",
       "small business app",
       "online catalog creator",
-      "digital product sharing",
+      "digital product sharing",  
       "catalog management",
       "business marketing tool",
       "e-commerce solution"

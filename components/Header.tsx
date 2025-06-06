@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import Image from "next/image";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,9 +58,11 @@ const Header = () => {
           {/* Logo */}
           <Link
             href="/"
-            className="text-2xl font-extrabold bg-gradient-to-r from-blue-700 via-purple-600 to-indigo-600 bg-clip-text text-transparent"
+            className="text-2xl max-h-32 font-extrabold bg-gradient-to-r from-blue-700 via-purple-600 to-indigo-600 bg-clip-text text-transparent"
           >
-            Product Share
+           <Image alt="Product Share" height={100} width={100}  src={'/productShareLV-cropped.svg'}/>
+
+          
           </Link>
 
           {/* Desktop Nav */}
