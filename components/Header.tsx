@@ -60,7 +60,7 @@ const Header = () => {
             href="/"
             className="text-2xl max-h-32 font-extrabold bg-gradient-to-r from-blue-700 via-purple-600 to-indigo-600 bg-clip-text text-transparent"
           >
-           <Image alt="Product Share" height={100} width={100}  src={'/productShareLV-cropped.svg'}/>
+           <Image alt="Product Share" height={110} width={110}  src={'/productShareLV-cropped.svg'}/>
 
           
           </Link>
