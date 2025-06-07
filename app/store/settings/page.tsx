@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { motion } from "framer-motion";
@@ -96,28 +95,6 @@ const SettingsPage: React.FC = () => {
     }
   };
 
-  const handlePasswordChange = async () => {
-    if (!newPassword) {
-      toast.error("Please enter a new password.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      if (auth.currentUser) {
-        await updatePassword(auth.currentUser, newPassword);
-        toast.success("Password updated successfully.");
-        setNewPassword("");
-      }
-    } catch (error) {
-      console.error("Error updating password:", error);
-      toast.error("Failed to update password.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleProfilePicChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -167,7 +144,12 @@ const SettingsPage: React.FC = () => {
 
         {/* Input Fields */}
         {[
-          { label: "Username", value: username, disabled: true },
+          {
+            label: "Username",
+            value: username,
+            onchange: setUsername,
+            disabled: false,
+          },
           { label: "Email", value: email, disabled: true },
           { label: "Shop Name", value: name, onChange: setName },
           {
@@ -218,20 +200,6 @@ const SettingsPage: React.FC = () => {
           ></textarea>
         </div>
 
-        {/* Password Section */}
-        <div className="mb-6">
-          <label className="block text-gray-700 font-semibold mb-2">
-            Change Password
-          </label>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
-            placeholder="Enter new password"
-          />
-        </div>
-
         {/* Action Buttons */}
         <motion.button
           onClick={handleSaveChanges}
@@ -239,13 +207,6 @@ const SettingsPage: React.FC = () => {
           disabled={loading}
         >
           {loading ? "Saving..." : "Save Changes"}
-        </motion.button>
-        <motion.button
-          onClick={handlePasswordChange}
-          className="w-full mt-4 px-4 py-2 bg-green-500 text-white font-semibold rounded-md shadow-md hover:bg-green-400"
-          disabled={loading}
-        >
-          {loading ? "Updating..." : "Update Password"}
         </motion.button>
       </section>
     </div>

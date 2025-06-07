@@ -11,6 +11,10 @@ import {
   Smile,
   Lock,
   Globe,
+  Video,
+  LineChart,
+  WandSparkles,
+  Rows3,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -38,6 +42,22 @@ const features = [
   {
     icon: <PieChart className="text-pink-500 w-5 h-5" />,
     text: "Sales & engagement charts",
+  },
+  {
+    icon: <Video className="text-red-500 w-5 h-5" />,
+    text: "Add videos to product listings",
+  },
+  {
+    icon: <LineChart className="text-sky-500 w-5 h-5" />,
+    text: "Advanced performance graphs",
+  },
+  {
+    icon: <WandSparkles className="text-indigo-500 w-5 h-5" />,
+    text: "AI-generated customer insights",
+  },
+  {
+    icon: <Rows3 className="text-gray-700 w-5 h-5" />,
+    text: "Bulk edit tools for products",
   },
 ];
 

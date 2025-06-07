@@ -5,10 +5,12 @@ import {
   onAuthStateChanged,
   signInWithPopup,
   GoogleAuthProvider,
+  fetchSignInMethodsForEmail,
 } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
+import { doc, setDoc } from "firebase/firestore";
 
 const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
@@ -27,8 +29,27 @@ const LoginPage: React.FC = () => {
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      console.log("Google login successful", result.user);
-      router.push("/store");
+      const user = result.user;
+
+      // Check if the user already has an account
+      const methods = await fetchSignInMethodsForEmail(auth, user.email!);
+
+      if (methods.length > 0) {
+        // User already has an account — redirect to register page
+        console.log("User already exists. Redirecting to register...");
+        router.push("/register");
+      } else {
+        // User doesn't exist — proceed to store
+        console.log("New user. Proceeding to store...");
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          username: user.displayName,
+          name: user.displayName || name,
+          email: user.email,
+          premiumUser: false,
+          createdAt: new Date().toISOString(),
+        });
+      }
     } catch (error) {
       console.error("Google login failed:", error);
       setError("Google login failed. Please try again.");

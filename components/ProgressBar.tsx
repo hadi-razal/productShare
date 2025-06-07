@@ -1,17 +1,18 @@
-"use client"
+"use client";
 
-import { AppProgressBar } from 'next-nprogress-bar';
+import { AppProgressBar } from "next-nprogress-bar";
 
 const ProgressBar = () => {
-    return (
-        <div>
-            <AppProgressBar height="3px"
-                color="#003399"
-                options={{ showSpinner: false }}
-                shallowRouting
-            />
-        </div>
-    )
-}
+  return (
+    <div>
+      <AppProgressBar
+        height="3px"
+        color="#6c64cb"
+        options={{ showSpinner: false }}
+        shallowRouting
+      />
+    </div>
+  );
+};
 
-export default ProgressBar
+export default ProgressBar;

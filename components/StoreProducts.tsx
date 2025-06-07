@@ -40,7 +40,7 @@ const StoreProducts: React.FC<StoreProductsProps> = ({ storeId }) => {
           sessionStorage.setItem(`MyShop_${storeId}_View`, "true");
         }
 
-        const productsRef = collection(db, userID);
+        const productsRef = collection(db, "users", userID, "products");
         const querySnapshot = await getDocs(productsRef);
 
         const productList: ProductType[] = querySnapshot.docs.map((doc) => {

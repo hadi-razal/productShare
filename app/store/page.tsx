@@ -139,7 +139,8 @@ const StoreDashboard = () => {
           setUserId(user.uid);
 
           // Fetch various stats and data
-          const productsSnapshot = await getDocs(collection(db, user.uid));
+          const productsSnapshot = await getDocs(collection(db, "users", userId, "products")); 
+
           const userDoc = await getDoc(doc(db, "users", user.uid));
           const userData = userDoc.exists()
             ? userDoc.data()
@@ -186,12 +187,12 @@ const StoreDashboard = () => {
       }
 
       const leastViewedQuery = query(
-        collection(db, userId),
+        collection(db, "users", userId, "products"),
         orderBy("views"),
         limit(1)
       );
       const mostViewedQuery = query(
-        collection(db, userId),
+        collection(db, "users", userId, "products"),
         orderBy("views", "desc"),
         limit(1)
       );
@@ -229,7 +230,7 @@ const StoreDashboard = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <StatCard
+          <StatCard
             title="Total Products"
             value={loading ? null : stats.products}
             trend={12}
@@ -259,17 +260,39 @@ const StoreDashboard = () => {
           Latest Searched Keywords
         </h2>
         <div className="bg-white rounded-md shadow-md p-6 mb-10 flex gap-2 flex-wrap">
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Shirt</span>
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Best mac book under 7k</span>
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Blue Jeans for users</span>
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Fancy LED Bulb</span>
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">PS5</span>
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">GTA 5 PS5</span>
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Women saree under 5000</span>
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">toys</span>
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">gaming pc</span>
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Best laptop for students</span>
-          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">Kurta men</span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">
+            Shirt
+          </span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">
+            Best mac book under 7k
+          </span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">
+            Blue Jeans for users
+          </span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">
+            Fancy LED Bulb
+          </span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">
+            PS5
+          </span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">
+            GTA 5 PS5
+          </span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">
+            Women saree under 5000
+          </span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">
+            toys
+          </span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">
+            gaming pc
+          </span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">
+            Best laptop for students
+          </span>
+          <span className="flex items-center justify-between bg-gray-100 rounded-md shadow-md px-4 py-2">
+            Kurta men
+          </span>
         </div>
 
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Products</h2>
