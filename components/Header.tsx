@@ -58,9 +58,9 @@ const Header = () => {
           {/* Logo */}
           <Link
             href="/"
-            className="text-2xl max-h-32 font-extrabold bg-gradient-to-r from-blue-700 via-purple-600 to-indigo-600 bg-clip-text text-transparent"
+            className="text-2xl max-h-32 font-extrabold bg-gradient-to-r pt-3 from-blue-700 via-purple-600 to-indigo-600 bg-clip-text text-transparent"
           >
-           <Image alt="Product Share" height={95} width={95}  src={'/productShareLV-cropped.svg'}/>
+           <Image alt="Product Share" height={85} width={85}  src={'/productShareLV-cropped.svg'}/>
 
           
           </Link>
