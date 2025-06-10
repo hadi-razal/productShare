@@ -70,8 +70,8 @@ export const metadata: Metadata = {
       "inventory management tool",
       "customer ordering system",
     ].join(", "),
-  authors: [{ name: "Hadi Razal", url: "https://www.hadirazal.com/" }],
-  creator: "Hadi Razal",
+  authors: [{ name: "Duoph Technologies", url: "https://www.duoph.in/" }],
+  creator: "Duoph Technologies",
   publisher: "Product Share India",
   robots: {
     index: true,
