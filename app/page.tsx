@@ -7,13 +7,13 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
   return {
     metadataBase: new URL(baseUrl),
     title: {
-      default: "Product Share | #1 Catalog Builder for Indian Businesses | Hadi Razal",
+      default: "Product Share | #1 Catalog Builder for Indian Businesses",
       template: "%s | Product Share"
     },
     description: "Revolutionize your business with Product Share - India's most powerful AI-driven catalog creation and sharing platform. Founded by Hadi Razal, empowering small businesses to showcase products professionally.",
     keywords: [
       "Product Share",
-      "Hadi Razal",
+      "Duoph Technologies",
       "catalog builder india",
       "product catalog software",
       "small business app",
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
       "e-commerce solution"
     ],
     applicationName: "Product Share",
-    authors: [{ name: "Hadi Razal", url: baseUrl }],
+    authors: [{ name: "Duoph Technologies", url: baseUrl }],
     generator: "Next.js",
     referrer: "origin",
     
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       title: "Product Share | AI Catalog Builder for Indian Businesses",
-      description: "Create stunning product catalogs in minutes. Designed for Indian entrepreneurs by Hadi Razal.",
+      description: "Create stunning product catalogs in minutes. Designed for Indian entrepreneurs by  Duoph Technologies.",
       creator: "@Hadi_Razal",
       site: "@ProductShare",
       images: [`${baseUrl}/twitter-image.png`]
