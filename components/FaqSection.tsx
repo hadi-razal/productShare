@@ -50,23 +50,6 @@ const faqs = [
         </ul>
       </div>
     )
-  },
-  {
-    question: "How Can I Get Started?",
-    answer: (
-      <div>
-        <p className="text-base text-gray-800 font-medium mb-2">
-          <strong>Create Your Free Account Now</strong><br />
-          Join small business owners already using Product Share.
-        </p>
-        <a
-          href="/register"
-          className="text-sm bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-        >
-          👉 Register Now
-        </a>
-      </div>
-    )
   }
 ]
 
