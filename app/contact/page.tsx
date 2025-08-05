@@ -37,7 +37,7 @@ const ContactPage = () => {
           name="keywords"
           content="contact, inquiries, support, feedback, Product Share, product management, customer service"
         />
-        <meta name="author" content="Hadi Rasal" />
+        <meta name="author" content="Duoph Technologies" />
       </Head>
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center px-4 py-16">
