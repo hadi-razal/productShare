@@ -23,6 +23,8 @@ export interface ProductType {
     isMostSelling?:boolean;
     isFreeDelivery?:boolean;
   }
+
+
   
   export interface userType {
     id?: string;
