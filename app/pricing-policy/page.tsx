@@ -13,6 +13,7 @@ const PricingPolicy = () => {
         Choose the plan that best fits your needs, with both monthly and yearly options available. Both plans are single-time purchases with no auto-pay or recurring billing.
       </p>
 
+
       <ul>
         <li><strong>Monthly Plan:</strong> 
           <span style={{ fontWeight: 'bold', color: 'green' }}>&#8377;99</span> for a one-time payment. This plan gives you access to all features of our online catalogue builder for one month. You can renew the plan if you wish to continue using the service after the month ends.
