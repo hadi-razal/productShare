@@ -6,6 +6,10 @@ import {
   Headphones,
   Bell,
   PieChart,
+  Globe,
+  Shield,
+  CloudUpload,
+  Users,
 } from "lucide-react";
 
 const PricingSection = () => {
@@ -13,12 +17,12 @@ const PricingSection = () => {
 
   const pricingDetails: any = {
     monthly: {
-      price: 199,
-      description: "Ideal for businesses looking for short-term flexibility",
+      price: 499,
+      description: "Perfect for businesses looking for flexibility with a one-time monthly purchase",
     },
     yearly: {
-      price: Math.round(199 * 12 * 0.83), // 17% discount
-      description: "Best value - save 17% compared to monthly billing",
+      price: Math.round(499 * 12 * 0.8), // 20% discount
+      description: "Best value - one-time yearly purchase, save 20%",
     },
   };
 
@@ -27,8 +31,7 @@ const PricingSection = () => {
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold mb-4">Product Share Premium</h2>
         <p className="text-gray-600 text-lg leading-5">
-          Choose the plan that works best for your store's catalog-building
-          needs
+          Unlock all premium tools for building and managing your store’s catalog
         </p>
       </div>
 
@@ -55,7 +58,7 @@ const PricingSection = () => {
           >
             Yearly
             <span className="ml-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
-              Save 17%
+              Save 20%
             </span>
           </button>
         </div>
@@ -71,36 +74,52 @@ const PricingSection = () => {
             {pricingDetails[billingCycle].description}
           </p>
           <div className="text-4xl font-bold mb-6">
-          &#8377;{pricingDetails[billingCycle].price}
+            &#8377;{pricingDetails[billingCycle].price}
             <span className="text-lg text-gray-600">
-              {billingCycle === "monthly" ? "/month" : "/year"}
+              {billingCycle === "monthly" ? " / one-time" : " / year (one-time)"}
             </span>
           </div>
 
-          <ul className="text-gray-600 text-base mb-6 w-full max-w-7xl space-y-1">
-            <li className="flex  md:justify-center text-start">
+          <ul className="text-gray-600 text-base mb-6 w-full max-w-7xl space-y-2">
+            <li className="flex md:justify-center text-start">
               <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
               Unlimited product listings
             </li>
-            <li className="flex  md:justify-center text-start">
+            <li className="flex md:justify-center text-start">
               <BarChart className="w-5 h-5 text-blue-500 mr-2" />
-              Advanced analytics with detailed customer behavior insights
+              Advanced analytics with customer insights
             </li>
-            <li className="flex  md:justify-center text-start">
+            <li className="flex md:justify-center text-start">
               <Paintbrush className="w-5 h-5 text-yellow-500 mr-2" />
-              Custom website theme
+              Custom branding and catalog design tools
             </li>
-            <li className="flex  md:justify-center text-start">
+            <li className="flex md:justify-center text-start">
               <Headphones className="w-5 h-5 text-purple-500 mr-2" />
-              Priority customer support (24/7 email and chat)
+              Priority customer support (24/7 email + chat)
             </li>
-            <li className="flex  md:justify-center text-start">
+            <li className="flex md:justify-center text-start">
               <Bell className="w-5 h-5 text-orange-500 mr-2" />
-              Custom alert banners
+              Smart notification & alert system
             </li>
-            <li className="flex  md:justify-center text-start">
+            <li className="flex md:justify-center text-start">
               <PieChart className="w-5 h-5 text-pink-500 mr-2" />
-              Detailed analytics feature
+              Sales & revenue analytics dashboard
+            </li>
+            <li className="flex md:justify-center text-start">
+              <Globe className="w-5 h-5 text-teal-500 mr-2" />
+              Multi-language & multi-currency support
+            </li>
+            <li className="flex md:justify-center text-start">
+              <CloudUpload className="w-5 h-5 text-indigo-500 mr-2" />
+              Bulk product upload via Excel/CSV
+            </li>
+            <li className="flex md:justify-center text-start">
+              <Shield className="w-5 h-5 text-red-500 mr-2" />
+              Secure data protection & backups
+            </li>
+            <li className="flex md:justify-center text-start">
+              <Users className="w-5 h-5 text-cyan-500 mr-2" />
+              Team access with role-based permissions
             </li>
           </ul>
         </div>

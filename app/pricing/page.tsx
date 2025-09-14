@@ -15,6 +15,11 @@ import {
   LineChart,
   WandSparkles,
   Rows3,
+  Users,
+  CloudUpload,
+  Shield,
+  Zap,
+  Layers,
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -60,6 +65,26 @@ const features = [
     icon: <Rows3 className="text-gray-700 w-5 h-5" />,
     text: "Bulk edit tools for products",
   },
+  {
+    icon: <Users className="text-cyan-500 w-5 h-5" />,
+    text: "Team access & role-based permissions",
+  },
+  {
+    icon: <CloudUpload className="text-indigo-500 w-5 h-5" />,
+    text: "Bulk product upload via CSV/Excel",
+  },
+  {
+    icon: <Shield className="text-red-500 w-5 h-5" />,
+    text: "Secure backups & data protection",
+  },
+  {
+    icon: <Zap className="text-yellow-600 w-5 h-5" />,
+    text: "Integrations with top e-commerce tools",
+  },
+  {
+    icon: <Layers className="text-purple-600 w-5 h-5" />,
+    text: "Unlimited categories & collections",
+  },
 ];
 
 const freeFeatures = [
@@ -83,18 +108,18 @@ const pricingDetails: Record<string, { price: number; description: string }> = {
     description: "Start for free and explore our platform",
   },
   monthly: {
-    price: 249,
-    description: "Ideal for businesses looking for short-term flexibility",
+    price: 499,
+    description: "One-time monthly purchase – no recurring charges",
   },
   yearly: {
-    price: Math.round(249 * 12 * 0.83),
-    description: "Best value – save 17% with yearly billing",
+    price: Math.round(499 * 12 * 0.8), // 20% discount
+    description: "One-time yearly purchase – save 20%",
   },
 };
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
 
 const PricingPage = () => {
@@ -102,7 +127,7 @@ const PricingPage = () => {
 
   return (
     <main className="min-h-screen bg-white px-4 md:px-16 py-12">
-      <motion.section 
+      <motion.section
         initial="hidden"
         animate="visible"
         variants={fadeIn}
@@ -112,7 +137,7 @@ const PricingPage = () => {
           Simple, transparent pricing
         </h1>
         <p className="text-gray-600 text-xl max-w-2xl mx-auto">
-          Choose the perfect plan for your business needs. Scale up or down as you grow.
+          Choose the perfect plan for your business. Pay once, use without recurring fees.
         </p>
       </motion.section>
 
@@ -128,7 +153,7 @@ const PricingPage = () => {
           />
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="flex justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -155,7 +180,7 @@ const PricingPage = () => {
             >
               Yearly
               <span className="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                Save 17%
+                Save 20%
               </span>
             </button>
           </div>
@@ -174,16 +199,16 @@ const PricingPage = () => {
       </div>
 
       {/* Desktop view */}
-      <motion.div 
+      <motion.div
         className="hidden md:grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
         initial="hidden"
         animate="visible"
         variants={{
           visible: {
             transition: {
-              staggerChildren: 0.1
-            }
-          }
+              staggerChildren: 0.1,
+            },
+          },
         }}
       >
         <motion.div variants={fadeIn}>
@@ -218,7 +243,7 @@ const PricingPage = () => {
       </motion.div>
 
       {/* Enterprise CTA */}
-      <motion.div 
+      <motion.div
         className="max-w-4xl mx-auto mt-20 text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -259,9 +284,11 @@ const PricingCard = ({
   highlight?: boolean;
 }) => {
   return (
-    <motion.div 
+    <motion.div
       whileHover={{ y: -5 }}
-      className={`relative h-full flex flex-col border rounded-xl overflow-hidden transition-all ${highlight ? "border-indigo-300 shadow-lg" : "border-gray-200 shadow-sm"}`}
+      className={`relative h-full flex flex-col border rounded-xl overflow-hidden transition-all ${
+        highlight ? "border-indigo-300 shadow-lg" : "border-gray-200 shadow-sm"
+      }`}
     >
       {highlight && (
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-blue-500"></div>
@@ -272,13 +299,27 @@ const PricingCard = ({
             {badge}
           </div>
         )}
-        <h3 className={`text-2xl font-bold mb-3 ${highlight ? "text-indigo-700" : "text-gray-900"}`}>{title}</h3>
+        <h3
+          className={`text-2xl font-bold mb-3 ${
+            highlight ? "text-indigo-700" : "text-gray-900"
+          }`}
+        >
+          {title}
+        </h3>
         <p className="text-gray-600 mb-6 text-sm">{description}</p>
-        <div className={`text-5xl font-bold mb-6 ${highlight ? "text-indigo-600" : "text-gray-900"}`}>
+        <div
+          className={`text-5xl font-bold mb-6 ${
+            highlight ? "text-indigo-600" : "text-gray-900"
+          }`}
+        >
           {price === 0 ? "Free" : `₹${price}`}
           {price !== 0 && (
             <span className="text-lg text-gray-600 ml-1">
-              {billingCycle === "monthly" ? "/month" : billingCycle === "yearly" ? "/year" : ""}
+              {billingCycle === "monthly"
+                ? "(one-time)"
+                : billingCycle === "yearly"
+                ? "(one-time)"
+                : ""}
             </span>
           )}
         </div>
@@ -296,7 +337,11 @@ const PricingCard = ({
       <div className="px-8 pb-8">
         <Link
           href="/register"
-          className={`block w-full text-center font-medium px-6 py-3 rounded-lg transition ${highlight ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg" : "bg-gray-900 hover:bg-gray-800 text-white shadow-sm hover:shadow-md"}`}
+          className={`block w-full text-center font-medium px-6 py-3 rounded-lg transition ${
+            highlight
+              ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg"
+              : "bg-gray-900 hover:bg-gray-800 text-white shadow-sm hover:shadow-md"
+          }`}
         >
           {price === 0 ? "Try for Free" : "Get Started"}
         </Link>

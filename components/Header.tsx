@@ -54,7 +54,7 @@ const Header = () => {
           isScrolled ? "bg-white shadow-md" : "bg-white/70 backdrop-blur-lg"
         }`}
       >
-        <div className="max-w-screen-xl mx-auto px-6 py-5 flex justify-between items-center">
+        <div className="max-w-screen-xl mx-auto px-6 py-3 flex justify-between items-center">
           {/* Logo */}
           <Link
             href="/"
