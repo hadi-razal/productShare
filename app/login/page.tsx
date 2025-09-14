@@ -39,12 +39,19 @@ const LoginPage: React.FC = () => {
         console.log("User already exists. Redirecting to register...");
         router.push("/register");
       } else {
+
+        const rawUsername = user.email?.split("@")[0] || "user";
+const safeUsername = rawUsername.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+const finalUsername = safeUsername + Math.floor(Math.random() * 1000);
+
+        console.log("User already exists. Redirecting to register..." + finalUsername);
+
         // User doesn't exist — proceed to store
         console.log("New user. Proceeding to store...");
         await setDoc(doc(db, "users", user.uid), {
           uid: user.uid,
-          username: user.displayName,
-          name: user.displayName || name,
+          username: finalUsername, 
+          name: user.displayName ,
           email: user.email,
           premiumUser: false,
           createdAt: new Date().toISOString(),

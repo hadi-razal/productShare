@@ -43,12 +43,14 @@ const RegisterPage: React.FC = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      const username = user.email?.split("@")[0] || "user";
+     const rawUsername = user.email?.split("@")[0] || "user";
+const safeUsername = rawUsername.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+const finalUsername = safeUsername + Math.floor(Math.random() * 1000);
 
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
-        username: user.displayName ,
-        name: username + Math.floor(Math.random() * 1000),
+        username: finalUsername, 
+        name: user.displayName ,
         email: user.email,
         premiumUser: false,
         createdAt: new Date().toISOString(),
