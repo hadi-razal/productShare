@@ -126,58 +126,61 @@ const StoreDashboard = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/login");
-        return;
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        console.log("User ID:", user.uid);
+
+        const fetchedUsername = await getUsername(user.uid); // Pass plain uid
+        setUsername(fetchedUsername);
+        setUserId(user.uid);
+
+        // Use user.uid directly, not state userId
+        const productsSnapshot = await getDocs(
+          collection(db, "users", user.uid, "products")
+        );
+
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const userData = userDoc.exists() ? userDoc.data() : { visitCount: 0 };
+
+        setStats({
+          products: productsSnapshot.size,
+          visitors: userData.visitCount ?? 0,
+          sales: userData.sales ?? 0,
+          revenue: userData.revenue ?? 0,
+          orders: 120,
+          returningCustomers: 35,
+          reviews: 290,
+          averageOrderValue: 34.5,
+          conversionRate: 2.5,
+          lowStockItems: 15,
+          topCategory: "Electronics",
+          discountsUsed: 43,
+          refundsProcessed: 3,
+          outOfStockProducts: 7,
+          visitorData: userData.visitorData || [],
+        });
+
+        await fetchLeastAndMostViewedProducts(user.uid);
+
+        setLoading(false);
+      } catch (error) {
+        console.log("Error fetching dashboard data:", error);
+        setLoading(false);
       }
+    };
 
-      const fetchData = async () => {
-        try {
-          const fetchedUsername = await getUsername(user.uid);
-          setUsername(fetchedUsername);
-          setUserId(user.uid);
+    fetchData();
+  });
 
-          // Fetch various stats and data
-          const productsSnapshot = await getDocs(collection(db, "users", userId, "products")); 
+  return () => unsubscribe();
+}, [auth, router]);
 
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          const userData = userDoc.exists()
-            ? userDoc.data()
-            : { visitCount: 0 };
-
-          setStats({
-            products: productsSnapshot.size,
-            visitors: userData.visitCount ?? 0,
-            sales: userData.sales ?? 0,
-            revenue: userData.revenue ?? 0,
-            orders: 120,
-            returningCustomers: 35,
-            reviews: 290,
-            averageOrderValue: 34.5,
-            conversionRate: 2.5,
-            lowStockItems: 15,
-            topCategory: "Electronics",
-            discountsUsed: 43,
-            refundsProcessed: 3,
-            outOfStockProducts: 7,
-            visitorData: userData.visitorData || [],
-          });
-
-          await fetchLeastAndMostViewedProducts(user.uid);
-
-          setLoading(false);
-        } catch (error) {
-          console.log("Error fetching dashboard data:", error);
-          setLoading(false);
-        }
-      };
-
-      fetchData();
-    });
-
-    return () => unsubscribe();
-  }, []);
 
   const fetchLeastAndMostViewedProducts = async (userId: string) => {
     try {
