@@ -655,7 +655,7 @@ const StoreDashboard = () => {
                 disabled={card.disabled}
               />
             ))}
-          </div>
+        </div>
         </div>
 
         {/* Recent Activity / Notifications */}
