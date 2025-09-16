@@ -16,8 +16,8 @@ export const getUserId = async (username: string): Promise<string | null> => {
       console.log("No user found with the specified username.");
       return null;
     }
-  } catch (error) {
-    console.error("Error fetching user ID:", error);
+  } catch (error:any) {
+    console?.error("Error fetching user ID:", error);
     return null;
   }
 };
