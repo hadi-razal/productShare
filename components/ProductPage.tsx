@@ -42,16 +42,18 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
     );
 
     if (userID && !isCounted) {
-      const ProductDocRef = doc(db, userID, productId);
+      const ProductDocRef = doc(db, "users", userID, "products", productId);
       await updateDoc(ProductDocRef, {
         views: increment(1),
       });
       sessionStorage.setItem(`MyShop_Product_${productId}_View`, "true");
     }
+
   };
 
   // To get total views of the product to visible only for the store owner
   useEffect(() => {
+    addProductCount();
     const fetchUserId = async () => {
       if (storeId) {
         const id = await getUserId(storeId);
