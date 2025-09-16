@@ -142,7 +142,7 @@ const ProductCard = ({
           height={0}
           src={product.images[0]}
           alt={product.name}
-          className="w-full h-48 object-contain rounded-t-lg"
+          className="w-full h-48 object-cover rounded-t-lg"
         />
         <div className="absolute top-1 left-1 flex gap-2">
           {!product.isInStock && (
