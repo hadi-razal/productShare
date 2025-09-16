@@ -537,53 +537,15 @@ const StoreDashboard = () => {
             icon={Users}
             loading={loading}
           />
-          <StatCard
-            title="Total Sales"
-            value={stats.sales}
-            trend={5}
-            icon={ShoppingCart}
-            loading={loading}
-          />
-          <StatCard
-            title="Revenue"
-            value={stats.revenue}
-            trend={15}
-            icon={DollarSign}
-            loading={loading}
-            currency={true}
-          />
-        </div>
 
-        {/* Secondary Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
           <StatCard
-            title="Orders"
-            value={stats.orders}
-            trend={3}
-            icon={ShoppingCart}
-            loading={loading}
-          />
-          <StatCard
-            title="Conversion Rate"
-            value={stats.conversionRate}
-            trend={-2}
-            icon={Percent}
-            loading={loading}
-          />
-          <StatCard
-            title="Returning Customers"
-            value={stats.returningCustomers}
-            trend={7}
-            icon={UserCheck}
-            loading={loading}
-          />
-          <StatCard
-            title="Low Stock"
+            title="Out of Stock"
             value={stats.lowStockItems}
             trend={-4}
             icon={AlertTriangle}
             loading={loading}
           />
+
           <StatCard
             title="Refunds"
             value={stats.refundsProcessed}
@@ -591,7 +553,10 @@ const StoreDashboard = () => {
             icon={RotateCcw}
             loading={loading}
           />
+          
         </div>
+
+        
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Visitor Analytics */}
@@ -658,53 +623,7 @@ const StoreDashboard = () => {
         </div>
         </div>
 
-        {/* Recent Activity / Notifications */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
-          <div className="space-y-3">
-            {loading ? (
-              [...Array(3)].map((_, i) => (
-                <div key={i} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                  <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse mr-3"></div>
-                  <div className="flex-1">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse"></div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <>
-                <div className="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-100">
-                  <div className="flex-shrink-0 p-2 bg-blue-100 rounded-full mr-3">
-                    <Eye className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-800">Store visited by 12 new customers</p>
-                    <p className="text-sm text-gray-600">2 hours ago</p>
-                  </div>
-                </div>
-                <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                  <div className="flex-shrink-0 p-2 bg-green-100 rounded-full mr-3">
-                    <ShoppingCart className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-800">New order received #ORD-2189</p>
-                    <p className="text-sm text-gray-600">5 hours ago</p>
-                  </div>
-                </div>
-                <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                  <div className="flex-shrink-0 p-2 bg-yellow-100 rounded-full mr-3">
-                    <Star className="w-5 h-5 text-yellow-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-8 00">New 5-star review for "Wireless Headphones"</p>
-                    <p className="text-sm text-gray-600">Yesterday</p>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+       
       </div>
     </div>
   );

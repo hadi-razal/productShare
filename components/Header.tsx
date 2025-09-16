@@ -160,7 +160,7 @@ const Header = () => {
             {!isStorePage && isAuthenticated && (
               <button
                 onClick={handleLogout}
-                className="text-sm font-medium text-red-600 border border-red-300 px-4 py-1.5 rounded-md hover:bg-red-50 transition"
+                className="text-sm font-medium text-white bg-red-600 border border-red-300 px-4 py-1.5 rounded-md hover:bg-red-400 transition"
               >
                 Logout
               </button>
@@ -210,7 +210,7 @@ const Header = () => {
                   handleLogout();
                   setMenuOpen(false);
                 }}
-                className="text-red-600 border border-red-300 py-2 rounded-md hover:bg-red-50 font-medium"
+                className="text-white bg-red-600 border  py-2 rounded-md hover:bg-red-50 font-medium"
               >
                 Logout
               </button>
