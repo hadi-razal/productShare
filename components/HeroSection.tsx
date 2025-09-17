@@ -10,14 +10,14 @@ const HeroSection = () => {
     <section className="relative min-h-[90vh] flex flex-col justify-center items-center px-4 py-10 text-center bg-gradient-to-br from-slate-50 to-slate-100">
       
       {/* Background Image */}
-      <Image
+      {/* <Image
         src="/hero_bg.jpg"
         alt="Background"
         fill
         style={{ objectFit: "cover" }}
         className="z-10 opacity-10"
         priority
-      />
+      /> */}
 
       {/* Trust Badge */}
       <motion.div

@@ -490,7 +490,7 @@ const StoreDashboard = () => {
     <div className="min-h-screen bg-gray-50 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Header */}
-        <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between  gap-4">
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
@@ -509,7 +509,7 @@ const StoreDashboard = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center jc gap-3">
             <Link
               href={`/store/${username}`}
               className="hidden sm:flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50"
@@ -519,6 +519,7 @@ const StoreDashboard = () => {
             </Link>
             <PaymentButton userId={userId} />
           </div>
+
         </div>
 
         {/* Stats Grid */}

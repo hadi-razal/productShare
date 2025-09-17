@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import ProgressBar from "@/components/ProgressBar";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
+import Script from "next/script";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -155,10 +156,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en-IN" dir="ltr">
-      <head />
+
+     <head/>
+     
       <body
         className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+         {/* Load Razorpay script globally */}
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="beforeInteractive"
+        />
+        
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-blue-600 text-white p-2 z-50"
