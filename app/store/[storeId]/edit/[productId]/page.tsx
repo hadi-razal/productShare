@@ -52,7 +52,7 @@ const EditProduct = () => {
                 setIsLoading(false)
                 console.log("no product id found")
             }
-            const productRef = doc(db, userId, productId as string);
+            const productRef = doc(db, 'users', userId,'products', productId as string);
             const productSnap = await getDoc(productRef);
 
             if (productSnap.exists()) {
@@ -147,7 +147,7 @@ const EditProduct = () => {
                 images: [...productData.images, ...imageUrls]
             };
 
-            const productRef = doc(db, userId, productId as string);
+            const productRef = doc(db, 'user',userId ,'products', productId as string);
             await updateDoc(productRef, updatedData);
             console.log('Product updated successfully!');
             router.push(`/store/${storeId}`);
