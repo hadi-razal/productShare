@@ -165,7 +165,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
     body: JSON.stringify({ amount }),
     headers: { "Content-Type": "application/json" },
   });
-  const order = await res.json();
+  const order = await res?.json();
 
   const options = {
     key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // public key
