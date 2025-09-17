@@ -89,7 +89,7 @@ const ProductCard = ({
         toast.success("Error");
         return;
       }
-      await deleteDoc(doc(db, userId, product.id));
+      await deleteDoc(doc(db, 'user',userId,'products', product.id));
       refetchProducts();
       toast.success("Product deleted successfully!");
       setShowDeleteModal(false);
