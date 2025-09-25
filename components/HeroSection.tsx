@@ -47,9 +47,6 @@ const HeroSection = () => {
         
         <motion.div
           className="md:space-y-6 sm:space-y-4 space-y-2"
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
         >
     
           <div className="inline-flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-2xl text-sm text-slate-600">
@@ -82,9 +79,7 @@ const HeroSection = () => {
        
         <motion.div
           className="relative"
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          
         >
           <div className="bg-gradient-to-br from-slate-50 to-white border rounded-xl p-6 shadow-lg">
             {/* Header */}
@@ -103,9 +98,7 @@ const HeroSection = () => {
                 <motion.div
                   key={product.id}
                   className="bg-white border rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.1 * index }}
+                 
                 >
                  
                   <div className="relative mb-3">

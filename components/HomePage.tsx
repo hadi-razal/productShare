@@ -66,13 +66,7 @@ const Home = () => {
     },
   ];
 
-  const stats = [
-    { icon: <Users className="w-8 h-8" />, value: "500+", label: "Happy Customers" },
-    { icon: <TrendingUp className="w-8 h-8" />, value: "500%", label: "Average Growth" },
-    { icon: <Award className="w-8 h-8" />, value: "99.9%", label: "Uptime" },
-    { icon: <Zap className="w-8 h-8" />, value: "2 min", label: "Setup Time" }
-  ];
-
+ 
   const testimonials = [
     {
       name: "Priya Sharma",
@@ -210,32 +204,7 @@ const Home = () => {
         </motion.div>
       </div>
 
-      {/* Stats Section */}
-      <section className="py-12 bg-gradient-to-r from-gray-900 via-purple-900 to-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <motion.div 
-            className="grid grid-cols-2 md:grid-cols-4 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {stats.map((stat, index) => (
-              <motion.div 
-                key={index} 
-                className="text-center text-white"
-                variants={itemVariants}
-              >
-                <div className="flex justify-center mb-3" style={{ color: primaryColor }}>
-                  {stat.icon}
-                </div>
-                <div className="text-2xl sm:text-3xl font-bold mb-1">{stat.value}</div>
-                <div className="text-gray-300 text-sm">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+    
 
       {/* Enhanced Features Section */}
       <section id="features" className="mx-auto max-w-7xl px-4 sm:px-6 py-20">
