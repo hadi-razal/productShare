@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import localFont from "next/font/local";
-import "../globals.css";
+import "./globals.css";
 import Header from "@/components/Header";
 import ProgressBar from "@/components/ProgressBar";
 import { Toaster } from "react-hot-toast";
