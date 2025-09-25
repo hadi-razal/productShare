@@ -105,7 +105,7 @@ const Header = () => {
             ? ""
             : isScrolled
             ? "bg-white shadow-md"
-            : "bg-white/70 backdrop-blur-lg"
+            : "bg-white backdrop-blur-lg"
         }`}
         style={isStorePage && themeColor ? { backgroundColor: themeColor } : {}}
       >
