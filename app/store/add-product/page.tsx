@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 // @ts-ignore
 import { ChromePicker, ColorResult } from "react-color";
 
+
 const CreateProduct = () => {
   const [productData, setProductData] = useState<ProductType>({
     name: "",
