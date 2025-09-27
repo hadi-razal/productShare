@@ -2,29 +2,20 @@
 
 import React, { useEffect, useState } from "react";
 import { Check, X, Zap } from "lucide-react";
-import {
-  arrayUnion,
-  doc,
-  getDoc,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import toast from "react-hot-toast";
 
 // -----------------------------
-// UI COMPONENTS
+// UI Components (same as before)
 // -----------------------------
-
 interface DialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
 }
-
 const Dialog: React.FC<DialogProps> = ({ open, onOpenChange, children }) => {
   if (!open) return null;
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
@@ -40,7 +31,6 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "outline";
   className?: string;
 }
-
 const Button: React.FC<ButtonProps> = ({
   children,
   variant = "default",
@@ -49,17 +39,12 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   const baseStyles =
     "inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50";
-
   const variants = {
     default: "bg-primary text-white hover:bg-indigo-700",
     outline: "border border-gray-200 bg-white hover:bg-gray-100 text-gray-900",
   };
-
   return (
-    <button
-      className={`${baseStyles} ${variants[variant]} ${className}`}
-      {...props}
-    >
+    <button className={`${baseStyles} ${variants[variant]} ${className}`} {...props}>
       {children}
     </button>
   );
@@ -69,7 +54,6 @@ interface SwitchProps {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
 }
-
 const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange }) => (
   <button
     role="switch"
@@ -91,13 +75,11 @@ interface BadgeProps {
   children: React.ReactNode;
   variant?: "default" | "secondary";
 }
-
 const Badge: React.FC<BadgeProps> = ({ children, variant = "default" }) => {
   const variants = {
     default: "bg-gray-100 text-gray-900",
     secondary: "bg-green-100 text-green-700",
   };
-
   return (
     <span
       className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${variants[variant]}`}
@@ -108,12 +90,11 @@ const Badge: React.FC<BadgeProps> = ({ children, variant = "default" }) => {
 };
 
 // -----------------------------
-// PLAN CONFIG
+// Plan Config
 // -----------------------------
-
 const plan = {
   name: "Pro Plan",
-  monthlyPrice: 1000, // 100 = ₹1, so 10000 = ₹100
+  monthlyPrice: 100, // ₹1000
   yearlyPrice: 999900, // ₹9999
   features: [
     "Up to 100 products",
@@ -121,21 +102,20 @@ const plan = {
     "Videos can be added to the product display",
     "Priority support",
     "Unlimited product images per item",
-    "Shareable catalog link for easy distribution",
-    "User-friendly product search and filtering",
-    "Integration with social media sharing",
-    "Add-to-cart or wishlist options for users",
+    "Shareable catalog link",
+    "User-friendly product search",
+    "Integration with social media",
+    "Add-to-cart or wishlist options",
     "Customer feedback and review section",
-    "SEO-friendly URLs for better online visibility",
-    "Password-protected catalog for privacy",
-    "Display sale and discount tags on products",
+    "SEO-friendly URLs",
+    "Password-protected catalog",
+    "Display sale and discount tags",
   ],
 };
 
 // -----------------------------
-// MAIN COMPONENT
+// Main Component
 // -----------------------------
-
 interface PricingButtonProps {
   userId: string;
 }
@@ -146,60 +126,62 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
   const [isPremiumUser, setIsPremiumUser] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Load Razorpay script on mount
+  // ✅ Load Razorpay script
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     script.onload = () => console.log("Razorpay SDK loaded ✅");
-    script.onerror = () => console.error("Failed to load Razorpay SDK ❌");
     document.body.appendChild(script);
   }, []);
 
-  const handlePayment = async () => {
-  const amount = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
+  // ✅ Handle subscription flow
+  const handleSubscription = async () => {
+    const planId = isYearly
+      ? process.env.NEXT_PUBLIC_RZP_YEARLY_PLAN_ID
+      : process.env.NEXT_PUBLIC_RZP_MONTHLY_PLAN_ID;
 
-  // create order on backend
-  const res = await fetch("/api/create-order", {
-    method: "POST",
-    body: JSON.stringify({ amount }),
-    headers: { "Content-Type": "application/json" },
-  });
-  const order = await res?.json();
+    const res = await fetch("/api/create-order", {
+      method: "POST",
+      body: JSON.stringify({ planId }),
+      headers: { "Content-Type": "application/json" },
+    });
 
-  const options = {
-    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // public key
-    amount: order.amount,
-    currency: order.currency,
-    order_id: order.id,
-    name: "Product Share",
-    description: `${plan.name} - ${isYearly ? "Annual" : "Monthly"} Subscription`,
-    image: "/logo.png",
-    handler: async (response: any) => {
-      toast.success("Payment Successful 🎉");
-      // update Firestore etc.
-    },
-    theme: { color: "#4F46E5" },
+    const subscription = await res.json();
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      subscription_id: subscription.id,
+      name: "Product Share",
+      description: `${plan.name} - ${isYearly ? "Annual" : "Monthly"} Subscription`,
+      handler: async (response: any) => {
+        toast.success("Subscription started 🎉");
+        // ✅ Save subscription to Firestore
+        await updateDoc(doc(db, "users", userId), {
+          isPremiumUser: true,
+          subscriptionId: subscription.id,
+          subscribedAt: serverTimestamp(),
+        });
+        setIsOpen(false);
+      },
+      theme: { color: "#4F46E5" },
+    };
+
+    const rzp = new (window as any).Razorpay(options);
+    rzp.open();
   };
 
-  const rzp = new (window as any).Razorpay(options);
-  rzp.open();
-};
-
-
+  // ✅ Fetch user to check premium status
   useEffect(() => {
     if (!userId) {
       console.warn("userId is undefined");
       setLoading(false);
       return;
     }
-
     const fetchUser = async () => {
       try {
         const userDoc = await getDoc(doc(db, "users", userId));
-        const userData = userDoc.exists()
-          ? userDoc.data()
-          : { isPremiumUser: false };
+        const userData = userDoc.exists() ? userDoc.data() : { isPremiumUser: false };
         setIsPremiumUser(userData.isPremiumUser);
       } catch (error) {
         console.error("Error fetching user data: ", error);
@@ -207,7 +189,6 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
         setLoading(false);
       }
     };
-
     fetchUser();
   }, [userId]);
 
@@ -223,10 +204,10 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <div className="bg-white rounded-xl shadow-2xl">
           <div className="relative p-6">
-            {/* Close Button */}
+            {/* Close */}
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100"
+              className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100"
             >
               <X className="h-4 w-4" />
             </button>
@@ -238,7 +219,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
               </h2>
             </div>
 
-            {/* Billing Toggle */}
+            {/* Toggle */}
             <div className="flex items-center justify-center gap-4 mb-8">
               <span
                 className={`text-sm ${
@@ -284,7 +265,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
               </ul>
 
               <div className="text-center">
-                <Button onClick={handlePayment} className="w-full">
+                <Button onClick={handleSubscription} className="w-full">
                   Subscribe {isYearly ? "Yearly" : "Monthly"} - ₹
                   {((isYearly ? plan.yearlyPrice : plan.monthlyPrice) / 100).toFixed(2)}
                 </Button>
