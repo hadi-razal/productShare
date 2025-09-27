@@ -84,7 +84,7 @@ const StatCard = ({ title, value, trend, icon: Icon, loading, currency }: any) =
 const ActionCard = ({ title, href = "#", icon: Icon, description, disabled }: any) => (
   <Link
     href={disabled ? "#" : href}
-    className={`block rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5 ${
+    className={`block rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all hover:shadow-md  ${
       disabled ? "opacity-60 cursor-not-allowed" : ""
     }`}
     onClick={(e) => {
@@ -221,10 +221,10 @@ const VisitorStats = ({ visitorData, loading }: any) => {
   const stats = getStats();
   
   return (
-    <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+    <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100 h-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-gray-800">Visitor Analytics</h3>
-        <div className="flex bg-gray-100 rounded-lg p-1">
+        <div className="flex bg-gray-100 rounded-lg p-1 h-full">
           {["week", "month"].map((period) => (
             <button
               key={period}
@@ -318,34 +318,6 @@ const actionCards = [
     href: "/store/reviews",
     icon: Star,
     description: "View and manage customer feedback",
-  },
-  {
-    title: "Order Management",
-    href: "/store/orders",
-    icon: ShoppingCart,
-    description: "Process and track orders",
-    disabled: true,
-  },
-  {
-    title: "Discount Codes",
-    href: "/store/discounts",
-    icon: Tag,
-    description: "Create and manage promotions",
-    disabled: true,
-  },
-  {
-    title: "Customer Messages",
-    href: "/store/messages",
-    icon: MessageSquare,
-    description: "Respond to customer inquiries",
-    disabled: true,
-  },
-  {
-    title: "Analytics Report",
-    href: "/store/analytics",
-    icon: BarChart3,
-    description: "Detailed performance insights",
-    disabled: true,
   },
 ];
 
@@ -523,7 +495,7 @@ const StoreDashboard = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           <StatCard
             title="Total Products"
             value={stats.products}
@@ -544,14 +516,6 @@ const StoreDashboard = () => {
             value={stats.lowStockItems}
             trend={-4}
             icon={AlertTriangle}
-            loading={loading}
-          />
-
-          <StatCard
-            title="Refunds"
-            value={stats.refundsProcessed}
-            trend={-10}
-            icon={RotateCcw}
             loading={loading}
           />
           
@@ -580,31 +544,12 @@ const StoreDashboard = () => {
           </div>
         </div>
 
-        {/* Trending Keywords */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Trending Search Keywords
-            </h2>
-            <span className="text-sm text-gray-500">Last 7 days</span>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {trendingKeywords.map((item, index) => (
-              <KeywordPill key={index} keyword={item.keyword} count={item.count} />
-            ))}
-          </div>
-        </div>
 
         {/* Quick Actions */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
-            <Link 
-              href="/store/settings" 
-              className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
-            >
-              Manage store <ChevronRight className="w-4 h-4" />
-            </Link>
+            
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {actionCards.map((card, index) => (
@@ -618,7 +563,6 @@ const StoreDashboard = () => {
                 }
                 icon={card.icon}
                 description={card.description}
-                disabled={card.disabled}
               />
             ))}
         </div>

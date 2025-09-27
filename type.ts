@@ -2,6 +2,7 @@ export interface ProductType {
     id?: string; 
     createdAt?:any;
     name: string;
+    video?: any;
     description: string;
     category: string;
     colors:string[];
