@@ -2,7 +2,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { getFirestore } from "firebase/firestore"; // Import Firestore
+import { getFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics"; // Import Firestore
 
 // Your web app's Firebase configuration
 // firebaseConfig.js
@@ -13,6 +14,7 @@ const firebaseConfig = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: "G-2C10LWX5H9"
 };
 
 export default firebaseConfig;
@@ -23,6 +25,7 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase Authentication, Firestore, and Storage
 const auth = getAuth(app);
 const storage = getStorage(app);
-const db = getFirestore(app); // Initialize Firestore
+const db = getFirestore(app);
+const analytics = getAnalytics(app); // Initialize Firestore
 
-export { app, auth, storage, db };
+export { app, auth, storage, db,analytics };
