@@ -66,6 +66,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
   const mediaArray = getMediaArray();
 
   const addProductCount = async () => {
+    if (typeof window === "undefined") return; // Skip on server side
+    
     const userID = await getUserId(storeId as string);
 
     const isCounted = sessionStorage.getItem(

@@ -29,6 +29,7 @@ const StoreProducts: React.FC<StoreProductsProps> = ({ storeId }) => {
 
   const fetchProducts = async () => {
     if (!storeId) return;
+    if (typeof window === "undefined") return; // Skip on server side
     try {
       const userID = await getUserId(storeId);
 
