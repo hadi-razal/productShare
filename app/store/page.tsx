@@ -49,7 +49,7 @@ import Image from "next/image";
 const StatCard = ({ title, value, trend, icon: Icon, loading, currency }: any) => (
   <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100 hover:shadow-md transition-shadow">
     <div className="flex items-center justify-between">
-      <div className={`p-3 rounded-lg ${loading ? 'bg-gray-200 animate-pulse' : 'bg-purple-100'}`}>
+      <div className={`p-3 rounded-lg ${loading ? 'bg-gray-200 anim.ate-pulse' : 'bg-purple-100'}`}>
         <Icon className="w-5 h-5 text-blue-700" />
       </div>
       {trend !== undefined && !loading && (

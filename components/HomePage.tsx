@@ -75,7 +75,7 @@ const Home = () => {
         "This platform completely revolutionized the way we showcase and market our products. Our sales increased by 300% in just 3 months!",
       location: "Mumbai",
       rating: 5,
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b5c5?w=100&h=100&fit=crop&crop=face",
+      avatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23000000'/%3E%3C/svg%3E",
       company: "Fashion Hub"
     },
     {
@@ -85,7 +85,7 @@ const Home = () => {
         "An incredibly intuitive and powerful marketing solution that helped boost my sales dramatically. The support team is amazing!",
       location: "Delhi",
       rating: 5,
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+      avatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23000000'/%3E%3C/svg%3E",
       company: "Tech Solutions"
     },
     {
@@ -95,7 +95,7 @@ const Home = () => {
         "The analytics and insights provided are game-changing. I can now make data-driven decisions that actually impact my bottom line.",
       location: "Bangalore",
       rating: 5,
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+      avatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23000000'/%3E%3C/svg%3E",
       company: "Growth Co"
     }
   ];

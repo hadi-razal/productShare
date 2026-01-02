@@ -34,9 +34,16 @@ const PricingPolicy = () => {
       </p>
 
       <h3>Refund Policy</h3>
-      <p>
-        As our plans are based on one-time payments for a set period (monthly or yearly), we do not offer refunds after the purchase is made. Please review your selected plan carefully before proceeding with the purchase.
-      </p>
+<p>
+As our plans are based on one-time payments for a set period (monthly or yearly), we generally do not offer refunds once the purchase is completed. We strongly encourage you to review your selected plan carefully before proceeding with the purchase.
+</p>
+<p>
+However, in compliance with mandatory consumer protection regulations, customers are eligible to request a refund within <strong>14 days</strong> of the purchase date, provided that the service has not been significantly used or abused during this period. Refund requests made after 14 days from the purchase date will not be accepted.
+</p>
+<p>
+To request a refund within the eligible period, please contact our support team with your order details. Approved refunds will be processed using the original payment method within a reasonable processing time.
+</p>
+
 
       <h3>Customer Support</h3>
       <p>
