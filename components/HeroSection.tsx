@@ -79,64 +79,78 @@ const HeroSection = () => {
        
         <motion.div
           className="relative"
-          
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="bg-gradient-to-br from-slate-50 to-white border rounded-xl p-6 shadow-lg">
+          <div className="bg-gradient-to-br from-white via-slate-50 to-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-xl hover:shadow-2xl transition-all duration-300">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-slate-800">Featured Products</h3>
-              <div className="flex gap-2">
-                <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
+              <div>
+                <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-1">Featured Products</h3>
+                <p className="text-xs text-slate-500">Best deals of the week</p>
+              </div>
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></div>
+                <div className="w-2.5 h-2.5 bg-yellow-500 rounded-full"></div>
+                <div className="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
               </div>
             </div>
             
-         
-            <div className="grid grid-cols-2 gap-4">
+            {/* Products Grid */}
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
               {mockProducts.map((product, index) => (
                 <motion.div
                   key={product.id}
-                  className="bg-white border rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer"
-                 
+                  className="group bg-white border border-slate-200 rounded-xl p-3 md:p-4 hover:border-primary/30 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
+                  whileHover={{ y: -4 }}
                 >
-                 
-                  <div className="relative mb-3">
+                  {/* Product Image */}
+                  <div className="relative mb-3 overflow-hidden rounded-lg bg-slate-100">
                     <img 
                       src={product.image} 
                       alt={product.name}
-                      className="w-full h-16 sm:h-20 object-cover rounded"
+                      className="w-full h-24 md:h-28 object-cover group-hover:scale-110 transition-transform duration-300"
                     />
-                   
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                    {/* Discount Badge */}
+                    <span className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] md:text-xs px-2 py-1 rounded-full font-bold shadow-lg">
                       {product.discount}
                     </span>
                   </div>
                   
-                 
+                  {/* Product Info */}
                   <div className="space-y-2">
-                    <h4 className="text-sm font-medium text-slate-800 line-clamp-1">
+                    <h4 className="text-xs md:text-sm font-semibold text-slate-900 line-clamp-1 group-hover:text-primary transition-colors">
                       {product.name}
                     </h4>
                     
-                   
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-green-600">
-                        &#8377;{product.salePrice}
+                    {/* Price */}
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-sm md:text-base font-bold text-green-600">
+                        ₹{product.salePrice}
                       </span>
-                      <span className="text-xs text-slate-400 line-through">
-                        &#8377;{product.originalPrice}
+                      <span className="text-[10px] md:text-xs text-slate-400 line-through">
+                        ₹{product.originalPrice}
                       </span>
                     </div>
                     
-                  
-                    <div className="flex items-center gap-[2px]">
-                      {[...Array(5)].map((_, i) => (
-                        <span key={i} className="text-yellow-400 text-xs">
-                          ⭐
-                        </span>
-                      ))}
-                      <span className="text-xs text-slate-500 ml-1">
+                    {/* Rating */}
+                    <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <svg
+                            key={i}
+                            className="w-3 h-3 text-yellow-400 fill-current"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                          </svg>
+                        ))}
+                      </div>
+                      <span className="text-[10px] text-slate-500 font-medium">
                         (4.{Math.floor(Math.random() * 9) + 1})
                       </span>
                     </div>
@@ -147,21 +161,30 @@ const HeroSection = () => {
             
             {/* View More Button */}
             <motion.button 
-              className="w-full mt-4 bg-blue-50 hover:bg-blue-100 text-primary py-2 rounded-lg text-sm font-medium transition-colors"
-            
-             
+              className="w-full mt-6 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white py-3 rounded-xl text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 group"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              View All Products →
+              View All Products
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
             </motion.button>
           </div>
           
           {/* Floating Elements */}
-          <div className="absolute -top-4 -right-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
-            Live Catalog
-          </div>
-          <div className="absolute -bottom-4 -left-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
-            Mobile Ready
-          </div>
+          <motion.div 
+            className="absolute -top-3 -right-3 bg-gradient-to-r from-primary to-primary/90 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl z-10"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            🔴 Live Catalog
+          </motion.div>
+          <motion.div 
+            className="absolute -bottom-3 -left-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl z-10"
+            animate={{ y: [0, 5, 0] }}
+            transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+          >
+            📱 Mobile Ready
+          </motion.div>
         </motion.div>
       </div>
     </section>
