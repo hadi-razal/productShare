@@ -28,11 +28,11 @@ const ProductCard = ({
   const router = useRouter();
   const [isStoreOwner, setIsStoreOwner] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const calculateDiscount = (): number => {
     const regularPrice = Number(product?.regularPrice);
     const discountPrice = Number(product?.discountPrice);
-
     if (
       !isNaN(regularPrice) &&
       !isNaN(discountPrice) &&
@@ -40,8 +40,7 @@ const ProductCard = ({
       discountPrice >= 0 &&
       discountPrice < regularPrice
     ) {
-      const discount = ((regularPrice - discountPrice) / regularPrice) * 100;
-      return Number(discount.toFixed(1));
+      return Number((((regularPrice - discountPrice) / regularPrice) * 100).toFixed(1));
     }
     return 0;
   };
@@ -49,25 +48,20 @@ const ProductCard = ({
   const discountPercentage = calculateDiscount();
   const isDiscounted = discountPercentage > 0;
 
-  const getDisplayPrice = () => {
-    if (isDiscounted) {
-      return Number(product?.discountPrice).toLocaleString("en-IN");
-    }
-    return Number(product?.regularPrice).toLocaleString("en-IN");
-  };
+  const getDisplayPrice = () =>
+    isDiscounted
+      ? Number(product?.discountPrice).toLocaleString("en-IN")
+      : Number(product?.regularPrice).toLocaleString("en-IN");
 
-  const getOriginalPrice = () => {
-    return Number(product?.regularPrice).toLocaleString("en-IN");
-  };
+  const getOriginalPrice = () =>
+    Number(product?.regularPrice).toLocaleString("en-IN");
 
   useEffect(() => {
     const getStoreOwner = async () => {
       try {
         const userId = await getUserId(storeId);
         onAuthStateChanged(auth, (user) => {
-          if (user && user.uid === userId) {
-            setIsStoreOwner(true);
-          }
+          if (user && user.uid === userId) setIsStoreOwner(true);
         });
       } catch (error) {
         console.log(error);
@@ -85,157 +79,151 @@ const ProductCard = ({
     try {
       e.stopPropagation();
       const userId = await getUserId(storeId);
-      if (!userId) {
-        toast.success("Error");
-        return;
-      }
-      await deleteDoc(doc(db, 'users',userId,'products', product.id));
-      refetchProducts();
+      if (!userId) { toast.error("Error"); return; }
+      await deleteDoc(doc(db, "users", userId, "products", product.id));
+      refetchProducts?.();
       toast.success("Product deleted successfully!");
       setShowDeleteModal(false);
     } catch (error) {
       console.log(error);
-      toast.error("Failed to delete product."); // Show error toast
+      toast.error("Failed to delete product.");
     }
   };
 
-  console.log(product);
-
+  // ── Skeleton ──────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="cursor-pointer relative w-full rounded-md border bg-gray-200 animate-pulse shadow-sm">
-        <div className="w-full h-48 bg-gray-300 rounded-t-md"></div>
-        <div className="p-2">
-          <div className="h-4 w-3/4 bg-gray-300 rounded-md mb-2"></div>
-          <div className="h-4 w-1/2 bg-gray-300 rounded-md mb-2"></div>
-          <div className="flex gap-2">
-            <div className="h-4 w-1/4 bg-gray-300 rounded-md"></div>
-            <div className="h-4 w-1/4 bg-gray-300 rounded-md"></div>
+      <div className="relative w-full rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+        <div className="w-full h-48 bg-gray-200 animate-pulse" />
+        <div className="p-3 space-y-2">
+          <div className="h-3.5 w-3/4 bg-gray-200 rounded-full animate-pulse" />
+          <div className="h-3 w-1/2 bg-gray-200 rounded-full animate-pulse" />
+          <div className="flex gap-2 pt-1">
+            <div className="h-3.5 w-1/4 bg-gray-200 rounded-full animate-pulse" />
+            <div className="h-3.5 w-1/4 bg-gray-200 rounded-full animate-pulse" />
           </div>
         </div>
       </div>
     );
   }
 
-  if (product.isHidden && !isStoreOwner) {
-    return;
-  }
+  if (product.isHidden && !isStoreOwner) return null;
 
   return (
     <div
       onClick={() => router.push(`/store/${storeId}/${product.id}`)}
-      className="cursor-pointer relative w-full rounded-md border bg-gray-50 shadow-sm transition-all duration-300 hover:shadow-lg"
+      className="cursor-pointer relative w-full rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
     >
-      <div className="relative">
+      {/* ── Image container ── */}
+      <div className="relative w-full h-48 bg-gray-100 rounded-t-xl overflow-hidden">
+        {/* Shimmer placeholder — fades out when image loads */}
+        {!imgLoaded && (
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 animate-pulse" />
+        )}
+
         {product.isHidden && isStoreOwner && (
-          <div className="bg-black/75 absolute flex flex-col items-center justify-center w-full h-full">
-            <span className="text-white text-sm font-medium px-3">
-              This product is hidden
-            </span>
+          <div className="absolute inset-0 z-10 bg-black/70 flex flex-col items-center justify-center">
+            <span className="text-white text-xs font-medium px-3 text-center">Hidden</span>
           </div>
         )}
 
         <Image
-          quality={50}
-          unoptimized={true}
-          width={0}
-          height={0}
           src={product.images[0]}
           alt={product.name}
-          className="w-full h-48 object-cover rounded-t-lg"
+          width={400}
+          height={300}
+          quality={80}
+          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+          className={`w-full h-48 object-cover transition-opacity duration-300 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+          onLoad={() => setImgLoaded(true)}
         />
-        <div className="absolute top-1 left-1 flex gap-2">
+
+        {/* Badges — top left */}
+        <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
           {!product.isInStock && (
-            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-700 text-white">
+            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-600 text-white shadow">
               Out of Stock
             </span>
           )}
           {isDiscounted && product.isInStock && (
-            <span className="px-2 py-1 bg-red-700 text-white rounded-full text-[12px] font-medium">
+            <span className="px-2 py-0.5 bg-red-600 text-white rounded-full text-[10px] font-bold shadow">
               {Math.round(discountPercentage)}% OFF
             </span>
           )}
         </div>
-        <div className="absolute top-1 right-1 flex gap-2">
-          {product.isNew && (
-            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-500 text-white">
-              New
-            </span>
-          )}
-        </div>
 
-        <div className="absolute bottom-0 right-0 flex gap-2">
-          {product.isMostSelling && (
-            <span className="px-3 py-1 text-xs flex items-center font-semibold rounded-md bg-red-700 text-white">
-              <FaStar className="text-yellow-400 pr-[2px]" /> Most Selling
-            </span>
-          )}
-        </div>
+        {/* Badges — top right */}
+        {product.isNew && (
+          <span className="absolute top-2 right-2 z-10 px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-500 text-white shadow">
+            New
+          </span>
+        )}
+
+        {/* Most Selling — bottom */}
+        {product.isMostSelling && (
+          <span className="absolute bottom-0 right-0 z-10 px-2 py-1 text-[10px] flex items-center gap-0.5 font-bold bg-red-600 text-white rounded-tl-lg">
+            <FaStar className="text-yellow-300 w-2.5 h-2.5" /> Top Seller
+          </span>
+        )}
       </div>
 
-      <div className="p-2">
-        <h3 className="font-light text-sm text-ellipsis line-clamp-3">
+      {/* ── Info ── */}
+      <div className="p-2.5">
+        <h3 className="text-sm text-gray-800 line-clamp-2 leading-snug mb-1.5">
           {product.name}
         </h3>
-        <div className="flex items-center gap-2 my-2">
-          <span
-            className={`text-md font-normal ${
-              isDiscounted ? "text-red-600" : "text-black"
-            }`}
-          >
+        <div className="flex items-baseline gap-1.5">
+          <span className={`text-sm font-semibold ${isDiscounted ? "text-red-600" : "text-gray-900"}`}>
             ₹{getDisplayPrice()}
           </span>
           {isDiscounted && (
-            <span className="text-sm text-gray-500 line-through">
-              ₹{getOriginalPrice()}
-            </span>
+            <span className="text-xs text-gray-400 line-through">₹{getOriginalPrice()}</span>
           )}
         </div>
-      
       </div>
 
+      {/* ── Owner controls ── */}
       {isStoreOwner && (
-        <div className="flex h-12 items-center justify-center w-full px-3">
-          <div className="flex gap-3 bottom-0 py-4 absolute items-center justify-center w-full px-3">
-            <button
-              onClick={(e) => {
-                handleDelete(e);
-              }}
-              className="flex items-center justify-center bg-red-600  py-2 px-3 w-full rounded-md text-white gap-1"
-            >
-              <Trash className="w-4 h-4" />
-              <span className="hidden sm:flex">Delete</span>
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                router.push(`/store/${storeId}/edit/${product.id}`);
-              }}
-              className="flex items-center justify-center bg-gray-500 w-full py-2 px-3 rounded-md text-white gap-1"
-            >
-              <PencilIcon className="w-4 h-4" />
-              <span className="hidden sm:flex">Edit</span>
-            </button>
-          </div>
+        <div className="flex gap-2 px-2.5 pb-2.5">
+          <button
+            onClick={handleDelete}
+            className="flex items-center justify-center gap-1 bg-red-500 hover:bg-red-600 py-1.5 px-3 w-full rounded-lg text-white text-xs font-medium transition-colors"
+          >
+            <Trash className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Delete</span>
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/store/${storeId}/edit/${product.id}`);
+            }}
+            className="flex items-center justify-center gap-1 bg-gray-500 hover:bg-gray-600 w-full py-1.5 px-3 rounded-lg text-white text-xs font-medium transition-colors"
+          >
+            <PencilIcon className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Edit</span>
+          </button>
         </div>
       )}
 
+      {/* ── Delete modal ── */}
       {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-4 rounded-lg shadow-lg">
-            <p className="mb-4 text-lg font-semibold">
-              Are you sure you want to delete this product?
-            </p>
-            <div className="flex justify-end gap-4">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4">
+            <p className="text-base font-semibold text-gray-900 mb-1">Delete product?</p>
+            <p className="text-sm text-gray-500 mb-5">This action cannot be undone.</p>
+            <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 rounded bg-gray-300"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-colors"
               >
                 Cancel
               </button>
               <button
-                onClick={(e) => confirmDelete(e)}
-                className="px-4 py-2 rounded bg-red-600 text-white"
+                onClick={confirmDelete}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors"
               >
                 Delete
               </button>

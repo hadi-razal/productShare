@@ -10,7 +10,6 @@ import {
   limit,
   orderBy,
   query,
-  where,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
@@ -23,337 +22,292 @@ import {
   Users,
   ArrowRight,
   Eye,
-  ShoppingCart,
-  DollarSign,
   TrendingUp,
   TrendingDown,
-  Search,
   BarChart3,
-  Calendar,
   RefreshCw,
   AlertTriangle,
-  CreditCard,
-  MessageSquare,
-  UserCheck,
-  Percent,
-  Tag,
-  RotateCcw,
-  Box,
   ChevronRight,
 } from "lucide-react";
 import { getUsername } from "@/helpers/getUsername";
 import PaymentButton from "@/components/PaymentButton";
 import Image from "next/image";
 
-// Stat Card Component
-const StatCard = ({ title, value, trend, icon: Icon, loading, currency }: any) => (
-  <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100 hover:shadow-md transition-shadow">
-    <div className="flex items-center justify-between">
-      <div className={`p-3 rounded-lg ${loading ? 'bg-gray-200 anim.ate-pulse' : 'bg-purple-100'}`}>
-        <Icon className="w-5 h-5 text-blue-700" />
+const PRIMARY = "#6c64cb";
+
+// ─── Greeting helper ───────────────────────────────────────────────────────
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+};
+
+// ─── Stat Card ─────────────────────────────────────────────────────────────
+const StatCard = ({ title, value, trend, icon: Icon, loading, iconGradient }: any) => (
+  <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-all duration-200 group">
+    <div className="flex items-center justify-between mb-4">
+      <div
+        className="w-11 h-11 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200"
+        style={{ background: iconGradient || `linear-gradient(135deg, ${PRIMARY}, #a78bfa)` }}
+      >
+        <Icon className="w-5 h-5 text-white" />
       </div>
       {trend !== undefined && !loading && (
         <div
-          className={`flex items-center text-xs font-medium px-2 py-1 rounded-full ${
+          className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
             trend >= 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
           }`}
         >
-          {trend >= 0 ? (
-            <TrendingUp className="w-3 h-3 mr-1" />
-          ) : (
-            <TrendingDown className="w-3 h-3 mr-1" />
-          )}
-          <span>{Math.abs(trend)}%</span>
+          {trend >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+          {Math.abs(trend)}%
         </div>
       )}
     </div>
-    <h3 className="mt-4 text-2xl font-bold text-gray-800">
+    <div className="space-y-1">
       {loading ? (
-        <div className="h-8 w-16 bg-gray-200 rounded animate-pulse"></div>
-      ) : currency ? (
-        `$${value?.toLocaleString() || 0}`
+        <div className="h-8 w-20 bg-gray-100 rounded-lg animate-pulse" />
       ) : (
-        value?.toLocaleString() ?? "0"
+        <p className="text-2xl font-bold text-gray-900">
+          {value?.toLocaleString() ?? "0"}
+        </p>
       )}
-    </h3>
-    <p className="mt-1 text-sm text-gray-500 font-medium">{title}</p>
+      <p className="text-sm text-gray-500 font-medium">{title}</p>
+    </div>
   </div>
 );
 
-// Enhanced Action Card Component with hover effects
-const ActionCard = ({ title, href = "#", icon: Icon, description, disabled }: any) => (
+// ─── Action Card ───────────────────────────────────────────────────────────
+const ActionCard = ({ title, href = "#", icon: Icon, description, disabled, gradient }: any) => (
   <Link
     href={disabled ? "#" : href}
-    className={`block rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all hover:shadow-md  ${
-      disabled ? "opacity-60 cursor-not-allowed" : ""
+    className={`group flex items-center gap-4 bg-white rounded-2xl p-5 border border-gray-100 hover:border-primary/20 hover:shadow-lg transition-all duration-200 ${
+      disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""
     }`}
-    onClick={(e) => {
-      if (disabled || href === "#") {
-        e.preventDefault();
-      }
-    }}
+    onClick={(e) => { if (disabled || href === "#") e.preventDefault(); }}
   >
-    <div className="relative p-5 bg-white">
-      <div className="flex items-center space-x-4">
-        <div className="p-3 bg-blue-50 rounded-xl">
-          <Icon className="w-6 h-6 text-blue-600" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-          <p className="mt-1 text-sm text-gray-600 truncate">{description}</p>
-        </div>
-        <ArrowRight className="w-5 h-5 text-gray-400" />
-      </div>
+    <div
+      className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-200 shadow-sm"
+      style={{ background: gradient || `linear-gradient(135deg, ${PRIMARY}, #a78bfa)` }}
+    >
+      <Icon className="w-5 h-5 text-white" />
     </div>
+    <div className="flex-1 min-w-0">
+      <p className="font-semibold text-gray-900 text-sm group-hover:text-primary transition-colors">{title}</p>
+      <p className="text-xs text-gray-500 mt-0.5 truncate">{description}</p>
+    </div>
+    <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
   </Link>
 );
 
-// Keyword Pill Component
-const KeywordPill = ({ keyword, count }: any) => (
-  <div className="flex items-center bg-gray-100 rounded-full px-4 py-2 text-sm">
-    <Search className="w-4 h-4 text-gray-500 mr-2" />
-    <span className="font-medium text-gray-700">{keyword}</span>
-    {count && (
-      <span className="ml-2 bg-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full">
-        {count}
-      </span>
-    )}
-  </div>
-);
-
-// Product View Card Component
-const ProductViewCard = ({ product, type, loading }: any) => (
-  <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
-    <div className="flex items-center justify-between mb-3">
-      <span className="text-sm font-medium text-gray-700 capitalize">
-        {type} Product
-      </span>
-      <div className="flex items-center text-xs text-gray-500">
-        <Eye className="w-4 h-4 mr-1" />
-        <span>Views</span>
+// ─── Product View Card ─────────────────────────────────────────────────────
+const ProductViewCard = ({ product, type, loading }: any) => {
+  const isMost = type === "Most Viewed";
+  return (
+    <div className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-all duration-200">
+      <div className="flex items-center justify-between mb-3">
+        <span
+          className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+            isMost ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
+          }`}
+        >
+          {isMost ? "🔥 Most Viewed" : "📉 Least Viewed"}
+        </span>
+        <Eye className="w-4 h-4 text-gray-300" />
       </div>
-    </div>
-    <div className="flex gap-3 items-center">
-      {loading ? (
-        <div className="w-16 h-16 bg-gray-200 rounded-md animate-pulse"></div>
-      ) : product?.images?.[0] ? (
-        <Image
-          alt={product.name || "Product"}
-          src={product.images[0]}
-          width={64}
-          height={64}
-          className="w-16 h-16 object-cover rounded-md"
-        />
-      ) : (
-        <div className="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center">
-          <Package className="w-6 h-6 text-gray-400" />
-        </div>
-      )}
-      <div className="flex-1 min-w-0">
-        <p className="font-semibold text-gray-800 truncate">
-          {loading ? (
-            <div className="h-5 w-32 bg-gray-200 rounded animate-pulse"></div>
-          ) : product ? (
-            product.name
-          ) : (
-            "No products yet"
-          )}
-        </p>
-        {!loading && product && (
-          <div className="flex items-center mt-1">
-            <Eye className="w-4 h-4 text-gray-500 mr-1" />
-            <span className="text-sm text-gray-600">{product.views || 0} views</span>
+      <div className="flex gap-3 items-center">
+        {loading ? (
+          <div className="w-14 h-14 bg-gray-100 rounded-xl animate-pulse flex-shrink-0" />
+        ) : product?.images?.[0] ? (
+          <Image
+            alt={product.name || "Product"}
+            src={product.images[0]}
+            width={56}
+            height={56}
+            className="w-14 h-14 object-cover rounded-xl flex-shrink-0"
+          />
+        ) : (
+          <div className="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Package className="w-6 h-6 text-gray-300" />
           </div>
         )}
+        <div className="flex-1 min-w-0">
+          {loading ? (
+            <div className="space-y-2">
+              <div className="h-4 w-28 bg-gray-100 rounded animate-pulse" />
+              <div className="h-3 w-16 bg-gray-100 rounded animate-pulse" />
+            </div>
+          ) : product ? (
+            <>
+              <p className="font-semibold text-sm text-gray-900 truncate">{product.name}</p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                <span className="font-bold text-gray-700">{product.views || 0}</span> views
+              </p>
+            </>
+          ) : (
+            <p className="text-sm text-gray-400">No products yet</p>
+          )}
+        </div>
+        {!loading && product && <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" />}
       </div>
-      {!loading && product && (
-        <ChevronRight className="w-5 h-5 text-gray-400" />
-      )}
     </div>
-  </div>
-);
+  );
+};
 
-// Visitor Stats Component
+// ─── Visitor Analytics ─────────────────────────────────────────────────────
 const VisitorStats = ({ visitorData, loading }: any) => {
   const [timeframe, setTimeframe] = useState("week");
-  
-  // Calculate stats based on timeframe
+
   const getStats = () => {
-    if (!visitorData || !visitorData.length) return { total: 0, change: 0 };
-    
+    if (!visitorData?.length) return { total: 0, change: 0 };
     const now = new Date();
-    let compareDate = new Date();
-    
-    if (timeframe === "week") {
-      compareDate.setDate(now.getDate() - 7);
-    } else if (timeframe === "month") {
-      compareDate.setMonth(now.getMonth() - 1);
-    }
-    
-    const currentPeriod = visitorData.filter((v: any) => 
-      new Date(v.timestamp?.toDate?.() || v.timestamp) >= compareDate
+    const compareDate = new Date();
+    if (timeframe === "week") compareDate.setDate(now.getDate() - 7);
+    else compareDate.setMonth(now.getMonth() - 1);
+
+    const current = visitorData.filter(
+      (v: any) => new Date(v.timestamp?.toDate?.() || v.timestamp) >= compareDate
     ).length;
-    
-    const previousPeriod = visitorData.filter((v: any) => {
-      const visitDate = new Date(v.timestamp?.toDate?.() || v.timestamp);
-      let startPrevious, endPrevious;
-      
-      if (timeframe === "week") {
-        startPrevious = new Date(compareDate);
-        startPrevious.setDate(startPrevious.getDate() - 7);
-        endPrevious = new Date(compareDate);
-      } else {
-        startPrevious = new Date(compareDate);
-        startPrevious.setMonth(startPrevious.getMonth() - 1);
-        endPrevious = new Date(compareDate);
-      }
-      
-      return visitDate >= startPrevious && visitDate < endPrevious;
+
+    const prevStart = new Date(compareDate);
+    if (timeframe === "week") prevStart.setDate(prevStart.getDate() - 7);
+    else prevStart.setMonth(prevStart.getMonth() - 1);
+
+    const prev = visitorData.filter((v: any) => {
+      const d = new Date(v.timestamp?.toDate?.() || v.timestamp);
+      return d >= prevStart && d < compareDate;
     }).length;
-    
-    const change = previousPeriod > 0 
-      ? Math.round(((currentPeriod - previousPeriod) / previousPeriod) * 100) 
-      : currentPeriod > 0 ? 100 : 0;
-    
-    return { total: currentPeriod, change };
+
+    const change = prev > 0 ? Math.round(((current - prev) / prev) * 100) : current > 0 ? 100 : 0;
+    return { total: current, change };
   };
-  
+
   const stats = getStats();
-  
+  const days = timeframe === "week" ? 7 : 30;
+
+  // Build bar data
+  const barData = Array.from({ length: Math.min(days, 14) }, (_, i) => {
+    const count = visitorData?.filter((v: any) => {
+      const visitDate = new Date(v.timestamp?.toDate?.() || v.timestamp);
+      const diff = Math.floor((Date.now() - visitDate.getTime()) / 86400000);
+      return diff === i;
+    }).length ?? 0;
+    return count;
+  });
+  const maxBar = Math.max(...barData, 1);
+
   return (
-    <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100 h-full">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-800">Visitor Analytics</h3>
-        <div className="flex bg-gray-100 rounded-lg p-1 h-full">
-          {["week", "month"].map((period) => (
+    <div className="bg-white rounded-2xl p-6 border border-gray-100 h-full">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h3 className="font-semibold text-gray-900">Visitor Analytics</h3>
+          <p className="text-xs text-gray-500 mt-0.5">Store page views over time</p>
+        </div>
+        <div className="flex bg-gray-100 rounded-xl p-1">
+          {["week", "month"].map((p) => (
             <button
-              key={period}
-              className={`px-3 py-1 text-xs rounded-md ${
-                timeframe === period
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-800"
+              key={p}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                timeframe === p ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-gray-700"
               }`}
-              onClick={() => setTimeframe(period)}
+              onClick={() => setTimeframe(p)}
             >
-              {period === "week" ? "7D" : "30D"}
+              {p === "week" ? "7 Days" : "30 Days"}
             </button>
           ))}
         </div>
       </div>
-      
+
       {loading ? (
-        <div className="h-24 bg-gray-100 rounded-lg animate-pulse"></div>
-      ) : visitorData && visitorData.length > 0 ? (
+        <div className="h-32 bg-gray-50 rounded-xl animate-pulse" />
+      ) : visitorData?.length > 0 ? (
         <>
-          <div className="flex items-end justify-between mb-2">
-            <span className="text-2xl font-bold text-gray-800">{stats.total}</span>
-            <div className={`flex items-center text-xs font-medium ${stats.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {stats.change >= 0 ? (
-                <TrendingUp className="w-4 h-4 mr-1" />
-              ) : (
-                <TrendingDown className="w-4 h-4 mr-1" />
-              )}
+          <div className="flex items-baseline gap-3 mb-5">
+            <span className="text-3xl font-bold text-gray-900">{stats.total}</span>
+            <div className={`flex items-center gap-1 text-sm font-semibold ${stats.change >= 0 ? "text-green-600" : "text-red-500"}`}>
+              {stats.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
               {Math.abs(stats.change)}%
             </div>
+            <span className="text-xs text-gray-400">vs prev period</span>
           </div>
-          <p className="text-sm text-gray-600 mb-4">Total visitors</p>
-          
-          {/* Simple bar chart visualization */}
-          <div className="flex items-end h-12 gap-1 pt-4">
-            {[...Array(7)].map((_, i) => {
-              const dayData = visitorData.filter((v: any) => {
-                const visitDate = new Date(v.timestamp?.toDate?.() || v.timestamp);
-                const dayDiff = Math.floor((new Date().getTime() - visitDate.getTime()) / (1000 * 60 * 60 * 24));
-                return dayDiff === i;
-              });
-              
-              const height = Math.min(100, (dayData.length / Math.max(1, stats.total)) * 100);
-              
-              return (
-                <div key={i} className="flex-1 flex flex-col items-center">
-                  <div
-                    className="w-full bg-blue-500 rounded-t-md"
-                    style={{ height: `${height}%` }}
-                  ></div>
-                  <span className="text-xs text-gray-500 mt-1">
-                    {i === 0 ? 'Today' : i === 1 ? '1d' : `${i}d`}
+
+          {/* Bar chart */}
+          <div className="flex items-end gap-1.5 h-20">
+            {barData.map((val, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                <div
+                  className="w-full rounded-t-md transition-all duration-500"
+                  style={{
+                    height: `${Math.max(4, (val / maxBar) * 100)}%`,
+                    background: val > 0
+                      ? `linear-gradient(to top, ${PRIMARY}, #a78bfa)`
+                      : "#f3f4f6",
+                  }}
+                />
+                {barData.length <= 8 && (
+                  <span className="text-[9px] text-gray-400">
+                    {i === 0 ? "T" : `${i}d`}
                   </span>
-                </div>
-              );
-            })}
+                )}
+              </div>
+            ))}
           </div>
         </>
       ) : (
-        <div className="text-center py-6 text-gray-500">
-          <BarChart3 className="w-12 h-12 mx-auto text-gray-300 mb-2" />
-          <p>No visitor data yet</p>
+        <div className="flex flex-col items-center justify-center py-10 text-center">
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3"
+            style={{ background: "linear-gradient(135deg, #f3f0ff, #e8e4ff)" }}
+          >
+            <BarChart3 className="w-6 h-6" style={{ color: PRIMARY }} />
+          </div>
+          <p className="text-sm font-medium text-gray-700">No visitor data yet</p>
+          <p className="text-xs text-gray-400 mt-1">Share your store link to get started</p>
         </div>
       )}
     </div>
   );
 };
 
-// Define available routes and feature status
+// ─── Action Cards config ────────────────────────────────────────────────────
 const actionCards = [
   {
     title: "Add New Product",
     href: "/store/add-product",
     icon: Plus,
     description: "List a new product in your showcase",
+    gradient: `linear-gradient(135deg, ${PRIMARY}, #a78bfa)`,
   },
   {
     title: "View Catalog",
     href: `/store/username`,
     icon: Package,
     description: "Browse and manage your product listings",
+    gradient: "linear-gradient(135deg, #059669, #34d399)",
   },
   {
     title: "Store Settings",
     href: "/store/settings",
     icon: Settings,
     description: "Adjust your store preferences and settings",
+    gradient: "linear-gradient(135deg, #d97706, #fbbf24)",
   },
   {
     title: "Customer Reviews",
     href: "/store/reviews",
     icon: Star,
     description: "View and manage customer feedback",
+    gradient: "linear-gradient(135deg, #dc2626, #f87171)",
   },
 ];
 
-// Sample trending keywords with counts
-const trendingKeywords = [
-  { keyword: "Shirt", count: 42 },
-  { keyword: "Best mac book under 7k", count: 28 },
-  { keyword: "Blue Jeans for users", count: 35 },
-  { keyword: "Fancy LED Bulb", count: 19 },
-  { keyword: "PS5", count: 56 },
-  { keyword: "GTA 5 PS5", count: 31 },
-  { keyword: "Women saree under 5000", count: 24 },
-  { keyword: "toys", count: 47 },
-  { keyword: "gaming pc", count: 39 },
-  { keyword: "Best laptop for students", count: 52 },
-  { keyword: "Kurta men", count: 33 },
-];
-
-// Main Dashboard Component
+// ─── Main Dashboard ─────────────────────────────────────────────────────────
 const StoreDashboard = () => {
   const [stats, setStats] = useState({
     products: null,
     visitors: null,
-    sales: null,
-    revenue: null,
-    orders: null,
-    returningCustomers: null,
-    reviews: null,
-    averageOrderValue: null,
-    conversionRate: null,
     lowStockItems: null,
-    topCategory: null,
-    discountsUsed: null,
-    refundsProcessed: null,
-    outOfStockProducts: null,
-    visitorData: [],
+    visitorData: [] as any[],
   });
   const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -366,142 +320,113 @@ const StoreDashboard = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/login");
-        return;
-      }
-
+      if (!user) { router.push("/login"); return; }
       fetchDashboardData(user.uid);
     });
-
     return () => unsubscribe();
-  }, [auth, router]);
+  }, []);
 
   const fetchDashboardData = async (uid: string) => {
     try {
       setLoading(true);
-      console.log("User ID:", uid);
-
       const fetchedUsername = await getUsername(uid);
       setUsername(fetchedUsername);
       setUserId(uid);
 
-      const productsSnapshot = await getDocs(
-        collection(db, "users", uid, "products")
-      );
-
+      const productsSnapshot = await getDocs(collection(db, "users", uid, "products"));
       const userDoc = await getDoc(doc(db, "users", uid));
       const userData = userDoc.exists() ? userDoc.data() : { visitCount: 0 };
 
       setStats({
         products: productsSnapshot.size,
         visitors: userData.visitCount ?? 0,
-        sales: userData.sales ?? 0,
-        revenue: userData.revenue ?? 0,
-        orders: 120,
-        returningCustomers: 35,
-        reviews: 290,
-        averageOrderValue: 34.5,
-        conversionRate: 2.5,
-        lowStockItems: 15,
-        topCategory: "Electronics",
-        discountsUsed: 43,
-        refundsProcessed: 3,
-        outOfStockProducts: 7,
+        lowStockItems: userData.lowStockItems ?? 0,
         visitorData: userData.visitorData || [],
       });
 
-      await fetchLeastAndMostViewedProducts(uid);
-      setLoading(false);
-      setRefreshing(false);
+      await fetchProductViews(uid);
     } catch (error) {
       console.log("Error fetching dashboard data:", error);
+    } finally {
       setLoading(false);
       setRefreshing(false);
+    }
+  };
+
+  const fetchProductViews = async (uid: string) => {
+    try {
+      const [leastSnap, mostSnap] = await Promise.all([
+        getDocs(query(collection(db, "users", uid, "products"), orderBy("views"), limit(1))),
+        getDocs(query(collection(db, "users", uid, "products"), orderBy("views", "desc"), limit(1))),
+      ]);
+      setLeastViewedProduct(leastSnap.docs[0]?.data() ?? null);
+      setMostViewedProduct(mostSnap.docs[0]?.data() ?? null);
+    } catch (error) {
+      console.log("Error fetching product views:", error);
     }
   };
 
   const handleRefresh = () => {
+    if (!userId) return;
     setRefreshing(true);
-    if (userId) {
-      fetchDashboardData(userId);
-    }
-  };
-
-  const fetchLeastAndMostViewedProducts = async (userId: string) => {
-    try {
-      if (!userId) {
-        console.log("User ID is not defined. Cannot fetch product view data.");
-        return;
-      }
-
-      const leastViewedQuery = query(
-        collection(db, "users", userId, "products"),
-        orderBy("views"),
-        limit(1)
-      );
-      const mostViewedQuery = query(
-        collection(db, "users", userId, "products"),
-        orderBy("views", "desc"),
-        limit(1)
-      );
-
-      const [leastViewedSnapshot, mostViewedSnapshot] = await Promise.all([
-        getDocs(leastViewedQuery),
-        getDocs(mostViewedQuery),
-      ]);
-
-      setLeastViewedProduct(leastViewedSnapshot.docs[0]?.data() ?? null);
-      setMostViewedProduct(mostViewedSnapshot.docs[0]?.data() ?? null);
-    } catch (error) {
-      console.log("Error fetching product view data:", error);
-    }
+    fetchDashboardData(userId);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {/* Header */}
-        <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between  gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                Store Dashboard
-              </h1>
-              <button
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="p-2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
-              >
-                <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
-              </button>
+    <div className="min-h-screen bg-gray-50/70 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+
+        {/* ── Header ── */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            {/* Avatar */}
+            <div
+              className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-md flex-shrink-0"
+              style={{ background: `linear-gradient(135deg, ${PRIMARY}, #a78bfa)` }}
+            >
+              {username ? username[0].toUpperCase() : "?"}
             </div>
-            <p className="mt-1 text-sm text-gray-600">
-              Welcome back{username ? `, ${username}` : ""}! Here's your store performance summary.
-            </p>
+            <div>
+              <p className="text-sm text-gray-500 font-medium">{getGreeting()}</p>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+                {loading ? (
+                  <div className="h-7 w-36 bg-gray-200 rounded-lg animate-pulse" />
+                ) : (
+                  <>{username || "Store Owner"}</>
+                )}
+                <button
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="text-gray-400 hover:text-primary transition-colors disabled:opacity-40 ml-1"
+                  title="Refresh"
+                >
+                  <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+                </button>
+              </h1>
+            </div>
           </div>
 
-          <div className="flex items-center jc gap-3">
+          <div className="flex items-center gap-3">
             <Link
               href={`/store/${username}`}
-              className="hidden sm:flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50"
+              className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-primary/30 hover:text-primary transition-all"
             >
-              <Eye className="w-4 h-4 mr-2" />
+              <Eye className="w-4 h-4" />
               View Store
             </Link>
             <PaymentButton userId={userId} />
           </div>
-
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        {/* ── Stats Grid ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard
             title="Total Products"
             value={stats.products}
             trend={12}
             icon={Package}
             loading={loading}
+            iconGradient={`linear-gradient(135deg, ${PRIMARY}, #a78bfa)`}
           />
           <StatCard
             title="Store Visitors"
@@ -509,66 +434,48 @@ const StoreDashboard = () => {
             trend={8}
             icon={Users}
             loading={loading}
+            iconGradient="linear-gradient(135deg, #059669, #34d399)"
           />
-
           <StatCard
-            title="Out of Stock"
+            title="Low Stock Items"
             value={stats.lowStockItems}
             trend={-4}
             icon={AlertTriangle}
             loading={loading}
+            iconGradient="linear-gradient(135deg, #d97706, #fbbf24)"
           />
-          
         </div>
 
-        
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Visitor Analytics */}
+        {/* ── Analytics + Product Performance ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2">
             <VisitorStats visitorData={stats.visitorData} loading={loading} />
           </div>
-
-          {/* Product Performance */}
           <div className="space-y-4">
-            <ProductViewCard 
-              product={mostViewedProduct} 
-              type="Most Viewed" 
-              loading={loading}
-            />
-            <ProductViewCard 
-              product={leastViewedProduct} 
-              type="Least Viewed" 
-              loading={loading}
-            />
+            <ProductViewCard product={mostViewedProduct} type="Most Viewed" loading={loading} />
+            <ProductViewCard product={leastViewedProduct} type="Least Viewed" loading={loading} />
           </div>
         </div>
 
-
-        {/* Quick Actions */}
-        <div className="mb-8">
+        {/* ── Quick Actions ── */}
+        <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
-            
+            <h2 className="text-lg font-bold text-gray-900">Quick Actions</h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {actionCards.map((card, index) => (
               <ActionCard
                 key={index}
                 title={card.title}
-                href={
-                  card.href === "/store/username"
-                    ? `/store/${username}`
-                    : card.href
-                }
+                href={card.href === "/store/username" ? `/store/${username}` : card.href}
                 icon={card.icon}
                 description={card.description}
+                gradient={card.gradient}
               />
             ))}
-        </div>
+          </div>
         </div>
 
-       
       </div>
     </div>
   );
