@@ -63,7 +63,7 @@ export default function FaqSection() {
   return (
     <section className="py-10 px-4 md:px-10">
       <div className="max-w-3xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center text-blue-800 mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8">
           Product Share – FAQ
         </h2>
 

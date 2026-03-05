@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { Plus, X } from "lucide-react";
+import { ImagePlus, Plus, Tag, Type, AlignLeft, DollarSign, Grid3X3, Palette, Video, SlidersHorizontal, X, ChevronLeft } from "lucide-react";
 import {
   addDoc,
   collection,
@@ -16,6 +16,42 @@ import { useRouter } from "next/navigation";
 // @ts-ignore
 import { ChromePicker, ColorResult } from "react-color";
 
+// ── Toggle Switch ────────────────────────────────────────────────────────────
+const Toggle = ({ name, checked, onChange, label, description }: any) => (
+  <div className="flex items-center justify-between py-3">
+    <div>
+      <p className="text-sm font-medium text-gray-800">{label}</p>
+      {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
+    </div>
+    <label className="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
+      <input
+        type="checkbox"
+        name={name}
+        checked={checked}
+        onChange={onChange}
+        className="sr-only peer"
+      />
+      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-primary transition-all after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 after:shadow-sm" />
+    </label>
+  </div>
+);
+
+// ── Section Card ─────────────────────────────────────────────────────────────
+const Section = ({ icon: Icon, title, children }: any) => (
+  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-50">
+      <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <Icon className="w-4 h-4 text-primary" />
+      </div>
+      <h3 className="font-semibold text-gray-900 text-sm">{title}</h3>
+    </div>
+    <div className="p-6">{children}</div>
+  </div>
+);
+
+// ── Field ────────────────────────────────────────────────────────────────────
+const inputCls = "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50";
+const labelCls = "block text-sm font-medium text-gray-700 mb-1.5";
 
 const CreateProduct = () => {
   const [productData, setProductData] = useState<ProductType>({
@@ -24,7 +60,7 @@ const CreateProduct = () => {
     regularPrice: "",
     discountPrice: "",
     colors: [],
-    video: "", 
+    video: "",
     category: "",
     sizes: [],
     isInStock: true,
@@ -42,84 +78,46 @@ const CreateProduct = () => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [previewVideo, setPreviewVideo] = useState<string>("");
-  const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [videoCompressing, setVideoCompressing] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [videoCompressing, setVideoCompressing] = useState(false);
 
   const router = useRouter();
 
   const compressVideo = async (file: File): Promise<File> => {
     return new Promise((resolve, reject) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const video = document.createElement('video');
-      
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const video = document.createElement("video");
       video.src = URL.createObjectURL(file);
       video.muted = true;
       video.playsInline = true;
-      
       video.onloadedmetadata = () => {
-        const maxWidth = 720;
-        const maxHeight = 480;
+        const maxWidth = 720, maxHeight = 480;
         let { videoWidth, videoHeight } = video;
-        
-        if (videoWidth > maxWidth) {
-          videoHeight = (videoHeight * maxWidth) / videoWidth;
-          videoWidth = maxWidth;
-        }
-        
-        if (videoHeight > maxHeight) {
-          videoWidth = (videoWidth * maxHeight) / videoHeight;
-          videoHeight = maxHeight;
-        }
-        
+        if (videoWidth > maxWidth) { videoHeight = (videoHeight * maxWidth) / videoWidth; videoWidth = maxWidth; }
+        if (videoHeight > maxHeight) { videoWidth = (videoWidth * maxHeight) / videoHeight; videoHeight = maxHeight; }
         canvas.width = videoWidth;
         canvas.height = videoHeight;
-        
         const chunks: BlobPart[] = [];
         const stream = canvas.captureStream(30);
-        const mediaRecorder = new MediaRecorder(stream, {
-          mimeType: 'video/webm;codecs=vp8',
-          videoBitsPerSecond: 1000000
-        });
-        
-        mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            chunks.push(event.data);
-          }
-        };
-        
+        const mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm;codecs=vp8", videoBitsPerSecond: 1000000 });
+        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
         mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.webm'), {
-            type: 'video/webm'
-          });
+          const blob = new Blob(chunks, { type: "video/webm" });
+          resolve(new File([blob], file.name.replace(/\.[^/.]+$/, ".webm"), { type: "video/webm" }));
           URL.revokeObjectURL(video.src);
-          resolve(compressedFile);
         };
-        
         const drawFrame = () => {
-          if (video.ended || video.paused) {
-            mediaRecorder.stop();
-            return;
-          }
+          if (video.ended || video.paused) { mediaRecorder.stop(); return; }
           ctx?.drawImage(video, 0, 0, videoWidth, videoHeight);
           requestAnimationFrame(drawFrame);
         };
-        
         video.play();
         mediaRecorder.start();
         drawFrame();
-        
-        setTimeout(() => {
-          video.pause();
-          mediaRecorder.stop();
-        }, Math.min(video.duration * 1000, 30000));
+        setTimeout(() => { video.pause(); mediaRecorder.stop(); }, Math.min(video.duration * 1000, 30000));
       };
-      
-      video.onerror = () => {
-        URL.revokeObjectURL(video.src);
-        reject(new Error('Video processing failed'));
-      };
+      video.onerror = () => { URL.revokeObjectURL(video.src); reject(new Error("Video processing failed")); };
     });
   };
 
@@ -130,9 +128,7 @@ const CreateProduct = () => {
     };
   }, [previewImages, previewVideo]);
 
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
@@ -143,181 +139,86 @@ const CreateProduct = () => {
   };
 
   const handleSizeChange = (size: string) => {
-    setProductData((prev) => {
-      const newSizes = prev.sizes.includes(size)
-        ? prev.sizes.filter((s) => s !== size)
-        : [...prev.sizes, size];
-      return { ...prev, sizes: newSizes };
-    });
+    setProductData((prev) => ({
+      ...prev,
+      sizes: prev.sizes.includes(size) ? prev.sizes.filter((s) => s !== size) : [...prev.sizes, size],
+    }));
   };
 
   const handleAddColor = () => {
     if (currentColor.trim()) {
-      setProductData((prev) => ({
-        ...prev,
-        colors: [...prev.colors, currentColor.trim()],
-      }));
+      setProductData((prev) => ({ ...prev, colors: [...prev.colors, currentColor.trim()] }));
       setCurrentColor("");
       setShowColorPicker(false);
     }
   };
 
-  const handleRemoveColor = (colorToRemove: string) => {
-    setProductData((prev) => ({
-      ...prev,
-      colors: prev.colors.filter((color) => color !== colorToRemove),
-    }));
-  };
-
-  const handleColorPickerChange = (color: ColorResult) => {
-    setCurrentColor(color.hex);
+  const handleRemoveColor = (color: string) => {
+    setProductData((prev) => ({ ...prev, colors: prev.colors.filter((c) => c !== color) }));
   };
 
   const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newCategory = e.target.value;
-    setProductData((prev) => ({
-      ...prev,
-      category: newCategory,
-      sizes: newCategory !== "clothing" ? [] : prev.sizes,
-    }));
+    setProductData((prev) => ({ ...prev, category: newCategory, sizes: newCategory !== "clothing" ? [] : prev.sizes }));
   };
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const newFiles = Array.from(event.target.files) as File[];
-      const totalImages = imageFiles.length + newFiles.length;
-      
-      if (totalImages > 10) {
-        alert("You can upload maximum 10 images");
-        return;
-      }
-      
-      setImageFiles((prev) => [...prev, ...newFiles]);
-      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
-      setPreviewImages((prev) => [...prev, ...newPreviews]);
-    }
+    if (!event.target.files) return;
+    const newFiles = Array.from(event.target.files) as File[];
+    if (imageFiles.length + newFiles.length > 10) { alert("Maximum 10 images allowed"); return; }
+    setImageFiles((prev) => [...prev, ...newFiles]);
+    setPreviewImages((prev) => [...prev, ...newFiles.map(URL.createObjectURL)]);
   };
 
   const handleVideoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-
-      if (file.size > 100 * 1024 * 1024) {
-        alert("Video file size must be less than 100MB");
-        return;
-      }
-
-      try {
-        setVideoCompressing(true);
-        
-        let processedFile = file;
-        if (file.size > 10 * 1024 * 1024) {
-          processedFile = await compressVideo(file);
-        }
-
-        setVideoFile(processedFile);
-
-        if (previewVideo) URL.revokeObjectURL(previewVideo);
-        setPreviewVideo(URL.createObjectURL(processedFile));
-      } catch (err) {
-        console.error("Error processing video:", err);
-        alert("Video processing failed. Try a smaller file.");
-      } finally {
-        setVideoCompressing(false);
-      }
+    if (!event.target.files?.[0]) return;
+    const file = event.target.files[0];
+    if (file.size > 100 * 1024 * 1024) { alert("Video must be less than 100MB"); return; }
+    try {
+      setVideoCompressing(true);
+      const processed = file.size > 10 * 1024 * 1024 ? await compressVideo(file) : file;
+      setVideoFile(processed);
+      if (previewVideo) URL.revokeObjectURL(previewVideo);
+      setPreviewVideo(URL.createObjectURL(processed));
+    } catch {
+      alert("Video processing failed. Try a smaller file.");
+    } finally {
+      setVideoCompressing(false);
     }
   };
 
   const uploadFilesToFirebase = async (files: File[], type: "images" | "video") => {
-    const currentDate = new Date();
-    const formattedDate = `${currentDate.getFullYear()}-${String(
-      currentDate.getMonth() + 1
-    ).padStart(2, "0")}-${String(currentDate.getDate()).padStart(
-      2,
-      "0"
-    )}_${String(currentDate.getHours()).padStart(2, "0")}-${String(
-      currentDate.getMinutes()
-    ).padStart(2, "0")}-${String(currentDate.getSeconds()).padStart(2, "0")}`;
-
-    const uploadPromises = files.map(async (file, index) => {
-      const fileName = type === "video" ? `video_${formattedDate}_${file.name}` : `image_${index}_${formattedDate}_${file.name}`;
-      const storageRef = ref(storage, `${type}/${fileName}`);
-      await uploadBytes(storageRef, file);
-      return getDownloadURL(storageRef);
-    });
-
-    return await Promise.all(uploadPromises);
+    const ts = new Date().toISOString().replace(/[:.]/g, "-");
+    return Promise.all(
+      files.map(async (file, i) => {
+        const name = type === "video" ? `video_${ts}_${file.name}` : `image_${i}_${ts}_${file.name}`;
+        const storageRef = ref(storage, `${type}/${name}`);
+        await uploadBytes(storageRef, file);
+        return getDownloadURL(storageRef);
+      })
+    );
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
-    if (!productData.name.trim()) {
-      alert("Product name is required");
-      return;
-    }
-    
-    if (!productData.regularPrice.trim()) {
-      alert("Regular price is required");
-      return;
-    }
-    
-    if (!productData.category) {
-      alert("Category is required");
-      return;
-    }
-    
-    if (imageFiles.length === 0) {
-      alert("At least one image is required");
-      return;
-    }
-
-    if (imageFiles.length > 10) {
-      alert("Maximum 10 images allowed");
-      return;
-    }
-
+    if (!productData.name.trim()) { alert("Product name is required"); return; }
+    if (!productData.regularPrice.toString().trim()) { alert("Regular price is required"); return; }
+    if (!productData.category) { alert("Category is required"); return; }
+    if (imageFiles.length === 0) { alert("At least one image is required"); return; }
     setIsUploading(true);
-
     try {
       const user = auth.currentUser;
-      if (!user) {
-        alert("You must be logged in to create a product");
-        setIsUploading(false);
-        return;
-      }
-
-      const userDocRef = doc(db, "users", user.uid);
-      const userDocSnap = await getDoc(userDocRef);
-      
-      if (!userDocSnap.exists()) {
-        alert("User profile not found");
-        setIsUploading(false);
-        return;
-      }
-
+      if (!user) { alert("You must be logged in"); setIsUploading(false); return; }
+      const userSnap = await getDoc(doc(db, "users", user.uid));
+      if (!userSnap.exists()) { alert("User profile not found"); setIsUploading(false); return; }
       const imageUrls = await uploadFilesToFirebase(imageFiles, "images");
-      
       let videoUrl = "";
-      if (videoFile) {
-        const videoUrls = await uploadFilesToFirebase([videoFile], "video");
-        videoUrl = videoUrls[0];
-      }
-
-      const productToSave = {
-        ...productData,
-        images: imageUrls,
-        video: videoUrl,
-        createdAt: serverTimestamp(),
-      };
-
-      await addDoc(collection(db, "users", user.uid, "products"), productToSave);
-      
+      if (videoFile) { [videoUrl] = await uploadFilesToFirebase([videoFile], "video"); }
+      await addDoc(collection(db, "users", user.uid, "products"), { ...productData, images: imageUrls, video: videoUrl, createdAt: serverTimestamp() });
       alert("Product created successfully!");
       router.push("/store");
-      
     } catch (error) {
-      console.error("Error creating product:", error);
+      console.error(error);
       alert("Error creating product. Please try again.");
     } finally {
       setIsUploading(false);
@@ -336,324 +237,324 @@ const CreateProduct = () => {
     setVideoFile(null);
   };
 
+  const busy = isUploading || videoCompressing;
+
   return (
-    <div className="w-full max-w-3xl mx-auto px-3 pb-10 pt-7 relative">
-      <h2 className="text-2xl font-bold mb-6">Create New Product</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">
-            Product Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            disabled={isUploading}
-            name="name"
-            value={productData.name}
-            onChange={handleInputChange}
-            className="block w-full bg-gray-200 p-3 border focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
-            placeholder="Enter product name"
-            required
-          />
-        </div>
+    <div className="min-h-screen bg-gray-50/60">
+      <div className="max-w-2xl mx-auto px-4 py-8">
 
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Description</label>
-          <textarea
-            name="description"
-            disabled={isUploading}
-            value={productData.description}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 min-h-20 border bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
-            placeholder="Enter product description"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">
-              Regular Price <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              disabled={isUploading}
-              name="regularPrice"
-              value={productData.regularPrice}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">Discount Price</label>
-            <input
-              type="number"
-              disabled={isUploading}
-              name="discountPrice"
-              value={productData.discountPrice}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">
-            Category <span className="text-red-500">*</span>
-          </label>
-          <select
-            name="category"
-            disabled={isUploading}
-            value={productData.category}
-            onChange={handleCategoryChange}
-            className="block w-full bg-gray-200 p-3 border focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
-            required
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-8">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="p-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
           >
-            <option value="">Select a category</option>
-            <option value="electronics">Electronics</option>
-            <option value="clothing">Clothing</option>
-            <option value="home">Home & Garden</option>
-            <option value="sports">Sports & Outdoors</option>
-            <option value="autoMobiles">Automobiles</option>
-            <option value="books">Books</option>
-            <option value="toys">Toys & Games</option>
-          </select>
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">Add New Product</h1>
+            <p className="text-sm text-gray-500">Fill in the details to list your product</p>
+          </div>
         </div>
 
-        {productData.category === "clothing" && (
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">Available Sizes</label>
-            <div className="flex flex-wrap gap-2">
-              {availableSizes.map((size) => (
-                <button
-                  key={size}
-                  type="button"
-                  disabled={isUploading}
-                  onClick={() => handleSizeChange(size)}
-                  className={`px-4 py-2 border rounded-md transition-colors ${
-                    productData.sizes.includes(size)
-                      ? "bg-blue-600 text-white border-blue-600"
-                      : "bg-gray-200 text-gray-700 border-gray-300 hover:bg-gray-300"
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <form onSubmit={handleSubmit} className="space-y-5">
 
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Available Colors</label>
-          <div className="space-y-3">
-            {productData.colors.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {productData.colors.map((color, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div
-                      className="w-8 h-8 rounded-full border-2 border-gray-300"
-                      style={{ backgroundColor: color }}
+          {/* Basic Info */}
+          <Section icon={Type} title="Basic Information">
+            <div className="space-y-4">
+              <div>
+                <label className={labelCls}>
+                  Product Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={productData.name}
+                  onChange={handleInputChange}
+                  disabled={busy}
+                  className={inputCls}
+                  placeholder="e.g. Blue Denim Jacket"
+                  required
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Description</label>
+                <textarea
+                  name="description"
+                  value={productData.description}
+                  onChange={handleInputChange}
+                  disabled={busy}
+                  className={`${inputCls} min-h-28 resize-none`}
+                  placeholder="Describe your product — material, fit, features..."
+                />
+              </div>
+            </div>
+          </Section>
+
+          {/* Pricing */}
+          <Section icon={DollarSign} title="Pricing">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={labelCls}>
+                  Regular Price (₹) <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="number"
+                  name="regularPrice"
+                  value={productData.regularPrice}
+                  onChange={handleInputChange}
+                  disabled={busy}
+                  className={inputCls}
+                  placeholder="0"
+                  min="0"
+                  required
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Discount Price (₹)</label>
+                <input
+                  type="number"
+                  name="discountPrice"
+                  value={productData.discountPrice}
+                  onChange={handleInputChange}
+                  disabled={busy}
+                  className={inputCls}
+                  placeholder="0"
+                  min="0"
+                />
+              </div>
+            </div>
+            {productData.discountPrice && productData.regularPrice &&
+              Number(productData.discountPrice) < Number(productData.regularPrice) && (
+              <p className="mt-3 text-xs text-green-600 font-medium bg-green-50 px-3 py-2 rounded-lg">
+                🎉 {Math.round(((Number(productData.regularPrice) - Number(productData.discountPrice)) / Number(productData.regularPrice)) * 100)}% discount applied
+              </p>
+            )}
+          </Section>
+
+          {/* Category & Sizes */}
+          <Section icon={Grid3X3} title="Category & Sizes">
+            <div className="space-y-4">
+              <div>
+                <label className={labelCls}>
+                  Category <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="category"
+                  value={productData.category}
+                  onChange={handleCategoryChange}
+                  disabled={busy}
+                  className={inputCls}
+                  required
+                >
+                  <option value="">Select a category</option>
+                  <option value="electronics">Electronics</option>
+                  <option value="clothing">Clothing</option>
+                  <option value="home">Home & Garden</option>
+                  <option value="sports">Sports & Outdoors</option>
+                  <option value="autoMobiles">Automobiles</option>
+                  <option value="books">Books</option>
+                  <option value="toys">Toys & Games</option>
+                </select>
+              </div>
+
+              {productData.category === "clothing" && (
+                <div>
+                  <label className={labelCls}>Available Sizes</label>
+                  <div className="flex flex-wrap gap-2">
+                    {availableSizes.map((size) => (
+                      <button
+                        key={size}
+                        type="button"
+                        disabled={busy}
+                        onClick={() => handleSizeChange(size)}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium border-2 transition-all ${
+                          productData.sizes.includes(size)
+                            ? "bg-primary text-white border-primary shadow-sm"
+                            : "bg-white text-gray-600 border-gray-200 hover:border-primary/40"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </Section>
+
+          {/* Colors */}
+          <Section icon={Palette} title="Available Colors">
+            <div className="space-y-4">
+              {productData.colors.length > 0 && (
+                <div className="flex flex-wrap gap-3">
+                  {productData.colors.map((color, index) => (
+                    <div key={index} className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+                      <div className="w-5 h-5 rounded-full border border-gray-300 shadow-sm flex-shrink-0" style={{ backgroundColor: color }} />
+                      <span className="text-xs text-gray-600 font-medium">{color}</span>
+                      <button type="button" onClick={() => handleRemoveColor(color)} className="text-gray-400 hover:text-red-500 transition-colors ml-1">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center gap-3">
+                <div className="relative flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setShowColorPicker(!showColorPicker)}
+                    className="w-10 h-10 rounded-xl border-2 border-gray-200 shadow-sm hover:border-primary/40 transition-colors"
+                    style={{ backgroundColor: currentColor || "#ffffff" }}
+                  />
+                  {showColorPicker && (
+                    <div className="absolute top-12 left-0 z-20">
+                      <div className="fixed inset-0" onClick={() => setShowColorPicker(false)} />
+                      <div className="relative z-10 shadow-xl rounded-xl overflow-hidden">
+                        <ChromePicker color={currentColor} onChange={(c: ColorResult) => setCurrentColor(c.hex)} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={currentColor}
+                  onChange={(e) => setCurrentColor(e.target.value)}
+                  placeholder="#FF5733 or color name"
+                  className={`${inputCls} flex-1`}
+                />
+                <button
+                  type="button"
+                  onClick={handleAddColor}
+                  disabled={!currentColor.trim()}
+                  className="px-4 py-3 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 disabled:opacity-40 transition-all flex-shrink-0"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          </Section>
+
+          {/* Images */}
+          <Section icon={ImagePlus} title="Product Images">
+            <div className="space-y-4">
+              <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+                {previewImages.map((image, index) => (
+                  <div key={index} className="relative aspect-square group">
+                    <img
+                      src={image}
+                      alt={`Product ${index + 1}`}
+                      className="w-full h-full object-cover rounded-xl border border-gray-200"
                     />
-                    <span className="text-sm">{color}</span>
+                    {index === 0 && (
+                      <span className="absolute bottom-1 left-1 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">Main</span>
+                    )}
                     <button
                       type="button"
-                      onClick={() => handleRemoveColor(color)}
-                      className="text-red-500 hover:text-red-700"
+                      onClick={() => removeImage(index)}
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-3 h-3" />
                     </button>
                   </div>
                 ))}
-              </div>
-            )}
-            
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setShowColorPicker(!showColorPicker)}
-                  className="w-10 h-10 rounded-full border-2 border-gray-300"
-                  style={{ backgroundColor: currentColor || "#ffffff" }}
-                />
-                {showColorPicker && (
-                  <div className="absolute top-12 left-0 z-10">
-                    <div 
-                      className="fixed inset-0" 
-                      onClick={() => setShowColorPicker(false)}
-                    />
-                    <ChromePicker
-                      color={currentColor}
-                      onChange={handleColorPickerChange}
-                    />
-                  </div>
+                {imageFiles.length < 10 && (
+                  <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
+                    <Plus className="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors" />
+                    <span className="text-[10px] text-gray-400 group-hover:text-primary mt-1">Add</span>
+                    <input type="file" multiple accept="image/*" disabled={busy} onChange={handleImageUpload} className="hidden" />
+                  </label>
                 )}
               </div>
+              <p className="text-xs text-gray-500">
+                Up to 10 images. <span className="font-medium">First image is the main photo.</span>
+              </p>
+            </div>
+          </Section>
+
+          {/* Video */}
+          <Section icon={Video} title="Product Video (Optional)">
+            <div className="space-y-3">
+              {videoCompressing && (
+                <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl text-sm font-medium">
+                  <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  Compressing video...
+                </div>
+              )}
+              {previewVideo ? (
+                <div className="relative inline-block">
+                  <video src={previewVideo} controls className="w-full max-w-xs h-40 object-cover rounded-xl border border-gray-200" />
+                  <button
+                    type="button"
+                    onClick={removeVideo}
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-md"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : !videoCompressing && (
+                <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
+                  <Video className="w-7 h-7 text-gray-400 group-hover:text-primary transition-colors mb-1" />
+                  <span className="text-sm text-gray-500 group-hover:text-primary">Upload a video</span>
+                  <span className="text-xs text-gray-400 mt-0.5">Max 100MB</span>
+                  <input type="file" accept="video/*" disabled={busy} onChange={handleVideoUpload} className="hidden" />
+                </label>
+              )}
+              <p className="text-xs text-gray-500">Videos over 10MB will be automatically compressed.</p>
+            </div>
+          </Section>
+
+          {/* Options */}
+          <Section icon={SlidersHorizontal} title="Product Options">
+            <div className="divide-y divide-gray-50">
+              <Toggle name="isInStock" checked={productData.isInStock} onChange={handleCheckboxChange} label="In Stock" description="Product is available for purchase" />
+              <Toggle name="isFreeDelivery" checked={productData.isFreeDelivery} onChange={handleCheckboxChange} label="Free Delivery" description="Offer free shipping on this product" />
+              <Toggle name="isMostSelling" checked={productData.isMostSelling} onChange={handleCheckboxChange} label="Most Selling" description="Mark as a top-selling product" />
+            </div>
+          </Section>
+
+          {/* Tags */}
+          <Section icon={Tag} title="Tags">
+            <div>
+              <label className={labelCls}>Search Tags</label>
               <input
                 type="text"
-                value={currentColor}
-                onChange={(e) => setCurrentColor(e.target.value)}
-                placeholder="#000000 or color name"
-                className="px-3 py-2 border bg-gray-200 rounded-md flex-1"
+                name="tags"
+                value={productData.tags}
+                onChange={handleInputChange}
+                disabled={busy}
+                className={inputCls}
+                placeholder="summer, casual, cotton, blue..."
               />
-              <button
-                type="button"
-                onClick={handleAddColor}
-                disabled={!currentColor.trim()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
-              >
-                Add
-              </button>
+              <p className="text-xs text-gray-500 mt-2">Separate tags with commas to help customers find your product.</p>
             </div>
-          </div>
-        </div>
+          </Section>
 
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">
-            Product Images <span className="text-red-500">*</span> (Max: 10)
-          </label>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {previewImages.map((image, index) => (
-              <div key={index} className="relative w-24 h-24">
-                <img
-                  src={image}
-                  alt={`Product ${index + 1}`}
-                  className="w-full h-full object-cover rounded-md border"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeImage(index)}
-                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ))}
-            {imageFiles.length < 10 && (
-              <label className="flex items-center justify-center w-24 h-24 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-gray-400 hover:bg-gray-50">
-                <Plus className="w-8 h-8 text-gray-400" />
-                <input
-                  disabled={isUploading}
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-              </label>
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={busy}
+            className="w-full py-4 rounded-2xl text-white font-bold text-base transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
+            style={{ background: busy ? "#9ca3af" : "linear-gradient(135deg, #6c64cb, #a78bfa)" }}
+          >
+            {isUploading ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Creating Product...
+              </span>
+            ) : videoCompressing ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Processing Video...
+              </span>
+            ) : (
+              "Create Product"
             )}
-          </div>
-          <p className="text-sm text-gray-500">
-            Upload up to 10 images. The first image will be the main product image.
-          </p>
-        </div>
+          </button>
 
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Product Video (Optional)</label>
-          {videoCompressing && (
-            <div className="text-sm text-blue-600">Compressing video, please wait...</div>
-          )}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {previewVideo && (
-              <div className="relative w-48 h-28">
-                <video
-                  src={previewVideo}
-                  controls
-                  className="w-full h-full object-cover rounded-md border"
-                />
-                <button
-                  type="button"
-                  onClick={removeVideo}
-                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            )}
-            {!previewVideo && !videoCompressing && (
-              <label className="flex items-center justify-center w-48 h-28 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-gray-400 hover:bg-gray-50">
-                <Plus className="w-8 h-8 text-gray-400" />
-                <input
-                  disabled={isUploading || videoCompressing}
-                  type="file"
-                  accept="video/*"
-                  onChange={handleVideoUpload}
-                  className="hidden"
-                />
-              </label>
-            )}
-          </div>
-          <p className="text-sm text-gray-500">
-            Upload one video file. Maximum size: 100MB. Videos larger than 10MB will be compressed.
-          </p>
-        </div>
-
-        <div className="space-y-3">
-          <label className="block text-sm font-medium">Additional Options</label>
-          <div className="flex flex-col space-y-2">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                name="isInStock"
-                checked={productData.isInStock}
-                onChange={handleCheckboxChange}
-                className="mr-2"
-              />
-              In Stock
-            </label>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                name="isFreeDelivery"
-                checked={productData.isFreeDelivery}
-                onChange={handleCheckboxChange}
-                className="mr-2"
-              />
-              Free Delivery
-            </label>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                name="isMostSelling"
-                checked={productData.isMostSelling}
-                onChange={handleCheckboxChange}
-                className="mr-2"
-              />
-              Most Selling Product
-            </label>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Tags</label>
-          <input
-            type="text"
-            disabled={isUploading}
-            name="tags"
-            value={productData.tags}
-            onChange={handleInputChange}
-            className="block w-full bg-gray-200 p-3 border focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
-            placeholder="Enter tags separated by commas (e.g., summer, casual, cotton)"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className={`w-full py-3 px-4 rounded-md text-white font-medium transition-colors ${
-            isUploading || videoCompressing
-              ? "bg-gray-400 cursor-not-allowed" 
-              : "bg-blue-600 hover:bg-blue-700"
-          }`}
-          disabled={isUploading || videoCompressing}
-        >
-          {isUploading ? "Creating Product..." : videoCompressing ? "Processing Video..." : "Create Product"}
-        </button>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

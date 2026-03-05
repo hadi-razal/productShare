@@ -122,6 +122,10 @@ const PricingSection = () => {
               Team access with role-based permissions
             </li>
           </ul>
+
+          <button className="mt-6 bg-primary text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl w-full max-w-sm mx-auto block hover:-translate-y-0.5 active:translate-y-0">
+            Get Started →
+          </button>
         </div>
       </div>
     </section>
