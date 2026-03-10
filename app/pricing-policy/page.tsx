@@ -1,4 +1,20 @@
+import type { Metadata } from "next";
 import React from 'react';
+
+export const metadata: Metadata = {
+  title: "Pricing Policy — Product Share India",
+  description:
+    "Product Share India pricing policy: Monthly plan at ₹499 and Yearly plan at ₹4,790 — both one-time payments with no auto-renewals. 14-day refund window. Read our full pricing terms.",
+  keywords: ["Product Share pricing policy", "catalog builder payment terms India", "₹499 monthly plan", "₹4790 yearly plan"],
+  alternates: { canonical: "https://productshare.in/pricing-policy" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: "Pricing Policy — Product Share India",
+    description: "Monthly ₹499 or Yearly ₹4,790 — one-time payments, no hidden fees, 14-day refund window.",
+    url: "https://productshare.in/pricing-policy",
+    type: "website",
+  },
+};
 
 const PricingPolicy = () => {
   return (

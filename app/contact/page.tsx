@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Head from "next/head";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 const ContactPage = () => {
@@ -27,19 +26,6 @@ const ContactPage = () => {
 
   return (
     <>
-      <Head>
-        <title>Contact Us - Product Share</title>
-        <meta
-          name="description"
-          content="Get in touch with Product Share for inquiries, support, or feedback. We'd love to hear from you!"
-        />
-        <meta
-          name="keywords"
-          content="contact, inquiries, support, feedback, Product Share, product management, customer service"
-        />
-        <meta name="author" content="Duoph Technologies" />
-      </Head>
-
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-6xl bg-white/80 backdrop-blur-md rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row">
           {/* Contact Info */}
@@ -141,6 +127,8 @@ const ContactPage = () => {
       </div>
     </>
   );
+
+
 };
 
 export default ContactPage;

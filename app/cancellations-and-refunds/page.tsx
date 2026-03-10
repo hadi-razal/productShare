@@ -1,4 +1,20 @@
+import type { Metadata } from "next";
 import React from 'react';
+
+export const metadata: Metadata = {
+  title: "Cancellation & Refund Policy — Product Share India",
+  description:
+    "Learn about Product Share India's cancellation and refund policy. Cancellation requests accepted within 1–2 days of purchase. Refunds processed within 1–2 business days if approved.",
+  keywords: ["Product Share refund policy", "catalog builder cancellation", "refund India digital service"],
+  alternates: { canonical: "https://productshare.in/cancellations-and-refunds" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: "Cancellation & Refund Policy — Product Share India",
+    description: "Understand cancellation and refund terms for Product Share India's catalog builder subscription.",
+    url: "https://productshare.in/cancellations-and-refunds",
+    type: "website",
+  },
+};
 
 const Page = () => {
   return (

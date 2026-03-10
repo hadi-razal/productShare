@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import React from "react";
 import {
   MonitorSmartphone,
@@ -10,6 +11,36 @@ import {
   Target,
   Users,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "About Us — Product Share India",
+  description:
+    "Learn about Product Share India — built by Duoph Technologies to help 10,000+ small businesses, restaurants, and dropshippers create and share professional digital catalogs with zero technical skills.",
+  keywords: [
+    "about Product Share India",
+    "Duoph Technologies",
+    "digital catalog builder team",
+    "small business catalog platform",
+    "Indian startup catalog builder",
+    "product showcase platform India",
+  ],
+  alternates: {
+    canonical: "https://productshare.in/about-us",
+  },
+  openGraph: {
+    title: "About Product Share India — Empowering Small Businesses",
+    description:
+      "Built by Duoph Technologies, Product Share India helps 10,000+ businesses create and share professional digital catalogs — no coding required.",
+    url: "https://productshare.in/about-us",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Product Share India",
+    description:
+      "Built by Duoph Technologies to help 10,000+ Indian small businesses go digital with beautiful product catalogs.",
+  },
+};
 
 const FeatureCard = ({ icon: Icon, title, description }: any) => (
   <div className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md border border-gray-100 transition-all duration-300">
