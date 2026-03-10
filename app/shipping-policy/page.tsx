@@ -1,4 +1,20 @@
+import type { Metadata } from "next";
 import React from 'react';
+
+export const metadata: Metadata = {
+  title: "Shipping Policy — Product Share India",
+  description:
+    "Product Share India is a fully digital service — no physical shipping involved. Access your catalog builder instantly from anywhere in the world after purchase.",
+  keywords: ["Product Share shipping policy", "digital service delivery India", "no shipping catalog builder"],
+  alternates: { canonical: "https://productshare.in/shipping-policy" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: "Shipping Policy — Product Share India",
+    description: "Product Share India is a 100% digital service. Access your catalog instantly — no shipping required.",
+    url: "https://productshare.in/shipping-policy",
+    type: "website",
+  },
+};
 
 const ShippingPolicy = () => {
   return (

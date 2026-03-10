@@ -40,30 +40,48 @@ async function getProductData(
 
 // Generate metadata for the page
 export async function generateMetadata({ params }: any): Promise<Metadata> {
-  const { productId, storeId } = params; // No need to await params here
+  const { productId, storeId } = params;
 
   const productData = await getProductData(productId, storeId);
 
-  const title = productData?.name ?? "Product Not Found";
-  const description = productData?.description ?? "No description available";
-  const image = productData?.images[0] ?? null;
+  const productName = productData?.name ?? "Product";
+  const title = productData
+    ? `${productName} — Buy Online | Product Share India`
+    : "Product Not Found | Product Share India";
+  const description = productData?.description
+    ? `${productData.description} — View ${productName} on Product Share India.`
+    : `View details and pricing for ${productName} on Product Share India's digital catalog.`;
+  const image = productData?.images?.[0] ?? null;
+  const productUrl = `https://productshare.in/store/${storeId}/${productId}`;
 
   return {
     title,
     description,
     keywords: productData
-      ? `ProductShare, ${productData.name}, product catalog, small business`
-      : "ProductShare",
+      ? [
+          productName,
+          `buy ${productName} online India`,
+          `${productName} price`,
+          "Product Share India",
+          "digital catalog product",
+          "small business products India",
+        ]
+      : ["Product Share India"],
+    alternates: { canonical: productUrl },
     openGraph: {
       title,
       description,
-      images: image ? [image] : [],
+      url: productUrl,
+      type: "website",
+      images: image
+        ? [{ url: image, width: 800, height: 600, alt: productName }]
+        : [{ url: "https://productshare.in/og-image.png", width: 1200, height: 630, alt: "Product Share India" }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: image ? [image] : [],
+      images: image ? [image] : ["https://productshare.in/og-image.png"],
     },
   };
 }

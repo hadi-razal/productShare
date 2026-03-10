@@ -41,36 +41,39 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title:
-    "Product Share India - Free Digital Catalog Builder | Menu Creator for Restaurants, Stores & Dropshippers",
+  metadataBase: new URL("https://productshare.in"),
+  title: {
+    default:
+      "Product Share India - Free Digital Catalog Builder for Restaurants, Stores & Dropshippers",
+    template: "%s | Product Share India",
+  },
   description:
     "Create stunning digital catalogs and menus instantly with Product Share India. Perfect for restaurants, retail stores, dropshippers, and small businesses. Build professional product catalogs, restaurant menus, and business listings in minutes. Free catalog maker with WhatsApp sharing, QR codes, and mobile-friendly design.",
-  keywords:
-    [
-      "digital catalog builder India",
-      "restaurant menu creator",
-      "product catalog maker",
-      "dropshipping catalog tool",
-      "business catalog creator India",
-      "free online catalog builder for small business",
-      "restaurant digital menu maker India",
-      "WhatsApp catalog sharing tool",
-      "QR code menu generator",
-      "mobile catalog builder",
-      "catalog maker Mumbai Delhi Bangalore",
-      "Indian restaurant menu app",
-      "small business tools India",
-      "dropshipper product showcase",
-      "retail store catalog online",
-      "food menu digital creator",
-      "business listing maker",
-      "product showcase platform India",
-      "catalog with price list",
-      "shareable product catalog",
-      "professional menu design",
-      "inventory management tool",
-      "customer ordering system",
-    ].join(", "),
+  keywords: [
+    "digital catalog builder India",
+    "restaurant menu creator",
+    "product catalog maker",
+    "dropshipping catalog tool",
+    "business catalog creator India",
+    "free online catalog builder for small business",
+    "restaurant digital menu maker India",
+    "WhatsApp catalog sharing tool",
+    "QR code menu generator",
+    "mobile catalog builder",
+    "catalog maker Mumbai Delhi Bangalore",
+    "Indian restaurant menu app",
+    "small business tools India",
+    "dropshipper product showcase",
+    "retail store catalog online",
+    "food menu digital creator",
+    "business listing maker",
+    "product showcase platform India",
+    "catalog with price list",
+    "shareable product catalog",
+    "professional menu design",
+    "inventory management tool",
+    "customer ordering system",
+  ],
   authors: [{ name: "Duoph Technologies", url: "https://www.duoph.in/" }],
   creator: "Duoph Technologies",
   publisher: "Product Share India",
@@ -92,10 +95,10 @@ export const metadata: Metadata = {
     ],
     shortcut: "/favicon-32x32.png",
     apple: [
-      { url: "/apple-icon-114x114.png", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
-  manifest: "/site.webmanifest",
+  manifest: "/manifest.json",
   openGraph: {
     title:
       "Product Share India - Digital Catalog Builder for Restaurants & Stores",
@@ -107,18 +110,10 @@ export const metadata: Metadata = {
     locale: "en_IN",
     images: [
       {
-        url: "https://productshare.in/favicon-32x32.png",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Product Share India - Digital Catalog Builder for Restaurants and Stores",
-        type: "image/jpeg",
-      },
-      {
-        url: "https://productshare.in/favicon-32x32.png",
-        width: 800,
-        height: 600,
-        alt: "Product Share India Logo",
-        type: "image/png",
       },
     ],
   },
@@ -129,14 +124,10 @@ export const metadata: Metadata = {
     title: "Product Share India - Free Digital Catalog & Menu Builder",
     description:
       "Build stunning catalogs and restaurant menus in minutes. Perfect for Indian businesses, dropshippers, and food establishments. Start creating your digital catalog today!",
-    images: ["https://productshare.in/twitter-card.jpg"],
+    images: ["/og-image.png"],
   },
   alternates: {
     canonical: "https://productshare.in",
-    languages: {
-      "en-IN": "https://productshare.in",
-      "hi-IN": "https://productshare.in/hi",
-    },
   },
   category: "Business Tools",
   classification: "Digital Catalog Builder",
@@ -157,17 +148,80 @@ export default function RootLayout({
   return (
     <html lang="en-IN" dir="ltr">
 
-     <head/>
-     
+      <head />
+
       <body
         className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-         {/* Load Razorpay script globally */}
+        {/* Load Razorpay script globally */}
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
-          strategy="beforeInteractive"
+          strategy="lazyOnload"
         />
-        
+
+        {/* Organization JSON-LD */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Product Share India",
+              url: "https://productshare.in",
+              logo: "https://productshare.in/icon.png",
+              description:
+                "India's leading digital catalog builder for small businesses, restaurants, dropshippers, and entrepreneurs.",
+              contactPoint: {
+                "@type": "ContactPoint",
+                telephone: "+91-8589920409",
+                email: "productshareindia@gmail.com",
+                contactType: "customer service",
+                availableLanguage: ["English", "Hindi"],
+                areaServed: "IN",
+              },
+              address: {
+                "@type": "PostalAddress",
+                addressRegion: "Kerala",
+                addressCountry: "IN",
+              },
+              foundingDate: "2023",
+              brand: {
+                "@type": "Brand",
+                name: "Product Share India",
+              },
+              parentOrganization: {
+                "@type": "Organization",
+                name: "Duoph Technologies",
+                url: "https://www.duoph.in/",
+              },
+            }),
+          }}
+        />
+        {/* WebSite JSON-LD */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Product Share India",
+              url: "https://productshare.in",
+              description:
+                "Free digital catalog builder for Indian businesses — create, share, and manage product catalogs in minutes.",
+              inLanguage: "en-IN",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate:
+                    "https://productshare.in/store/{search_term_string}",
+                },
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
+
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-blue-600 text-white p-2 z-50"
@@ -177,11 +231,11 @@ export default function RootLayout({
         <Header />
         <Toaster />
         <ProgressBar />
-        <main id="main-content"  role="main">
+        <main id="main-content" role="main">
           {children}
         </main>
         <Footer />
-      </body>  
+      </body>
     </html>
   );
 }

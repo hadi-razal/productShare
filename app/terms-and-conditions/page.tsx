@@ -1,3 +1,20 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms and Conditions — Product Share India",
+  description:
+    "Review the Terms and Conditions for using Product Share India's digital catalog builder. Understand your rights, responsibilities, and our service policies.",
+  keywords: ["Product Share terms and conditions", "catalog builder terms of service", "user agreement India"],
+  alternates: { canonical: "https://productshare.in/terms-and-conditions" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: "Terms and Conditions — Product Share India",
+    description: "Terms of service for using Product Share India's catalog builder platform.",
+    url: "https://productshare.in/terms-and-conditions",
+    type: "website",
+  },
+};
+
 const TermsAndConditions = () => {
   return (
     <div className="pt-24 px-6 md:px-10 lg:px-20 max-w-7xl mx-auto space-y-8 pb-20">
