@@ -101,9 +101,14 @@ const ActionCard = ({ title, href = "#", icon: Icon, description, disabled, grad
 );
 
 // ─── Product View Card ─────────────────────────────────────────────────────
-const ProductViewCard = ({ product, type, loading }: any) => {
+const ProductViewCard = ({ product, type, loading, storeUsername }: any) => {
   const isMost = type === "Most Viewed";
-  return (
+  const productHref =
+    !loading && product?.id && storeUsername
+      ? `/store/${storeUsername}/${product.id}`
+      : null;
+
+  const cardContent = (
     <div className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-all duration-200">
       <div className="flex items-center justify-between mb-3">
         <span
@@ -152,6 +157,19 @@ const ProductViewCard = ({ product, type, loading }: any) => {
       </div>
     </div>
   );
+
+  if (productHref) {
+    return (
+      <Link
+        href={productHref}
+        className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      >
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 };
 
 // ─── Visitor Analytics ─────────────────────────────────────────────────────
@@ -359,8 +377,16 @@ const StoreDashboard = () => {
         getDocs(query(collection(db, "users", uid, "products"), orderBy("views"), limit(1))),
         getDocs(query(collection(db, "users", uid, "products"), orderBy("views", "desc"), limit(1))),
       ]);
-      setLeastViewedProduct(leastSnap.docs[0]?.data() ?? null);
-      setMostViewedProduct(mostSnap.docs[0]?.data() ?? null);
+      setLeastViewedProduct(
+        leastSnap.docs[0]
+          ? { id: leastSnap.docs[0].id, ...leastSnap.docs[0].data() }
+          : null
+      );
+      setMostViewedProduct(
+        mostSnap.docs[0]
+          ? { id: mostSnap.docs[0].id, ...mostSnap.docs[0].data() }
+          : null
+      );
     } catch (error) {
       console.log("Error fetching product views:", error);
     }
@@ -452,8 +478,18 @@ const StoreDashboard = () => {
             <VisitorStats visitorData={stats.visitorData} loading={loading} />
           </div>
           <div className="space-y-4">
-            <ProductViewCard product={mostViewedProduct} type="Most Viewed" loading={loading} />
-            <ProductViewCard product={leastViewedProduct} type="Least Viewed" loading={loading} />
+            <ProductViewCard
+              product={mostViewedProduct}
+              type="Most Viewed"
+              loading={loading}
+              storeUsername={username}
+            />
+            <ProductViewCard
+              product={leastViewedProduct}
+              type="Least Viewed"
+              loading={loading}
+              storeUsername={username}
+            />
           </div>
         </div>
 

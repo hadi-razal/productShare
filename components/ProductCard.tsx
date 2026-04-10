@@ -1,20 +1,20 @@
 "use client";
 
-import { getUserId } from "@/helpers/getUserId";
-import { auth, db } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { ProductType } from "@/type";
-import { onAuthStateChanged } from "firebase/auth";
 import { deleteDoc, doc } from "firebase/firestore";
 import { PencilIcon, Trash } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { FaStar } from "react-icons/fa";
 
 interface ProductCardProps {
   product?: ProductType;
   storeId?: string;
+  storeOwnerId?: string | null;
+  isStoreOwner?: boolean;
   isLoading?: boolean;
   refetchProducts?: () => void;
 }
@@ -22,13 +22,16 @@ interface ProductCardProps {
 const ProductCard = ({
   product,
   storeId,
+  storeOwnerId,
+  isStoreOwner = false,
   refetchProducts,
   isLoading,
 }: ProductCardProps) => {
   const router = useRouter();
-  const [isStoreOwner, setIsStoreOwner] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const productHref =
+    storeId && product?.id ? `/store/${storeId}/${product.id}` : null;
 
   const calculateDiscount = (): number => {
     const regularPrice = Number(product?.regularPrice);
@@ -40,7 +43,9 @@ const ProductCard = ({
       discountPrice >= 0 &&
       discountPrice < regularPrice
     ) {
-      return Number((((regularPrice - discountPrice) / regularPrice) * 100).toFixed(1));
+      return Number(
+        (((regularPrice - discountPrice) / regularPrice) * 100).toFixed(1)
+      );
     }
     return 0;
   };
@@ -56,31 +61,20 @@ const ProductCard = ({
   const getOriginalPrice = () =>
     Number(product?.regularPrice).toLocaleString("en-IN");
 
-  useEffect(() => {
-    const getStoreOwner = async () => {
-      try {
-        const userId = await getUserId(storeId);
-        onAuthStateChanged(auth, (user) => {
-          if (user && user.uid === userId) setIsStoreOwner(true);
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getStoreOwner();
-  }, [storeId]);
-
-  const handleDelete = (e: any) => {
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = async (e: any) => {
+  const confirmDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
       e.stopPropagation();
-      const userId = await getUserId(storeId);
-      if (!userId) { toast.error("Error"); return; }
-      await deleteDoc(doc(db, "users", userId, "products", product.id));
+      if (!storeOwnerId || !product?.id) {
+        toast.error("Error");
+        return;
+      }
+
+      await deleteDoc(doc(db, "users", storeOwnerId, "products", product.id));
       refetchProducts?.();
       toast.success("Product deleted successfully!");
       setShowDeleteModal(false);
@@ -90,7 +84,6 @@ const ProductCard = ({
     }
   };
 
-  // ── Skeleton ──────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
       <div className="relative w-full rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
@@ -107,17 +100,33 @@ const ProductCard = ({
     );
   }
 
+  if (!product) {
+    return null;
+  }
+
   if (product.isHidden && !isStoreOwner) return null;
 
   return (
     <div
-      onClick={() => router.push(`/store/${storeId}/${product.id}`)}
+      onClick={() => {
+        if (productHref) {
+          router.push(productHref);
+        }
+      }}
+      onMouseEnter={() => {
+        if (productHref) {
+          void router.prefetch(productHref);
+        }
+      }}
+      onFocus={() => {
+        if (productHref) {
+          void router.prefetch(productHref);
+        }
+      }}
       className="cursor-pointer relative w-full rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
     >
-      {/* ── Image container ── */}
       <div className="relative w-full h-48 bg-gray-100 rounded-t-xl overflow-hidden">
-        {/* Shimmer placeholder — fades out when image loads */}
-        {!imgLoaded && (
+        {product.images?.[0] && !imgLoaded && (
           <div className="absolute inset-0 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 animate-pulse" />
         )}
 
@@ -127,18 +136,25 @@ const ProductCard = ({
           </div>
         )}
 
-        <Image
-          src={product.images[0]}
-          alt={product.name}
-          width={400}
-          height={300}
-          quality={80}
-          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-          className={`w-full h-48 object-cover transition-opacity duration-300 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
-          onLoad={() => setImgLoaded(true)}
-        />
+        {product.images?.[0] ? (
+          <Image
+            src={product.images[0]}
+            alt={product.name}
+            width={400}
+            height={300}
+            quality={80}
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+            className={`w-full h-48 object-cover transition-opacity duration-300 ${
+              imgLoaded ? "opacity-100" : "opacity-0"
+            }`}
+            onLoad={() => setImgLoaded(true)}
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-sm text-gray-400">
+            No image
+          </div>
+        )}
 
-        {/* Badges — top left */}
         <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
           {!product.isInStock && (
             <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-600 text-white shadow">
@@ -152,14 +168,12 @@ const ProductCard = ({
           )}
         </div>
 
-        {/* Badges — top right */}
         {product.isNew && (
           <span className="absolute top-2 right-2 z-10 px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-500 text-white shadow">
             New
           </span>
         )}
 
-        {/* Most Selling — bottom */}
         {product.isMostSelling && (
           <span className="absolute bottom-0 right-0 z-10 px-2 py-1 text-[10px] flex items-center gap-0.5 font-bold bg-red-600 text-white rounded-tl-lg">
             <FaStar className="text-yellow-300 w-2.5 h-2.5" /> Top Seller
@@ -167,22 +181,26 @@ const ProductCard = ({
         )}
       </div>
 
-      {/* ── Info ── */}
       <div className="p-2.5">
         <h3 className="text-sm text-gray-800 line-clamp-2 leading-snug mb-1.5">
           {product.name}
         </h3>
         <div className="flex items-baseline gap-1.5">
-          <span className={`text-sm font-semibold ${isDiscounted ? "text-red-600" : "text-gray-900"}`}>
+          <span
+            className={`text-sm font-semibold ${
+              isDiscounted ? "text-red-600" : "text-gray-900"
+            }`}
+          >
             ₹{getDisplayPrice()}
           </span>
           {isDiscounted && (
-            <span className="text-xs text-gray-400 line-through">₹{getOriginalPrice()}</span>
+            <span className="text-xs text-gray-400 line-through">
+              ₹{getOriginalPrice()}
+            </span>
           )}
         </div>
       </div>
 
-      {/* ── Owner controls ── */}
       {isStoreOwner && (
         <div className="flex gap-2 px-2.5 pb-2.5">
           <button
@@ -205,7 +223,6 @@ const ProductCard = ({
         </div>
       )}
 
-      {/* ── Delete modal ── */}
       {showDeleteModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"

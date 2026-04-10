@@ -1,48 +1,23 @@
 import ProductPage from "@/components/ProductPage";
-import { getUserId } from "@/helpers/getUserId";
 import { Metadata } from "next";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { ProductType } from "@/type";
+import { notFound } from "next/navigation";
+import { getStorefrontProduct } from "@/lib/storefront";
 
-// Define the type for params
-// interface Params {
-//   params: {
-//     productId: string;
-//     storeId: string;
-//   };
-// }
-
-// Function to fetch product data based on ID
-async function getProductData(
-  productId: string,
-  storeId: string
-): Promise<ProductType | null> {
-  try {
-    const userId = await getUserId(storeId);
-
-    if (!userId) {
-      console.error("User ID not found");
-      return null;
-    }
-
-    const productRef = doc(db, "users", userId, "products", productId);
-    const productSnap = await getDoc(productRef);
-
-    if (productSnap.exists()) {
-      return productSnap.data() as ProductType;
-    }
-  } catch (error) {
-    console.error("Error fetching product data:", error);
-  }
-  return null;
+interface ProductRouteProps {
+  params: Promise<{
+    productId: string;
+    storeId: string;
+  }>;
 }
 
 // Generate metadata for the page
-export async function generateMetadata({ params }: any): Promise<Metadata> {
-  const { productId, storeId } = params;
+export async function generateMetadata({
+  params,
+}: ProductRouteProps): Promise<Metadata> {
+  const { productId, storeId } = await params;
 
-  const productData = await getProductData(productId, storeId);
+  const storefrontProduct = await getStorefrontProduct(storeId, productId);
+  const productData = storefrontProduct?.product ?? null;
 
   const productName = productData?.name ?? "Product";
   const title = productData
@@ -87,16 +62,20 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 }
 
 // Server component that renders the page
-export default async function Page({ params }: any) {
-  const { productId, storeId } = await params; // No need to await params here
+export default async function Page({ params }: ProductRouteProps) {
+  const { productId, storeId } = await params;
+  const storefrontProduct = await getStorefrontProduct(storeId, productId);
 
-  // Fetch the product data here if needed
-  const productData = await getProductData(productId, storeId);
-
-  if (!productData) {
-    // You might want to handle the not-found case
-    return <div>Product not found</div>;
+  if (!storefrontProduct) {
+    notFound();
   }
 
-  return <ProductPage productId={productId} storeId={storeId} />;
+  return (
+    <ProductPage
+      productId={productId}
+      storeId={storeId}
+      initialProduct={storefrontProduct.product}
+      initialUserId={storefrontProduct.store.id}
+    />
+  );
 }

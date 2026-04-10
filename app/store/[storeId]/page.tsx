@@ -1,42 +1,21 @@
 import { Metadata } from "next";
 import StoreProducts from "@/components/StoreProducts";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { getUserId } from "@/helpers/getUserId";
-import AlertMessageSlider from "@/components/AlertSlider";
+import { notFound } from "next/navigation";
+import { getStorefrontProducts, getStorefrontStore } from "@/lib/storefront";
 
-// Function to fetch store data from Firestore
-async function getStoreData(storeId: string): Promise<any | null> {
-  try {
-    const userId = await getUserId(storeId);
-
-    console.log(userId);
-
-    if (!userId) {
-      console.error("User ID not found");
-      return null;
-    }
-
-    const storeRef = doc(db, "users", userId as string);
-    const storeSnap = await getDoc(storeRef);
-
-    if (storeSnap.exists()) {
-      return storeSnap.data();
-    } else {
-      console.error("Store not found");
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching store data:", error);
-    return null;
-  }
+interface StorePageProps {
+  params: Promise<{
+    storeId: string;
+  }>;
 }
 
 // Metadata generation function with improved type safety and error handling
-export async function generateMetadata({ params }: any): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: StorePageProps): Promise<Metadata> {
   const { storeId } = await params;
 
-  const storeData = await getStoreData(storeId);
+  const storeData = await getStorefrontStore(storeId);
 
   const storeName = storeData?.name ?? "Store";
   const title = storeData
@@ -87,19 +66,25 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 }
 
 // Page component with improved conditional rendering
-export default async function Page({ params }: any) {
-  const { storeId } = params;
+export default async function Page({ params }: StorePageProps) {
+  const { storeId } = await params;
 
-  const storeData = await getStoreData(storeId);
+  const [storeData, initialProducts] = await Promise.all([
+    getStorefrontStore(storeId),
+    getStorefrontProducts(storeId),
+  ]);
 
   if (!storeData) {
-    return <p>Store not found.</p>;
+    notFound();
   }
 
   return (
     <>
-      
-      <StoreProducts storeId={storeId} />
+      <StoreProducts
+        storeId={storeId}
+        initialProducts={initialProducts}
+        storeOwnerId={storeData.id}
+      />
     </>
   );
 }

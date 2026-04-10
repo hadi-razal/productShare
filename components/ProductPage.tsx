@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { doc, getDoc, increment, updateDoc } from "firebase/firestore";
 import {
   FiFacebook,
   FiTwitter,
-  FiShoppingCart,
   FiShare2,
   FiX,
 } from "react-icons/fi";
-import { FaInstagram, FaWhatsapp } from "react-icons/fa";
+import { FaWhatsapp } from "react-icons/fa";
 import { getUserId } from "@/helpers/getUserId";
 import { auth, db } from "@/lib/firebase";
 import { ProductType } from "@/type";
@@ -20,6 +19,8 @@ import { onAuthStateChanged } from "firebase/auth";
 interface ProductPageProps {
   productId: string;
   storeId: string;
+  initialProduct?: ProductType | null;
+  initialUserId?: string | null;
 }
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────
@@ -55,10 +56,15 @@ const ProductSkeleton = () => (
   </div>
 );
 
-const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
-  const [productData, setProductData] = useState<ProductType | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [userId, setUserId] = useState<string | null>(null);
+const ProductPage = ({
+  productId,
+  storeId,
+  initialProduct = null,
+  initialUserId = null,
+}: ProductPageProps) => {
+  const [productData, setProductData] = useState<ProductType | null>(initialProduct);
+  const [loading, setLoading] = useState<boolean>(!initialProduct);
+  const [userId, setUserId] = useState<string | null>(initialUserId);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [isModalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -81,18 +87,25 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
 
   const mediaArray = getMediaArray();
 
-  const addProductCount = async () => {
+  const addProductCount = useCallback(async (resolvedUserId?: string | null) => {
     if (typeof window === "undefined") return;
-    const userID = await getUserId(storeId);
+    const userID = resolvedUserId ?? userId ?? (await getUserId(storeId));
     const isCounted = sessionStorage.getItem(`MyShop_Product_${productId}_View`);
     if (userID && !isCounted) {
       await updateDoc(doc(db, "users", userID, "products", productId), { views: increment(1) });
       sessionStorage.setItem(`MyShop_Product_${productId}_View`, "true");
     }
-  };
+  }, [productId, storeId, userId]);
 
   // Single combined fetch — no waterfall
   useEffect(() => {
+    if (initialProduct) {
+      setProductData(initialProduct);
+      setUserId(initialUserId);
+      setLoading(false);
+      return;
+    }
+
     const init = async () => {
       try {
         const id = await getUserId(storeId);
@@ -110,9 +123,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, storeId }) => {
       }
     };
 
-    addProductCount();
     init();
-  }, [storeId, productId]);
+  }, [initialProduct, initialUserId, productId, storeId]);
+
+  useEffect(() => {
+    void addProductCount(initialUserId ?? userId);
+  }, [addProductCount, initialUserId, productId, storeId, userId]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
