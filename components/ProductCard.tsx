@@ -107,128 +107,133 @@ const ProductCard = ({
   if (product.isHidden && !isStoreOwner) return null;
 
   return (
-    <div
-      onClick={() => {
-        if (productHref) {
-          router.push(productHref);
-        }
-      }}
-      onMouseEnter={() => {
-        if (productHref) {
-          void router.prefetch(productHref);
-        }
-      }}
-      onFocus={() => {
-        if (productHref) {
-          void router.prefetch(productHref);
-        }
-      }}
-      className="cursor-pointer relative w-full rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
-    >
-      <div className="relative w-full h-48 bg-gray-100 rounded-t-xl overflow-hidden">
-        {product.images?.[0] && !imgLoaded && (
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 animate-pulse" />
-        )}
+    <>
+      <div
+        onClick={() => {
+          if (productHref) {
+            router.push(productHref);
+          }
+        }}
+        onMouseEnter={() => {
+          if (productHref) {
+            void router.prefetch(productHref);
+          }
+        }}
+        onFocus={() => {
+          if (productHref) {
+            void router.prefetch(productHref);
+          }
+        }}
+        className="cursor-pointer relative w-full rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+      >
+        <div className="relative w-full h-48 bg-gray-100 rounded-t-xl overflow-hidden">
+          {product.images?.[0] && !imgLoaded && (
+            <div className="absolute inset-0 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 animate-pulse" />
+          )}
 
-        {product.isHidden && isStoreOwner && (
-          <div className="absolute inset-0 z-10 bg-black/70 flex flex-col items-center justify-center">
-            <span className="text-white text-xs font-medium px-3 text-center">Hidden</span>
+          {product.isHidden && isStoreOwner && (
+            <div className="absolute inset-0 z-10 bg-black/70 flex flex-col items-center justify-center">
+              <span className="text-white text-xs font-medium px-3 text-center">Hidden</span>
+            </div>
+          )}
+
+          {product.images?.[0] ? (
+            <Image
+              src={product.images[0]}
+              alt={product.name}
+              width={400}
+              height={300}
+              quality={80}
+              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+              className={`w-full h-48 object-cover transition-opacity duration-300 ${
+                imgLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              onLoad={() => setImgLoaded(true)}
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-sm text-gray-400">
+              No image
+            </div>
+          )}
+
+          <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
+            {!product.isInStock && (
+              <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-600 text-white shadow">
+                Out of Stock
+              </span>
+            )}
+            {isDiscounted && product.isInStock && (
+              <span className="px-2 py-0.5 bg-red-600 text-white rounded-full text-[10px] font-bold shadow">
+                {Math.round(discountPercentage)}% OFF
+              </span>
+            )}
+          </div>
+
+          {product.isNew && (
+            <span className="absolute top-2 right-2 z-10 px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-500 text-white shadow">
+              New
+            </span>
+          )}
+
+          {product.isMostSelling && (
+            <span className="absolute bottom-0 right-0 z-10 px-2 py-1 text-[10px] flex items-center gap-0.5 font-bold bg-red-600 text-white rounded-tl-lg">
+              <FaStar className="text-yellow-300 w-2.5 h-2.5" /> Top Seller
+            </span>
+          )}
+        </div>
+
+        <div className="p-2.5">
+          <h3 className="text-sm text-gray-800 line-clamp-2 leading-snug mb-1.5">
+            {product.name}
+          </h3>
+          <div className="flex items-baseline gap-1.5">
+            <span
+              className={`text-sm font-semibold ${
+                isDiscounted ? "text-red-600" : "text-gray-900"
+              }`}
+            >
+              ₹{getDisplayPrice()}
+            </span>
+            {isDiscounted && (
+              <span className="text-xs text-gray-400 line-through">
+                ₹{getOriginalPrice()}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {isStoreOwner && (
+          <div className="flex gap-2 px-2.5 pb-2.5">
+            <button
+              onClick={handleDelete}
+              className="flex items-center justify-center gap-1 bg-red-500 hover:bg-red-600 py-1.5 px-3 w-full rounded-lg text-white text-xs font-medium transition-colors"
+            >
+              <Trash className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Delete</span>
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(`/store/${storeId}/edit/${product.id}`);
+              }}
+              className="flex items-center justify-center gap-1 bg-gray-500 hover:bg-gray-600 w-full py-1.5 px-3 rounded-lg text-white text-xs font-medium transition-colors"
+            >
+              <PencilIcon className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Edit</span>
+            </button>
           </div>
         )}
-
-        {product.images?.[0] ? (
-          <Image
-            src={product.images[0]}
-            alt={product.name}
-            width={400}
-            height={300}
-            quality={80}
-            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-            className={`w-full h-48 object-cover transition-opacity duration-300 ${
-              imgLoaded ? "opacity-100" : "opacity-0"
-            }`}
-            onLoad={() => setImgLoaded(true)}
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-sm text-gray-400">
-            No image
-          </div>
-        )}
-
-        <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
-          {!product.isInStock && (
-            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-600 text-white shadow">
-              Out of Stock
-            </span>
-          )}
-          {isDiscounted && product.isInStock && (
-            <span className="px-2 py-0.5 bg-red-600 text-white rounded-full text-[10px] font-bold shadow">
-              {Math.round(discountPercentage)}% OFF
-            </span>
-          )}
-        </div>
-
-        {product.isNew && (
-          <span className="absolute top-2 right-2 z-10 px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-500 text-white shadow">
-            New
-          </span>
-        )}
-
-        {product.isMostSelling && (
-          <span className="absolute bottom-0 right-0 z-10 px-2 py-1 text-[10px] flex items-center gap-0.5 font-bold bg-red-600 text-white rounded-tl-lg">
-            <FaStar className="text-yellow-300 w-2.5 h-2.5" /> Top Seller
-          </span>
-        )}
       </div>
-
-      <div className="p-2.5">
-        <h3 className="text-sm text-gray-800 line-clamp-2 leading-snug mb-1.5">
-          {product.name}
-        </h3>
-        <div className="flex items-baseline gap-1.5">
-          <span
-            className={`text-sm font-semibold ${
-              isDiscounted ? "text-red-600" : "text-gray-900"
-            }`}
-          >
-            ₹{getDisplayPrice()}
-          </span>
-          {isDiscounted && (
-            <span className="text-xs text-gray-400 line-through">
-              ₹{getOriginalPrice()}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {isStoreOwner && (
-        <div className="flex gap-2 px-2.5 pb-2.5">
-          <button
-            onClick={handleDelete}
-            className="flex items-center justify-center gap-1 bg-red-500 hover:bg-red-600 py-1.5 px-3 w-full rounded-lg text-white text-xs font-medium transition-colors"
-          >
-            <Trash className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Delete</span>
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(`/store/${storeId}/edit/${product.id}`);
-            }}
-            className="flex items-center justify-center gap-1 bg-gray-500 hover:bg-gray-600 w-full py-1.5 px-3 rounded-lg text-white text-xs font-medium transition-colors"
-          >
-            <PencilIcon className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Edit</span>
-          </button>
-        </div>
-      )}
 
       {showDeleteModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-          onClick={(e) => e.stopPropagation()}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setShowDeleteModal(false)}
         >
-          <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4">
+          <div
+            className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
             <p className="text-base font-semibold text-gray-900 mb-1">Delete product?</p>
             <p className="text-sm text-gray-500 mb-5">This action cannot be undone.</p>
             <div className="flex gap-3">
@@ -248,7 +253,7 @@ const ProductCard = ({
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
