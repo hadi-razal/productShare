@@ -1,24 +1,14 @@
 import { db } from "@/lib/firebase";
 import { getDoc, doc } from "firebase/firestore";
 
-// Function to get user ID by username
 export const getUsername = async (id: string): Promise<string | null> => {
   try {
-
-    console.log(id)
     const userDoc = doc(db, "users", id);
-
-    
-
     const querySnapshot = await getDoc(userDoc);
 
-    
-
     if (querySnapshot.exists()) {
- 
-      return querySnapshot.data().username; // Access the username field correctly
+      return querySnapshot.data().username;
     } else {
-      console.log("No user found with the specified ID.");
       return null;
     }
   } catch (error) {

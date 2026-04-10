@@ -9,18 +9,51 @@ import { auth, db } from "@/lib/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import Image from "next/image";
 
+const storeThemeCache = new Map<string, string | null>();
+const storeThemePromiseCache = new Map<string, Promise<string | null>>();
+
+const getStoreThemeColor = async (username: string) => {
+  if (storeThemeCache.has(username)) {
+    return storeThemeCache.get(username) ?? null;
+  }
+
+  const cachedPromise = storeThemePromiseCache.get(username);
+  if (cachedPromise) {
+    return cachedPromise;
+  }
+
+  const themePromise = (async () => {
+    try {
+      const q = query(collection(db, "users"), where("username", "==", username));
+      const snapshot = await getDocs(q);
+      const color = snapshot.empty
+        ? null
+        : (snapshot.docs[0].data().themeColor as string | null) || null;
+
+      storeThemeCache.set(username, color);
+      return color;
+    } catch (error) {
+      console.error("Error fetching theme color:", error);
+      return null;
+    } finally {
+      storeThemePromiseCache.delete(username);
+    }
+  })();
+
+  storeThemePromiseCache.set(username, themePromise);
+  return themePromise;
+};
+
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [themeColor, setThemeColor] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
   const pathname = usePathname();
   const isStorePage = pathname.startsWith("/store/");
 
-  // Track auth & scroll
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsAuthenticated(!!user);
@@ -35,39 +68,33 @@ const Header = () => {
     };
   }, []);
 
-  // Fetch themeColor from Firestore
   useEffect(() => {
-    const fetchThemeColor = async () => {
-      if (!isStorePage) {
-        setThemeColor(null);
-        setLoading(false);
-        return;
+    let isCancelled = false;
+
+    if (!isStorePage) {
+      setThemeColor(null);
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    const username = pathname.split("/")[2];
+    if (!username) {
+      setThemeColor(null);
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    void getStoreThemeColor(username).then((color) => {
+      if (!isCancelled) {
+        setThemeColor(color);
       }
+    });
 
-      const username = pathname.split("/")[2];
-      if (!username) return;
-
-      setLoading(true);
-
-      try {
-        const q = query(collection(db, "users"), where("username", "==", username));
-        const snapshot = await getDocs(q);
-
-        if (!snapshot.empty) {
-          const color = snapshot.docs[0].data().themeColor || null;
-          setThemeColor(color);
-        } else {
-          setThemeColor(null);
-        }
-      } catch (error) {
-        console.error("Error fetching theme color:", error);
-        setThemeColor(null);
-      } finally {
-        setLoading(false);
-      }
+    return () => {
+      isCancelled = true;
     };
-
-    fetchThemeColor();
   }, [pathname, isStorePage]);
 
   const handleLogout = async () => {
@@ -77,25 +104,16 @@ const Header = () => {
 
   const links = (() => {
     if (isStorePage) {
-      return isAuthenticated ? [{ href: "/login", label: "My Store" }] : [];
-    } else {
-      return [
-        { href: isAuthenticated ? "/login" : "/", label: isAuthenticated ? "My Store" : "Home" },
-        { href: "/pricing", label: "Pricing" },
-        { href: "/about-us", label: "About" },
-        { href: "/contact", label: "Contact" },
-      ];
+      return isAuthenticated ? [{ href: "/store", label: "My Store" }] : [];
     }
-  })();
 
-  // 🔹 Full-screen loading overlay
-  if (isStorePage && loading) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white text-gray-700 text-lg font-medium">
-        Loading the store...
-      </div>
-    );
-  }
+    return [
+      { href: isAuthenticated ? "/store" : "/", label: isAuthenticated ? "My Store" : "Home" },
+      { href: "/pricing", label: "Pricing" },
+      { href: "/about-us", label: "About" },
+      { href: "/contact", label: "Contact" },
+    ];
+  })();
 
   return (
     <>
@@ -110,9 +128,8 @@ const Header = () => {
         style={isStorePage && themeColor ? { backgroundColor: themeColor } : {}}
       >
         <div className="max-w-screen-xl mx-auto px-6 py-3 flex justify-between items-center">
-          {/* Logo */}
           <Link
-            href="/"
+            href={isAuthenticated ? "/store" : "/"}
             className="text-2xl max-h-32 font-extrabold bg-gradient-to-r pt-3 from-blue-700 via-purple-600 to-indigo-600 bg-clip-text text-transparent"
           >
             <Image
@@ -123,7 +140,6 @@ const Header = () => {
             />
           </Link>
 
-          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-6">
             {links.map(({ href, label }) => (
               <Link
@@ -167,7 +183,6 @@ const Header = () => {
             )}
           </nav>
 
-          {/* Hamburger Icon */}
           {links.length > 0 && (
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -180,7 +195,6 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {menuOpen && links.length > 0 && (
           <motion.div
@@ -210,7 +224,7 @@ const Header = () => {
                   handleLogout();
                   setMenuOpen(false);
                 }}
-                className="text-white bg-red-600 border  py-2 rounded-md hover:bg-red-50 font-medium"
+                className="text-white bg-red-600 border py-2 rounded-md hover:bg-red-50 font-medium"
               >
                 Logout
               </button>
@@ -219,7 +233,6 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      {/* Offset to prevent content jump */}
       <div className="h-[65px]" />
     </>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Rocket,
   Globe,
@@ -13,11 +13,12 @@ import {
   UserPlus,
   PackagePlus,
   Share2,
-  ArrowRight,
 } from "lucide-react";
 import Marquee from "react-fast-marquee";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import HeroSection from "./HeroSection";
 import PricingSection from "./PricingSection";
 import FaqSection from "./FaqSection";
@@ -168,6 +169,24 @@ const marqueeMessages2 = [
 
 const Home = () => {
   const router = useRouter();
+  const [isAuthResolved, setIsAuthResolved] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.replace("/store");
+        return;
+      }
+
+      setIsAuthResolved(true);
+    });
+
+    return () => unsubscribe();
+  }, [router]);
+
+  if (!isAuthResolved) {
+    return <div className="min-h-screen bg-white" />;
+  }
 
   return (
     <div className="bg-white text-gray-900 min-h-screen">
@@ -402,7 +421,9 @@ const Home = () => {
                 </div>
 
                 <p className="text-sm text-gray-600 leading-relaxed italic">
-                  "{testimonial.quote}"
+                  <span aria-hidden="true">&ldquo;</span>
+                  {testimonial.quote}
+                  <span aria-hidden="true">&rdquo;</span>
                 </p>
               </motion.div>
             ))}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   collection,
   doc,
@@ -8,79 +8,159 @@ import {
   increment,
   updateDoc,
 } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { Search, X } from "lucide-react";
 import { getUserId } from "@/helpers/getUserId";
-import { db } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
-import AlertMessageSlider from "./AlertSlider";
 
 interface StoreProductsProps {
   storeId: string | undefined;
+  initialProducts?: ProductType[];
+  storeOwnerId?: string | null;
 }
 
-const StoreProducts: React.FC<StoreProductsProps> = ({ storeId }) => {
-  const [products, setProducts] = useState<ProductType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+const getCreatedAtValue = (createdAt: ProductType["createdAt"]) => {
+  if (typeof createdAt === "number") {
+    return createdAt;
+  }
+
+  if (typeof createdAt?.toMillis === "function") {
+    return createdAt.toMillis();
+  }
+
+  if (typeof createdAt === "string") {
+    return new Date(createdAt).getTime() || 0;
+  }
+
+  return 0;
+};
+
+const StoreProducts = ({
+  storeId,
+  initialProducts,
+  storeOwnerId,
+}: StoreProductsProps) => {
+  const [products, setProducts] = useState<ProductType[]>(() => initialProducts ?? []);
+  const [isLoading, setIsLoading] = useState(initialProducts === undefined);
   const [searchInput, setSearchInput] = useState<string>("");
-  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>(
+    () => initialProducts ?? []
+  );
   const [sortOption, setSortOption] = useState<string>("");
   const [visibleProducts, setVisibleProducts] = useState(20);
+  const [resolvedStoreOwnerId, setResolvedStoreOwnerId] = useState<string | null>(
+    storeOwnerId ?? null
+  );
+  const [isStoreOwner, setIsStoreOwner] = useState(false);
 
-  const fetchProducts = async () => {
-    if (!storeId) return;
-    if (typeof window === "undefined") return; // Skip on server side
+  useEffect(() => {
+    setProducts(initialProducts ?? []);
+    setFilteredProducts(initialProducts ?? []);
+    setIsLoading(initialProducts === undefined);
+  }, [initialProducts]);
+
+  useEffect(() => {
+    setResolvedStoreOwnerId(storeOwnerId ?? null);
+  }, [storeOwnerId]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsStoreOwner(!!(user && resolvedStoreOwnerId && user.uid === resolvedStoreOwnerId));
+    });
+
+    return () => unsubscribe();
+  }, [resolvedStoreOwnerId]);
+
+  const countStoreView = useCallback(async (userID: string) => {
+    if (typeof window === "undefined" || !storeId || !userID) {
+      return;
+    }
+
     try {
-      const userID = await getUserId(storeId);
-
-      if (userID) {
-        const isCounted = sessionStorage.getItem(`MyShop_${storeId}_View`);
-        if (!isCounted) {
-          const userDocRef = doc(db, "users", userID);
-          await updateDoc(userDocRef, { visitCount: increment(1) });
-          sessionStorage.setItem(`MyShop_${storeId}_View`, "true");
-        }
-
-        const productsRef = collection(db, "users", userID, "products");
-        const querySnapshot = await getDocs(productsRef);
-
-        const productList: ProductType[] = querySnapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            name: data.name,
-            description: data.description,
-            colors: data.colors || [],
-            category: data.category,
-            images: data.images || [],
-            regularPrice: data.regularPrice,
-            discountPrice: data.discountPrice,
-            isNew: data.isNew || false,
-            isInStock: data.isInStock || false,
-            rating: data.rating || 0,
-            ratingCount: data.ratingCount || 0,
-            sizes: data.sizes || [],
-            isMostSelling: data.isMostSelling || false,
-            createdAt: data.createdAt,
-            tags: data.tags || "",
-            isFeatured: data.isFeatured || false,
-            isHidden: data.isHidden || false,
-          };
-        });
-
-        setProducts(productList);
-        setFilteredProducts(productList);
+      const isCounted = sessionStorage.getItem(`MyShop_${storeId}_View`);
+      if (isCounted) {
+        return;
       }
+
+      await updateDoc(doc(db, "users", userID), { visitCount: increment(1) });
+      sessionStorage.setItem(`MyShop_${storeId}_View`, "true");
+    } catch (error) {
+      console.error("Error counting store visit:", error);
+    }
+  }, [storeId]);
+
+  const fetchProducts = useCallback(async () => {
+    if (!storeId || typeof window === "undefined") {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const userID = resolvedStoreOwnerId ?? (await getUserId(storeId));
+
+      if (!userID) {
+        setProducts([]);
+        setFilteredProducts([]);
+        return;
+      }
+
+      if (!resolvedStoreOwnerId) {
+        setResolvedStoreOwnerId(userID);
+      }
+
+      void countStoreView(userID);
+
+      const productsRef = collection(db, "users", userID, "products");
+      const querySnapshot = await getDocs(productsRef);
+
+      const productList: ProductType[] = querySnapshot.docs.map((productDoc) => {
+        const data = productDoc.data();
+        return {
+          id: productDoc.id,
+          name: data.name,
+          description: data.description || "",
+          colors: data.colors || [],
+          category: data.category || "",
+          images: data.images || [],
+          regularPrice: data.regularPrice,
+          discountPrice: data.discountPrice,
+          isNew: data.isNew || false,
+          isInStock: data.isInStock || false,
+          rating: data.rating || 0,
+          ratingCount: data.ratingCount || 0,
+          sizes: data.sizes || [],
+          isMostSelling: data.isMostSelling || false,
+          createdAt: getCreatedAtValue(data.createdAt),
+          tags: data.tags || "",
+          isFeatured: data.isFeatured || false,
+          isHidden: data.isHidden || false,
+        };
+      });
+
+      setProducts(productList);
+      setFilteredProducts(productList);
     } catch (error) {
       console.error("Error fetching products: ", error);
     } finally {
-      setIsLoading(false); // Ensure this runs after the loop or errors
+      setIsLoading(false);
     }
-  };
+  }, [countStoreView, resolvedStoreOwnerId, storeId]);
 
   useEffect(() => {
-    fetchProducts();
-  }, [storeId]);
+    const publicStoreOwnerId = storeOwnerId ?? resolvedStoreOwnerId;
+
+    if (initialProducts !== undefined) {
+      if (publicStoreOwnerId) {
+        void countStoreView(publicStoreOwnerId);
+      }
+      return;
+    }
+
+    void fetchProducts();
+  }, [countStoreView, fetchProducts, initialProducts, resolvedStoreOwnerId, storeId, storeOwnerId]);
 
   const handleSearchInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -115,30 +195,30 @@ const StoreProducts: React.FC<StoreProductsProps> = ({ storeId }) => {
   };
 
   const sortProducts = (
-    products: ProductType[],
+    items: ProductType[],
     option: string
   ): ProductType[] => {
     switch (option) {
       case "price-low-high":
-        return products.sort(
+        return [...items].sort(
           (a, b) =>
             (a.discountPrice || a.regularPrice) -
             (b.discountPrice || b.regularPrice)
         );
       case "price-high-low":
-        return products.sort(
+        return [...items].sort(
           (a, b) =>
             (b.discountPrice || b.regularPrice) -
             (a.discountPrice || a.regularPrice)
         );
       case "newest":
-        return products.sort((a, b) => {
-          const dateA = a.createdAt?.toMillis?.() || 0;
-          const dateB = b.createdAt?.toMillis?.() || 0;
+        return [...items].sort((a, b) => {
+          const dateA = getCreatedAtValue(a.createdAt);
+          const dateB = getCreatedAtValue(b.createdAt);
           return dateB - dateA;
         });
       default:
-        return products;
+        return items;
     }
   };
 
@@ -208,20 +288,22 @@ const StoreProducts: React.FC<StoreProductsProps> = ({ storeId }) => {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
         {isLoading
           ? Array.from({ length: 20 }).map((_, idx) => (
-            <ProductCard
-            key={idx}
-            isLoading={true} // Pass the actual loading state
-          />  
+              <ProductCard
+                key={idx}
+                isLoading
+              />
             ))
           : filteredProducts.slice(0, visibleProducts).map((product) => (
-            <ProductCard
-            key={product.id}
-            isLoading={isLoading} // Pass the actual loading state
-            refetchProducts={fetchProducts}
-            storeId={storeId}
-            product={product}
-          />            
-          ))}
+              <ProductCard
+                key={product.id}
+                isLoading={isLoading}
+                refetchProducts={fetchProducts}
+                storeId={storeId}
+                storeOwnerId={resolvedStoreOwnerId}
+                isStoreOwner={isStoreOwner}
+                product={product}
+              />
+            ))}
       </div>
 
       {visibleProducts < filteredProducts.length && (
