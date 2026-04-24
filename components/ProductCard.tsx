@@ -143,7 +143,10 @@ const ProductCard = ({
               alt={product.name}
               width={400}
               height={300}
-              quality={80}
+              quality={65}
+              loading="lazy"
+              placeholder="blur"
+              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+"
               sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
               className={`w-full h-48 object-cover transition-opacity duration-300 ${
                 imgLoaded ? "opacity-100" : "opacity-0"

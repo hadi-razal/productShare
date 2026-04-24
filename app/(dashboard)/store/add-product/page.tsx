@@ -38,20 +38,20 @@ const Toggle = ({ name, checked, onChange, label, description }: any) => (
 
 // ── Section Card ─────────────────────────────────────────────────────────────
 const Section = ({ icon: Icon, title, children }: any) => (
-  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-    <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-50">
-      <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <Icon className="w-4 h-4 text-primary" />
+  <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+    <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+      <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)' }}>
+        <Icon className="w-4.5 h-4.5 text-indigo-600" />
       </div>
-      <h3 className="font-semibold text-gray-900 text-sm">{title}</h3>
+      <h3 className="font-semibold text-gray-900 text-[15px]">{title}</h3>
     </div>
     <div className="p-6">{children}</div>
   </div>
 );
 
 // ── Field ────────────────────────────────────────────────────────────────────
-const inputCls = "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50";
-const labelCls = "block text-sm font-medium text-gray-700 mb-1.5";
+const inputCls = "w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
+const labelCls = "block text-sm font-semibold text-gray-700 mb-1.5";
 
 const CreateProduct = () => {
   const [productData, setProductData] = useState<ProductType>({
@@ -240,22 +240,28 @@ const CreateProduct = () => {
   const busy = isUploading || videoCompressing;
 
   return (
-    <div className="min-h-screen bg-gray-50/60">
-      <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="min-h-screen">
+      <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
 
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="p-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5 text-gray-600" />
-          </button>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Add New Product</h1>
-            <p className="text-sm text-gray-500">Fill in the details to list your product</p>
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-5">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="p-2.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Add New Product</h1>
+              <p className="text-sm text-gray-500 mt-0.5">Fill in the details to list your product</p>
+            </div>
           </div>
+          <div className="h-1 w-full rounded-full bg-gray-100 overflow-hidden">
+            <div className="h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, (imageFiles.length > 0 ? 20 : 0) + (productData.name ? 20 : 0) + (productData.regularPrice ? 20 : 0) + (productData.category ? 20 : 0) + (productData.description ? 20 : 0))}%`, background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }} />
+          </div>
+          <p className="text-xs text-gray-400 mt-2">Fill out required fields to complete your listing</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -535,8 +541,8 @@ const CreateProduct = () => {
           <button
             type="submit"
             disabled={busy}
-            className="w-full py-4 rounded-2xl text-white font-bold text-base transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
-            style={{ background: busy ? "#9ca3af" : "linear-gradient(135deg, #6c64cb, #a78bfa)" }}
+            className="w-full py-4 rounded-2xl text-white font-bold text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
+            style={{ background: busy ? "#9ca3af" : "linear-gradient(135deg, #4f46e5, #7c3aed)", boxShadow: busy ? 'none' : '0 8px 24px rgba(79,70,229,0.3)' }}
           >
             {isUploading ? (
               <span className="flex items-center justify-center gap-2">
