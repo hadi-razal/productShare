@@ -9,7 +9,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { Search, X } from "lucide-react";
+import { Search, X, LayoutDashboard, PlusSquare, Settings, MessageSquare, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { getUserId } from "@/helpers/getUserId";
 import { auth, db } from "@/lib/firebase";
 import ProductCard from "@/components/ProductCard";
@@ -54,6 +55,7 @@ const StoreProducts = ({
     storeOwnerId ?? null
   );
   const [isStoreOwner, setIsStoreOwner] = useState(false);
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   useEffect(() => {
     setProducts(initialProducts ?? []);
@@ -287,7 +289,7 @@ const StoreProducts = ({
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
         {isLoading
-          ? Array.from({ length: 20 }).map((_, idx) => (
+          ? Array.from({ length: 8 }).map((_, idx) => (
               <ProductCard
                 key={idx}
                 isLoading
@@ -310,11 +312,108 @@ const StoreProducts = ({
         <div className="flex justify-center mt-4">
           <button
             onClick={handleLoadMore}
-            className="px-6 py-2 text-white bg-blue-950 rounded-md"
+            className="px-6 py-2.5 text-white font-medium rounded-xl transition-all hover:-translate-y-0.5"
+            style={{ background: 'linear-gradient(135deg, #0f172a, #1e1b4b)', boxShadow: '0 4px 14px rgba(15,23,42,0.25)' }}
           >
             Load More
           </button>
         </div>
+      )}
+
+      {/* ── Admin Slide-in Panel ── */}
+      {isStoreOwner && (
+        <>
+          {/* Toggle Tab */}
+          <button
+            onClick={() => setAdminPanelOpen(!adminPanelOpen)}
+            className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-center gap-1 py-3 px-2 rounded-l-xl text-white text-xs font-semibold transition-all hover:px-3"
+            style={{ background: 'linear-gradient(180deg, #4f46e5, #7c3aed)', boxShadow: '-2px 0 12px rgba(79,70,229,0.3)', writingMode: adminPanelOpen ? undefined : 'vertical-rl' }}
+          >
+            {adminPanelOpen ? <ChevronRight className="w-4 h-4" /> : <><LayoutDashboard className="w-4 h-4" /><span style={{ transform: 'rotate(180deg)' }}>Admin</span></>}
+          </button>
+
+          {/* Overlay */}
+          {adminPanelOpen && (
+            <div
+              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity"
+              onClick={() => setAdminPanelOpen(false)}
+            />
+          )}
+
+          {/* Panel */}
+          <div
+            className="fixed top-0 right-0 h-full z-50 flex flex-col transition-transform duration-300 ease-in-out"
+            style={{
+              width: '300px',
+              maxWidth: '85vw',
+              background: 'linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%)',
+              transform: adminPanelOpen ? 'translateX(0)' : 'translateX(100%)',
+              boxShadow: adminPanelOpen ? '-8px 0 32px rgba(0,0,0,0.2)' : 'none',
+            }}
+          >
+            {/* Panel Header */}
+            <div style={{ padding: '20px 18px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+                    <LayoutDashboard className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-sm">Admin Panel</p>
+                    <p className="text-xs" style={{ color: '#64748b' }}>Store Management</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setAdminPanelOpen(false)}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
+                  style={{ background: 'rgba(255,255,255,0.06)', color: '#94a3b8' }}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Panel Actions */}
+            <div style={{ padding: '16px 14px', flex: 1, overflowY: 'auto' }}>
+              <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: '#64748b', padding: '0 10px' }}>Quick Actions</p>
+              {[
+                { href: '/store', icon: LayoutDashboard, label: 'Dashboard', desc: 'View analytics & stats' },
+                { href: '/store/add-product', icon: PlusSquare, label: 'Add Product', desc: 'Create new listing' },
+                { href: '/store/reviews', icon: MessageSquare, label: 'Reviews', desc: 'Customer feedback' },
+                { href: '/store/settings', icon: Settings, label: 'Settings', desc: 'Store preferences' },
+              ].map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex items-center gap-3 rounded-xl transition-colors mb-1"
+                  style={{ padding: '12px 10px', color: '#94a3b8', textDecoration: 'none' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#e2e8f0'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#94a3b8'; }}
+                >
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                    <item.icon className="w-[18px] h-[18px]" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold" style={{ color: '#e2e8f0' }}>{item.label}</p>
+                    <p className="text-xs" style={{ color: '#64748b' }}>{item.desc}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Panel Footer */}
+            <div style={{ padding: '14px 18px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <Link
+                href="/store"
+                className="flex items-center justify-center gap-2 w-full rounded-xl text-sm font-semibold transition-all"
+                style={{ padding: '11px', background: 'rgba(99,102,241,0.15)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.2)', textDecoration: 'none' }}
+              >
+                <ExternalLink className="w-4 h-4" />
+                Open Dashboard
+              </Link>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

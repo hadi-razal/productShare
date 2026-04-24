@@ -44,6 +44,8 @@ const getStoreThemeColor = async (username: string) => {
   return themePromise;
 };
 
+const DASHBOARD_ROUTES = ["/store", "/store/add-product", "/store/reviews", "/store/settings"];
+
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -53,6 +55,10 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
   const isStorePage = pathname.startsWith("/store/");
+  const isDashboardPage = DASHBOARD_ROUTES.includes(pathname);
+
+  // Hide Header completely on dashboard pages
+  if (isDashboardPage) return null;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
