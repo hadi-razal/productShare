@@ -240,22 +240,24 @@ const StoreDashboard = () => {
         /* Welcome */
         .ds-welcome {
           position: relative;
-          background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
+          background: #ffffff;
           border-radius: 20px;
           padding: 28px 24px;
           overflow: hidden;
-          color: #fff;
+          color: #0f172a;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
         }
         @media (min-width: 768px) { .ds-welcome { padding: 36px 32px; border-radius: 24px; } }
         .ds-welcome-content { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 16px; }
         @media (min-width: 640px) { .ds-welcome-content { flex-direction: row; align-items: center; justify-content: space-between; } }
         .ds-welcome-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
         @media (min-width: 768px) { .ds-welcome-title { font-size: 26px; } }
-        .ds-welcome-sub { font-size: 14px; color: rgba(255,255,255,0.75); margin-top: 4px; }
+        .ds-welcome-sub { font-size: 14px; color: #475569; margin-top: 4px; }
         .ds-welcome-actions { display: flex; align-items: center; gap: 8px; }
         .ds-welcome-decor {
           position: absolute; top: -40px; right: -40px; width: 200px; height: 200px;
-          border-radius: 50%; background: rgba(255,255,255,0.08);
+          border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, rgba(255,255,255,0) 70%);
         }
 
         /* Buttons */
@@ -265,10 +267,10 @@ const StoreDashboard = () => {
           font-size: 13px; font-weight: 600; cursor: pointer;
           border: none; text-decoration: none; transition: all 0.2s; white-space: nowrap;
         }
-        .ds-btn-light { background: rgba(255,255,255,0.18); color: #fff; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); }
-        .ds-btn-light:hover { background: rgba(255,255,255,0.28); }
-        .ds-btn-ghost { background: rgba(255,255,255,0.1); color: #fff; padding: 9px; border-radius: 10px; }
-        .ds-btn-ghost:hover { background: rgba(255,255,255,0.2); }
+        .ds-btn-light { background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .ds-btn-light:hover { background: #f1f5f9; border-color: #cbd5e1; }
+        .ds-btn-ghost { background: #f8fafc; color: #475569; padding: 9px; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .ds-btn-ghost:hover { background: #f1f5f9; color: #0f172a; }
         .ds-btn-ghost:disabled { opacity: 0.5; }
 
         /* Stats */
@@ -277,10 +279,11 @@ const StoreDashboard = () => {
 
         .ds-stat-card {
           background: #fff; border-radius: 16px; padding: 20px;
-          border: 1px solid #e5e7eb;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 4px 14px rgba(0,0,0,0.02);
           transition: all 0.2s;
         }
-        .ds-stat-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-2px); }
+        .ds-stat-card:hover { box-shadow: 0 12px 24px rgba(0,0,0,0.06); transform: translateY(-3px); border-color: #cbd5e1; }
         .ds-stat-top { display: flex; align-items: center; justify-content: space-between; }
         .ds-stat-icon-wrap {
           width: 42px; height: 42px; border-radius: 12px;
@@ -304,7 +307,7 @@ const StoreDashboard = () => {
         .ds-analytics-insights { display: flex; flex-direction: column; gap: 16px; }
 
         /* Chart */
-        .ds-chart-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #e5e7eb; height: 100%; display: flex; flex-direction: column; }
+        .ds-chart-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; height: 100%; display: flex; flex-direction: column; box-shadow: 0 4px 14px rgba(0,0,0,0.02); }
         @media (min-width: 768px) { .ds-chart-card { padding: 24px; } }
         .ds-chart-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
         .ds-card-title { font-size: 15px; font-weight: 700; color: #0f172a; }
@@ -322,7 +325,7 @@ const StoreDashboard = () => {
         .ds-chart-empty span { font-size: 13px; color: #94a3b8; }
 
         /* Insights */
-        .ds-insights-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #e5e7eb; }
+        .ds-insights-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 14px rgba(0,0,0,0.02); }
         .ds-insights-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
         .ds-insight-row { margin-bottom: 14px; }
         .ds-insight-row:last-of-type { margin-bottom: 0; }
@@ -346,15 +349,15 @@ const StoreDashboard = () => {
         .ds-insights-link:hover { background: #eef2ff; }
 
         /* Quick Actions */
-        .ds-quick-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #e5e7eb; }
+        .ds-quick-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 14px rgba(0,0,0,0.02); }
         .ds-quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
         .ds-quick-action {
           display: flex; flex-direction: column; align-items: center; gap: 8px;
           padding: 16px 12px; border-radius: 12px; background: #f8fafc;
-          border: 1px solid #e5e7eb; text-decoration: none; transition: all 0.2s;
+          border: 1px solid #e2e8f0; text-decoration: none; transition: all 0.2s;
         }
         .ds-quick-action span { font-size: 12px; font-weight: 600; color: #334155; }
-        .ds-quick-action:hover { background: #eef2ff; border-color: #c7d2fe; transform: translateY(-1px); }
+        .ds-quick-action:hover { background: #ffffff; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transform: translateY(-2px); }
 
         .ds-payment-row { display: flex; justify-content: flex-end; }
       `}</style>
