@@ -271,8 +271,8 @@ export default function DashboardShell({
           display: none;
           flex-direction: column;
           width: 250px;
-          background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
-          color: #cbd5e1;
+          background: #ffffff;
+          border-right: 1px solid #e2e8f0;
           position: sticky;
           top: 0;
           height: 100vh;
@@ -302,18 +302,19 @@ export default function DashboardShell({
           align-items: center;
           gap: 10px;
           text-decoration: none;
-          color: #fff;
+          color: #0f172a;
         }
         .ds-brand-icon {
           width: 38px;
           height: 38px;
           border-radius: 12px;
-          background: linear-gradient(135deg, #6366f1, #8b5cf6);
+          background: linear-gradient(135deg, #6366f1, #4f46e5);
           display: flex;
           align-items: center;
           justify-content: center;
           color: #fff;
           flex-shrink: 0;
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
         }
         .ds-brand-icon-sm {
           width: 32px;
@@ -330,9 +331,9 @@ export default function DashboardShell({
           width: 26px;
           height: 26px;
           border-radius: 7px;
-          border: none;
-          background: rgba(255, 255, 255, 0.08);
-          color: #94a3b8;
+          border: 1px solid #e2e8f0;
+          background: #f8fafc;
+          color: #64748b;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -340,8 +341,8 @@ export default function DashboardShell({
           transition: all 0.2s;
         }
         .ds-collapse-btn:hover {
-          background: rgba(255, 255, 255, 0.15);
-          color: #fff;
+          background: #e2e8f0;
+          color: #0f172a;
         }
 
         /* Nav */
@@ -355,10 +356,10 @@ export default function DashboardShell({
         }
         .ds-nav-section {
           font-size: 10px;
-          font-weight: 600;
+          font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: #64748b;
+          letter-spacing: 0.08em;
+          color: #94a3b8;
           padding: 8px 12px 6px;
           margin-bottom: 2px;
         }
@@ -368,9 +369,9 @@ export default function DashboardShell({
           gap: 12px;
           padding: 10px 12px;
           border-radius: 10px;
-          font-size: 13.5px;
+          font-size: 14px;
           font-weight: 500;
-          color: #94a3b8;
+          color: #475569;
           text-decoration: none;
           transition: all 0.2s ease;
           cursor: pointer;
@@ -381,12 +382,12 @@ export default function DashboardShell({
           white-space: nowrap;
         }
         .ds-nav-link:hover {
-          background: rgba(255, 255, 255, 0.06);
-          color: #e2e8f0;
+          background: #f1f5f9;
+          color: #0f172a;
         }
         .ds-nav-link.active {
-          background: rgba(99, 102, 241, 0.2);
-          color: #a5b4fc;
+          background: #eef2ff;
+          color: #4f46e5;
           font-weight: 600;
         }
         .ds-nav-icon-wrap {
@@ -398,41 +399,55 @@ export default function DashboardShell({
           justify-content: center;
           flex-shrink: 0;
           transition: all 0.2s;
+          color: #64748b;
+        }
+        .ds-nav-link:hover .ds-nav-icon-wrap {
+          color: #4f46e5;
         }
         .ds-nav-link.active .ds-nav-icon-wrap {
-          background: linear-gradient(135deg, #6366f1, #8b5cf6);
+          background: #4f46e5;
           color: #fff;
-          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+          box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
         }
 
         /* Sidebar Bottom */
         .ds-sidebar-bottom {
-          padding: 12px;
-          border-top: 1px solid rgba(255, 255, 255, 0.06);
+          padding: 16px;
+          border-top: 1px solid #e2e8f0;
         }
         .ds-upgrade-card {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 12px;
           padding: 14px;
           border-radius: 12px;
-          background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.12));
-          border: 1px solid rgba(99, 102, 241, 0.2);
-          margin-bottom: 12px;
+          background: linear-gradient(135deg, #fffbeb, #fef3c7);
+          border: 1px solid #fde68a;
+          margin-bottom: 16px;
+          box-shadow: 0 2px 8px rgba(251, 191, 36, 0.15);
         }
         .ds-upgrade-title {
-          font-size: 12px;
-          font-weight: 600;
-          color: #e2e8f0;
+          font-size: 13px;
+          font-weight: 700;
+          color: #92400e;
         }
         .ds-upgrade-sub {
-          font-size: 10.5px;
-          color: #64748b;
+          font-size: 11px;
+          color: #b45309;
           margin-top: 1px;
         }
+        .ds-signout-btn {
+          color: #ef4444 !important;
+        }
+        .ds-signout-btn .ds-nav-icon-wrap {
+          color: #ef4444 !important;
+        }
         .ds-signout-btn:hover {
-          background: rgba(239, 68, 68, 0.1) !important;
-          color: #fca5a5 !important;
+          background: #fef2f2 !important;
+          color: #b91c1c !important;
+        }
+        .ds-signout-btn:hover .ds-nav-icon-wrap {
+          color: #b91c1c !important;
         }
 
         /* ══════════════════════════════════
@@ -452,10 +467,12 @@ export default function DashboardShell({
           align-items: center;
           gap: 12px;
           padding: 12px 16px;
-          background: linear-gradient(180deg, #0f172a, #1e1b4b);
+          background: #ffffff;
+          border-bottom: 1px solid #e2e8f0;
           position: sticky;
           top: 0;
           z-index: 15;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
         @media (min-width: 768px) {
           .ds-topbar {
@@ -466,17 +483,18 @@ export default function DashboardShell({
           width: 36px;
           height: 36px;
           border-radius: 10px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid #e2e8f0;
+          background: #f8fafc;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          color: #cbd5e1;
+          color: #475569;
           transition: all 0.2s;
         }
         .ds-hamburger:hover {
-          background: rgba(255, 255, 255, 0.1);
+          background: #e2e8f0;
+          color: #0f172a;
         }
         .ds-mobile-brand {
           display: flex;
@@ -486,8 +504,8 @@ export default function DashboardShell({
         }
         .ds-brand-name-sm {
           font-weight: 700;
-          font-size: 15px;
-          color: #fff;
+          font-size: 16px;
+          color: #0f172a;
         }
 
         /* Content */
@@ -540,13 +558,13 @@ export default function DashboardShell({
           left: 0;
           width: 290px;
           max-width: 85vw;
-          background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+          background: #ffffff;
           z-index: 50;
           transform: translateX(-100%);
           transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           display: flex;
           flex-direction: column;
-          box-shadow: 8px 0 32px rgba(0, 0, 0, 0.25);
+          box-shadow: 8px 0 32px rgba(0, 0, 0, 0.15);
         }
         .ds-drawer.open {
           transform: translateX(0);
@@ -562,18 +580,18 @@ export default function DashboardShell({
           align-items: center;
           justify-content: space-between;
           padding: 20px 18px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          border-bottom: 1px solid #e2e8f0;
         }
         .ds-drawer-head .ds-brand-link {
-          color: #fff;
+          color: #0f172a;
         }
         .ds-drawer-close {
           width: 34px;
           height: 34px;
           border-radius: 9px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          background: rgba(255, 255, 255, 0.05);
-          color: #94a3b8;
+          border: 1px solid #e2e8f0;
+          background: #f8fafc;
+          color: #64748b;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -581,8 +599,8 @@ export default function DashboardShell({
           transition: all 0.2s;
         }
         .ds-drawer-close:hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: #fff;
+          background: #e2e8f0;
+          color: #0f172a;
         }
 
         .ds-drawer-nav {
@@ -600,25 +618,25 @@ export default function DashboardShell({
           padding: 13px 14px;
           border-radius: 12px;
           text-decoration: none;
-          color: #94a3b8;
-          font-size: 14.5px;
+          color: #475569;
+          font-size: 15px;
           font-weight: 500;
           transition: all 0.2s;
         }
         .ds-drawer-link:hover {
-          background: rgba(255, 255, 255, 0.06);
-          color: #e2e8f0;
+          background: #f1f5f9;
+          color: #0f172a;
         }
         .ds-drawer-link.active {
-          background: rgba(99, 102, 241, 0.2);
-          color: #a5b4fc;
+          background: #eef2ff;
+          color: #4f46e5;
           font-weight: 600;
         }
         .ds-drawer-icon {
           width: 40px;
           height: 40px;
           border-radius: 10px;
-          background: rgba(255, 255, 255, 0.06);
+          background: #f8fafc;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -626,15 +644,15 @@ export default function DashboardShell({
           color: #64748b;
           transition: all 0.2s;
         }
-        .ds-drawer-icon.active {
-          background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        .ds-drawer-link.active .ds-drawer-icon {
+          background: #4f46e5;
           color: #fff;
-          box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+          box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
         }
 
         .ds-drawer-foot {
-          padding: 14px 18px;
-          border-top: 1px solid rgba(255, 255, 255, 0.06);
+          padding: 16px 18px;
+          border-top: 1px solid #e2e8f0;
         }
         .ds-drawer-signout {
           display: flex;
@@ -643,16 +661,17 @@ export default function DashboardShell({
           width: 100%;
           padding: 12px 14px;
           border-radius: 12px;
-          border: 1px solid rgba(239, 68, 68, 0.2);
-          background: rgba(239, 68, 68, 0.08);
-          color: #fca5a5;
+          background: #fef2f2;
+          color: #ef4444;
+          border: 1px solid #fee2e2;
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.2s;
         }
         .ds-drawer-signout:hover {
-          background: rgba(239, 68, 68, 0.15);
+          background: #fee2e2;
+          color: #b91c1c;
         }
 
         /* ══════════════════════════════════
