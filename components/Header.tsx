@@ -58,7 +58,6 @@ const Header = () => {
   const isDashboardPage = DASHBOARD_ROUTES.includes(pathname);
 
   // Hide Header completely on dashboard pages
-  if (isDashboardPage) return null;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -120,6 +119,8 @@ const Header = () => {
       { href: "/contact", label: "Contact" },
     ];
   })();
+
+  if (isDashboardPage) return null;
 
   return (
     <>
