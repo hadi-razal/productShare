@@ -262,7 +262,7 @@ const StoreProducts = ({
           )}
           <button
             onClick={handleSearchClick}
-            className="p-2 text-white bg-primaryColor rounded-md px-4 py-3"
+            className="rounded-md bg-primary px-4 py-3 text-white"
           >
             <Search size={18} />
           </button>

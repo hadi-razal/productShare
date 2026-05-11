@@ -1,62 +1,93 @@
 import { MetadataRoute } from "next";
+import { absoluteUrl } from "@/lib/site";
+import { getPublicStorefrontEntries } from "@/lib/storefront";
 
-const baseUrl = "https://productshare.in";
+export const revalidate = 3600;
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return [
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const lastModified = new Date();
+  const staticPages: MetadataRoute.Sitemap = [
     {
-      url: baseUrl,
-      lastModified: new Date(),
+      url: absoluteUrl("/"),
+      lastModified,
       changeFrequency: "weekly",
-      priority: 1.0,
+      priority: 1,
     },
     {
-      url: `${baseUrl}/about-us`,
-      lastModified: new Date(),
+      url: absoluteUrl("/about-us"),
+      lastModified,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/pricing`,
-      lastModified: new Date(),
+      url: absoluteUrl("/pricing"),
+      lastModified,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
+      url: absoluteUrl("/contact"),
+      lastModified,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/privacy-policy`,
-      lastModified: new Date(),
+      url: absoluteUrl("/privacy-policy"),
+      lastModified,
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/terms-and-conditions`,
-      lastModified: new Date(),
+      url: absoluteUrl("/terms-and-conditions"),
+      lastModified,
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/cancellations-and-refunds`,
-      lastModified: new Date(),
+      url: absoluteUrl("/cancellations-and-refunds"),
+      lastModified,
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/shipping-policy`,
-      lastModified: new Date(),
+      url: absoluteUrl("/shipping-policy"),
+      lastModified,
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/pricing-policy`,
-      lastModified: new Date(),
+      url: absoluteUrl("/pricing-policy"),
+      lastModified,
       changeFrequency: "yearly",
       priority: 0.3,
     },
   ];
+
+  try {
+    const storefrontEntries = await getPublicStorefrontEntries();
+
+    const dynamicPages = storefrontEntries.flatMap((entry) => {
+      const storePath = `/store/${entry.store.username}`;
+      const productPages = entry.products.map((product) => ({
+        url: absoluteUrl(`${storePath}/${product.id}`),
+        lastModified,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }));
+
+      return [
+        {
+          url: absoluteUrl(storePath),
+          lastModified,
+          changeFrequency: "weekly" as const,
+          priority: 0.8,
+        },
+        ...productPages,
+      ];
+    });
+
+    return [...staticPages, ...dynamicPages];
+  } catch {
+    return staticPages;
+  }
 }

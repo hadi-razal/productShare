@@ -53,7 +53,7 @@ const ForgotPasswordPage: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-primaryColor hover:bg-primaryColor/90 text-white shadow-lg"
+            className="flex w-full items-center justify-center rounded-md bg-primary px-6 py-3 text-base font-medium text-white shadow-lg transition-all duration-300 hover:bg-primary/90"
           >
             Send Reset Email
           </button>
