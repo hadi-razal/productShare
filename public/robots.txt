@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://productshare.in
+
+# Sitemaps
+Sitemap: https://productshare.in/sitemap.xml

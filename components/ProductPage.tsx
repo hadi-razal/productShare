@@ -214,7 +214,9 @@ const ProductPage = ({
                     alt={currentMedia.alt}
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
-                    quality={85}
+                    quality={75}
+                    placeholder="blur"
+                    blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+"
                     className={`object-contain transition-opacity duration-300 ${mainImgLoaded ? "opacity-100" : "opacity-0"}`}
                     onLoad={() => setMainImgLoaded(true)}
                     priority={currentImageIndex === 0}
@@ -278,7 +280,8 @@ const ProductPage = ({
                       alt={`Thumbnail ${i + 1}`}
                       width={64}
                       height={64}
-                      quality={60}
+                      quality={40}
+                      loading="lazy"
                       className="w-full h-full object-cover"
                     />
                   )}
