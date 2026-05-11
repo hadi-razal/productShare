@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -44,6 +44,8 @@ const getStoreThemeColor = async (username: string) => {
   return themePromise;
 };
 
+const DASHBOARD_ROUTES = ["/store", "/store/add-product", "/store/reviews", "/store/settings"];
+
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -53,6 +55,9 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
   const isStorePage = pathname.startsWith("/store/");
+  const isDashboardPage = DASHBOARD_ROUTES.includes(pathname);
+
+  // Hide Header completely on dashboard pages
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -115,6 +120,8 @@ const Header = () => {
     ];
   })();
 
+  if (isDashboardPage) return null;
+
   return (
     <>
       <header
@@ -174,6 +181,16 @@ const Header = () => {
             )}
 
             {!isStorePage && isAuthenticated && (
+              <Link
+                href="/pricing"
+                className="text-sm font-medium text-white bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-1.5 rounded-md hover:scale-105 transition-transform shadow flex items-center gap-1.5"
+              >
+                <Sparkles className="w-4 h-4" />
+                Upgrade to Pro
+              </Link>
+            )}
+
+            {!isStorePage && isAuthenticated && (
               <button
                 onClick={handleLogout}
                 className="text-sm font-medium text-white bg-red-600 border border-red-300 px-4 py-1.5 rounded-md hover:bg-red-400 transition"
@@ -218,6 +235,16 @@ const Header = () => {
                 {label}
               </Link>
             ))}
+            {!isStorePage && isAuthenticated && (
+              <Link
+                href="/pricing"
+                onClick={() => setMenuOpen(false)}
+                className="text-white bg-gradient-to-r from-amber-500 to-orange-500 py-2 rounded-md hover:opacity-90 font-medium flex items-center justify-center gap-1.5 shadow"
+              >
+                <Sparkles className="w-4 h-4" />
+                Upgrade to Pro
+              </Link>
+            )}
             {isStorePage && isAuthenticated && (
               <button
                 onClick={() => {
