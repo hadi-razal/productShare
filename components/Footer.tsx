@@ -2,95 +2,142 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
+import { siteConfig } from "@/lib/site";
+
+const marketingLinks = [
+  { href: "/", label: "Home" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/about-us", label: "About" },
+  { href: "/contact", label: "Contact" },
+];
+
+const legalLinks = [
+  { href: "/privacy-policy", label: "Privacy Policy" },
+  { href: "/terms-and-conditions", label: "Terms and Conditions" },
+  { href: "/pricing-policy", label: "Pricing Policy" },
+  { href: "/cancellations-and-refunds", label: "Refund Policy" },
+  { href: "/shipping-policy", label: "Shipping Policy" },
+];
 
 const Footer = () => {
-  const path = usePathname();
+  const pathname = usePathname();
 
-  // Show the footer only if the path is one of these specific routes
-  if (path !== "/" && path !== "/contact" && path !== "/about-us" && path !== "/terms-and-conditions" && path !== "/privacy-policy") {
+  if (
+    pathname.startsWith("/store") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/register") ||
+    pathname.startsWith("/forgot-password")
+  ) {
     return null;
   }
 
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-b from-gray-900 to-gray-950">
-      {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto pt-16 pb-8 px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          {/* Company Info */}
-          <div className="space-y-4">
-            <h3 className="text-white font-bold text-lg mb-4">Product Share</h3>
-            <p className="text-gray-400 text-sm leading-5">
-              Empowering businesses to showcase and share their products globally.
+    <footer className="bg-slate-950 text-slate-200">
+      <div className="mx-auto max-w-7xl px-6 py-16">
+        <div className="grid gap-10 lg:grid-cols-[1.3fr_0.8fr_0.9fr_1fr]">
+          <div className="space-y-5">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-indigo-300">
+                Product Share India
+              </p>
+              <h2 className="mt-3 text-3xl font-bold text-white">
+                Build catalogs that are easy to share and ready to sell.
+              </h2>
+            </div>
+            <p className="max-w-md text-sm leading-6 text-slate-400">
+              Product Share helps businesses publish digital catalogs, menus, and
+              product pages without the overhead of a full ecommerce site.
             </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90"
+              >
+                Start Free
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-900"
+              >
+                Talk to Support
+              </Link>
+            </div>
           </div>
 
-          {/* Contact Info */}
           <div>
-            <h3 className="text-white font-bold text-lg mb-4">Contact</h3>
-            <ul className="space-y-3">
-              <li>
-                <a href="mailto:support@productshare.com" className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-2 text-sm">
-                  <Mail className="w-4 h-4" />
-                  productshareindia@gmail.com
-                </a>
-              </li>
-              <li>
-                <a href="tel:+1234567890" className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-2 text-sm">
-                  <Phone className="w-4 h-4" />
-                  +91 8589920409
-                </a>
-              </li>
-              <li>
-                <span className="text-gray-400 flex items-center gap-2 text-sm">
-                  <MapPin className="w-4 h-4" />
-                  Kerala ,India
-                </span>
-              </li>
+            <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">
+              Explore
+            </h3>
+            <ul className="mt-5 space-y-3 text-sm">
+              {marketingLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-slate-300 transition hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Newsletter */}
           <div>
-            <h3 className="text-white font-bold text-lg mb-4">Newsletter</h3>
-            <p className="text-gray-400 text-sm mb-4">
-              Subscribe to our newsletter for updates and tips.
-            </p>
-            <div className="flex flex-col space-y-2">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="bg-gray-800 text-gray-200 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-              />
-              <button className="bg-primaryColor hover:bg-primaryColor/90 text-white px-4 py-2 rounded-lg transition-colors text-sm">
-                Subscribe
-              </button>
-            </div>
+            <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">
+              Legal
+            </h3>
+            <ul className="mt-5 space-y-3 text-sm">
+              {legalLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-slate-300 transition hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">
+              Contact
+            </h3>
+            <ul className="mt-5 space-y-4 text-sm text-slate-300">
+              <li className="flex items-start gap-3">
+                <Mail className="mt-0.5 h-4 w-4 text-indigo-300" />
+                <a
+                  href={`mailto:${siteConfig.supportEmail}`}
+                  className="transition hover:text-white"
+                >
+                  {siteConfig.supportEmail}
+                </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <Phone className="mt-0.5 h-4 w-4 text-indigo-300" />
+                <a
+                  href={`tel:${siteConfig.supportPhoneHref}`}
+                  className="transition hover:text-white"
+                >
+                  {siteConfig.supportPhone}
+                </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <MapPin className="mt-0.5 h-4 w-4 text-indigo-300" />
+                <span>Kerala, India</span>
+              </li>
+            </ul>
+            <p className="mt-5 text-sm text-slate-500">{siteConfig.supportHours}</p>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 border-t border-gray-800">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-400 text-sm">
-              &copy; {currentYear} Product Share. All rights reserved.
-            </p>
-            <div className="flex items-center space-x-4 text-sm">
-              <Link href="/privacy-policy">
-                <span className="text-gray-400 hover:text-blue-500 transition-colors">
-                  Privacy Policy
-                </span>
-              </Link>
-              <span className="text-gray-600">|</span>
-              <Link href="/terms-and-conditions">
-                <span className="text-gray-400 hover:text-blue-500 transition-colors">
-                  Terms of Service
-                </span>
-              </Link>
-            </div>
-          </div>
+        <div className="mt-12 border-t border-slate-800 pt-6 text-sm text-slate-500">
+          <p>&copy; {currentYear} {siteConfig.name}. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -13,7 +13,8 @@ import { ProductType, userType } from "@/type";
 export interface StorefrontStore extends userType {
   id: string;
   description?: string;
-  image?: string;
+  logoImage?: string;
+  whatsappNumber?: string;
 }
 
 export interface StorefrontProduct extends ProductType {
@@ -119,5 +120,46 @@ export const getStorefrontProduct = cache(
         productSnapshot.data() as Partial<ProductType>
       ),
     };
+  }
+);
+
+export interface PublicStorefrontEntry {
+  store: StorefrontStore;
+  products: StorefrontProduct[];
+}
+
+export const getPublicStorefrontEntries = cache(
+  async (): Promise<PublicStorefrontEntry[]> => {
+    const storesSnapshot = await getDocs(collection(db, "users"));
+
+    const entries = await Promise.all(
+      storesSnapshot.docs.map(async (storeDoc) => {
+        const storeData = storeDoc.data() as Partial<StorefrontStore>;
+
+        if (!storeData.username) {
+          return null;
+        }
+
+        const productsSnapshot = await getDocs(
+          collection(db, "users", storeDoc.id, "products")
+        );
+
+        const products = productsSnapshot.docs
+          .map((productDoc) =>
+            mapProduct(productDoc.id, productDoc.data() as Partial<ProductType>)
+          )
+          .filter((product) => !product.isHidden && product.name);
+
+        return {
+          store: {
+            id: storeDoc.id,
+            ...(storeData as StorefrontStore),
+          },
+          products,
+        };
+      })
+    );
+
+    return entries.filter(Boolean) as PublicStorefrontEntry[];
   }
 );

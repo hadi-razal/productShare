@@ -1,60 +1,50 @@
 import HomePage from "@/components/HomePage";
 import { Metadata } from "next";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 
-const baseUrl = "https://productshare.in";
+const baseUrl = siteConfig.url;
 
 export const metadata: Metadata = {
-  title: "Product Share India — #1 Free Digital Catalog Builder for Indian Businesses",
+  title: "Product Share India - Digital Catalog Builder for Indian Businesses",
   description:
-    "Create professional digital catalogs and menus in minutes — no coding needed. Trusted by 10,000+ Indian businesses: restaurants, retail stores, dropshippers, and more. Free to start, with WhatsApp sharing and QR codes built in.",
+    "Create professional digital catalogs and menus in minutes with Product Share India. Share products on WhatsApp, social media, and QR codes without building a full website.",
   keywords: [
+    ...siteConfig.keywords,
     "Product Share India",
-    "digital catalog builder India",
-    "free catalog maker",
     "online product catalog",
-    "restaurant menu builder India",
-    "small business catalog tool",
-    "dropshipping product showcase",
-    "WhatsApp product catalog",
-    "QR code menu generator India",
     "catalog builder for restaurants",
-    "digital menu creator",
-    "product listing platform India",
-    "Duoph Technologies",
-    "business catalog app",
     "share products online India",
   ],
-  applicationName: "Product Share India",
+  applicationName: siteConfig.name,
   authors: [{ name: "Duoph Technologies", url: "https://www.duoph.in/" }],
   alternates: {
     canonical: baseUrl,
   },
   openGraph: {
-    title:
-      "Product Share India — Free Digital Catalog Builder for Restaurants & Stores",
+    title: "Product Share India - Digital Catalog Builder for Restaurants and Stores",
     description:
-      "Build and share professional product catalogs and menus in minutes. Perfect for Indian restaurants, retail stores, and dropshippers. Free plan available.",
+      "Build and share polished product catalogs and menus in minutes. Ideal for restaurants, shops, and small businesses.",
     url: baseUrl,
-    siteName: "Product Share India",
-    locale: "en_IN",
+    siteName: siteConfig.name,
+    locale: siteConfig.locale,
     type: "website",
     images: [
       {
-        url: `${baseUrl}/og-image.png`,
+        url: defaultOgImage,
         width: 1200,
         height: 630,
-        alt: "Product Share India - Digital Catalog Builder for Indian Businesses",
+        alt: `${siteConfig.name} social preview`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Product Share India — Free Digital Catalog Builder",
+    title: `${siteConfig.name} - Digital Catalog Builder`,
     description:
-      "Create stunning product catalogs and restaurant menus in minutes. Built for Indian businesses.",
-    creator: "@Hadi_Razal",
-    site: "@Hadi_Razal",
-    images: [`${baseUrl}/og-image.png`],
+      "Create digital catalogs and menus that are easy to publish and share.",
+    creator: siteConfig.twitterHandle,
+    site: siteConfig.twitterHandle,
+    images: [defaultOgImage],
   },
 };
 
@@ -62,12 +52,11 @@ export default function Page() {
   const softwareAppJsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "Product Share India",
+    name: siteConfig.name,
     operatingSystem: "Web Browser",
     applicationCategory: "BusinessApplication",
     url: baseUrl,
-    description:
-      "Free digital catalog builder for Indian businesses — create and share product catalogs, restaurant menus, and store listings in minutes.",
+    description: siteConfig.description,
     offers: [
       {
         "@type": "Offer",
@@ -78,25 +67,19 @@ export default function Page() {
       },
       {
         "@type": "Offer",
-        name: "Monthly Plan",
+        name: "Monthly Access",
         price: "499",
         priceCurrency: "INR",
-        description: "Full access — one-time monthly purchase, no recurring charges",
+        description: "Full access for 1 month",
       },
       {
         "@type": "Offer",
-        name: "Yearly Plan",
+        name: "Yearly Access",
         price: "4790",
         priceCurrency: "INR",
-        description: "Full access for a year — save 20% over monthly",
+        description: "Full access for 1 year",
       },
     ],
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.8",
-      ratingCount: "500",
-      bestRating: "5",
-    },
   };
 
   const faqJsonLd = {
@@ -108,7 +91,7 @@ export default function Page() {
         name: "What is Product Share India?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Product Share India is a free digital catalog builder that lets restaurants, retail stores, dropshippers, and small businesses create and share professional product catalogs and menus in minutes — no coding required.",
+          text: "Product Share India helps restaurants, retail stores, dropshippers, and small businesses create and share professional product catalogs and menus without needing a full website.",
         },
       },
       {
@@ -116,7 +99,7 @@ export default function Page() {
         name: "How much does Product Share India cost?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Product Share India offers a free plan with up to 3 product listings. The monthly premium plan costs ₹499 (one-time) and the yearly plan costs ₹4,790 (one-time, saving 20%).",
+          text: "Product Share India offers a free plan with up to 3 product listings. Premium access is available in monthly and yearly options priced at INR 499 and INR 4,790.",
         },
       },
       {
@@ -124,7 +107,7 @@ export default function Page() {
         name: "Can I share my catalog on WhatsApp?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes! Every catalog gets a unique shareable link and QR code that you can share directly on WhatsApp, Instagram, and other platforms.",
+          text: "Yes. Every catalog gets a shareable link that you can post on WhatsApp, Instagram, and other platforms.",
         },
       },
     ],

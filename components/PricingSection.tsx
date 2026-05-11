@@ -1,131 +1,139 @@
+"use client";
+
 import React, { useState } from "react";
+import Link from "next/link";
 import {
-  CheckCircle,
   BarChart,
-  Paintbrush,
-  Headphones,
   Bell,
-  PieChart,
-  Globe,
-  Shield,
+  CheckCircle,
   CloudUpload,
+  Globe,
+  Headphones,
+  Paintbrush,
+  PieChart,
+  Shield,
   Users,
 } from "lucide-react";
 
 const PricingSection = () => {
-  const [billingCycle, setBillingCycle] = useState("monthly");
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
+    "monthly"
+  );
 
-  const pricingDetails: any = {
+  const pricingDetails = {
     monthly: {
       price: 499,
-      description: "Perfect for businesses looking for flexibility with a one-time monthly purchase",
+      description: "Full access for 1 month with a single checkout",
     },
     yearly: {
-      price: Math.round(499 * 12 * 0.8), // 20% discount
-      description: "Best value - one-time yearly purchase, save 20%",
+      price: Math.round(499 * 12 * 0.8),
+      description: "Full access for 1 year and save 20%",
     },
-  };
+  } as const;
 
   return (
     <section id="pricing" className="mx-auto max-w-7xl px-6 py-16">
-      <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold mb-4">Product Share Premium</h2>
-        <p className="text-gray-600 text-lg leading-5">
-          Unlock all premium tools for building and managing your store’s catalog
+      <div className="mx-auto max-w-3xl text-center">
+        <h2 className="text-3xl font-bold text-slate-900">Product Share Premium</h2>
+        <p className="mt-4 text-lg text-slate-600">
+          Unlock the complete toolkit for publishing, managing, and sharing your
+          store catalog.
         </p>
       </div>
 
-      {/* Billing Cycle Toggle */}
-      <div className="flex justify-center mb-8">
-        <div className="bg-gray-100 p-1 rounded-full inline-flex">
+      <div className="mt-10 flex justify-center">
+        <div className="inline-flex rounded-full bg-slate-100 p-1">
           <button
             onClick={() => setBillingCycle("monthly")}
-            className={`px-4 py-2 rounded-full transition-colors ${
+            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
               billingCycle === "monthly"
-                ? "bg-primaryColor text-white"
-                : "text-gray-600 hover:bg-gray-200"
+                ? "bg-primary text-white shadow-sm"
+                : "text-slate-600 hover:bg-slate-200"
             }`}
           >
             Monthly
           </button>
           <button
             onClick={() => setBillingCycle("yearly")}
-            className={`px-4 py-2 rounded-full transition-colors ${
+            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
               billingCycle === "yearly"
-                ? "bg-primaryColor text-white"
-                : "text-gray-600 hover:bg-gray-200"
+                ? "bg-primary text-white shadow-sm"
+                : "text-slate-600 hover:bg-slate-200"
             }`}
           >
             Yearly
-            <span className="ml-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+            <span className="ml-2 rounded-full bg-red-600 px-2 py-1 text-[11px] text-white">
               Save 20%
             </span>
           </button>
         </div>
       </div>
 
-      {/* Pricing Card */}
-      <div className="grid grid-cols-1 gap-8">
-        <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
-          <h3 className="text-2xl font-semibold mb-3 text-primaryColor">
+      <div className="mt-8 grid grid-cols-1 gap-8">
+        <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center">
+          <h3 className="text-2xl font-semibold text-primary">
             Product Share Premium
           </h3>
-          <p className="text-gray-600 text-base mb-6 leading-4">
+          <p className="mx-auto mt-3 max-w-2xl text-base leading-6 text-slate-600">
             {pricingDetails[billingCycle].description}
           </p>
-          <div className="text-4xl font-bold mb-6">
+
+          <div className="mt-6 text-4xl font-bold text-slate-950">
             &#8377;{pricingDetails[billingCycle].price}
-            <span className="text-lg text-gray-600">
-              {billingCycle === "monthly" ? " / one-time" : " / year (one-time)"}
+            <span className="ml-2 text-lg font-medium text-slate-500">
+              {billingCycle === "monthly" ? "/ month access" : "/ year access"}
             </span>
           </div>
 
-          <ul className="text-gray-600 text-base mb-6 w-full max-w-7xl space-y-2">
-            <li className="flex md:justify-center text-start">
-              <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+          <ul className="mx-auto mt-8 w-full max-w-4xl space-y-3 text-left text-base text-slate-600">
+            <li className="flex text-start md:justify-center">
+              <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
               Unlimited product listings
             </li>
-            <li className="flex md:justify-center text-start">
-              <BarChart className="w-5 h-5 text-blue-500 mr-2" />
+            <li className="flex text-start md:justify-center">
+              <BarChart className="mr-2 h-5 w-5 text-blue-500" />
               Advanced analytics with customer insights
             </li>
-            <li className="flex md:justify-center text-start">
-              <Paintbrush className="w-5 h-5 text-yellow-500 mr-2" />
+            <li className="flex text-start md:justify-center">
+              <Paintbrush className="mr-2 h-5 w-5 text-yellow-500" />
               Custom branding and catalog design tools
             </li>
-            <li className="flex md:justify-center text-start">
-              <Headphones className="w-5 h-5 text-purple-500 mr-2" />
-              Priority customer support (24/7 email + chat)
+            <li className="flex text-start md:justify-center">
+              <Headphones className="mr-2 h-5 w-5 text-purple-500" />
+              Priority customer support
             </li>
-            <li className="flex md:justify-center text-start">
-              <Bell className="w-5 h-5 text-orange-500 mr-2" />
-              Smart notification & alert system
+            <li className="flex text-start md:justify-center">
+              <Bell className="mr-2 h-5 w-5 text-orange-500" />
+              Smart notification banners
             </li>
-            <li className="flex md:justify-center text-start">
-              <PieChart className="w-5 h-5 text-pink-500 mr-2" />
-              Sales & revenue analytics dashboard
+            <li className="flex text-start md:justify-center">
+              <PieChart className="mr-2 h-5 w-5 text-pink-500" />
+              Sales and revenue analytics
             </li>
-            <li className="flex md:justify-center text-start">
-              <Globe className="w-5 h-5 text-teal-500 mr-2" />
-              Multi-language & multi-currency support
+            <li className="flex text-start md:justify-center">
+              <Globe className="mr-2 h-5 w-5 text-teal-500" />
+              Multi-language and multi-currency support
             </li>
-            <li className="flex md:justify-center text-start">
-              <CloudUpload className="w-5 h-5 text-indigo-500 mr-2" />
-              Bulk product upload via Excel/CSV
+            <li className="flex text-start md:justify-center">
+              <CloudUpload className="mr-2 h-5 w-5 text-indigo-500" />
+              Bulk product upload via CSV or Excel
             </li>
-            <li className="flex md:justify-center text-start">
-              <Shield className="w-5 h-5 text-red-500 mr-2" />
-              Secure data protection & backups
+            <li className="flex text-start md:justify-center">
+              <Shield className="mr-2 h-5 w-5 text-red-500" />
+              Secure data protection and backups
             </li>
-            <li className="flex md:justify-center text-start">
-              <Users className="w-5 h-5 text-cyan-500 mr-2" />
+            <li className="flex text-start md:justify-center">
+              <Users className="mr-2 h-5 w-5 text-cyan-500" />
               Team access with role-based permissions
             </li>
           </ul>
 
-          <button className="mt-6 bg-primary text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl w-full max-w-sm mx-auto block hover:-translate-y-0.5 active:translate-y-0">
-            Get Started →
-          </button>
+          <Link
+            href="/register"
+            className="mx-auto mt-8 block w-full max-w-sm rounded-xl bg-primary px-8 py-3.5 text-center font-semibold text-white shadow-lg transition hover:bg-primary/90 hover:shadow-xl"
+          >
+            Get Started
+          </Link>
         </div>
       </div>
     </section>

@@ -18,15 +18,22 @@
 :root {
   --font-clover: "Clover Display", sans-serif;
   --font-poppins: "Poppins", sans-serif;
+  --background: #ffffff;
+  --foreground: #0f172a;
 
-  background: "#ffffff";
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
 }
 
 /* === Default Font Application === */
 body {
-  font-family: var(--font-clover);
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins);
+}
+
+::selection {
+  background: rgba(108, 100, 203, 0.18);
 }
 
 /* === Marquee Styles === */

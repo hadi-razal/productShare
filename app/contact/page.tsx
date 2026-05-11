@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, MessageCircle, Phone } from "lucide-react";
+import { siteConfig } from "@/lib/site";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +11,9 @@ const ContactPage = () => {
     message: "",
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -18,117 +21,163 @@ const ContactPage = () => {
     }));
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Handle form logic here
+
+    const subject = `Website enquiry from ${formData.name}`;
+    const body = [
+      `Name: ${formData.name}`,
+      `Email: ${formData.email}`,
+      "",
+      formData.message,
+    ].join("\n");
+
+    window.location.href = `mailto:${siteConfig.supportEmail}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
   };
 
   return (
-    <>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center px-4 py-16">
-        <div className="w-full max-w-6xl bg-white/80 backdrop-blur-md rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row">
-          {/* Contact Info */}
-          <div className="md:w-1/2 bg-gradient-to-br from-[#5c84c8] to-[#849fd3] text-white p-10 flex flex-col justify-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Contact Information</h2>
-            <div className="space-y-6">
-              <div className="flex items-center space-x-4">
-                <Mail className="w-5 h-5" />
-                <span className="text-sm md:text-base">productshareindia@gmail.com</span>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_45%),linear-gradient(180deg,#f8fafc_0%,#ffffff_100%)] px-4 py-16">
+      <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+        <section className="rounded-3xl bg-slate-950 p-8 text-white shadow-xl md:p-10">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-indigo-300">
+            Contact Product Share
+          </p>
+          <h1 className="mt-4 text-4xl font-bold leading-tight">
+            Talk to the team behind your catalog website.
+          </h1>
+          <p className="mt-4 max-w-md text-sm leading-6 text-slate-300">
+            Reach out for support, pricing questions, onboarding help, or
+            partnership enquiries. We usually respond during business hours.
+          </p>
+
+          <div className="mt-8 space-y-4">
+            <a
+              href={`mailto:${siteConfig.supportEmail}`}
+              className="flex items-start gap-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 transition hover:border-slate-700"
+            >
+              <Mail className="mt-1 h-5 w-5 text-indigo-300" />
+              <div>
+                <p className="text-sm font-semibold text-white">Email support</p>
+                <p className="mt-1 text-sm text-slate-300">
+                  {siteConfig.supportEmail}
+                </p>
               </div>
-              <div className="flex items-center space-x-4">
-                <Phone className="w-5 h-5" />
-                <span className="text-sm md:text-base">+91 8589920409</span>
+            </a>
+
+            <a
+              href={`tel:${siteConfig.supportPhoneHref}`}
+              className="flex items-start gap-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 transition hover:border-slate-700"
+            >
+              <Phone className="mt-1 h-5 w-5 text-indigo-300" />
+              <div>
+                <p className="text-sm font-semibold text-white">Call us</p>
+                <p className="mt-1 text-sm text-slate-300">
+                  {siteConfig.supportPhone}
+                </p>
               </div>
-              <div className="flex items-center space-x-4">
-                <MapPin className="w-5 h-5" />
-                <span className="text-sm md:text-base">Kerala, India</span>
+            </a>
+
+            <a
+              href={`https://wa.me/${siteConfig.supportWhatsAppNumber}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-start gap-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 transition hover:border-slate-700"
+            >
+              <MessageCircle className="mt-1 h-5 w-5 text-indigo-300" />
+              <div>
+                <p className="text-sm font-semibold text-white">WhatsApp</p>
+                <p className="mt-1 text-sm text-slate-300">
+                  Chat with the team for a quick response
+                </p>
               </div>
-            </div>
-            <p className="mt-10 text-xs opacity-80">Available Mon–Fri, 9am–5pm IST</p>
+            </a>
           </div>
 
-          {/* Contact Form */}
-          <div className="md:w-1/2 w-full p-10">
-            <h1 className="text-2xl md:text-3xl font-bold text-[#2D3436] mb-4">
-              Get in Touch
-            </h1>
-            <p className="text-sm md:text-base text-gray-600 mb-6">
-              Have a question or feedback? Fill out the form below and we'll get back to you shortly.
+          <p className="mt-8 text-xs uppercase tracking-[0.22em] text-slate-500">
+            {siteConfig.supportHours}
+          </p>
+        </section>
+
+        <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg md:p-10">
+          <div className="max-w-xl">
+            <h2 className="text-3xl font-bold text-slate-900">Send a message</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              This form opens your email app with everything pre-filled so you can
+              send us a message right away.
             </p>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                  placeholder="Your full name"
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                  placeholder="you@example.com"
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Your Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                  placeholder="How can we help you today?"
-                  required
-                ></textarea>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-3 bg-[#5c84c8] hover:bg-[#4a70b0] text-white font-semibold rounded-xl transition duration-300 ease-in-out"
-              >
-                Send Message
-              </button>
-            </form>
           </div>
-        </div>
+
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            <div>
+              <label
+                htmlFor="name"
+                className="mb-2 block text-sm font-medium text-slate-700"
+              >
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+                placeholder="Your full name"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-sm font-medium text-slate-700"
+              >
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="message"
+                className="mb-2 block text-sm font-medium text-slate-700"
+              >
+                Your Message
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                rows={6}
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+                placeholder="Tell us what you need help with."
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="inline-flex w-full items-center justify-center rounded-2xl bg-primary px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-primary/90"
+            >
+              Compose Email
+            </button>
+          </form>
+        </section>
       </div>
-    </>
+    </div>
   );
-
-
 };
 
 export default ContactPage;
