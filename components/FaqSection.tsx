@@ -71,7 +71,7 @@ export default function FaqSection() {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm"
+              className="bg-white border border-gray-200 rounded-md p-4 shadow-sm"
             >
               <button
                 onClick={() => toggleFAQ(index)}

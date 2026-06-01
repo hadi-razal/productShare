@@ -133,7 +133,7 @@ const PricingPage = () => {
         variants={fadeIn}
         className="max-w-4xl mx-auto text-center mb-16"
       >
-        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-bold py-5 bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
           Simple, transparent pricing
         </h1>
         <p className="text-gray-600 text-xl max-w-2xl mx-auto">
@@ -159,27 +159,25 @@ const PricingPage = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="bg-gray-100 p-1 rounded-full inline-flex">
+          <div className="bg-gray-100 p-1 rounded-md inline-flex">
             <button
               onClick={() => setBillingCycle("monthly")}
-              className={`px-4 py-2 rounded-full transition-all ${
-                billingCycle === "monthly"
-                  ? "bg-indigo-600 text-white shadow-md"
-                  : "text-gray-700 hover:bg-gray-200"
-              }`}
+              className={`px-4 py-2 rounded-md transition-all ${billingCycle === "monthly"
+                ? "bg-indigo-600 text-white shadow-md"
+                : "text-gray-700 hover:bg-gray-200"
+                }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBillingCycle("yearly")}
-              className={`px-4 py-2 rounded-full transition-all ${
-                billingCycle === "yearly"
-                  ? "bg-indigo-600 text-white shadow-md"
-                  : "text-gray-700 hover:bg-gray-200"
-              }`}
+              className={`px-4 py-2 rounded-md transition-all ${billingCycle === "yearly"
+                ? "bg-indigo-600 text-white shadow-md"
+                : "text-gray-700 hover:bg-gray-200"
+                }`}
             >
               Yearly
-              <span className="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+              <span className="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-md">
                 Save 20%
               </span>
             </button>
@@ -256,7 +254,7 @@ const PricingPage = () => {
           </p>
           <Link
             href="/contact"
-            className="inline-block bg-white text-indigo-600 hover:bg-gray-50 font-medium px-6 py-3 rounded-lg border border-indigo-200 transition shadow-sm hover:shadow-md"
+            className="inline-block bg-white text-indigo-600 hover:bg-gray-50 font-medium px-6 py-3 rounded-md border border-indigo-200 transition shadow-sm hover:shadow-md"
           >
             Contact Sales →
           </Link>
@@ -286,31 +284,28 @@ const PricingCard = ({
   return (
     <motion.div
       whileHover={{ y: -5 }}
-      className={`relative h-full flex flex-col border rounded-xl overflow-hidden transition-all ${
-        highlight ? "border-indigo-300 shadow-lg" : "border-gray-200 shadow-sm"
-      }`}
+      className={`relative h-full flex flex-col border rounded-md overflow-hidden transition-all ${highlight ? "border-indigo-300 shadow-lg" : "border-gray-200 shadow-sm"
+        }`}
     >
       {highlight && (
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-blue-500"></div>
       )}
       <div className="p-8 flex-1">
         {badge && (
-          <div className="absolute top-4 right-4 bg-yellow-400 text-white text-xs font-semibold px-3 py-1 rounded-full">
+          <div className="absolute top-4 right-4 bg-yellow-400 text-white text-xs font-semibold px-3 py-1 rounded-md">
             {badge}
           </div>
         )}
         <h3
-          className={`text-2xl font-bold mb-3 ${
-            highlight ? "text-indigo-700" : "text-gray-900"
-          }`}
+          className={`text-2xl font-bold mb-3 ${highlight ? "text-indigo-700" : "text-gray-900"
+            }`}
         >
           {title}
         </h3>
         <p className="text-gray-600 mb-6 text-sm">{description}</p>
         <div
-          className={`text-5xl font-bold mb-6 ${
-            highlight ? "text-indigo-600" : "text-gray-900"
-          }`}
+          className={`text-5xl font-bold mb-6 ${highlight ? "text-indigo-600" : "text-gray-900"
+            }`}
         >
           {price === 0 ? "Free" : `₹${price}`}
           {price !== 0 && (
@@ -318,8 +313,8 @@ const PricingCard = ({
               {billingCycle === "monthly"
                 ? "(one-time)"
                 : billingCycle === "yearly"
-                ? "(one-time)"
-                : ""}
+                  ? "(one-time)"
+                  : ""}
             </span>
           )}
         </div>
@@ -337,11 +332,10 @@ const PricingCard = ({
       <div className="px-8 pb-8">
         <Link
           href="/register"
-          className={`block w-full text-center font-medium px-6 py-3 rounded-lg transition ${
-            highlight
-              ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg"
-              : "bg-gray-900 hover:bg-gray-800 text-white shadow-sm hover:shadow-md"
-          }`}
+          className={`block w-full text-center font-medium px-6 py-3 rounded-md transition ${highlight
+            ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg"
+            : "bg-gray-900 hover:bg-gray-800 text-white shadow-sm hover:shadow-md"
+            }`}
         >
           {price === 0 ? "Try for Free" : "Get Started"}
         </Link>

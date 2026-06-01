@@ -125,13 +125,12 @@ const Header = () => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          isStorePage && themeColor
-            ? ""
-            : isScrolled
+        className={`fixed top-0 left-0 w-full z-30 transition-all duration-300 ${isStorePage && themeColor
+          ? ""
+          : isScrolled
             ? "bg-white shadow-md"
             : "bg-white backdrop-blur-lg"
-        }`}
+          }`}
         style={isStorePage && themeColor ? { backgroundColor: themeColor } : {}}
       >
         <div className="max-w-screen-xl mx-auto px-6 py-3 flex justify-between items-center">
@@ -152,11 +151,10 @@ const Header = () => {
               <Link
                 key={href}
                 href={href}
-                className={`text-sm font-medium transition-all ${
-                  pathname === href
-                    ? "text-indigo-700 font-semibold"
-                    : "text-gray-700 hover:text-indigo-700"
-                }`}
+                className={`text-sm font-medium transition-all ${pathname === href
+                  ? "text-indigo-700 font-semibold"
+                  : "text-gray-700 hover:text-indigo-700"
+                  }`}
               >
                 {label}
               </Link>
@@ -203,7 +201,7 @@ const Header = () => {
           {links.length > 0 && (
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden text-gray-800"
+              className="md:hidden text-gray-800 z-50"
               aria-label="Toggle menu"
             >
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -213,24 +211,35 @@ const Header = () => {
       </header>
 
       <AnimatePresence>
+
+
+
         {menuOpen && links.length > 0 && (
-          <motion.div
+          < motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.3 }}
-            className="fixed top-[64px] right-0 h-[calc(100vh-64px)] w-[80%] max-w-xs bg-white shadow-xl z-40 flex flex-col px-6 py-6 gap-4"
+            className="fixed md:hidden right-0 h-full w-[80%] max-w-xs  bg-gray-50 shadow-xl z-30 flex flex-col px-6 py-6 gap-4 pt-[64px]"
           >
+            {links.length > 0 && (
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="md:hidden absolute right-10 top-[30px] text-gray-800 z-50"
+                aria-label="Toggle menu"
+              >
+                {menuOpen && < X size={24} />}
+              </button>
+            )}
             {links.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
                 onClick={() => setMenuOpen(false)}
-                className={`text-base font-medium transition ${
-                  pathname === href
-                    ? "text-indigo-700 font-semibold"
-                    : "text-gray-700 hover:text-indigo-700"
-                }`}
+                className={`text-base font-medium transition ${pathname === href
+                  ? "text-indigo-700 font-semibold"
+                  : "text-gray-700 hover:text-indigo-700"
+                  }`}
               >
                 {label}
               </Link>
@@ -258,7 +267,7 @@ const Header = () => {
             )}
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence >
 
       <div className="h-[65px]" />
     </>
