@@ -42,27 +42,25 @@ const PricingSection = () => {
       </div>
 
       <div className="mt-10 flex justify-center">
-        <div className="inline-flex rounded-full bg-slate-100 p-1">
+        <div className="inline-flex rounded-md bg-slate-100 p-1">
           <button
             onClick={() => setBillingCycle("monthly")}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-              billingCycle === "monthly"
-                ? "bg-primary text-white shadow-sm"
-                : "text-slate-600 hover:bg-slate-200"
-            }`}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${billingCycle === "monthly"
+              ? "bg-primary text-white shadow-sm"
+              : "text-slate-600 hover:bg-slate-200"
+              }`}
           >
             Monthly
           </button>
           <button
             onClick={() => setBillingCycle("yearly")}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-              billingCycle === "yearly"
-                ? "bg-primary text-white shadow-sm"
-                : "text-slate-600 hover:bg-slate-200"
-            }`}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${billingCycle === "yearly"
+              ? "bg-primary text-white shadow-sm"
+              : "text-slate-600 hover:bg-slate-200"
+              }`}
           >
             Yearly
-            <span className="ml-2 rounded-full bg-red-600 px-2 py-1 text-[11px] text-white">
+            <span className="ml-2 rounded-md bg-red-600 px-2 py-1 text-[11px] text-white">
               Save 20%
             </span>
           </button>
@@ -70,7 +68,7 @@ const PricingSection = () => {
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-8">
-        <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center">
+        <div className="rounded-md border border-slate-200 bg-slate-50 p-8 text-center">
           <h3 className="text-2xl font-semibold text-primary">
             Product Share Premium
           </h3>
@@ -130,7 +128,7 @@ const PricingSection = () => {
 
           <Link
             href="/register"
-            className="mx-auto mt-8 block w-full max-w-sm rounded-xl bg-primary px-8 py-3.5 text-center font-semibold text-white shadow-lg transition hover:bg-primary/90 hover:shadow-xl"
+            className="mx-auto mt-8 block w-full max-w-sm rounded-md bg-primary px-8 py-3.5 text-center font-semibold text-white shadow-lg transition hover:bg-primary/90 hover:shadow-xl"
           >
             Get Started
           </Link>

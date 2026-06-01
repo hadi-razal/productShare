@@ -141,7 +141,7 @@ const stats = [
   { value: "4.9★", label: "Average Rating" },
 ];
 
-const marqueeMessages1 = [
+const marqueeMessages = [
   "🚀 Boost Your Sales with Ease",
   "🌟 Create Stunning E-Store Websites",
   "⚡ Effortless Catalog Management",
@@ -152,9 +152,6 @@ const marqueeMessages1 = [
   "🤖 AI-Powered Marketing Tools",
   "📊 Your Growth, Our Mission",
   "⏱️ Build Your Catalog in Minutes",
-];
-
-const marqueeMessages2 = [
   "💰 Maximize Your Revenue Potential",
   "📱 Effortless Product Uploads",
   "🎨 Your Catalog, Your Brand",
@@ -215,12 +212,12 @@ const Home = () => {
       </section>
 
       {/* Marquee Section */}
-      <div className="w-full flex flex-col gap-4 bg-gradient-to-r from-gray-50 via-purple-50 to-gray-50 py-8">
+      <div className="w-full flex flex-col gap-4 bg-purple-50 py-10">
         <Marquee loop={0} speed={60} gradient={false} className="flex items-center">
-          {marqueeMessages1.map((message, index) => (
+          {marqueeMessages.map((message, index) => (
             <motion.div
               key={index}
-              className="bg-white border border-gray-200 rounded-full px-6 mx-2 py-3 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white border border-gray-200 rounded-md px-6 mx-2 py-3 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
               whileHover={{ scale: 1.05, y: -2 }}
             >
               <span className="text-gray-700 font-medium text-sm whitespace-nowrap">
@@ -230,7 +227,7 @@ const Home = () => {
           ))}
         </Marquee>
 
-        <Marquee loop={0} speed={60} direction="right" gradient={false}>
+        {/* <Marquee loop={0} speed={60} direction="right" gradient={false}>
           {marqueeMessages2.map((message, index) => (
             <motion.div
               key={index}
@@ -242,7 +239,7 @@ const Home = () => {
               </span>
             </motion.div>
           ))}
-        </Marquee>
+        </Marquee> */}
       </div>
 
       {/* Features Section */}
