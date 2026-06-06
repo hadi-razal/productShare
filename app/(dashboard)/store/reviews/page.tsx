@@ -2,8 +2,8 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { MessageSquare } from "lucide-react";
 
-// Demo data array
 const demoReviews = [
   {
     id: "1",
@@ -45,30 +45,34 @@ const demoReviews = [
 
 const CustomerReviewsPage: React.FC = () => {
   return (
-    <div className="min-h-screen px-4 pb-10 pt-7 bg-gray-50">
-      <section className="max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold text-blue-950 mb-6">Customer Reviews</h2>
-
+    <div className="ds-page">
+      <section className="max-w-3xl">
         {demoReviews.length === 0 ? (
-          <p className="text-gray-500">No reviews available for your products yet.</p>
+          <div className="ds-card" style={{ textAlign: "center", padding: "40px 24px" }}>
+            <MessageSquare className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+            <h3 className="ds-card-title">No reviews yet</h3>
+            <p style={{ fontSize: 14, color: "#64748b", marginTop: 8 }}>
+              Customer reviews will appear here once you start receiving them.
+            </p>
+          </div>
         ) : (
-          <div className="space-y-6">
+          <div className="ds-review-list">
             {demoReviews.map((review) => (
               <motion.div
                 key={review.id}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="border rounded-xl p-5 bg-white shadow-md"
+                className="ds-review-card"
               >
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-semibold text-blue-800">{review.productName}</h4>
-                  <span className="text-sm text-gray-500">{review.createdAt}</span>
+                <div className="ds-review-top">
+                  <h4 className="ds-review-product">{review.productName}</h4>
+                  <span className="ds-review-date">{review.createdAt}</span>
                 </div>
-                <div className="text-yellow-500 text-sm mb-2">
+                <div className="ds-review-stars">
                   {"★".repeat(review.rating) + "☆".repeat(5 - review.rating)}
                 </div>
-                <p className="text-gray-800 italic">"{review.comment}"</p>
-                <p className="text-sm text-gray-500 mt-2">— {review.userName}</p>
+                <p className="ds-review-comment">&ldquo;{review.comment}&rdquo;</p>
+                <p className="ds-review-author">— {review.userName}</p>
               </motion.div>
             ))}
           </div>

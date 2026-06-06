@@ -1,18 +1,31 @@
 "use client";
 
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  useMemo,
+  useRef,
+} from "react";
 import { motion } from "framer-motion";
-import { onAuthStateChanged, User, updatePassword } from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, db, storage } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { userType } from "@/type";
 import toast from "react-hot-toast";
+import StoreSettingsPreview from "@/components/StoreSettingsPreview";
+import {
+  isUsernameAvailable,
+  isValidUsername,
+  normalizeUsername,
+} from "@/helpers/username";
 
 const SettingsPage: React.FC = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState<string>("");
+  const [originalUsername, setOriginalUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [whatsappNumber, setWhatsappNumber] = useState<string>("");
@@ -22,6 +35,7 @@ const SettingsPage: React.FC = () => {
   const [logoImage, setLogoImage] = useState<File | null>(null);
   const [logoImageUrl, setLogoImageUrl] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState<string>("");
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
 
@@ -45,6 +59,7 @@ const SettingsPage: React.FC = () => {
       if (docSnap.exists()) {
         const data: userType = docSnap.data() as userType;
         setUsername(data.username || "");
+        setOriginalUsername(data.username || "");
         setName(data.name || "");
         setEmail(data.email || "");
         setWhatsappNumber(data?.whatsappNumber || "");
@@ -66,25 +81,66 @@ const SettingsPage: React.FC = () => {
       return;
     }
 
+    const normalizedUsername = normalizeUsername(username);
+
+    if (!isValidUsername(normalizedUsername)) {
+      toast.error(
+        "Username must be 3–30 characters, letters and numbers only.",
+      );
+      return;
+    }
+
+    if (normalizedUsername !== originalUsername) {
+      const available = await isUsernameAvailable(normalizedUsername, userId);
+      if (!available) {
+        toast.error("This username is already taken.");
+        return;
+      }
+    }
+
+    if (logoImage && logoImage.size > 1024 * 1024) {
+      toast.error("Logo must be under 1MB.");
+      return;
+    }
+
     setLoading(true);
 
     try {
       const updatedData: Partial<userType> = {
         name,
+        username: normalizedUsername,
         themeColor,
         additionalNotes,
         whatsappNumber,
       };
 
-      // Upload profile picture if a new one is selected
       if (logoImage) {
-        const storageRef = ref(storage, `profilePics/${userId}`);
-        const uploadResult = await uploadBytes(storageRef, logoImage);
-        const downloadUrl = await getDownloadURL(uploadResult.ref);
-        updatedData.logoImage = downloadUrl;
+        try {
+          const ts = new Date().toISOString().replace(/[:.]/g, "-");
+          const safeName = logoImage.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const storageRef = ref(
+            storage,
+            `images/logo_${userId}_${ts}_${safeName}`,
+          );
+          await uploadBytes(storageRef, logoImage, {
+            contentType: logoImage.type || "image/jpeg",
+          });
+          updatedData.logoImage = await getDownloadURL(storageRef);
+        } catch (uploadError) {
+          console.error("Error uploading logo:", uploadError);
+          toast.error("Failed to upload logo. Please try again.");
+          return;
+        }
       }
 
       await updateDoc(doc(db, "users", userId), updatedData);
+      if (updatedData.logoImage) {
+        setLogoImageUrl(updatedData.logoImage);
+        setLogoImage(null);
+        if (logoInputRef.current) logoInputRef.current.value = "";
+      }
+      setOriginalUsername(normalizedUsername);
+      setUsername(normalizedUsername);
       toast.success("Changes saved successfully!");
       router.push("/store");
     } catch (error) {
@@ -97,118 +153,119 @@ const SettingsPage: React.FC = () => {
 
   const handleProfilePicChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      setLogoImage(file);
+    if (!file) return;
+
+    if (file.size > 1024 * 1024) {
+      toast.error("Logo must be under 1MB.");
+      event.target.value = "";
+      return;
     }
+
+    setLogoImage(file);
   };
 
+  const previewLogoUrl = useMemo(() => {
+    if (logoImage) return URL.createObjectURL(logoImage);
+    return logoImageUrl;
+  }, [logoImage, logoImageUrl]);
+
+  useEffect(() => {
+    if (!logoImage || !previewLogoUrl) return;
+    return () => URL.revokeObjectURL(previewLogoUrl);
+  }, [logoImage, previewLogoUrl]);
+
   return (
-    <div className="min-h-screen px-4 pb-10 pt-7">
-      <section className="max-w-2xl mx-auto">
-        <h2 className="text-2xl font-bold text-blue-950 mb-6">
-          Store Settings
-        </h2>
-
-        {/* Profile Picture Section */}
-        <div className="mb-6">
-          <label className="block text-gray-700 font-semibold mb-2">
-            Logo (Profile Picture)
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleProfilePicChange}
-            className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
-          />
-          {logoImageUrl && (
-            <img
-              src={logoImageUrl}
-              alt="Profile"
-              className="h-32 w-32 rounded-full object-cover mt-4"
-            />
-          )}
-          {logoImage && (
-            <img
-              src={URL.createObjectURL(logoImage)}
-              alt="New Profile"
-              className="h-32 w-32 rounded-full mt-4"
-            />
-          )}
-          <p className="text-sm text-gray-500 mt-1">
-            The image will be displayed on the header of your catalog website.
-            Please ensure the image is compatible with the header, and its
-            resolution should be optimized for web display. The image size must
-            be under 1MB.
-          </p>{" "}
-        </div>
-
-        {/* Input Fields */}
-        {[
-          {
-            label: "Username",
-            value: username,
-            onchange: setUsername,
-            disabled: false,
-          },
-          { label: "Email", value: email, disabled: true },
-          { label: "Shop Name", value: name, onChange: setName },
-          {
-            label: "WhatsApp Number",
-            value: whatsappNumber,
-            onChange: setWhatsappNumber,
-          },
-        ].map((field, index) => (
-          <div key={index} className="mb-6">
-            <label className="block text-gray-700 font-semibold mb-2">
-              {field.label}
-            </label>
+    <div className="ds-page">
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6">
+        <section className="ds-card min-w-0">
+          <div className="ds-form-group">
+            <label className="ds-form-label">Store Logo</label>
             <input
-              type="text"
-              value={field.value}
-              onChange={
-                field.onChange
-                  ? (e) => field.onChange!(e.target.value)
-                  : undefined
-              }
-              className="block w-full bg-gray-200 p-3 border focus:outline-none rounded-md"
-              disabled={field.disabled}
+              ref={logoInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleProfilePicChange}
+              className="ds-form-input"
+            />
+            <p className="ds-form-hint">Displayed in your store header. Max 1MB.</p>
+          </div>
+
+          {[
+            {
+              label: "Username",
+              value: username,
+              onChange: (value: string) => setUsername(normalizeUsername(value)),
+              disabled: false,
+              hint: "3–30 characters, letters and numbers only. Must be unique.",
+            },
+            { label: "Email", value: email, disabled: true },
+            { label: "Shop Name", value: name, onChange: setName },
+            {
+              label: "WhatsApp Number",
+              value: whatsappNumber,
+              onChange: setWhatsappNumber,
+              hint: "10-digit number for customer inquiries.",
+            },
+          ].map((field, index) => (
+            <div key={index} className="ds-form-group">
+              <label className="ds-form-label">{field.label}</label>
+              <input
+                type="text"
+                value={field.value}
+                onChange={
+                  field.onChange
+                    ? (e) => field.onChange!(e.target.value)
+                    : undefined
+                }
+                className="ds-form-input"
+                disabled={field.disabled}
+              />
+              {"hint" in field && field.hint && (
+                <p className="ds-form-hint">{field.hint}</p>
+              )}
+            </div>
+          ))}
+
+          <div className="ds-form-group">
+            <label className="ds-form-label">Theme Color</label>
+            <input
+              type="color"
+              value={themeColor}
+              onChange={(e) => setThemeColor(e.target.value)}
+              className="ds-form-input h-12 cursor-pointer p-1"
             />
           </div>
-        ))}
 
-        {/* Additional Inputs */}
-        <div className="mb-6">
-          <label className="block text-gray-700 font-semibold mb-2">
-            Theme Color
-          </label>
-          <input
-            type="color"
-            value={themeColor}
-            onChange={(e) => setThemeColor(e.target.value)}
-            className="w-full h-10 rounded-md border border-gray-300"
+          <div className="ds-form-group">
+            <label className="ds-form-label">Additional Notes</label>
+            <textarea
+              rows={3}
+              value={additionalNotes}
+              onChange={(e) => setAdditionalNotes(e.target.value)}
+              className="ds-form-input resize-none"
+              placeholder="Promo message shown on your storefront..."
+            />
+          </div>
+
+          <motion.button
+            onClick={handleSaveChanges}
+            className="ds-btn-primary"
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save Changes"}
+          </motion.button>
+        </section>
+
+        <aside className="xl:sticky xl:top-6 xl:self-start">
+          <StoreSettingsPreview
+            name={name}
+            username={username}
+            logoUrl={previewLogoUrl}
+            themeColor={themeColor}
+            additionalNotes={additionalNotes}
           />
-        </div>
-        <div className="mb-6">
-          <label className="block text-gray-700 font-semibold mb-2">
-            Additional Notes
-          </label>
-          <textarea
-            rows={3}
-            value={additionalNotes}
-            onChange={(e) => setAdditionalNotes(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
-          ></textarea>
-        </div>
-
-        {/* Action Buttons */}
-        <motion.button
-          onClick={handleSaveChanges}
-          className="w-full mt-4 px-4 py-2 bg-blue-950 text-white font-semibold rounded-md shadow-md hover:bg-blue-900"
-          disabled={loading}
-        >
-          {loading ? "Saving..." : "Save Changes"}
-        </motion.button>
-      </section>
+        </aside>
+      </div>
     </div>
   );
 };

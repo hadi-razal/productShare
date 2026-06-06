@@ -27,6 +27,21 @@ const navigation = [
   { name: "Settings", href: "/store/settings", icon: Settings },
 ];
 
+const pageMeta: Record<string, { title: string; subtitle: string }> = {
+  "/store": { title: "Dashboard", subtitle: "Overview of your store performance" },
+  "/store/add-product": { title: "Add Product", subtitle: "Create a new listing for your catalog" },
+  "/store/reviews": { title: "Reviews", subtitle: "See what customers are saying" },
+  "/store/settings": { title: "Settings", subtitle: "Manage your store profile and branding" },
+};
+
+const getPageMeta = (pathname: string) => {
+  if (pageMeta[pathname]) return pageMeta[pathname];
+  const match = Object.entries(pageMeta).find(
+    ([path]) => path !== "/store" && pathname.startsWith(path)
+  );
+  return match?.[1] ?? { title: "Dashboard", subtitle: "Manage your store" };
+};
+
 export default function DashboardShell({
   children,
 }: {
@@ -68,6 +83,9 @@ export default function DashboardShell({
     window.location.href = "/login";
   };
 
+  const { title: pageTitle, subtitle: pageSubtitle } = getPageMeta(pathname);
+  const showDesktopHeader = pathname !== "/store";
+
   return (
     <>
       <div className="ds-root">
@@ -79,7 +97,12 @@ export default function DashboardShell({
               <div className="ds-brand-icon">
                 <Store className="w-5 h-5" />
               </div>
-              {!collapsed && <span className="ds-brand-name">{storeName}</span>}
+              {!collapsed && (
+                <div className="ds-brand-text">
+                  <span className="ds-brand-name">{storeName}</span>
+                  <span className="ds-brand-tag">Store dashboard</span>
+                </div>
+              )}
             </Link>
             <button
               onClick={() => setCollapsed(!collapsed)}
@@ -145,7 +168,6 @@ export default function DashboardShell({
 
         {/* ── MAIN AREA ── */}
         <div className="ds-main">
-          {/* Top bar */}
           <header className="ds-topbar">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -154,15 +176,23 @@ export default function DashboardShell({
             >
               <Menu className="w-5 h-5" />
             </button>
-            <Link href="/" className="ds-mobile-brand">
+            <Link href="/store" className="ds-mobile-brand">
               <div className="ds-brand-icon ds-brand-icon-sm">
                 <Store className="w-4 h-4" />
               </div>
-              <span className="ds-brand-name-sm">{storeName}</span>
+              <span className="ds-brand-name-sm">{pageTitle}</span>
             </Link>
           </header>
 
-          {/* Content */}
+          {showDesktopHeader && (
+            <div className="ds-desktop-header">
+              <div>
+                <h1 className="ds-page-title">{pageTitle}</h1>
+                <p className="ds-page-subtitle">{pageSubtitle}</p>
+              </div>
+            </div>
+          )}
+
           <main className="ds-content">
             <div className="ds-content-inner">{children}</div>
           </main>
@@ -185,7 +215,10 @@ export default function DashboardShell({
               <div className="ds-brand-icon">
                 <Store className="w-5 h-5" />
               </div>
-              <span className="ds-brand-name">{storeName}</span>
+              <div className="ds-brand-text">
+                <span className="ds-brand-name">{storeName}</span>
+                <span className="ds-brand-tag">Store dashboard</span>
+              </div>
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -252,486 +285,6 @@ export default function DashboardShell({
           })}
         </nav>
       </div>
-
-      {/* ═══ STYLES ═══ */}
-      <style jsx global>{`
-        /* ── Reset for dashboard ── */
-        .ds-root {
-          display: flex;
-          min-height: 100vh;
-          background: #f0f2f5;
-          font-family: var(--font-poppins), "Inter", system-ui, sans-serif;
-          isolation: isolate;
-        }
-
-        /* ══════════════════════════════════
-           DESKTOP SIDEBAR
-           ══════════════════════════════════ */
-        .ds-sidebar {
-          display: none;
-          flex-direction: column;
-          width: 250px;
-          background: #ffffff;
-          border-right: 1px solid #e2e8f0;
-          position: sticky;
-          top: 0;
-          height: 100vh;
-          z-index: 20;
-          flex-shrink: 0;
-          transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-          overflow: hidden;
-        }
-        .ds-sidebar.ds-collapsed {
-          width: 72px;
-        }
-        @media (min-width: 768px) {
-          .ds-sidebar {
-            display: flex;
-          }
-        }
-
-        /* Brand */
-        .ds-brand {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 22px 16px 18px;
-        }
-        .ds-brand-link {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          text-decoration: none;
-          color: #0f172a;
-        }
-        .ds-brand-icon {
-          width: 38px;
-          height: 38px;
-          border-radius: 12px;
-          background: linear-gradient(135deg, #6366f1, #4f46e5);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #fff;
-          flex-shrink: 0;
-          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-        }
-        .ds-brand-icon-sm {
-          width: 32px;
-          height: 32px;
-          border-radius: 9px;
-        }
-        .ds-brand-name {
-          font-weight: 700;
-          font-size: 16px;
-          white-space: nowrap;
-          letter-spacing: -0.01em;
-        }
-        .ds-collapse-btn {
-          width: 26px;
-          height: 26px;
-          border-radius: 7px;
-          border: 1px solid #e2e8f0;
-          background: #f8fafc;
-          color: #64748b;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .ds-collapse-btn:hover {
-          background: #e2e8f0;
-          color: #0f172a;
-        }
-
-        /* Nav */
-        .ds-nav {
-          flex: 1;
-          padding: 8px 12px;
-          overflow-y: auto;
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-        }
-        .ds-nav-section {
-          font-size: 10px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          color: #94a3b8;
-          padding: 8px 12px 6px;
-          margin-bottom: 2px;
-        }
-        .ds-nav-link {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 10px 12px;
-          border-radius: 10px;
-          font-size: 14px;
-          font-weight: 500;
-          color: #475569;
-          text-decoration: none;
-          transition: all 0.2s ease;
-          cursor: pointer;
-          border: none;
-          background: transparent;
-          width: 100%;
-          text-align: left;
-          white-space: nowrap;
-        }
-        .ds-nav-link:hover {
-          background: #f1f5f9;
-          color: #0f172a;
-        }
-        .ds-nav-link.active {
-          background: #eef2ff;
-          color: #4f46e5;
-          font-weight: 600;
-        }
-        .ds-nav-icon-wrap {
-          width: 32px;
-          height: 32px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          transition: all 0.2s;
-          color: #64748b;
-        }
-        .ds-nav-link:hover .ds-nav-icon-wrap {
-          color: #4f46e5;
-        }
-        .ds-nav-link.active .ds-nav-icon-wrap {
-          background: #4f46e5;
-          color: #fff;
-          box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
-        }
-
-        /* Sidebar Bottom */
-        .ds-sidebar-bottom {
-          padding: 16px;
-          border-top: 1px solid #e2e8f0;
-        }
-        .ds-upgrade-card {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 14px;
-          border-radius: 12px;
-          background: linear-gradient(135deg, #fffbeb, #fef3c7);
-          border: 1px solid #fde68a;
-          margin-bottom: 16px;
-          box-shadow: 0 2px 8px rgba(251, 191, 36, 0.15);
-        }
-        .ds-upgrade-title {
-          font-size: 13px;
-          font-weight: 700;
-          color: #92400e;
-        }
-        .ds-upgrade-sub {
-          font-size: 11px;
-          color: #b45309;
-          margin-top: 1px;
-        }
-        .ds-signout-btn {
-          color: #ef4444 !important;
-        }
-        .ds-signout-btn .ds-nav-icon-wrap {
-          color: #ef4444 !important;
-        }
-        .ds-signout-btn:hover {
-          background: #fef2f2 !important;
-          color: #b91c1c !important;
-        }
-        .ds-signout-btn:hover .ds-nav-icon-wrap {
-          color: #b91c1c !important;
-        }
-
-        /* ══════════════════════════════════
-           MAIN CONTENT
-           ══════════════════════════════════ */
-        .ds-main {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          min-width: 0;
-          min-height: 100vh;
-        }
-
-        /* Top bar — mobile only */
-        .ds-topbar {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px 16px;
-          background: #ffffff;
-          border-bottom: 1px solid #e2e8f0;
-          position: sticky;
-          top: 0;
-          z-index: 15;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-        @media (min-width: 768px) {
-          .ds-topbar {
-            display: none;
-          }
-        }
-        .ds-hamburger {
-          width: 36px;
-          height: 36px;
-          border-radius: 10px;
-          border: 1px solid #e2e8f0;
-          background: #f8fafc;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          color: #475569;
-          transition: all 0.2s;
-        }
-        .ds-hamburger:hover {
-          background: #e2e8f0;
-          color: #0f172a;
-        }
-        .ds-mobile-brand {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          text-decoration: none;
-        }
-        .ds-brand-name-sm {
-          font-weight: 700;
-          font-size: 16px;
-          color: #0f172a;
-        }
-
-        /* Content */
-        .ds-content {
-          flex: 1;
-          overflow-y: auto;
-          padding-bottom: 80px;
-        }
-        @media (min-width: 768px) {
-          .ds-content {
-            padding-bottom: 0;
-          }
-        }
-        .ds-content-inner {
-          padding: 20px 16px;
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-        @media (min-width: 768px) {
-          .ds-content-inner {
-            padding: 28px 32px;
-          }
-        }
-
-        /* ══════════════════════════════════
-           MOBILE OVERLAY + DRAWER
-           ══════════════════════════════════ */
-        .ds-overlay {
-          position: fixed;
-          inset: 0;
-          background: transparent;
-          z-index: 40;
-          pointer-events: none;
-          transition: background 0.3s;
-        }
-        .ds-overlay.open {
-          background: rgba(0, 0, 0, 0.55);
-          backdrop-filter: blur(4px);
-          pointer-events: auto;
-        }
-        @media (min-width: 768px) {
-          .ds-overlay {
-            display: none;
-          }
-        }
-
-        .ds-drawer {
-          position: fixed;
-          inset-block: 0;
-          left: 0;
-          width: 290px;
-          max-width: 85vw;
-          background: #ffffff;
-          z-index: 50;
-          transform: translateX(-100%);
-          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          display: flex;
-          flex-direction: column;
-          box-shadow: 8px 0 32px rgba(0, 0, 0, 0.15);
-        }
-        .ds-drawer.open {
-          transform: translateX(0);
-        }
-        @media (min-width: 768px) {
-          .ds-drawer {
-            display: none;
-          }
-        }
-
-        .ds-drawer-head {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 20px 18px;
-          border-bottom: 1px solid #e2e8f0;
-        }
-        .ds-drawer-head .ds-brand-link {
-          color: #0f172a;
-        }
-        .ds-drawer-close {
-          width: 34px;
-          height: 34px;
-          border-radius: 9px;
-          border: 1px solid #e2e8f0;
-          background: #f8fafc;
-          color: #64748b;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .ds-drawer-close:hover {
-          background: #e2e8f0;
-          color: #0f172a;
-        }
-
-        .ds-drawer-nav {
-          flex: 1;
-          padding: 16px 14px;
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-          overflow-y: auto;
-        }
-        .ds-drawer-link {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          padding: 13px 14px;
-          border-radius: 12px;
-          text-decoration: none;
-          color: #475569;
-          font-size: 15px;
-          font-weight: 500;
-          transition: all 0.2s;
-        }
-        .ds-drawer-link:hover {
-          background: #f1f5f9;
-          color: #0f172a;
-        }
-        .ds-drawer-link.active {
-          background: #eef2ff;
-          color: #4f46e5;
-          font-weight: 600;
-        }
-        .ds-drawer-icon {
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-          background: #f8fafc;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          color: #64748b;
-          transition: all 0.2s;
-        }
-        .ds-drawer-link.active .ds-drawer-icon {
-          background: #4f46e5;
-          color: #fff;
-          box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
-        }
-
-        .ds-drawer-foot {
-          padding: 16px 18px;
-          border-top: 1px solid #e2e8f0;
-        }
-        .ds-drawer-signout {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          width: 100%;
-          padding: 12px 14px;
-          border-radius: 12px;
-          background: #fef2f2;
-          color: #ef4444;
-          border: 1px solid #fee2e2;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .ds-drawer-signout:hover {
-          background: #fee2e2;
-          color: #b91c1c;
-        }
-
-        /* ══════════════════════════════════
-           BOTTOM TAB BAR (mobile)
-           ══════════════════════════════════ */
-        .ds-bottombar {
-          display: flex;
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: #fff;
-          border-top: 1px solid #e5e7eb;
-          z-index: 30;
-          padding: 4px 6px;
-          padding-bottom: max(4px, env(safe-area-inset-bottom));
-          box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
-        }
-        @media (min-width: 768px) {
-          .ds-bottombar {
-            display: none;
-          }
-        }
-        .ds-tab {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 2px;
-          padding: 8px 4px 6px;
-          border-radius: 10px;
-          text-decoration: none;
-          color: #9ca3af;
-          transition: color 0.2s;
-          position: relative;
-        }
-        .ds-tab.active {
-          color: #6366f1;
-        }
-        .ds-tab.active::after {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 24px;
-          height: 3px;
-          background: linear-gradient(90deg, #6366f1, #8b5cf6);
-          border-radius: 0 0 4px 4px;
-        }
-        .ds-tab-icon {
-          width: 22px;
-          height: 22px;
-        }
-        .ds-tab-label {
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.01em;
-        }
-      `}</style>
     </>
   );
 }
