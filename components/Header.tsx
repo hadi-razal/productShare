@@ -47,11 +47,15 @@ const getStoreThemeColor = async (username: string) => {
   return themePromise;
 };
 
-const DASHBOARD_ROUTES = [
+const HIDDEN_HEADER_ROUTES = [
   "/store",
   "/store/add-product",
   "/store/reviews",
   "/store/settings",
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
 ];
 
 const Header = () => {
@@ -63,11 +67,8 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
   const isStorePage = pathname.startsWith("/store/");
-  const isDashboardPage = DASHBOARD_ROUTES.includes(pathname);
-  const isHomePage = pathname === "/";
-  const isTransparentHeader = isHomePage && !isScrolled;
-
-  // Hide Header completely on dashboard pages
+  const hideHeader = HIDDEN_HEADER_ROUTES.includes(pathname);
+  const isTransparentHeader = !isScrolled;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -140,7 +141,7 @@ const Header = () => {
     ];
   })();
 
-  if (isDashboardPage) return null;
+  if (hideHeader) return null;
 
   return (
     <>
@@ -303,7 +304,6 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      {!isHomePage && <div className="h-[65px]" />}
     </>
   );
 };
