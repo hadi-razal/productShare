@@ -24,7 +24,10 @@ const getStoreThemeColor = async (username: string) => {
 
   const themePromise = (async () => {
     try {
-      const q = query(collection(db, "users"), where("username", "==", username));
+      const q = query(
+        collection(db, "users"),
+        where("username", "==", username),
+      );
       const snapshot = await getDocs(q);
       const color = snapshot.empty
         ? null
@@ -44,7 +47,12 @@ const getStoreThemeColor = async (username: string) => {
   return themePromise;
 };
 
-const DASHBOARD_ROUTES = ["/store", "/store/add-product", "/store/reviews", "/store/settings"];
+const DASHBOARD_ROUTES = [
+  "/store",
+  "/store/add-product",
+  "/store/reviews",
+  "/store/settings",
+];
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -56,6 +64,8 @@ const Header = () => {
   const pathname = usePathname();
   const isStorePage = pathname.startsWith("/store/");
   const isDashboardPage = DASHBOARD_ROUTES.includes(pathname);
+  const isHomePage = pathname === "/";
+  const isTransparentHeader = isHomePage && !isScrolled;
 
   // Hide Header completely on dashboard pages
 
@@ -64,14 +74,21 @@ const Header = () => {
       setIsAuthenticated(!!user);
     });
 
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      unsubscribe();
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(
+        (document.documentElement.scrollTop || window.scrollY) > 10,
+      );
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pathname]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -113,7 +130,10 @@ const Header = () => {
     }
 
     return [
-      { href: isAuthenticated ? "/store" : "/", label: isAuthenticated ? "My Store" : "Home" },
+      {
+        href: isAuthenticated ? "/store" : "/",
+        label: isAuthenticated ? "My Store" : "Home",
+      },
       { href: "/pricing", label: "Pricing" },
       { href: "/about-us", label: "About" },
       { href: "/contact", label: "Contact" },
@@ -124,16 +144,21 @@ const Header = () => {
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 w-full z-30 transition-all duration-300 ${isStorePage && themeColor
-          ? ""
-          : isScrolled
-            ? "bg-white shadow-md"
-            : "bg-white backdrop-blur-lg"
-          }`}
-        style={isStorePage && themeColor ? { backgroundColor: themeColor } : {}}
-      >
-        <div className="max-w-screen-xl mx-auto px-6 py-3 flex justify-between items-center">
+      <header className="fixed top-0 left-0 w-full z-30">
+        <AnimatePresence>
+          {isScrolled && (
+            <motion.div
+              key="header-bg"
+              initial={{ y: "-100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "-100%" }}
+              transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 bg-white shadow-sm"
+            />
+          )}
+        </AnimatePresence>
+
+        <div className="relative max-w-screen-xl mx-auto px-6 py-3 flex justify-between items-center">
           <Link
             href={isAuthenticated ? "/store" : "/"}
             className="text-2xl max-h-32 font-extrabold bg-gradient-to-r pt-3 from-blue-700 via-purple-600 to-indigo-600 bg-clip-text text-transparent"
@@ -142,7 +167,11 @@ const Header = () => {
               alt="Product Share"
               height={85}
               width={85}
-              src={"/productShareLV-cropped.svg"}
+              src={
+                isTransparentHeader
+                  ? "/white-logo.svg"
+                  : "/productShareLV-cropped.svg"
+              }
             />
           </Link>
 
@@ -151,10 +180,15 @@ const Header = () => {
               <Link
                 key={href}
                 href={href}
-                className={`text-sm font-medium transition-all ${pathname === href
-                  ? "text-indigo-700 font-semibold"
-                  : "text-gray-700 hover:text-indigo-700"
-                  }`}
+                className={`text-sm font-medium transition-all ${
+                  isTransparentHeader
+                    ? pathname === href
+                      ? "text-white font-semibold"
+                      : "text-white/90 hover:text-white"
+                    : pathname === href
+                      ? "text-indigo-700 font-semibold"
+                      : "text-gray-700 hover:text-indigo-700"
+                }`}
               >
                 {label}
               </Link>
@@ -201,7 +235,9 @@ const Header = () => {
           {links.length > 0 && (
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden text-gray-800 z-50"
+              className={`md:hidden z-50 transition-colors ${
+                isTransparentHeader ? "text-white" : "text-gray-800"
+              }`}
               aria-label="Toggle menu"
             >
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -211,11 +247,8 @@ const Header = () => {
       </header>
 
       <AnimatePresence>
-
-
-
         {menuOpen && links.length > 0 && (
-          < motion.div
+          <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -228,7 +261,7 @@ const Header = () => {
                 className="md:hidden absolute right-10 top-[30px] text-gray-800 z-50"
                 aria-label="Toggle menu"
               >
-                {menuOpen && < X size={24} />}
+                {menuOpen && <X size={24} />}
               </button>
             )}
             {links.map(({ href, label }) => (
@@ -236,10 +269,11 @@ const Header = () => {
                 key={href}
                 href={href}
                 onClick={() => setMenuOpen(false)}
-                className={`text-base font-medium transition ${pathname === href
-                  ? "text-indigo-700 font-semibold"
-                  : "text-gray-700 hover:text-indigo-700"
-                  }`}
+                className={`text-base font-medium transition ${
+                  pathname === href
+                    ? "text-indigo-700 font-semibold"
+                    : "text-gray-700 hover:text-indigo-700"
+                }`}
               >
                 {label}
               </Link>
@@ -267,9 +301,9 @@ const Header = () => {
             )}
           </motion.div>
         )}
-      </AnimatePresence >
+      </AnimatePresence>
 
-      <div className="h-[65px]" />
+      {!isHomePage && <div className="h-[65px]" />}
     </>
   );
 };
