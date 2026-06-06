@@ -14,7 +14,7 @@ import Link from "next/link";
 import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
-import { Eye, EyeOff } from "lucide-react";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import Image from "next/image";
 
 const inputClass =
@@ -260,9 +260,9 @@ const RegisterPage: React.FC = () => {
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
+                      <FiEyeOff className="w-5 h-5" />
                     ) : (
-                      <Eye className="w-5 h-5" />
+                      <FiEye className="w-5 h-5" />
                     )}
                   </button>
                 </div>

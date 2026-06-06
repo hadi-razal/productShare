@@ -3,7 +3,7 @@
 import { db } from "@/lib/firebase";
 import { ProductType } from "@/type";
 import { deleteDoc, doc } from "firebase/firestore";
-import { PencilIcon, Trash } from "lucide-react";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -211,7 +211,7 @@ const ProductCard = ({
               onClick={handleDelete}
               className="flex items-center justify-center gap-1 bg-red-500 hover:bg-red-600 py-1.5 px-3 w-full rounded-lg text-white text-xs font-medium transition-colors"
             >
-              <Trash className="w-3.5 h-3.5" />
+              <FiTrash2 className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Delete</span>
             </button>
             <button
@@ -221,7 +221,7 @@ const ProductCard = ({
               }}
               className="flex items-center justify-center gap-1 bg-gray-500 hover:bg-gray-600 w-full py-1.5 px-3 rounded-lg text-white text-xs font-medium transition-colors"
             >
-              <PencilIcon className="w-3.5 h-3.5" />
+              <FiEdit2 className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Edit</span>
             </button>
           </div>

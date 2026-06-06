@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Menu, X, Sparkles } from "lucide-react";
+import { FiMenu, FiX } from "react-icons/fi";
+import { HiSparkles } from "react-icons/hi2";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -218,7 +219,7 @@ const Header = () => {
                 href="/pricing"
                 className="text-sm font-medium text-white bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-1.5 rounded-md hover:scale-105 transition-transform shadow flex items-center gap-1.5"
               >
-                <Sparkles className="w-4 h-4" />
+                <HiSparkles className="w-4 h-4" />
                 Upgrade to Pro
               </Link>
             )}
@@ -241,7 +242,7 @@ const Header = () => {
               }`}
               aria-label="Toggle menu"
             >
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+              {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
           )}
         </div>
@@ -262,7 +263,7 @@ const Header = () => {
                 className="md:hidden absolute right-10 top-[30px] text-gray-800 z-50"
                 aria-label="Toggle menu"
               >
-                {menuOpen && <X size={24} />}
+                {menuOpen && <FiX size={24} />}
               </button>
             )}
             {links.map(({ href, label }) => (
@@ -285,7 +286,7 @@ const Header = () => {
                 onClick={() => setMenuOpen(false)}
                 className="text-white bg-gradient-to-r from-amber-500 to-orange-500 py-2 rounded-md hover:opacity-90 font-medium flex items-center justify-center gap-1.5 shadow"
               >
-                <Sparkles className="w-4 h-4" />
+                <HiSparkles className="w-4 h-4" />
                 Upgrade to Pro
               </Link>
             )}

@@ -3,17 +3,17 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  BarChart,
-  Bell,
-  CheckCircle,
-  CloudUpload,
-  Globe,
-  Headphones,
-  Paintbrush,
-  PieChart,
-  Shield,
-  Users,
-} from "lucide-react";
+  FiBarChart2,
+  FiBell,
+  FiCheckCircle,
+  FiUploadCloud,
+  FiGlobe,
+  FiHeadphones,
+  FiEdit3,
+  FiPieChart,
+  FiShield,
+  FiUsers,
+} from "react-icons/fi";
 
 const PricingSection = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
@@ -85,43 +85,43 @@ const PricingSection = () => {
 
           <ul className="mx-auto mt-8 w-full max-w-4xl space-y-3 text-left text-base text-slate-600">
             <li className="flex text-start md:justify-center">
-              <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
+              <FiCheckCircle className="mr-2 h-5 w-5 text-green-500" />
               Unlimited product listings
             </li>
             <li className="flex text-start md:justify-center">
-              <BarChart className="mr-2 h-5 w-5 text-blue-500" />
+              <FiBarChart2 className="mr-2 h-5 w-5 text-blue-500" />
               Advanced analytics with customer insights
             </li>
             <li className="flex text-start md:justify-center">
-              <Paintbrush className="mr-2 h-5 w-5 text-yellow-500" />
+              <FiEdit3 className="mr-2 h-5 w-5 text-yellow-500" />
               Custom branding and catalog design tools
             </li>
             <li className="flex text-start md:justify-center">
-              <Headphones className="mr-2 h-5 w-5 text-purple-500" />
+              <FiHeadphones className="mr-2 h-5 w-5 text-purple-500" />
               Priority customer support
             </li>
             <li className="flex text-start md:justify-center">
-              <Bell className="mr-2 h-5 w-5 text-orange-500" />
+              <FiBell className="mr-2 h-5 w-5 text-orange-500" />
               Smart notification banners
             </li>
             <li className="flex text-start md:justify-center">
-              <PieChart className="mr-2 h-5 w-5 text-pink-500" />
+              <FiPieChart className="mr-2 h-5 w-5 text-pink-500" />
               Sales and revenue analytics
             </li>
             <li className="flex text-start md:justify-center">
-              <Globe className="mr-2 h-5 w-5 text-teal-500" />
+              <FiGlobe className="mr-2 h-5 w-5 text-teal-500" />
               Multi-language and multi-currency support
             </li>
             <li className="flex text-start md:justify-center">
-              <CloudUpload className="mr-2 h-5 w-5 text-indigo-500" />
+              <FiUploadCloud className="mr-2 h-5 w-5 text-indigo-500" />
               Bulk product upload via CSV or Excel
             </li>
             <li className="flex text-start md:justify-center">
-              <Shield className="mr-2 h-5 w-5 text-red-500" />
+              <FiShield className="mr-2 h-5 w-5 text-red-500" />
               Secure data protection and backups
             </li>
             <li className="flex text-start md:justify-center">
-              <Users className="mr-2 h-5 w-5 text-cyan-500" />
+              <FiUsers className="mr-2 h-5 w-5 text-cyan-500" />
               Team access with role-based permissions
             </li>
           </ul>

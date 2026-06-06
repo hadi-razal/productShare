@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Check, X, Zap } from "lucide-react";
+import { FiCheck, FiX, FiZap } from "react-icons/fi";
 import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import toast from "react-hot-toast";
@@ -197,7 +197,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
   return (
     <div>
       <Button onClick={() => setIsOpen(true)}>
-        <Zap className="w-4 h-4 mr-2" />
+        <FiZap className="w-4 h-4 mr-2" />
         Upgrade to Pro
       </Button>
 
@@ -209,7 +209,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
               onClick={() => setIsOpen(false)}
               className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100"
             >
-              <X className="h-4 w-4" />
+              <FiX className="h-4 w-4" />
             </button>
 
             {/* Header */}
@@ -258,7 +258,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
               <ul className="grid gap-3 sm:grid-cols-2 mb-6">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <FiCheck className="h-4 w-4 text-green-500 flex-shrink-0" />
                     <span className="text-sm text-gray-600">{feature}</span>
                   </li>
                 ))}

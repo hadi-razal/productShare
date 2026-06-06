@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { MessageSquare } from "lucide-react";
+import { FiMessageSquare } from "react-icons/fi";
 
 const demoReviews = [
   {
@@ -49,7 +49,7 @@ const CustomerReviewsPage: React.FC = () => {
       <section className="max-w-3xl">
         {demoReviews.length === 0 ? (
           <div className="ds-card" style={{ textAlign: "center", padding: "40px 24px" }}>
-            <MessageSquare className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+            <FiMessageSquare className="w-10 h-10 text-slate-300 mx-auto mb-3" />
             <h3 className="ds-card-title">No reviews yet</h3>
             <p style={{ fontSize: 14, color: "#64748b", marginTop: 8 }}>
               Customer reviews will appear here once you start receiving them.

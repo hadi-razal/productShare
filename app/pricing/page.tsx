@@ -2,102 +2,102 @@
 
 import React, { useState } from "react";
 import {
-  CheckCircle,
-  BarChart,
-  Paintbrush,
-  Headphones,
-  Bell,
-  PieChart,
-  Smile,
-  Lock,
-  Globe,
-  Video,
-  LineChart,
-  WandSparkles,
-  Rows3,
-  Users,
-  CloudUpload,
-  Shield,
-  Zap,
-  Layers,
-} from "lucide-react";
+  FiCheckCircle,
+  FiBarChart2,
+  FiEdit3,
+  FiHeadphones,
+  FiBell,
+  FiPieChart,
+  FiSmile,
+  FiLock,
+  FiGlobe,
+  FiVideo,
+  FiTrendingUp,
+  FiMenu,
+  FiUsers,
+  FiUploadCloud,
+  FiShield,
+  FiZap,
+  FiLayers,
+} from "react-icons/fi";
+import { HiSparkles } from "react-icons/hi2";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
 const features = [
   {
-    icon: <CheckCircle className="text-green-500 w-5 h-5" />,
+    icon: <FiCheckCircle className="text-green-500 w-5 h-5" />,
     text: "Unlimited product listings",
   },
   {
-    icon: <BarChart className="text-blue-500 w-5 h-5" />,
+    icon: <FiBarChart2 className="text-blue-500 w-5 h-5" />,
     text: "Customer behavior analytics",
   },
   {
-    icon: <Paintbrush className="text-yellow-500 w-5 h-5" />,
+    icon: <FiEdit3 className="text-yellow-500 w-5 h-5" />,
     text: "Theme customization tools",
   },
   {
-    icon: <Headphones className="text-purple-500 w-5 h-5" />,
+    icon: <FiHeadphones className="text-purple-500 w-5 h-5" />,
     text: "24/7 priority support",
   },
   {
-    icon: <Bell className="text-orange-500 w-5 h-5" />,
+    icon: <FiBell className="text-orange-500 w-5 h-5" />,
     text: "Custom alert banners",
   },
   {
-    icon: <PieChart className="text-pink-500 w-5 h-5" />,
+    icon: <FiPieChart className="text-pink-500 w-5 h-5" />,
     text: "Sales & engagement charts",
   },
   {
-    icon: <Video className="text-red-500 w-5 h-5" />,
+    icon: <FiVideo className="text-red-500 w-5 h-5" />,
     text: "Add videos to product listings",
   },
   {
-    icon: <LineChart className="text-sky-500 w-5 h-5" />,
+    icon: <FiTrendingUp className="text-sky-500 w-5 h-5" />,
     text: "Advanced performance graphs",
   },
   {
-    icon: <WandSparkles className="text-indigo-500 w-5 h-5" />,
+    icon: <HiSparkles className="text-indigo-500 w-5 h-5" />,
     text: "AI-generated customer insights",
   },
   {
-    icon: <Rows3 className="text-gray-700 w-5 h-5" />,
+    icon: <FiMenu className="text-gray-700 w-5 h-5" />,
     text: "Bulk edit tools for products",
   },
   {
-    icon: <Users className="text-cyan-500 w-5 h-5" />,
+    icon: <FiUsers className="text-cyan-500 w-5 h-5" />,
     text: "Team access & role-based permissions",
   },
   {
-    icon: <CloudUpload className="text-indigo-500 w-5 h-5" />,
+    icon: <FiUploadCloud className="text-indigo-500 w-5 h-5" />,
     text: "Bulk product upload via CSV/Excel",
   },
   {
-    icon: <Shield className="text-red-500 w-5 h-5" />,
+    icon: <FiShield className="text-red-500 w-5 h-5" />,
     text: "Secure backups & data protection",
   },
   {
-    icon: <Zap className="text-yellow-600 w-5 h-5" />,
+    icon: <FiZap className="text-yellow-600 w-5 h-5" />,
     text: "Integrations with top e-commerce tools",
   },
   {
-    icon: <Layers className="text-purple-600 w-5 h-5" />,
+    icon: <FiLayers className="text-purple-600 w-5 h-5" />,
     text: "Unlimited categories & collections",
   },
 ];
 
 const freeFeatures = [
   {
-    icon: <Smile className="text-green-500 w-5 h-5" />,
+    icon: <FiSmile className="text-green-500 w-5 h-5" />,
     text: "Up to 3 product listings",
   },
   {
-    icon: <Lock className="text-blue-500 w-5 h-5" />,
+    icon: <FiLock className="text-blue-500 w-5 h-5" />,
     text: "Basic analytics dashboard",
   },
   {
-    icon: <Globe className="text-purple-500 w-5 h-5" />,
+    icon: <FiGlobe className="text-purple-500 w-5 h-5" />,
     text: "Public sharing link",
   },
 ];
