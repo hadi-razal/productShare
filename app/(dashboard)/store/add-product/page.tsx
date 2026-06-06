@@ -21,7 +21,9 @@ const Toggle = ({ name, checked, onChange, label, description }: any) => (
   <div className="flex items-center justify-between py-3">
     <div>
       <p className="text-sm font-medium text-gray-800">{label}</p>
-      {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
+      {description && (
+        <p className="text-xs text-gray-500 mt-0.5">{description}</p>
+      )}
     </div>
     <label className="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
       <input
@@ -37,8 +39,17 @@ const Toggle = ({ name, checked, onChange, label, description }: any) => (
 );
 
 // ── Section Card ─────────────────────────────────────────────────────────────
-const Section = ({ title, children }: { title: string; children: ReactNode }) => (
-  <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+const Section = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) => (
+  <div
+    className="bg-white rounded-2xl border border-gray-100 overflow-hidden"
+    style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
+  >
     <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
       <h3 className="font-semibold text-gray-900 text-[15px]">{title}</h3>
     </div>
@@ -47,7 +58,8 @@ const Section = ({ title, children }: { title: string; children: ReactNode }) =>
 );
 
 // ── Field ────────────────────────────────────────────────────────────────────
-const inputCls = "w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
+const inputCls =
+  "w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
 const labelCls = "block text-sm font-semibold text-gray-700 mb-1.5";
 
 const CreateProduct = () => {
@@ -89,32 +101,60 @@ const CreateProduct = () => {
       video.muted = true;
       video.playsInline = true;
       video.onloadedmetadata = () => {
-        const maxWidth = 720, maxHeight = 480;
+        const maxWidth = 720,
+          maxHeight = 480;
         let { videoWidth, videoHeight } = video;
-        if (videoWidth > maxWidth) { videoHeight = (videoHeight * maxWidth) / videoWidth; videoWidth = maxWidth; }
-        if (videoHeight > maxHeight) { videoWidth = (videoWidth * maxHeight) / videoHeight; videoHeight = maxHeight; }
+        if (videoWidth > maxWidth) {
+          videoHeight = (videoHeight * maxWidth) / videoWidth;
+          videoWidth = maxWidth;
+        }
+        if (videoHeight > maxHeight) {
+          videoWidth = (videoWidth * maxHeight) / videoHeight;
+          videoHeight = maxHeight;
+        }
         canvas.width = videoWidth;
         canvas.height = videoHeight;
         const chunks: BlobPart[] = [];
         const stream = canvas.captureStream(30);
-        const mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm;codecs=vp8", videoBitsPerSecond: 1000000 });
-        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+        const mediaRecorder = new MediaRecorder(stream, {
+          mimeType: "video/webm;codecs=vp8",
+          videoBitsPerSecond: 1000000,
+        });
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) chunks.push(e.data);
+        };
         mediaRecorder.onstop = () => {
           const blob = new Blob(chunks, { type: "video/webm" });
-          resolve(new File([blob], file.name.replace(/\.[^/.]+$/, ".webm"), { type: "video/webm" }));
+          resolve(
+            new File([blob], file.name.replace(/\.[^/.]+$/, ".webm"), {
+              type: "video/webm",
+            }),
+          );
           URL.revokeObjectURL(video.src);
         };
         const drawFrame = () => {
-          if (video.ended || video.paused) { mediaRecorder.stop(); return; }
+          if (video.ended || video.paused) {
+            mediaRecorder.stop();
+            return;
+          }
           ctx?.drawImage(video, 0, 0, videoWidth, videoHeight);
           requestAnimationFrame(drawFrame);
         };
         video.play();
         mediaRecorder.start();
         drawFrame();
-        setTimeout(() => { video.pause(); mediaRecorder.stop(); }, Math.min(video.duration * 1000, 30000));
+        setTimeout(
+          () => {
+            video.pause();
+            mediaRecorder.stop();
+          },
+          Math.min(video.duration * 1000, 30000),
+        );
       };
-      video.onerror = () => { URL.revokeObjectURL(video.src); reject(new Error("Video processing failed")); };
+      video.onerror = () => {
+        URL.revokeObjectURL(video.src);
+        reject(new Error("Video processing failed"));
+      };
     });
   };
 
@@ -125,7 +165,9 @@ const CreateProduct = () => {
     };
   }, [previewImages, previewVideo]);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
@@ -138,31 +180,46 @@ const CreateProduct = () => {
   const handleSizeChange = (size: string) => {
     setProductData((prev) => ({
       ...prev,
-      sizes: prev.sizes.includes(size) ? prev.sizes.filter((s) => s !== size) : [...prev.sizes, size],
+      sizes: prev.sizes.includes(size)
+        ? prev.sizes.filter((s) => s !== size)
+        : [...prev.sizes, size],
     }));
   };
 
   const handleAddColor = () => {
     if (currentColor.trim()) {
-      setProductData((prev) => ({ ...prev, colors: [...prev.colors, currentColor.trim()] }));
+      setProductData((prev) => ({
+        ...prev,
+        colors: [...prev.colors, currentColor.trim()],
+      }));
       setCurrentColor("");
       setShowColorPicker(false);
     }
   };
 
   const handleRemoveColor = (color: string) => {
-    setProductData((prev) => ({ ...prev, colors: prev.colors.filter((c) => c !== color) }));
+    setProductData((prev) => ({
+      ...prev,
+      colors: prev.colors.filter((c) => c !== color),
+    }));
   };
 
   const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newCategory = e.target.value;
-    setProductData((prev) => ({ ...prev, category: newCategory, sizes: newCategory !== "clothing" ? [] : prev.sizes }));
+    setProductData((prev) => ({
+      ...prev,
+      category: newCategory,
+      sizes: newCategory !== "clothing" ? [] : prev.sizes,
+    }));
   };
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     const newFiles = Array.from(event.target.files) as File[];
-    if (imageFiles.length + newFiles.length > 10) { alert("Maximum 10 images allowed"); return; }
+    if (imageFiles.length + newFiles.length > 10) {
+      alert("Maximum 10 images allowed");
+      return;
+    }
     setImageFiles((prev) => [...prev, ...newFiles]);
     setPreviewImages((prev) => [...prev, ...newFiles.map(URL.createObjectURL)]);
   };
@@ -170,10 +227,14 @@ const CreateProduct = () => {
   const handleVideoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files?.[0]) return;
     const file = event.target.files[0];
-    if (file.size > 100 * 1024 * 1024) { alert("Video must be less than 100MB"); return; }
+    if (file.size > 100 * 1024 * 1024) {
+      alert("Video must be less than 100MB");
+      return;
+    }
     try {
       setVideoCompressing(true);
-      const processed = file.size > 10 * 1024 * 1024 ? await compressVideo(file) : file;
+      const processed =
+        file.size > 10 * 1024 * 1024 ? await compressVideo(file) : file;
       setVideoFile(processed);
       if (previewVideo) URL.revokeObjectURL(previewVideo);
       setPreviewVideo(URL.createObjectURL(processed));
@@ -184,34 +245,67 @@ const CreateProduct = () => {
     }
   };
 
-  const uploadFilesToFirebase = async (files: File[], type: "images" | "video") => {
+  const uploadFilesToFirebase = async (
+    files: File[],
+    type: "images" | "video",
+  ) => {
     const ts = new Date().toISOString().replace(/[:.]/g, "-");
     return Promise.all(
       files.map(async (file, i) => {
-        const name = type === "video" ? `video_${ts}_${file.name}` : `image_${i}_${ts}_${file.name}`;
+        const name =
+          type === "video"
+            ? `video_${ts}_${file.name}`
+            : `image_${i}_${ts}_${file.name}`;
         const storageRef = ref(storage, `${type}/${name}`);
         await uploadBytes(storageRef, file);
         return getDownloadURL(storageRef);
-      })
+      }),
     );
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!productData.name.trim()) { alert("Product name is required"); return; }
-    if (!productData.regularPrice.toString().trim()) { alert("Regular price is required"); return; }
-    if (!productData.category) { alert("Category is required"); return; }
-    if (imageFiles.length === 0) { alert("At least one image is required"); return; }
+    if (!productData.name.trim()) {
+      alert("Product name is required");
+      return;
+    }
+    if (!productData.regularPrice.toString().trim()) {
+      alert("Regular price is required");
+      return;
+    }
+    if (!productData.category) {
+      alert("Category is required");
+      return;
+    }
+    if (imageFiles.length === 0) {
+      alert("At least one image is required");
+      return;
+    }
     setIsUploading(true);
     try {
       const user = auth.currentUser;
-      if (!user) { alert("You must be logged in"); setIsUploading(false); return; }
+      if (!user) {
+        alert("You must be logged in");
+        setIsUploading(false);
+        return;
+      }
       const userSnap = await getDoc(doc(db, "users", user.uid));
-      if (!userSnap.exists()) { alert("User profile not found"); setIsUploading(false); return; }
+      if (!userSnap.exists()) {
+        alert("User profile not found");
+        setIsUploading(false);
+        return;
+      }
       const imageUrls = await uploadFilesToFirebase(imageFiles, "images");
       let videoUrl = "";
-      if (videoFile) { [videoUrl] = await uploadFilesToFirebase([videoFile], "video"); }
-      await addDoc(collection(db, "users", user.uid, "products"), { ...productData, images: imageUrls, video: videoUrl, createdAt: serverTimestamp() });
+      if (videoFile) {
+        [videoUrl] = await uploadFilesToFirebase([videoFile], "video");
+      }
+      await addDoc(collection(db, "users", user.uid, "products"), {
+        ...productData,
+        images: imageUrls,
+        video: videoUrl,
+        createdAt: serverTimestamp(),
+      });
       alert("Product created successfully!");
       router.push("/store");
     } catch (error) {
@@ -248,12 +342,11 @@ const CreateProduct = () => {
             }}
           />
         </div>
-        <p className="text-xs text-gray-400 mt-2">Complete required fields to publish</p>
+        {/* <p className="text-xs text-gray-400 mt-2">Complete required fields to publish</p> */}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6 items-start">
         <form onSubmit={handleSubmit} className="space-y-5 min-w-0">
-
           {/* Basic Info */}
           <Section title="Basic Information">
             <div className="space-y-4">
@@ -319,12 +412,21 @@ const CreateProduct = () => {
                 />
               </div>
             </div>
-            {productData.discountPrice && productData.regularPrice &&
-              Number(productData.discountPrice) < Number(productData.regularPrice) && (
-              <p className="mt-3 text-xs text-green-600 font-medium bg-green-50 px-3 py-2 rounded-lg">
-                🎉 {Math.round(((Number(productData.regularPrice) - Number(productData.discountPrice)) / Number(productData.regularPrice)) * 100)}% discount applied
-              </p>
-            )}
+            {productData.discountPrice &&
+              productData.regularPrice &&
+              Number(productData.discountPrice) <
+                Number(productData.regularPrice) && (
+                <p className="mt-3 text-xs text-green-600 font-medium bg-green-50 px-3 py-2 rounded-lg">
+                  🎉{" "}
+                  {Math.round(
+                    ((Number(productData.regularPrice) -
+                      Number(productData.discountPrice)) /
+                      Number(productData.regularPrice)) *
+                      100,
+                  )}
+                  % discount applied
+                </p>
+              )}
           </Section>
 
           {/* Category & Sizes */}
@@ -384,10 +486,22 @@ const CreateProduct = () => {
               {productData.colors.length > 0 && (
                 <div className="flex flex-wrap gap-3">
                   {productData.colors.map((color, index) => (
-                    <div key={index} className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
-                      <div className="w-5 h-5 rounded-full border border-gray-300 shadow-sm flex-shrink-0" style={{ backgroundColor: color }} />
-                      <span className="text-xs text-gray-600 font-medium">{color}</span>
-                      <button type="button" onClick={() => handleRemoveColor(color)} className="text-gray-400 hover:text-red-500 transition-colors ml-1 text-xs font-bold">
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2"
+                    >
+                      <div
+                        className="w-5 h-5 rounded-full border border-gray-300 shadow-sm flex-shrink-0"
+                        style={{ backgroundColor: color }}
+                      />
+                      <span className="text-xs text-gray-600 font-medium">
+                        {color}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveColor(color)}
+                        className="text-gray-400 hover:text-red-500 transition-colors ml-1 text-xs font-bold"
+                      >
                         Remove
                       </button>
                     </div>
@@ -404,9 +518,15 @@ const CreateProduct = () => {
                   />
                   {showColorPicker && (
                     <div className="absolute top-12 left-0 z-20">
-                      <div className="fixed inset-0" onClick={() => setShowColorPicker(false)} />
+                      <div
+                        className="fixed inset-0"
+                        onClick={() => setShowColorPicker(false)}
+                      />
                       <div className="relative z-10 shadow-xl rounded-xl overflow-hidden">
-                        <ChromePicker color={currentColor} onChange={(c: ColorResult) => setCurrentColor(c.hex)} />
+                        <ChromePicker
+                          color={currentColor}
+                          onChange={(c: ColorResult) => setCurrentColor(c.hex)}
+                        />
                       </div>
                     </div>
                   )}
@@ -442,7 +562,9 @@ const CreateProduct = () => {
                       className="w-full h-full object-cover rounded-xl border border-gray-200"
                     />
                     {index === 0 && (
-                      <span className="absolute bottom-1 left-1 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">Main</span>
+                      <span className="absolute bottom-1 left-1 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">
+                        Main
+                      </span>
                     )}
                     <button
                       type="button"
@@ -455,13 +577,25 @@ const CreateProduct = () => {
                 ))}
                 {imageFiles.length < 10 && (
                   <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
-                    <span className="text-xs text-gray-500 group-hover:text-primary font-medium">Add</span>
-                    <input type="file" multiple accept="image/*" disabled={busy} onChange={handleImageUpload} className="hidden" />
+                    <span className="text-xs text-gray-500 group-hover:text-primary font-medium">
+                      Add
+                    </span>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      disabled={busy}
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
                   </label>
                 )}
               </div>
               <p className="text-xs text-gray-500">
-                Up to 10 images. <span className="font-medium">First image is the main photo.</span>
+                Up to 10 images.{" "}
+                <span className="font-medium">
+                  First image is the main photo.
+                </span>
               </p>
             </div>
           </Section>
@@ -477,7 +611,11 @@ const CreateProduct = () => {
               )}
               {previewVideo ? (
                 <div className="relative inline-block">
-                  <video src={previewVideo} controls className="w-full max-w-xs h-40 object-cover rounded-xl border border-gray-200" />
+                  <video
+                    src={previewVideo}
+                    controls
+                    className="w-full max-w-xs h-40 object-cover rounded-xl border border-gray-200"
+                  />
                   <button
                     type="button"
                     onClick={removeVideo}
@@ -486,23 +624,55 @@ const CreateProduct = () => {
                     Remove
                   </button>
                 </div>
-              ) : !videoCompressing && (
-                <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
-                  <span className="text-sm text-gray-500 group-hover:text-primary font-medium">Upload a video</span>
-                  <span className="text-xs text-gray-400 mt-0.5">Max 100MB</span>
-                  <input type="file" accept="video/*" disabled={busy} onChange={handleVideoUpload} className="hidden" />
-                </label>
+              ) : (
+                !videoCompressing && (
+                  <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
+                    <span className="text-sm text-gray-500 group-hover:text-primary font-medium">
+                      Upload a video
+                    </span>
+                    <span className="text-xs text-gray-400 mt-0.5">
+                      Max 100MB
+                    </span>
+                    <input
+                      type="file"
+                      accept="video/*"
+                      disabled={busy}
+                      onChange={handleVideoUpload}
+                      className="hidden"
+                    />
+                  </label>
+                )
               )}
-              <p className="text-xs text-gray-500">Videos over 10MB will be automatically compressed.</p>
+              <p className="text-xs text-gray-500">
+                Videos over 10MB will be automatically compressed.
+              </p>
             </div>
           </Section>
 
           {/* Options */}
           <Section title="Product Options">
             <div className="divide-y divide-gray-50">
-              <Toggle name="isInStock" checked={productData.isInStock} onChange={handleCheckboxChange} label="In Stock" description="Product is available for purchase" />
-              <Toggle name="isFreeDelivery" checked={productData.isFreeDelivery} onChange={handleCheckboxChange} label="Free Delivery" description="Offer free shipping on this product" />
-              <Toggle name="isMostSelling" checked={productData.isMostSelling} onChange={handleCheckboxChange} label="Most Selling" description="Mark as a top-selling product" />
+              <Toggle
+                name="isInStock"
+                checked={productData.isInStock}
+                onChange={handleCheckboxChange}
+                label="In Stock"
+                description="Product is available for purchase"
+              />
+              <Toggle
+                name="isFreeDelivery"
+                checked={productData.isFreeDelivery}
+                onChange={handleCheckboxChange}
+                label="Free Delivery"
+                description="Offer free shipping on this product"
+              />
+              <Toggle
+                name="isMostSelling"
+                checked={productData.isMostSelling}
+                onChange={handleCheckboxChange}
+                label="Most Selling"
+                description="Mark as a top-selling product"
+              />
             </div>
           </Section>
 
@@ -519,7 +689,9 @@ const CreateProduct = () => {
                 className={inputCls}
                 placeholder="summer, casual, cotton, blue..."
               />
-              <p className="text-xs text-gray-500 mt-2">Separate tags with commas to help customers find your product.</p>
+              <p className="text-xs text-gray-500 mt-2">
+                Separate tags with commas to help customers find your product.
+              </p>
             </div>
           </Section>
 
@@ -528,7 +700,12 @@ const CreateProduct = () => {
             type="submit"
             disabled={busy}
             className="w-full py-4 rounded-2xl text-white font-bold text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
-            style={{ background: busy ? "#9ca3af" : "linear-gradient(135deg, #4f46e5, #7c3aed)", boxShadow: busy ? 'none' : '0 8px 24px rgba(79,70,229,0.3)' }}
+            style={{
+              background: busy
+                ? "#9ca3af"
+                : "linear-gradient(135deg, #4f46e5, #7c3aed)",
+              boxShadow: busy ? "none" : "0 8px 24px rgba(79,70,229,0.3)",
+            }}
           >
             {isUploading ? (
               <span className="flex items-center justify-center gap-2">
@@ -544,7 +721,6 @@ const CreateProduct = () => {
               "Create Product"
             )}
           </button>
-
         </form>
 
         <aside className="xl:sticky xl:top-6 xl:self-start">

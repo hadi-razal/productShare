@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Mail, MessageCircle, Phone } from "lucide-react";
+import { FiMail, FiMessageCircle, FiPhone } from "react-icons/fi";
 import { siteConfig } from "@/lib/site";
 
 const ContactPage = () => {
@@ -57,7 +57,7 @@ const ContactPage = () => {
               href={`mailto:${siteConfig.supportEmail}`}
               className="flex items-start gap-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 transition hover:border-slate-700"
             >
-              <Mail className="mt-1 h-5 w-5 text-indigo-300" />
+              <FiMail className="mt-1 h-5 w-5 text-indigo-300" />
               <div>
                 <p className="text-sm font-semibold text-white">Email support</p>
                 <p className="mt-1 text-sm text-slate-300">
@@ -70,7 +70,7 @@ const ContactPage = () => {
               href={`tel:${siteConfig.supportPhoneHref}`}
               className="flex items-start gap-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 transition hover:border-slate-700"
             >
-              <Phone className="mt-1 h-5 w-5 text-indigo-300" />
+              <FiPhone className="mt-1 h-5 w-5 text-indigo-300" />
               <div>
                 <p className="text-sm font-semibold text-white">Call us</p>
                 <p className="mt-1 text-sm text-slate-300">
@@ -85,7 +85,7 @@ const ContactPage = () => {
               rel="noreferrer"
               className="flex items-start gap-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 transition hover:border-slate-700"
             >
-              <MessageCircle className="mt-1 h-5 w-5 text-indigo-300" />
+              <FiMessageCircle className="mt-1 h-5 w-5 text-indigo-300" />
               <div>
                 <p className="text-sm font-semibold text-white">WhatsApp</p>
                 <p className="mt-1 text-sm text-slate-300">

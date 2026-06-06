@@ -7,13 +7,16 @@ import {
   FiTwitter,
   FiShare2,
   FiX,
+  FiChevronLeft,
+  FiChevronRight,
+  FiEye,
+  FiTruck,
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { getUserId } from "@/helpers/getUserId";
 import { auth, db } from "@/lib/firebase";
 import { ProductType } from "@/type";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, EyeIcon, Truck } from "lucide-react";
 import { onAuthStateChanged } from "firebase/auth";
 
 interface ProductPageProps {
@@ -236,13 +239,13 @@ const ProductPage = ({
                   onClick={prevImage}
                   className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-white transition-colors"
                 >
-                  <ChevronLeft className="w-5 h-5 text-gray-700" />
+                  <FiChevronLeft className="w-5 h-5 text-gray-700" />
                 </button>
                 <button
                   onClick={nextImage}
                   className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-white transition-colors"
                 >
-                  <ChevronRight className="w-5 h-5 text-gray-700" />
+                  <FiChevronRight className="w-5 h-5 text-gray-700" />
                 </button>
               </>
             )}
@@ -295,7 +298,7 @@ const ProductPage = ({
         <div className="space-y-4">
           {isOwner && (
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-sm font-semibold">
-              <EyeIcon className="w-4 h-4" />
+              <FiEye className="w-4 h-4" />
               {productData.views || 0} Views
             </div>
           )}
@@ -317,7 +320,7 @@ const ProductPage = ({
           </div>
 
           <div className="flex items-center gap-2 bg-green-50 border border-green-100 p-3 rounded-xl">
-            <Truck className="w-4 h-4 text-green-600 flex-shrink-0" />
+            <FiTruck className="w-4 h-4 text-green-600 flex-shrink-0" />
             <span className="text-sm font-medium text-green-700">Free Delivery Available</span>
           </div>
 

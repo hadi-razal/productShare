@@ -7,9 +7,10 @@ import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  Package, Eye, AlertTriangle, RefreshCw, ExternalLink, ArrowUpRight,
-  Sparkles, BarChart3, ShoppingBag, Settings, Copy, Check, Plus,
-} from "lucide-react";
+  FiPackage, FiEye, FiAlertTriangle, FiRefreshCw, FiExternalLink, FiArrowUpRight,
+  FiBarChart2, FiShoppingBag, FiSettings, FiCopy, FiCheck, FiPlus,
+} from "react-icons/fi";
+import { HiSparkles } from "react-icons/hi2";
 import { getUsername } from "@/helpers/getUsername";
 import PaymentButton from "@/components/PaymentButton";
 import Image from "next/image";
@@ -93,12 +94,12 @@ const SessionChart = ({ visitorData, loading, username }: { visitorData: any[]; 
         </div>
       ) : (
         <div className="ds-chart-empty">
-          <BarChart3 className="w-10 h-10 text-slate-300" />
+          <FiBarChart2 className="w-10 h-10 text-slate-300" />
           <p>No session data yet</p>
           <span>Share your store link to start tracking visits</span>
           {username && (
             <Link href={`/store/${username}`} target="_blank" className="ds-empty-cta">
-              <ExternalLink className="w-4 h-4" /> Open your store
+              <FiExternalLink className="w-4 h-4" /> Open your store
             </Link>
           )}
         </div>
@@ -119,7 +120,7 @@ const InsightRow = ({ label, labelColor, product, loading }: {
       {loading ? <Pulse className="w-12 h-12 rounded-xl" /> : product?.images?.[0] ? (
         <Image alt="" src={product.images[0]} width={48} height={48} quality={50} loading="lazy" className="ds-insight-img" />
       ) : (
-        <div className="ds-insight-img-placeholder"><Package className="w-4 h-4 text-slate-400" /></div>
+        <div className="ds-insight-img-placeholder"><FiPackage className="w-4 h-4 text-slate-400" /></div>
       )}
       <div className="ds-insight-info">
         {loading ? <><Pulse className="h-3.5 w-24" /><Pulse className="h-3 w-14 mt-1.5" /></> : product ? (
@@ -195,7 +196,7 @@ const StoreDashboard = () => {
               <div className="ds-store-link">
                 <code>productshare.in/store/{username}</code>
                 <button type="button" onClick={copyStoreLink} className="ds-btn-outline" aria-label="Copy store link">
-                  {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied ? <FiCheck className="w-3.5 h-3.5" /> : <FiCopy className="w-3.5 h-3.5" />}
                   {copied ? "Copied" : "Copy"}
                 </button>
               </div>
@@ -204,11 +205,11 @@ const StoreDashboard = () => {
           <div className="ds-welcome-actions">
             {username && (
               <Link href={`/store/${username}`} target="_blank" className="ds-btn ds-btn-light">
-                <ExternalLink className="w-4 h-4" /> View Store
+                <FiExternalLink className="w-4 h-4" /> View Store
               </Link>
             )}
             <Link href="/store/add-product" className="ds-btn ds-btn-light">
-              <Plus className="w-4 h-4" /> Add Product
+              <FiPlus className="w-4 h-4" /> Add Product
             </Link>
             <button
               onClick={() => { if (userId) { setRefreshing(true); fetchData(userId); } }}
@@ -216,7 +217,7 @@ const StoreDashboard = () => {
               className="ds-btn ds-btn-ghost"
               aria-label="Refresh data"
             >
-              <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+              <FiRefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
             </button>
           </div>
         </div>
@@ -225,20 +226,20 @@ const StoreDashboard = () => {
       </div>
 
       <div className="ds-stats-grid">
-        <StatCard title="Total Products" value={stats.products} icon={Package} color="indigo" loading={loading} />
-        <StatCard title="Store Views" value={stats.visitors} icon={Eye} color="emerald" loading={loading} />
-        <StatCard title="Low Stock Items" value={stats.lowStockItems} icon={AlertTriangle} color="amber" loading={loading} />
+        <StatCard title="Total Products" value={stats.products} icon={FiPackage} color="indigo" loading={loading} />
+        <StatCard title="Store Views" value={stats.visitors} icon={FiEye} color="emerald" loading={loading} />
+        <StatCard title="Low Stock Items" value={stats.lowStockItems} icon={FiAlertTriangle} color="amber" loading={loading} />
       </div>
 
       {!loading && stats.products === 0 && (
         <div className="ds-card" style={{ textAlign: "center", padding: "32px 24px" }}>
-          <ShoppingBag className="w-10 h-10 text-indigo-400 mx-auto mb-3" />
+          <FiShoppingBag className="w-10 h-10 text-indigo-400 mx-auto mb-3" />
           <h3 className="ds-card-title">Your catalog is empty</h3>
           <p style={{ fontSize: 14, color: "#64748b", marginTop: 8, lineHeight: 1.5 }}>
             Add your first product to start selling through your digital storefront.
           </p>
           <Link href="/store/add-product" className="ds-empty-cta" style={{ margin: "16px auto 0" }}>
-            <Plus className="w-4 h-4" /> Add your first product
+            <FiPlus className="w-4 h-4" /> Add your first product
           </Link>
         </div>
       )}
@@ -251,13 +252,13 @@ const StoreDashboard = () => {
           <div className="ds-card">
             <div className="ds-insights-header">
               <h3 className="ds-card-title">Product Insights</h3>
-              <Sparkles className="w-4 h-4 text-amber-400" />
+              <HiSparkles className="w-4 h-4 text-amber-400" />
             </div>
             <InsightRow label="Top Performer" labelColor="green" product={mostViewed} loading={loading} />
             <InsightRow label="Needs Attention" labelColor="amber" product={leastViewed} loading={loading} />
             {username && (
               <Link href={`/store/${username}`} target="_blank" className="ds-insights-link">
-                View all products <ArrowUpRight className="w-3.5 h-3.5" />
+                View all products <FiArrowUpRight className="w-3.5 h-3.5" />
               </Link>
             )}
           </div>
@@ -266,20 +267,20 @@ const StoreDashboard = () => {
             <h3 className="ds-card-title">Quick Actions</h3>
             <div className="ds-quick-grid">
               <Link href="/store/add-product" className="ds-quick-action">
-                <ShoppingBag className="w-5 h-5 text-indigo-500" />
+                <FiShoppingBag className="w-5 h-5 text-indigo-500" />
                 <span>Add Product</span>
               </Link>
               <Link href="/store/reviews" className="ds-quick-action">
-                <BarChart3 className="w-5 h-5 text-emerald-500" />
+                <FiBarChart2 className="w-5 h-5 text-emerald-500" />
                 <span>Reviews</span>
               </Link>
               <Link href="/store/settings" className="ds-quick-action">
-                <Settings className="w-5 h-5 text-violet-500" />
+                <FiSettings className="w-5 h-5 text-violet-500" />
                 <span>Settings</span>
               </Link>
               {username && (
                 <Link href={`/store/${username}`} target="_blank" className="ds-quick-action">
-                  <ExternalLink className="w-5 h-5 text-sky-500" />
+                  <FiExternalLink className="w-5 h-5 text-sky-500" />
                   <span>View Store</span>
                 </Link>
               )}

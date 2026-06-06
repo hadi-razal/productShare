@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { Plus, X, Type, AlignLeft, DollarSign, Grid3X3, Palette, ImagePlus, SlidersHorizontal, Tag, ChevronLeft } from "lucide-react";
+import { FiChevronLeft } from "react-icons/fi";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useParams, useRouter } from "next/navigation";
@@ -24,12 +24,9 @@ const Toggle = ({ name, checked, onChange, label, description }: any) => (
 );
 
 // ── Section Card ──────────────────────────────────────────────────────────────
-const Section = ({ icon: Icon, title, children }: any) => (
+const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-    <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-50">
-      <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <Icon className="w-4 h-4 text-primary" />
-      </div>
+    <div className="px-6 py-4 border-b border-gray-50">
       <h3 className="font-semibold text-gray-900 text-sm">{title}</h3>
     </div>
     <div className="p-6">{children}</div>
@@ -193,7 +190,7 @@ const EditProduct = () => {
             onClick={() => router.back()}
             className="p-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-600" />
+            <FiChevronLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div>
             <h1 className="text-xl font-bold text-gray-900">Edit Product</h1>
@@ -204,7 +201,7 @@ const EditProduct = () => {
         <form onSubmit={handleSubmit} className="space-y-5">
 
           {/* Basic Info */}
-          <Section icon={Type} title="Basic Information">
+          <Section title="Basic Information">
             <div className="space-y-4">
               <div>
                 <label className={labelCls}>Product Name</label>
@@ -233,7 +230,7 @@ const EditProduct = () => {
           </Section>
 
           {/* Pricing */}
-          <Section icon={DollarSign} title="Pricing">
+          <Section title="Pricing">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className={labelCls}>Regular Price (₹)</label>
@@ -263,7 +260,7 @@ const EditProduct = () => {
           </Section>
 
           {/* Category & Sizes */}
-          <Section icon={Grid3X3} title="Category & Sizes">
+          <Section title="Category & Sizes">
             <div className="space-y-4">
               <div>
                 <label className={labelCls}>Category</label>
@@ -311,7 +308,7 @@ const EditProduct = () => {
           </Section>
 
           {/* Colors */}
-          <Section icon={Palette} title="Available Colors">
+          <Section title="Available Colors">
             <div className="space-y-4">
               {productData.colors.length > 0 && (
                 <div className="flex flex-wrap gap-3">
@@ -324,7 +321,7 @@ const EditProduct = () => {
                         onClick={() => setProductData((prev) => ({ ...prev, colors: prev.colors.filter((c) => c !== color) }))}
                         className="text-gray-400 hover:text-red-500 transition-colors ml-1"
                       >
-                        <X className="w-3.5 h-3.5" />
+                        Remove
                       </button>
                     </div>
                   ))}
@@ -356,7 +353,7 @@ const EditProduct = () => {
           </Section>
 
           {/* Images */}
-          <Section icon={ImagePlus} title="Product Images">
+          <Section title="Product Images">
             <div className="space-y-4">
               <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
                 {previewImages.map((image, index) => (
@@ -374,12 +371,12 @@ const EditProduct = () => {
                       onClick={() => removeImage(index)}
                       className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
                     >
-                      <X className="w-3 h-3" />
+                      Remove
                     </button>
                   </div>
                 ))}
                 <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
-                  <Plus className="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors" />
+                  <span className="text-xs text-gray-500 group-hover:text-primary font-medium">Add</span>
                   <span className="text-[10px] text-gray-400 group-hover:text-primary mt-1">Add</span>
                   <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
                 </label>
@@ -389,7 +386,7 @@ const EditProduct = () => {
           </Section>
 
           {/* Options */}
-          <Section icon={SlidersHorizontal} title="Product Options">
+          <Section title="Product Options">
             <div className="divide-y divide-gray-50">
               <Toggle name="isInStock" checked={productData.isInStock ?? true} onChange={handleCheckboxChange} label="In Stock" description="Product is available for purchase" />
               <Toggle name="isFeatured" checked={productData.isFeatured ?? false} onChange={handleCheckboxChange} label="Featured" description="Highlight as a featured product" />
@@ -400,7 +397,7 @@ const EditProduct = () => {
           </Section>
 
           {/* Tags */}
-          <Section icon={Tag} title="Tags">
+          <Section title="Tags">
             <div>
               <label className={labelCls}>Search Tags</label>
               <input

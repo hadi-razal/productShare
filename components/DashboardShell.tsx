@@ -3,34 +3,35 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { IconType } from "react-icons";
 import {
-  LayoutDashboard,
-  PlusSquare,
-  MessageSquare,
-  Settings,
-  Menu,
-  X,
-  LogOut,
-  Store,
-  ChevronLeft,
-  ChevronRight,
-  Sparkles,
-} from "lucide-react";
+  FiLayout,
+  FiPlusSquare,
+  FiMessageSquare,
+  FiSettings,
+  FiMenu,
+  FiX,
+  FiLogOut,
+  FiShoppingBag,
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
+import { HiSparkles } from "react-icons/hi2";
 import { auth } from "@/lib/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { getUsername } from "@/helpers/getUsername";
 
-const navigation = [
-  { name: "Dashboard", href: "/store", icon: LayoutDashboard, exact: true },
-  { name: "Add Product", href: "/store/add-product", icon: PlusSquare },
-  { name: "Reviews", href: "/store/reviews", icon: MessageSquare },
-  { name: "Settings", href: "/store/settings", icon: Settings },
+const navigation: { name: string; href: string; icon: IconType; exact?: boolean }[] = [
+  { name: "Dashboard", href: "/store", icon: FiLayout, exact: true },
+  { name: "Add New Product", href: "/store/add-product", icon: FiPlusSquare },
+  { name: "Reviews", href: "/store/reviews", icon: FiMessageSquare },
+  { name: "Settings", href: "/store/settings", icon: FiSettings },
 ];
 
 const pageMeta: Record<string, { title: string; subtitle: string }> = {
   "/store": { title: "Dashboard", subtitle: "Overview of your store performance" },
-  "/store/add-product": { title: "Add Product", subtitle: "Create a new listing for your catalog" },
-  "/store/reviews": { title: "Reviews", subtitle: "See what customers are saying" },
+  "/store/add-product": { title: "Create New Product", subtitle: "Add new product to your catalog." },
+  "/store/reviews": { title: "Customer Reviews", subtitle: "See what customers are saying" },
   "/store/settings": { title: "Settings", subtitle: "Manage your store profile and branding" },
 };
 
@@ -95,7 +96,7 @@ export default function DashboardShell({
           <div className="ds-brand">
             <Link href="/" className="ds-brand-link">
               <div className="ds-brand-icon">
-                <Store className="w-5 h-5" />
+                <FiShoppingBag className="w-5 h-5" />
               </div>
               {!collapsed && (
                 <div className="ds-brand-text">
@@ -110,9 +111,9 @@ export default function DashboardShell({
               aria-label="Toggle sidebar"
             >
               {collapsed ? (
-                <ChevronRight className="w-4 h-4" />
+                <FiChevronRight className="w-4 h-4" />
               ) : (
-                <ChevronLeft className="w-4 h-4" />
+                <FiChevronLeft className="w-4 h-4" />
               )}
             </button>
           </div>
@@ -146,7 +147,7 @@ export default function DashboardShell({
           <div className="ds-sidebar-bottom">
             {!collapsed && (
               <div className="ds-upgrade-card">
-                <Sparkles className="w-5 h-5 text-amber-300" />
+                <HiSparkles className="w-5 h-5 text-amber-300" />
                 <div>
                   <p className="ds-upgrade-title">Go Premium</p>
                   <p className="ds-upgrade-sub">Unlock advanced analytics</p>
@@ -159,7 +160,7 @@ export default function DashboardShell({
               title={collapsed ? "Sign Out" : undefined}
             >
               <span className="ds-nav-icon-wrap">
-                <LogOut className="w-[18px] h-[18px]" />
+                <FiLogOut className="w-[18px] h-[18px]" />
               </span>
               {!collapsed && <span>Sign Out</span>}
             </button>
@@ -174,11 +175,11 @@ export default function DashboardShell({
               className="ds-hamburger"
               aria-label="Open menu"
             >
-              <Menu className="w-5 h-5" />
+              <FiMenu className="w-5 h-5" />
             </button>
             <Link href="/store" className="ds-mobile-brand">
               <div className="ds-brand-icon ds-brand-icon-sm">
-                <Store className="w-4 h-4" />
+                <FiShoppingBag className="w-4 h-4" />
               </div>
               <span className="ds-brand-name-sm">{pageTitle}</span>
             </Link>
@@ -213,7 +214,7 @@ export default function DashboardShell({
               onClick={() => setSidebarOpen(false)}
             >
               <div className="ds-brand-icon">
-                <Store className="w-5 h-5" />
+                <FiShoppingBag className="w-5 h-5" />
               </div>
               <div className="ds-brand-text">
                 <span className="ds-brand-name">{storeName}</span>
@@ -225,7 +226,7 @@ export default function DashboardShell({
               className="ds-drawer-close"
               aria-label="Close"
             >
-              <X className="w-5 h-5" />
+              <FiX className="w-5 h-5" />
             </button>
           </div>
 
@@ -260,7 +261,7 @@ export default function DashboardShell({
               }}
               className="ds-drawer-signout"
             >
-              <LogOut className="w-5 h-5" />
+              <FiLogOut className="w-5 h-5" />
               Sign Out
             </button>
           </div>

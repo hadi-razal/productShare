@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
+import { FiArrowRight, FiMail, FiMapPin, FiPhone } from "react-icons/fi";
 import { siteConfig } from "@/lib/site";
 
 const marketingLinks = [
@@ -57,7 +57,7 @@ const Footer = () => {
                 className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90"
               >
                 Start Free
-                <ArrowRight className="h-4 w-4" />
+                <FiArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/contact"
@@ -110,7 +110,7 @@ const Footer = () => {
             </h3>
             <ul className="mt-5 space-y-4 text-sm text-slate-300">
               <li className="flex items-start gap-3">
-                <Mail className="mt-0.5 h-4 w-4 text-indigo-300" />
+                <FiMail className="mt-0.5 h-4 w-4 text-indigo-300" />
                 <a
                   href={`mailto:${siteConfig.supportEmail}`}
                   className="transition hover:text-white"
@@ -119,7 +119,7 @@ const Footer = () => {
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <Phone className="mt-0.5 h-4 w-4 text-indigo-300" />
+                <FiPhone className="mt-0.5 h-4 w-4 text-indigo-300" />
                 <a
                   href={`tel:${siteConfig.supportPhoneHref}`}
                   className="transition hover:text-white"
@@ -128,7 +128,7 @@ const Footer = () => {
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 text-indigo-300" />
+                <FiMapPin className="mt-0.5 h-4 w-4 text-indigo-300" />
                 <span>Kerala, India</span>
               </li>
             </ul>

@@ -9,7 +9,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { Search, X, LayoutDashboard, PlusSquare, Settings, MessageSquare, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { FiSearch, FiX, FiLayout, FiPlusSquare, FiSettings, FiMessageSquare, FiChevronLeft, FiChevronRight, FiExternalLink } from "react-icons/fi";
 import Link from "next/link";
 import { getUserId } from "@/helpers/getUserId";
 import { auth, db } from "@/lib/firebase";
@@ -259,14 +259,14 @@ const StoreProducts = ({
               onClick={clearSearchInput}
               className="p-2 text-gray-400 hover:text-gray-600"
             >
-              <X size={18} />
+              <FiX size={18} />
             </button>
           )}
           <button
             onClick={handleSearchClick}
             className="rounded-md bg-primary px-4 py-3 text-white"
           >
-            <Search size={18} />
+            <FiSearch size={18} />
           </button>
         </div>
       </div>
@@ -329,7 +329,7 @@ const StoreProducts = ({
             className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-center gap-1 py-3 px-2 rounded-l-xl text-white text-xs font-semibold transition-all hover:px-3"
             style={{ background: 'linear-gradient(180deg, #4f46e5, #7c3aed)', boxShadow: '-2px 0 12px rgba(79,70,229,0.3)', writingMode: adminPanelOpen ? undefined : 'vertical-rl' }}
           >
-            {adminPanelOpen ? <ChevronRight className="w-4 h-4" /> : <><LayoutDashboard className="w-4 h-4" /><span style={{ transform: 'rotate(180deg)' }}>Admin</span></>}
+            {adminPanelOpen ? <FiChevronRight className="w-4 h-4" /> : <><FiLayout className="w-4 h-4" /><span style={{ transform: 'rotate(180deg)' }}>Admin</span></>}
           </button>
 
           {/* Overlay */}
@@ -356,7 +356,7 @@ const StoreProducts = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
-                    <LayoutDashboard className="w-5 h-5 text-white" />
+                    <FiLayout className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <p className="text-white font-bold text-sm">Admin Panel</p>
@@ -368,7 +368,7 @@ const StoreProducts = ({
                   className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
                   style={{ background: 'rgba(255,255,255,0.06)', color: '#94a3b8' }}
                 >
-                  <X className="w-4 h-4" />
+                  <FiX className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -377,10 +377,10 @@ const StoreProducts = ({
             <div style={{ padding: '16px 14px', flex: 1, overflowY: 'auto' }}>
               <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: '#64748b', padding: '0 10px' }}>Quick Actions</p>
               {[
-                { href: '/store', icon: LayoutDashboard, label: 'Dashboard', desc: 'View analytics & stats' },
-                { href: '/store/add-product', icon: PlusSquare, label: 'Add Product', desc: 'Create new listing' },
-                { href: '/store/reviews', icon: MessageSquare, label: 'Reviews', desc: 'Customer feedback' },
-                { href: '/store/settings', icon: Settings, label: 'Settings', desc: 'Store preferences' },
+                { href: '/store', icon: FiLayout, label: 'Dashboard', desc: 'View analytics & stats' },
+                { href: '/store/add-product', icon: FiPlusSquare, label: 'Add Product', desc: 'Create new listing' },
+                { href: '/store/reviews', icon: FiMessageSquare, label: 'Reviews', desc: 'Customer feedback' },
+                { href: '/store/settings', icon: FiSettings, label: 'Settings', desc: 'Store preferences' },
               ].map((item) => (
                 <Link
                   key={item.href}
@@ -408,7 +408,7 @@ const StoreProducts = ({
                 className="flex items-center justify-center gap-2 w-full rounded-xl text-sm font-semibold transition-all"
                 style={{ padding: '11px', background: 'rgba(99,102,241,0.15)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.2)', textDecoration: 'none' }}
               >
-                <ExternalLink className="w-4 h-4" />
+                <FiExternalLink className="w-4 h-4" />
                 Open Dashboard
               </Link>
             </div>

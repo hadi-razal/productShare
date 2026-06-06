@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import React from "react";
 import {
-  MonitorSmartphone,
-  ShoppingBag,
-  Wrench,
-  Handshake,
-  Globe,
-  Palette,
-  Sparkles,
-  Target,
-  Users,
-} from "lucide-react";
+  FiSmartphone,
+  FiShoppingBag,
+  FiGlobe,
+  FiUsers,
+  FiCrosshair,
+} from "react-icons/fi";
+import { HiSparkles, HiWrench, HiHandRaised } from "react-icons/hi2";
+import { MdPalette } from "react-icons/md";
 
 export const metadata: Metadata = {
   title: "About Us — Product Share India",
@@ -71,37 +69,37 @@ const StatsCard = ({ number, label, icon: Icon }: any) => (
 const AboutUs = () => {
   const features = [
     {
-      icon: ShoppingBag,
+      icon: FiShoppingBag,
       title: "Create Product Catalogs",
       description:
         "Build stunning product showcases with photos, descriptions, and prices in minutes.",
     },
     {
-      icon: Globe,
+      icon: FiGlobe,
       title: "Instant Web Sharing",
       description:
         "Get a unique, professional link for your catalog to share across platforms.",
     },
     {
-      icon: MonitorSmartphone,
+      icon: FiSmartphone,
       title: "Mobile-Optimized",
       description:
         "Your catalogs look flawless on every device, especially smartphones.",
     },
     {
-      icon: Wrench,
+      icon: HiWrench,
       title: "Zero Technical Skills",
       description:
         "No coding or design expertise needed. Launch in minutes.",
     },
     {
-      icon: Handshake,
+      icon: HiHandRaised,
       title: "Small Business Focused",
       description:
         "Built for entrepreneurs and small businesses to compete with larger brands.",
     },
     {
-      icon: Palette,
+      icon: MdPalette,
       title: "Brand Customization",
       description:
         "Add logos, colors, and layouts to match your brand identity.",
@@ -109,9 +107,9 @@ const AboutUs = () => {
   ];
 
   const stats = [
-    { number: "10K+", label: "Businesses", icon: Users },
-    { number: "500K+", label: "Products", icon: ShoppingBag },
-    { number: "50+", label: "Countries", icon: Globe },
+    { number: "10K+", label: "Businesses", icon: FiUsers },
+    { number: "500K+", label: "Products", icon: FiShoppingBag },
+    { number: "50+", label: "Countries", icon: FiGlobe },
   ];
 
   return (
@@ -119,7 +117,7 @@ const AboutUs = () => {
       {/* Hero */}
       <section className="container mx-auto px-6 py-16 text-center">
         <div className="inline-flex items-center gap-2 bg-blue-50 px-5 py-2 rounded-full text-sm text-blue-600 mb-6">
-          <Sparkles className="w-4 h-4" />
+          <HiSparkles className="w-4 h-4" />
           Empowering Small Businesses
         </div>
         <h1 className="text-4xl md:text-6xl font-extrabold mb-6">
@@ -142,7 +140,7 @@ const AboutUs = () => {
       <section className="container mx-auto px-6 py-16">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 bg-blue-50 px-4 py-1.5 rounded-full text-sm text-blue-600 mb-4">
-            <Target className="w-4 h-4" /> Our Story
+            <FiCrosshair className="w-4 h-4" /> Our Story
           </div>
           <h2 className="text-3xl md:text-4xl font-bold">
             Built for the{" "}
@@ -166,7 +164,7 @@ const AboutUs = () => {
       <section className="container mx-auto px-6 py-16">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-blue-50 px-4 py-1.5 rounded-full text-sm text-blue-600 mb-4">
-            <Sparkles className="w-4 h-4" /> Platform Features
+            <HiSparkles className="w-4 h-4" /> Platform Features
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Tools to Help You <span className="text-blue-600">Succeed Online</span>
@@ -186,7 +184,7 @@ const AboutUs = () => {
       <section className="bg-gray-50 py-16">
         <div className="container mx-auto px-6 text-center max-w-4xl">
           <div className="inline-flex items-center gap-2 bg-blue-50 px-5 py-2 rounded-full text-sm text-blue-600 mb-6">
-            <Target className="w-4 h-4" /> Our Mission
+            <FiCrosshair className="w-4 h-4" /> Our Mission
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-blue-600 mb-6">
             Democratizing Digital Commerce

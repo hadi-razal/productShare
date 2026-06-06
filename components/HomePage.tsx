@@ -2,18 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  Rocket,
-  Globe,
-  PieChart,
-  Shield,
-  Quote,
-  MessageCircle,
-  Cog,
-  Star,
-  UserPlus,
-  PackagePlus,
-  Share2,
-} from "lucide-react";
+  FiSend,
+  FiGlobe,
+  FiPieChart,
+  FiShield,
+  FiMessageSquare,
+  FiMessageCircle,
+  FiSettings,
+  FiStar,
+  FiUserPlus,
+  FiPackage,
+  FiShare2,
+} from "react-icons/fi";
 import Marquee from "react-fast-marquee";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -40,42 +40,42 @@ const itemVariants = {
 
 const features = [
   {
-    icon: <Rocket className="w-6 h-6 text-white" />,
+    icon: <FiSend className="w-6 h-6 text-white" />,
     iconBg: "from-purple-500 to-primary",
     title: "Rapid Catalog Creation",
     description: "Streamline your product showcase with intelligent design tools and automated workflows",
     num: "01",
   },
   {
-    icon: <Globe className="w-6 h-6 text-white" />,
+    icon: <FiGlobe className="w-6 h-6 text-white" />,
     iconBg: "from-green-400 to-green-600",
     title: "Global Reach",
     description: "Expand your market presence across multiple platforms and reach customers worldwide",
     num: "02",
   },
   {
-    icon: <PieChart className="w-6 h-6 text-white" />,
+    icon: <FiPieChart className="w-6 h-6 text-white" />,
     iconBg: "from-blue-400 to-blue-600",
     title: "Smart Analytics",
     description: "Data-driven insights to optimize your business strategy and maximize growth",
     num: "03",
   },
   {
-    icon: <Shield className="w-6 h-6 text-white" />,
+    icon: <FiShield className="w-6 h-6 text-white" />,
     iconBg: "from-teal-400 to-teal-600",
     title: "Secure Platform",
     description: "Enterprise-grade security and data protection for your business",
     num: "04",
   },
   {
-    icon: <Cog className="w-6 h-6 text-white" />,
+    icon: <FiSettings className="w-6 h-6 text-white" />,
     iconBg: "from-orange-400 to-orange-600",
     title: "Customizable Solutions",
     description: "Tailor-made features to fit your unique business needs and requirements",
     num: "05",
   },
   {
-    icon: <MessageCircle className="w-6 h-6 text-white" />,
+    icon: <FiMessageCircle className="w-6 h-6 text-white" />,
     iconBg: "from-red-400 to-red-600",
     title: "24/7 Support",
     description: "Round-the-clock assistance for uninterrupted operations and peace of mind",
@@ -85,17 +85,17 @@ const features = [
 
 const steps = [
   {
-    icon: <UserPlus className="w-7 h-7 text-white" />,
+    icon: <FiUserPlus className="w-7 h-7 text-white" />,
     title: "Sign Up Free",
     description: "Create your account in 30 seconds — no credit card required.",
   },
   {
-    icon: <PackagePlus className="w-7 h-7 text-white" />,
+    icon: <FiPackage className="w-7 h-7 text-white" />,
     title: "Add Your Products",
     description: "Upload photos, set prices, and add descriptions in minutes.",
   },
   {
-    icon: <Share2 className="w-7 h-7 text-white" />,
+    icon: <FiShare2 className="w-7 h-7 text-white" />,
     title: "Share & Sell",
     description: "Share your catalog link on WhatsApp, Instagram, or anywhere your customers are.",
   },
@@ -397,7 +397,7 @@ const Home = () => {
                   className="absolute -top-4 left-8 w-8 h-8 rounded-full flex items-center justify-center shadow-md"
                   style={{ backgroundColor: primaryColor }}
                 >
-                  <Quote className="text-white w-4 h-4" />
+                  <FiMessageSquare className="text-white w-4 h-4" />
                 </div>
 
                 <div className="flex items-center mb-4 pt-4">
@@ -413,7 +413,7 @@ const Home = () => {
 
                 <div className="flex mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                    <FiStar key={i} className="w-4 h-4 text-yellow-400 fill-current" />
                   ))}
                 </div>
 

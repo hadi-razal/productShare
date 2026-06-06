@@ -13,7 +13,7 @@ import { FcGoogle } from "react-icons/fc";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff } from "lucide-react";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const inputClass =
   "w-full px-4 py-3 bg-white border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
@@ -188,9 +188,9 @@ const LoginPage: React.FC = () => {
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
+                  <FiEyeOff className="w-5 h-5" />
                 ) : (
-                  <Eye className="w-5 h-5" />
+                  <FiEye className="w-5 h-5" />
                 )}
               </button>
             </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { FaStar } from "react-icons/fa";
-import { Truck } from "lucide-react";
+import { FiTruck } from "react-icons/fi";
 import { ProductType } from "@/type";
 
 interface ProductPreviewProps {
@@ -186,7 +186,7 @@ const ProductPreview = ({
               )}
               {product.isFreeDelivery && (
                 <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-0.5">
-                  <Truck className="w-2.5 h-2.5" /> Free Delivery
+                  <FiTruck className="w-2.5 h-2.5" /> Free Delivery
                 </span>
               )}
               {product.isMostSelling && (

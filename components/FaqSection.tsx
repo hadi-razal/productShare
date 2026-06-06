@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion"
 
 const faqs = [
@@ -79,9 +79,9 @@ export default function FaqSection() {
               >
                 <span className="text-base font-medium text-gray-800">{faq.question}</span>
                 {openIndex === index ? (
-                  <ChevronUp className="w-4 h-4 text-blue-600" />
+                  <FiChevronUp className="w-4 h-4 text-blue-600" />
                 ) : (
-                  <ChevronDown className="w-4 h-4 text-blue-600" />
+                  <FiChevronDown className="w-4 h-4 text-blue-600" />
                 )}
               </button>
 

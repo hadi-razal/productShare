@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { FiSearch } from "react-icons/fi";
 
 interface StoreSettingsPreviewProps {
   name: string;
@@ -94,7 +94,7 @@ const StoreSettingsPreview = ({
                 className="absolute right-0 top-0 bottom-0 flex items-center px-2.5 rounded-r-lg"
                 style={{ backgroundColor: themeColor }}
               >
-                <Search size={12} className="text-white" />
+                <FiSearch size={12} className="text-white" />
               </div>
             </div>
           </div>
