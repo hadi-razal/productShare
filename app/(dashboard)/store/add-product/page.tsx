@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { ImagePlus, Plus, Tag, Type, AlignLeft, DollarSign, Grid3X3, Palette, Video, SlidersHorizontal, X, ChevronLeft } from "lucide-react";
+import { useState, useEffect, ChangeEvent, FormEvent, ReactNode } from "react";
 import {
   addDoc,
   collection,
@@ -13,6 +12,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, db, storage } from "@/lib/firebase";
 import { ProductType } from "@/type";
 import { useRouter } from "next/navigation";
+import ProductPreview from "@/components/ProductPreview";
 // @ts-ignore
 import { ChromePicker, ColorResult } from "react-color";
 
@@ -37,12 +37,9 @@ const Toggle = ({ name, checked, onChange, label, description }: any) => (
 );
 
 // ── Section Card ─────────────────────────────────────────────────────────────
-const Section = ({ icon: Icon, title, children }: any) => (
+const Section = ({ title, children }: { title: string; children: ReactNode }) => (
   <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-    <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-      <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)' }}>
-        <Icon className="w-4.5 h-4.5 text-indigo-600" />
-      </div>
+    <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
       <h3 className="font-semibold text-gray-900 text-[15px]">{title}</h3>
     </div>
     <div className="p-6">{children}</div>
@@ -240,34 +237,25 @@ const CreateProduct = () => {
   const busy = isUploading || videoCompressing;
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
-
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-5">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="p-2.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
-            >
-              <ChevronLeft className="w-5 h-5 text-gray-600" />
-            </button>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Add New Product</h1>
-              <p className="text-sm text-gray-500 mt-0.5">Fill in the details to list your product</p>
-            </div>
-          </div>
-          <div className="h-1 w-full rounded-full bg-gray-100 overflow-hidden">
-            <div className="h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, (imageFiles.length > 0 ? 20 : 0) + (productData.name ? 20 : 0) + (productData.regularPrice ? 20 : 0) + (productData.category ? 20 : 0) + (productData.description ? 20 : 0))}%`, background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }} />
-          </div>
-          <p className="text-xs text-gray-400 mt-2">Fill out required fields to complete your listing</p>
+    <div className="ds-page text-sm">
+      <div className="mb-2">
+        <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${Math.min(100, (imageFiles.length > 0 ? 20 : 0) + (productData.name ? 20 : 0) + (productData.regularPrice ? 20 : 0) + (productData.category ? 20 : 0) + (productData.description ? 20 : 0))}%`,
+              background: "linear-gradient(90deg, #6366f1, #8b5cf6)",
+            }}
+          />
         </div>
+        <p className="text-xs text-gray-400 mt-2">Complete required fields to publish</p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6 items-start">
+        <form onSubmit={handleSubmit} className="space-y-5 min-w-0">
 
           {/* Basic Info */}
-          <Section icon={Type} title="Basic Information">
+          <Section title="Basic Information">
             <div className="space-y-4">
               <div>
                 <label className={labelCls}>
@@ -299,7 +287,7 @@ const CreateProduct = () => {
           </Section>
 
           {/* Pricing */}
-          <Section icon={DollarSign} title="Pricing">
+          <Section title="Pricing">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className={labelCls}>
@@ -340,7 +328,7 @@ const CreateProduct = () => {
           </Section>
 
           {/* Category & Sizes */}
-          <Section icon={Grid3X3} title="Category & Sizes">
+          <Section title="Category & Sizes">
             <div className="space-y-4">
               <div>
                 <label className={labelCls}>
@@ -391,7 +379,7 @@ const CreateProduct = () => {
           </Section>
 
           {/* Colors */}
-          <Section icon={Palette} title="Available Colors">
+          <Section title="Available Colors">
             <div className="space-y-4">
               {productData.colors.length > 0 && (
                 <div className="flex flex-wrap gap-3">
@@ -399,8 +387,8 @@ const CreateProduct = () => {
                     <div key={index} className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
                       <div className="w-5 h-5 rounded-full border border-gray-300 shadow-sm flex-shrink-0" style={{ backgroundColor: color }} />
                       <span className="text-xs text-gray-600 font-medium">{color}</span>
-                      <button type="button" onClick={() => handleRemoveColor(color)} className="text-gray-400 hover:text-red-500 transition-colors ml-1">
-                        <X className="w-3.5 h-3.5" />
+                      <button type="button" onClick={() => handleRemoveColor(color)} className="text-gray-400 hover:text-red-500 transition-colors ml-1 text-xs font-bold">
+                        Remove
                       </button>
                     </div>
                   ))}
@@ -443,7 +431,7 @@ const CreateProduct = () => {
           </Section>
 
           {/* Images */}
-          <Section icon={ImagePlus} title="Product Images">
+          <Section title="Product Images">
             <div className="space-y-4">
               <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
                 {previewImages.map((image, index) => (
@@ -459,16 +447,15 @@ const CreateProduct = () => {
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
-                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                      className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 bg-red-500 text-white rounded-md text-[9px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
                     >
-                      <X className="w-3 h-3" />
+                      Remove
                     </button>
                   </div>
                 ))}
                 {imageFiles.length < 10 && (
                   <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
-                    <Plus className="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors" />
-                    <span className="text-[10px] text-gray-400 group-hover:text-primary mt-1">Add</span>
+                    <span className="text-xs text-gray-500 group-hover:text-primary font-medium">Add</span>
                     <input type="file" multiple accept="image/*" disabled={busy} onChange={handleImageUpload} className="hidden" />
                   </label>
                 )}
@@ -480,7 +467,7 @@ const CreateProduct = () => {
           </Section>
 
           {/* Video */}
-          <Section icon={Video} title="Product Video (Optional)">
+          <Section title="Product Video (Optional)">
             <div className="space-y-3">
               {videoCompressing && (
                 <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl text-sm font-medium">
@@ -494,15 +481,14 @@ const CreateProduct = () => {
                   <button
                     type="button"
                     onClick={removeVideo}
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-md"
+                    className="absolute -top-2 -right-2 px-2 py-1 bg-red-500 text-white rounded-md text-[10px] font-semibold shadow-md"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    Remove
                   </button>
                 </div>
               ) : !videoCompressing && (
                 <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
-                  <Video className="w-7 h-7 text-gray-400 group-hover:text-primary transition-colors mb-1" />
-                  <span className="text-sm text-gray-500 group-hover:text-primary">Upload a video</span>
+                  <span className="text-sm text-gray-500 group-hover:text-primary font-medium">Upload a video</span>
                   <span className="text-xs text-gray-400 mt-0.5">Max 100MB</span>
                   <input type="file" accept="video/*" disabled={busy} onChange={handleVideoUpload} className="hidden" />
                 </label>
@@ -512,7 +498,7 @@ const CreateProduct = () => {
           </Section>
 
           {/* Options */}
-          <Section icon={SlidersHorizontal} title="Product Options">
+          <Section title="Product Options">
             <div className="divide-y divide-gray-50">
               <Toggle name="isInStock" checked={productData.isInStock} onChange={handleCheckboxChange} label="In Stock" description="Product is available for purchase" />
               <Toggle name="isFreeDelivery" checked={productData.isFreeDelivery} onChange={handleCheckboxChange} label="Free Delivery" description="Offer free shipping on this product" />
@@ -521,7 +507,7 @@ const CreateProduct = () => {
           </Section>
 
           {/* Tags */}
-          <Section icon={Tag} title="Tags">
+          <Section title="Tags">
             <div>
               <label className={labelCls}>Search Tags</label>
               <input
@@ -560,6 +546,14 @@ const CreateProduct = () => {
           </button>
 
         </form>
+
+        <aside className="xl:sticky xl:top-6 xl:self-start">
+          <ProductPreview
+            product={productData}
+            previewImages={previewImages}
+            previewVideo={previewVideo}
+          />
+        </aside>
       </div>
     </div>
   );
