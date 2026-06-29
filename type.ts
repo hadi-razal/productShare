@@ -30,6 +30,7 @@ export interface ProductType {
     uid?: string;
     name: string;
     logoImage?: string;
+    image?: string;
     email: string;
     whatsappNumber?: string;
     additionalNotes: string;

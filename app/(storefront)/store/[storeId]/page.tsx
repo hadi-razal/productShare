@@ -24,7 +24,7 @@ export async function generateMetadata({
   const description = storeData?.description
     ? `${storeData.description} — Browse ${storeName}'s product catalog on Product Share India.`
     : `Browse ${storeName}'s digital product catalog on Product Share India. Discover products, prices, and more.`;
-  const storeImage = storeData?.image || "https://productshare.in/og-image.png";
+  const storeImage = storeData?.image || storeData?.logoImage || "https://productshare.in/og-image.png";
   const storeUrl = `https://productshare.in/store/${storeId}`;
 
   return {

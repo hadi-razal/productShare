@@ -50,13 +50,14 @@ export default function OpenGraphImage() {
           <div
             style={{
               display: "flex",
-              width: "fit-content",
               borderRadius: 9999,
               background: "rgba(99, 102, 241, 0.12)",
               color: "#4338ca",
               padding: "10px 18px",
               fontSize: 24,
               fontWeight: 600,
+              alignItems: "center",
+              width: "auto",
             }}
           >
             Digital catalog builder for modern businesses
