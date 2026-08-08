@@ -105,15 +105,15 @@ const freeFeatures = [
 const pricingDetails: Record<string, { price: number; description: string }> = {
   free: {
     price: 0,
-    description: "Start for free and explore our platform",
+    description: `Start for free and explore our platform`,
   },
   monthly: {
     price: 499,
-    description: "One-time monthly purchase – no recurring charges",
+    description: `One-time monthly purchase no recurring charges`,
   },
   yearly: {
     price: Math.round(499 * 12 * 0.8), // 20% discount
-    description: "One-time yearly purchase – save 20%",
+    description: `One-time yearly purchase save 20%`,
   },
 };
 
@@ -126,17 +126,20 @@ const PricingPage = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
 
   return (
-    <main className="min-h-screen bg-white px-4 md:px-16 py-12">
+    <div className="min-h-screen bg-white px-4 pb-16 pt-28 sm:pt-32 md:px-16 lg:pt-36">
       <motion.section
         initial="hidden"
         animate="visible"
         variants={fadeIn}
-        className="max-w-4xl mx-auto text-center mb-16"
+        className="mx-auto mb-14 max-w-4xl text-center md:mb-16"
       >
-        <h1 className="text-5xl font-bold py-5 bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">
+          Plans for every stage
+        </p>
+        <h1 className="bg-gradient-to-r from-indigo-700 to-blue-600 bg-clip-text text-4xl font-bold leading-tight text-transparent sm:text-5xl">
           Simple, transparent pricing
         </h1>
-        <p className="text-gray-600 text-xl max-w-2xl mx-auto">
+        <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
           Choose the perfect plan for your business. Pay once, use without recurring fees.
         </p>
       </motion.section>
@@ -260,7 +263,7 @@ const PricingPage = () => {
           </Link>
         </div>
       </motion.div>
-    </main>
+    </div>
   );
 };
 

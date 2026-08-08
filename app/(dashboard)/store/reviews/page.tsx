@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { FiMessageSquare } from "react-icons/fi";
+import { FiMessageSquare, FiStar } from "react-icons/fi";
 
 const demoReviews = [
   {
@@ -46,7 +46,7 @@ const demoReviews = [
 const CustomerReviewsPage: React.FC = () => {
   return (
     <div className="ds-page">
-      <section className="max-w-3xl">
+      <section className="w-full">
         {demoReviews.length === 0 ? (
           <div className="ds-card" style={{ textAlign: "center", padding: "40px 24px" }}>
             <FiMessageSquare className="w-10 h-10 text-slate-300 mx-auto mb-3" />
@@ -68,8 +68,14 @@ const CustomerReviewsPage: React.FC = () => {
                   <h4 className="ds-review-product">{review.productName}</h4>
                   <span className="ds-review-date">{review.createdAt}</span>
                 </div>
-                <div className="ds-review-stars">
-                  {"★".repeat(review.rating) + "☆".repeat(5 - review.rating)}
+                <div className="ds-review-stars" aria-label={`${review.rating} out of 5 stars`}>
+                  {Array.from({ length: 5 }, (_, index) => (
+                    <FiStar
+                      key={index}
+                      className={index >= review.rating ? "empty" : ""}
+                      fill={index < review.rating ? "currentColor" : "none"}
+                    />
+                  ))}
                 </div>
                 <p className="ds-review-comment">&ldquo;{review.comment}&rdquo;</p>
                 <p className="ds-review-author">— {review.userName}</p>

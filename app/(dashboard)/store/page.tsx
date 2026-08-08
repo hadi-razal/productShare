@@ -1,299 +1,463 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { collection, doc, getDoc, getDocs, limit, orderBy, query } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import {
-  FiPackage, FiEye, FiAlertTriangle, FiRefreshCw, FiExternalLink, FiArrowUpRight,
-  FiBarChart2, FiShoppingBag, FiSettings, FiCopy, FiCheck, FiPlus,
-} from "react-icons/fi";
-import { HiSparkles } from "react-icons/hi2";
-import { getUsername } from "@/helpers/getUsername";
-import PaymentButton from "@/components/PaymentButton";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  PolarAngleAxis,
+  RadialBar,
+  RadialBarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
+import {
+  FiAlertTriangle,
+  FiArrowRight,
+  FiCheck,
+  FiCheckCircle,
+  FiCopy,
+  FiExternalLink,
+  FiEye,
+  FiMessageCircle,
+  FiPackage,
+  FiRefreshCw,
+  FiShare2,
+  FiStar,
+  FiTrendingUp,
+} from "react-icons/fi";
 import toast from "react-hot-toast";
+import { auth, db } from "@/lib/firebase";
+import { getUsername } from "@/helpers/getUsername";
+import type { ProductType } from "@/type";
 
-const Pulse = ({ className }: { className?: string }) => (
-  <div className={`animate-pulse rounded-lg bg-slate-200/60 ${className ?? ""}`} />
+type DashboardProduct = Partial<ProductType> & { id: string };
+type ChartPoint = { name: string; views: number };
+
+const fallbackImages = [
+  "/dashboard/handwoven-tote.png",
+  "/dashboard/sandstone-vase.png",
+  "/dashboard/linen-table-runner.png",
+];
+
+const demoProducts: DashboardProduct[] = [
+  {
+    id: "preview-tote",
+    name: "Handwoven Tote",
+    regularPrice: 1299,
+    views: 362,
+    isInStock: true,
+    availableStock: "18",
+    images: [fallbackImages[0]],
+  },
+  {
+    id: "preview-vase",
+    name: "Sandstone Vase",
+    regularPrice: 899,
+    views: 278,
+    isInStock: true,
+    availableStock: "3",
+    images: [fallbackImages[1]],
+  },
+  {
+    id: "preview-linen",
+    name: "Linen Table Runner",
+    regularPrice: 699,
+    views: 194,
+    isInStock: true,
+    availableStock: "12",
+    images: [fallbackImages[2]],
+  },
+];
+
+const demoChart: ChartPoint[] = [
+  { name: "Jul 28", views: 204 },
+  { name: "Jul 29", views: 282 },
+  { name: "Jul 30", views: 356 },
+  { name: "Jul 31", views: 486 },
+  { name: "Aug 1", views: 521 },
+  { name: "Aug 2", views: 342 },
+  { name: "Aug 3", views: 298 },
+];
+
+const Pulse = ({ className = "" }: { className?: string }) => (
+  <div className={`animate-pulse rounded-xl bg-slate-200/70 ${className}`} />
 );
 
-const StatCard = ({ title, value, icon: Icon, color, loading }: {
-  title: string;
-  value: number | null;
-  icon: React.ElementType;
-  color: string;
-  loading: boolean;
-}) => (
-  <div className="ds-stat-card">
-    <div className="ds-stat-top">
-      <div className={`ds-stat-icon-wrap ${color}`}>
-        <Icon className="w-5 h-5" />
-      </div>
-    </div>
-    {loading ? <Pulse className="h-8 w-20 mt-4" /> : (
-      <p className="ds-stat-value">{value?.toLocaleString() ?? "0"}</p>
-    )}
-    <p className="ds-stat-label">{title}</p>
-  </div>
-);
-
-const SessionChart = ({ visitorData, loading, username }: { visitorData: any[]; loading: boolean; username: string | null }) => {
-  const [tf, setTf] = useState("week");
-  const days = tf === "week" ? 7 : 30;
-
-  const chartData = Array.from({ length: days }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (days - 1 - i));
-    const count = visitorData?.filter((v: any) => {
-      const vd = new Date(v.timestamp?.toDate?.() || v.timestamp);
-      return vd.toDateString() === d.toDateString();
-    }).length ?? 0;
-    return { name: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }), views: count };
-  });
-
-  const total = chartData.reduce((s, d) => s + d.views, 0);
-
-  return (
-    <div className="ds-chart-card">
-      <div className="ds-chart-header">
-        <div>
-          <h3 className="ds-card-title">Store Sessions</h3>
-          {!loading && <p className="ds-chart-total">{total} <span>visits in period</span></p>}
-        </div>
-        <div className="ds-toggle-group">
-          {["week", "month"].map((p) => (
-            <button key={p} className={`ds-toggle ${tf === p ? "active" : ""}`} onClick={() => setTf(p)}>
-              {p === "week" ? "7 days" : "30 days"}
-            </button>
-          ))}
-        </div>
-      </div>
-      {loading ? <Pulse className="h-[260px] w-full mt-4" /> : visitorData?.length > 0 ? (
-        <div className="ds-chart-area">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="viewsGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#6366f1" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#94a3b8" }} dy={8} minTickGap={20} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#94a3b8" }} allowDecimals={false} />
-              <Tooltip contentStyle={{ borderRadius: 12, border: "none", boxShadow: "0 8px 24px rgba(0,0,0,.12)", fontSize: 13 }} cursor={{ stroke: "#c7d2fe", strokeDasharray: "4 4" }} />
-              <Area type="monotone" dataKey="views" stroke="#6366f1" strokeWidth={2.5} fill="url(#viewsGrad)" dot={false} activeDot={{ r: 6, fill: "#6366f1", stroke: "#fff", strokeWidth: 3 }} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      ) : (
-        <div className="ds-chart-empty">
-          <FiBarChart2 className="w-10 h-10 text-slate-300" />
-          <p>No session data yet</p>
-          <span>Share your store link to start tracking visits</span>
-          {username && (
-            <Link href={`/store/${username}`} target="_blank" className="ds-empty-cta">
-              <FiExternalLink className="w-4 h-4" /> Open your store
-            </Link>
-          )}
-        </div>
-      )}
-    </div>
-  );
+const priceLabel = (product: DashboardProduct) => {
+  const value = Number(product.discountPrice || product.regularPrice || 0);
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(value);
 };
 
-const InsightRow = ({ label, labelColor, product, loading }: {
-  label: string;
-  labelColor: string;
-  product: any;
-  loading: boolean;
-}) => (
-  <div className="ds-insight-row">
-    <span className={`ds-insight-badge ${labelColor}`}>{label}</span>
-    <div className="ds-insight-product">
-      {loading ? <Pulse className="w-12 h-12 rounded-xl" /> : product?.images?.[0] ? (
-        <Image alt="" src={product.images[0]} width={48} height={48} quality={50} loading="lazy" className="ds-insight-img" />
-      ) : (
-        <div className="ds-insight-img-placeholder"><FiPackage className="w-4 h-4 text-slate-400" /></div>
-      )}
-      <div className="ds-insight-info">
-        {loading ? <><Pulse className="h-3.5 w-24" /><Pulse className="h-3 w-14 mt-1.5" /></> : product ? (
-          <><p className="ds-insight-name">{product.name}</p><p className="ds-insight-views">{product.views || 0} views</p></>
-        ) : <p className="ds-insight-views">No products yet</p>}
-      </div>
-    </div>
-  </div>
-);
+const stockCount = (product: DashboardProduct) => {
+  const parsed = Number(product.availableStock);
+  return Number.isFinite(parsed) ? parsed : null;
+};
 
-const StoreDashboard = () => {
-  const [stats, setStats] = useState({ products: null as number | null, visitors: null as number | null, lowStockItems: null as number | null, visitorData: [] as any[] });
+function StoreTraffic({
+  visitorData,
+  previewChart,
+  loading,
+  totalViews,
+}: {
+  visitorData: any[];
+  previewChart: ChartPoint[] | null;
+  loading: boolean;
+  totalViews: number | null;
+}) {
+  const chartData = useMemo(() => {
+    if (previewChart) return previewChart;
+    return Array.from({ length: 7 }, (_, index) => {
+      const day = new Date();
+      day.setDate(day.getDate() - (6 - index));
+      const views = visitorData.filter((visit: any) => {
+        const timestamp = visit?.timestamp?.toDate?.() || visit?.timestamp;
+        if (!timestamp) return false;
+        const visitDate = new Date(timestamp);
+        return !Number.isNaN(visitDate.getTime()) && visitDate.toDateString() === day.toDateString();
+      }).length;
+      return {
+        name: day.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        views,
+      };
+    });
+  }, [previewChart, visitorData]);
+
+  const hasChartData = chartData.some((point) => point.views > 0);
+
+  return (
+    <section className="ds-weekly-panel">
+      <div className="ds-weekly-chart-column">
+        <div className="ds-section-heading">
+          <div>
+            <span className="ds-eyebrow">This week</span>
+            {loading ? (
+              <Pulse className="mt-2 h-7 w-64" />
+            ) : (
+              <h2>Your store has reached <strong>{(totalViews || 0).toLocaleString("en-IN")}</strong> people.</h2>
+            )}
+          </div>
+          <span className="ds-period-pill">Last 7 days</span>
+        </div>
+
+        {loading ? (
+          <Pulse className="h-[226px] w-full" />
+        ) : hasChartData ? (
+          <div className="ds-traffic-chart" aria-label="Store views for the last seven days">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 10, right: 4, left: -22, bottom: 0 }}>
+                <CartesianGrid stroke="#e8ebf2" strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#748096", fontSize: 11 }} dy={8} />
+                <YAxis axisLine={false} tickLine={false} allowDecimals={false} tick={{ fill: "#98a1b2", fontSize: 11 }} />
+                <Tooltip
+                  cursor={{ fill: "rgba(102, 87, 232, 0.05)" }}
+                  contentStyle={{ border: "1px solid #e2e5ed", borderRadius: 12, boxShadow: "0 10px 28px rgba(33, 39, 55, .1)", fontSize: 12 }}
+                />
+                <Bar dataKey="views" fill="#6657e8" radius={[7, 7, 2, 2]} maxBarSize={42} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <div className="ds-traffic-empty">
+            <span><FiTrendingUp /></span>
+            <div><strong>Your traffic chart is ready</strong><p>Share your storefront to start seeing daily visits here.</p></div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function Readiness({
+  score,
+  lowStock,
+  loading,
+}: {
+  score: number;
+  lowStock: number | null;
+  loading: boolean;
+}) {
+  const chartData = [{ name: "readiness", value: score, fill: "#159a8a" }];
+  return (
+    <aside className="ds-readiness-panel">
+      <div className="ds-readiness-summary">
+        {loading ? (
+          <Pulse className="h-[104px] w-[104px] rounded-full" />
+        ) : (
+          <div className="ds-readiness-chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadialBarChart innerRadius="80%" outerRadius="100%" data={chartData} startAngle={90} endAngle={-270}>
+                <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
+                <RadialBar background={{ fill: "#edf0f4" }} dataKey="value" cornerRadius={10} />
+              </RadialBarChart>
+            </ResponsiveContainer>
+            <strong>{score}%</strong>
+          </div>
+        )}
+        <div>
+          <h3>Store readiness</h3>
+          <p>{score >= 75 ? "Great progress. Keep going." : "A few quick steps will help your store stand out."}</p>
+        </div>
+      </div>
+      <div className="ds-next-steps">
+        <span className="ds-eyebrow">Next steps</span>
+        <Link href="/store/settings" className="ds-next-step">
+          <span className="teal"><FiMessageCircle /></span>
+          <div><strong>Add WhatsApp contact</strong><p>Let customers reach you easily</p></div>
+          <FiArrowRight />
+        </Link>
+        <Link href="/store/add-product" className="ds-next-step">
+          <span className="amber"><FiPackage /></span>
+          <div><strong>{lowStock ? `Review ${lowStock} low-stock item${lowStock === 1 ? "" : "s"}` : "Add your next product"}</strong><p>{lowStock ? "Keep your catalog ready to sell" : "Keep your storefront growing"}</p></div>
+          <FiArrowRight />
+        </Link>
+      </div>
+    </aside>
+  );
+}
+
+export default function StoreDashboard() {
+  const [stats, setStats] = useState({
+    products: null as number | null,
+    visitors: null as number | null,
+    lowStockItems: null as number | null,
+    visitorData: [] as any[],
+  });
+  const [products, setProducts] = useState<DashboardProduct[]>([]);
   const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [leastViewed, setLeastViewed] = useState<any>(null);
-  const [mostViewed, setMostViewed] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [readiness, setReadiness] = useState(50);
+  const [previewChart, setPreviewChart] = useState<ChartPoint[] | null>(null);
   const router = useRouter();
 
-  const storeUrl = username ? `${typeof window !== "undefined" ? window.location.origin : ""}/store/${username}` : "";
+  const storeUrl = username
+    ? `${typeof window !== "undefined" ? window.location.origin : ""}/store/${username}`
+    : "";
+
+  const loadPreview = () => {
+    setUsername("nira-home");
+    setStats({ products: 48, visitors: 1284, lowStockItems: 3, visitorData: [] });
+    setProducts(demoProducts);
+    setReadiness(75);
+    setPreviewChart(demoChart);
+    setLoading(false);
+    setRefreshing(false);
+  };
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => { if (!u) { router.push("/login"); return; } fetchData(u.uid); });
-    return () => unsub();
+    const localPreview =
+      window.location.hostname === "localhost" &&
+      new URLSearchParams(window.location.search).get("preview") === "dashboard";
+    if (localPreview) {
+      loadPreview();
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+      setUserId(user.uid);
+      void fetchData(user.uid);
+    });
+    return () => unsubscribe();
   }, []);
 
   const fetchData = async (uid: string) => {
     try {
       setLoading(true);
-      const uname = await getUsername(uid);
-      setUsername(uname);
-      setUserId(uid);
-      const [prodSnap, userDoc] = await Promise.all([getDocs(collection(db, "users", uid, "products")), getDoc(doc(db, "users", uid))]);
-      const ud = userDoc.exists() ? userDoc.data() : { visitCount: 0 };
-      setStats({ products: prodSnap.size, visitors: ud.visitCount ?? 0, lowStockItems: ud.lowStockItems ?? 0, visitorData: ud.visitorData || [] });
-      const [lSnap, mSnap] = await Promise.all([
-        getDocs(query(collection(db, "users", uid, "products"), orderBy("views"), limit(1))),
-        getDocs(query(collection(db, "users", uid, "products"), orderBy("views", "desc"), limit(1))),
+      const [uname, productSnapshot, userSnapshot] = await Promise.all([
+        getUsername(uid),
+        getDocs(collection(db, "users", uid, "products")),
+        getDoc(doc(db, "users", uid)),
       ]);
-      setLeastViewed(lSnap.docs[0] ? { id: lSnap.docs[0].id, ...lSnap.docs[0].data() } : null);
-      setMostViewed(mSnap.docs[0] ? { id: mSnap.docs[0].id, ...mSnap.docs[0].data() } : null);
-    } catch (e) { console.log("Dashboard error:", e); } finally { setLoading(false); setRefreshing(false); }
-  };
+      const userData = userSnapshot.exists() ? userSnapshot.data() : {};
+      const fetchedProducts = productSnapshot.docs.map((product) => ({
+        id: product.id,
+        ...(product.data() as Omit<DashboardProduct, "id">),
+      }));
+      const sortedProducts = [...fetchedProducts].sort((a, b) => Number(b.views || 0) - Number(a.views || 0));
+      const derivedLowStock = fetchedProducts.filter((product) => {
+        const count = stockCount(product);
+        return product.isInStock === false || (count !== null && count <= 3);
+      }).length;
+      const readinessFields = [uname, userData.name, userData.whatsappNumber, userData.logoImage];
+      const readinessScore = 40 + readinessFields.filter(Boolean).length * 15;
 
-  const greeting = () => { const h = new Date().getHours(); return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"; };
+      setUsername(uname);
+      setProducts(sortedProducts);
+      setReadiness(Math.min(100, readinessScore));
+      setPreviewChart(null);
+      setStats({
+        products: productSnapshot.size,
+        visitors: Number(userData.visitCount || 0),
+        lowStockItems: Number(userData.lowStockItems ?? derivedLowStock),
+        visitorData: Array.isArray(userData.visitorData) ? userData.visitorData : [],
+      });
+    } catch (error) {
+      console.error("Dashboard error:", error);
+      toast.error("We could not refresh your dashboard.");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   const copyStoreLink = async () => {
     if (!storeUrl) return;
     try {
       await navigator.clipboard.writeText(storeUrl);
       setCopied(true);
-      toast.success("Store link copied!");
-      setTimeout(() => setCopied(false), 2000);
+      toast.success("Store link copied");
+      window.setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Could not copy link");
+      toast.error("Could not copy the link");
     }
   };
 
+  const topProduct = products[0];
+  const lowStockProduct = products.find((product) => {
+    const count = stockCount(product);
+    return product.isInStock === false || (count !== null && count <= 3);
+  });
+  const visibleProducts = products.slice(0, 3);
+
   return (
-    <div className="ds-page">
-      <div className="ds-welcome">
-        <div className="ds-welcome-content">
-          <div>
-            <h2 className="ds-welcome-title">{greeting()}</h2>
-            <p className="ds-welcome-sub">
-              {stats.products === 0 && !loading
-                ? "Get started by adding your first product to your catalog."
-                : "Here's a snapshot of how your store is doing."}
-            </p>
-            {username && (
-              <div className="ds-store-link">
-                <code>productshare.in/store/{username}</code>
-                <button type="button" onClick={copyStoreLink} className="ds-btn-outline" aria-label="Copy store link">
-                  {copied ? <FiCheck className="w-3.5 h-3.5" /> : <FiCopy className="w-3.5 h-3.5" />}
-                  {copied ? "Copied" : "Copy"}
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="ds-welcome-actions">
-            {username && (
-              <Link href={`/store/${username}`} target="_blank" className="ds-btn ds-btn-light">
-                <FiExternalLink className="w-4 h-4" /> View Store
-              </Link>
-            )}
-            <Link href="/store/add-product" className="ds-btn ds-btn-light">
-              <FiPlus className="w-4 h-4" /> Add Product
-            </Link>
-            <button
-              onClick={() => { if (userId) { setRefreshing(true); fetchData(userId); } }}
-              disabled={refreshing}
-              className="ds-btn ds-btn-ghost"
-              aria-label="Refresh data"
-            >
-              <FiRefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-            </button>
-          </div>
-        </div>
-        <div className="ds-welcome-decor" />
-        <div className="ds-welcome-decor-2" />
+    <div className="ds-page ds-dashboard-page">
+      <div className="ds-overview-grid">
+        <StoreTraffic
+          visitorData={stats.visitorData}
+          previewChart={previewChart}
+          loading={loading}
+          totalViews={stats.visitors}
+        />
+        <Readiness score={readiness} lowStock={stats.lowStockItems} loading={loading} />
       </div>
 
-      <div className="ds-stats-grid">
-        <StatCard title="Total Products" value={stats.products} icon={FiPackage} color="indigo" loading={loading} />
-        <StatCard title="Store Views" value={stats.visitors} icon={FiEye} color="emerald" loading={loading} />
-        <StatCard title="Low Stock Items" value={stats.lowStockItems} icon={FiAlertTriangle} color="amber" loading={loading} />
-      </div>
+      <section className="ds-metrics-band" aria-label="Store metrics">
+        {[
+          { label: "Products", value: stats.products, icon: FiPackage, tone: "violet" },
+          { label: "Store views", value: stats.visitors, icon: FiEye, tone: "teal" },
+          { label: "Low stock", value: stats.lowStockItems, icon: FiAlertTriangle, tone: "amber" },
+        ].map((metric) => (
+          <div className="ds-metric" key={metric.label}>
+            <span className={`ds-metric-icon ${metric.tone}`}><metric.icon /></span>
+            {loading ? <Pulse className="h-8 w-20" /> : <strong>{(metric.value || 0).toLocaleString("en-IN")}</strong>}
+            <span>{metric.label}</span>
+          </div>
+        ))}
+        <button
+          type="button"
+          className="ds-refresh"
+          disabled={refreshing || !userId}
+          onClick={() => {
+            if (!userId) return;
+            setRefreshing(true);
+            void fetchData(userId);
+          }}
+          aria-label="Refresh dashboard"
+        >
+          <FiRefreshCw className={refreshing ? "animate-spin" : ""} />
+        </button>
+      </section>
 
-      {!loading && stats.products === 0 && (
-        <div className="ds-card" style={{ textAlign: "center", padding: "32px 24px" }}>
-          <FiShoppingBag className="w-10 h-10 text-indigo-400 mx-auto mb-3" />
-          <h3 className="ds-card-title">Your catalog is empty</h3>
-          <p style={{ fontSize: 14, color: "#64748b", marginTop: 8, lineHeight: 1.5 }}>
-            Add your first product to start selling through your digital storefront.
-          </p>
-          <Link href="/store/add-product" className="ds-empty-cta" style={{ margin: "16px auto 0" }}>
-            <FiPlus className="w-4 h-4" /> Add your first product
-          </Link>
-        </div>
-      )}
+      <div className="ds-dashboard-lower-grid">
+        <section className="ds-products-panel">
+          <div className="ds-panel-header">
+            <div><h2>Your products</h2><p>Performance and stock at a glance</p></div>
+            {username ? (
+              <Link href={`/store/${username}`} target="_blank">View all <FiArrowRight /></Link>
+            ) : (
+              <Link href="/store/add-product">Add product <FiArrowRight /></Link>
+            )}
+          </div>
 
-      <div className="ds-analytics-row">
-        <div className="ds-analytics-chart">
-          <SessionChart visitorData={stats.visitorData} loading={loading} username={username} />
-        </div>
-        <div className="ds-analytics-insights">
-          <div className="ds-card">
-            <div className="ds-insights-header">
-              <h3 className="ds-card-title">Product Insights</h3>
-              <HiSparkles className="w-4 h-4 text-amber-400" />
+          {loading ? (
+            <div className="ds-product-skeletons">
+              {[0, 1, 2].map((item) => <Pulse key={item} className="h-[72px] w-full" />)}
             </div>
-            <InsightRow label="Top Performer" labelColor="green" product={mostViewed} loading={loading} />
-            <InsightRow label="Needs Attention" labelColor="amber" product={leastViewed} loading={loading} />
-            {username && (
-              <Link href={`/store/${username}`} target="_blank" className="ds-insights-link">
-                View all products <FiArrowUpRight className="w-3.5 h-3.5" />
-              </Link>
-            )}
-          </div>
+          ) : visibleProducts.length ? (
+            <div className="ds-product-table">
+              <div className="ds-product-table-head"><span>Product</span><span>Price</span><span>Views</span><span>Stock</span></div>
+              {visibleProducts.map((product, index) => {
+                const count = stockCount(product);
+                const low = product.isInStock === false || (count !== null && count <= 3);
+                const image = product.images?.[0] || fallbackImages[index % fallbackImages.length];
+                const content = (
+                  <>
+                    <span className="ds-product-cell">
+                      <Image src={image} alt="" width={56} height={56} sizes="56px" />
+                      <span><strong>{product.name || "Untitled product"}</strong><small>{product.category || "Product"}</small></span>
+                    </span>
+                    <span className="ds-product-price">{priceLabel(product)}</span>
+                    <span>{Number(product.views || 0).toLocaleString("en-IN")}</span>
+                    <span><i className={`ds-stock-chip ${low ? "low" : "in-stock"}`}>{low ? "Low stock" : "In stock"}</i></span>
+                  </>
+                );
+                return username ? (
+                  <Link key={product.id} href={`/store/${username}/${product.id}`} className="ds-product-row">{content}</Link>
+                ) : (
+                  <div key={product.id} className="ds-product-row">{content}</div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="ds-products-empty">
+              <span><FiPackage /></span>
+              <div><strong>Your catalog is ready for its first product</strong><p>Add photos, pricing, and details in a few minutes.</p></div>
+              <Link href="/store/add-product">Add product <FiArrowRight /></Link>
+            </div>
+          )}
+        </section>
 
-          <div className="ds-card">
-            <h3 className="ds-card-title">Quick Actions</h3>
-            <div className="ds-quick-grid">
-              <Link href="/store/add-product" className="ds-quick-action">
-                <FiShoppingBag className="w-5 h-5 text-indigo-500" />
-                <span>Add Product</span>
-              </Link>
-              <Link href="/store/reviews" className="ds-quick-action">
-                <FiBarChart2 className="w-5 h-5 text-emerald-500" />
-                <span>Reviews</span>
-              </Link>
-              <Link href="/store/settings" className="ds-quick-action">
-                <FiSettings className="w-5 h-5 text-violet-500" />
-                <span>Settings</span>
-              </Link>
-              {username && (
-                <Link href={`/store/${username}`} target="_blank" className="ds-quick-action">
-                  <FiExternalLink className="w-5 h-5 text-sky-500" />
-                  <span>View Store</span>
-                </Link>
-              )}
+        <aside className="ds-activity-panel">
+          <div className="ds-panel-header"><div><h2>Recent activity</h2><p>What needs your attention</p></div></div>
+          <div className="ds-activity-list">
+            <div className="ds-activity-item">
+              <span className="violet"><FiStar /></span>
+              <div><strong>{topProduct ? `${topProduct.name} is leading` : "Your product insights will appear here"}</strong><p>{topProduct ? `${Number(topProduct.views || 0).toLocaleString("en-IN")} total views` : "Add products to start tracking performance."}</p></div>
+            </div>
+            <div className="ds-activity-item">
+              <span className="teal"><FiTrendingUp /></span>
+              <div><strong>Store views milestone</strong><p>{stats.visitors ? `Your storefront has reached ${stats.visitors.toLocaleString("en-IN")} views.` : "Share your link to grow store traffic."}</p></div>
+            </div>
+            <div className="ds-activity-item">
+              <span className={lowStockProduct ? "amber" : "teal"}>{lowStockProduct ? <FiAlertTriangle /> : <FiCheckCircle />}</span>
+              <div><strong>{lowStockProduct ? "Low stock alert" : "Inventory looks healthy"}</strong><p>{lowStockProduct ? `${lowStockProduct.name} needs a stock check.` : "No low-stock products need attention."}</p></div>
             </div>
           </div>
-        </div>
+          <Link href="/store/reviews" className="ds-activity-link"><FiMessageCircle /> Open customer reviews <FiArrowRight /></Link>
+        </aside>
       </div>
 
-      <div className="ds-payment-row">
-        <PaymentButton userId={userId} />
-      </div>
+      <section className="ds-share-panel">
+        <span className="ds-share-icon"><FiShare2 /></span>
+        <div className="ds-share-copy">
+          <strong>Share your store</strong>
+          <code>{username ? `productshare.in/store/${username}` : "Your store link will appear here"}</code>
+        </div>
+        <div className="ds-share-actions">
+          <button type="button" onClick={copyStoreLink} disabled={!username}>
+            {copied ? <FiCheck /> : <FiCopy />} {copied ? "Copied" : "Copy link"}
+          </button>
+          {username && <Link href={`/store/${username}`} target="_blank"><FiExternalLink /> Open store</Link>}
+        </div>
+      </section>
     </div>
   );
-};
-
-export default StoreDashboard;
+}

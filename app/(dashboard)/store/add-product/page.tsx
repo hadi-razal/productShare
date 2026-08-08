@@ -47,10 +47,9 @@ const Section = ({
   children: ReactNode;
 }) => (
   <div
-    className="bg-white rounded-2xl border border-gray-100 overflow-hidden"
-    style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
+    className="bg-white rounded-2xl border border-gray-200 overflow-hidden"
   >
-    <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+    <div className="px-6 py-4 border-b border-gray-200 bg-gray-50/70">
       <h3 className="font-semibold text-gray-900 text-[15px]">{title}</h3>
     </div>
     <div className="p-6">{children}</div>
@@ -338,7 +337,7 @@ const CreateProduct = () => {
             className="h-full rounded-full transition-all duration-500"
             style={{
               width: `${Math.min(100, (imageFiles.length > 0 ? 20 : 0) + (productData.name ? 20 : 0) + (productData.regularPrice ? 20 : 0) + (productData.category ? 20 : 0) + (productData.description ? 20 : 0))}%`,
-              background: "linear-gradient(90deg, #6366f1, #8b5cf6)",
+              background: "#6657e8",
             }}
           />
         </div>
@@ -417,7 +416,6 @@ const CreateProduct = () => {
               Number(productData.discountPrice) <
                 Number(productData.regularPrice) && (
                 <p className="mt-3 text-xs text-green-600 font-medium bg-green-50 px-3 py-2 rounded-lg">
-                  🎉{" "}
                   {Math.round(
                     ((Number(productData.regularPrice) -
                       Number(productData.discountPrice)) /
@@ -703,7 +701,7 @@ const CreateProduct = () => {
             style={{
               background: busy
                 ? "#9ca3af"
-                : "linear-gradient(135deg, #4f46e5, #7c3aed)",
+                : "#6657e8",
               boxShadow: busy ? "none" : "0 8px 24px rgba(79,70,229,0.3)",
             }}
           >

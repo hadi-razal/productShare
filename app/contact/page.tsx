@@ -38,7 +38,7 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_45%),linear-gradient(180deg,#f8fafc_0%,#ffffff_100%)] px-4 py-16">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_45%),linear-gradient(180deg,#f8fafc_0%,#ffffff_100%)] px-4 pb-16 pt-40 md:pt-48">
       <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
         <section className="rounded-3xl bg-slate-950 p-8 text-white shadow-xl md:p-10">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-indigo-300">
