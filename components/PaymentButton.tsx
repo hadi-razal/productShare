@@ -91,24 +91,41 @@ const Badge: React.FC<BadgeProps> = ({ children, variant = "default" }) => {
 // -----------------------------
 // Plan Config
 // -----------------------------
-const plan = {
-  name: "Pro Plan",
-  monthlyPrice: 100, // ₹1000
-  yearlyPrice: 999900, // ₹9999
+const monthlyPlan = {
+  name: "Monthly Plan",
+  pricePaise: 69900,
   features: [
-    "Up to 100 products",
-    "Advanced analytics & reporting",
-    "Videos can be added to the product display",
+    "Up to 50 product listings",
+    "Customer behavior analytics",
+    "Public sharing link",
+    "Theme customization",
     "Priority support",
-    "Unlimited product images per item",
-    "Shareable catalog link",
-    "User-friendly product search",
-    "Integration with social media",
-    "Add-to-cart or wishlist options",
-    "Customer feedback and review section",
-    "SEO-friendly URLs",
-    "Password-protected catalog",
-    "Display sale and discount tags",
+    "Custom alert banners",
+    "Sales & engagement charts",
+    "Product videos",
+    "Performance graphs",
+    "AI customer insights",
+    "Bulk product editing",
+  ],
+};
+
+const yearlyPlan = {
+  name: "Yearly Plan",
+  pricePaise: 699000,
+  features: [
+    "Up to 150 product listings",
+    "Advanced analytics",
+    "Public sharing link",
+    "Theme customization",
+    "Priority support",
+    "Custom alert banners",
+    "Sales & engagement charts",
+    "Product videos",
+    "Performance graphs",
+    "AI customer insights",
+    "Bulk product editing",
+    "Team access",
+    "Bulk CSV/Excel upload",
   ],
 };
 
@@ -124,6 +141,8 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
   const [isYearly, setIsYearly] = useState(false);
   const [isPremiumUser, setIsPremiumUser] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
+  const selectedPlan = isYearly ? yearlyPlan : monthlyPlan;
+  const displayPrice = (selectedPlan.pricePaise / 100).toLocaleString("en-IN");
 
   // ✅ Load Razorpay script
   useEffect(() => {
@@ -152,7 +171,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       subscription_id: subscription.id,
       name: "Product Share",
-      description: `${plan.name} - ${isYearly ? "Annual" : "Monthly"} Subscription`,
+      description: `${isYearly ? yearlyPlan.name : monthlyPlan.name} subscription`,
       handler: async (response: any) => {
         toast.success("Subscription started 🎉");
         // ✅ Save subscription to Firestore
@@ -235,7 +254,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
                 >
                   Yearly
                 </span>
-                <Badge variant="secondary">Save 20%</Badge>
+                <Badge variant="secondary">2 months free</Badge>
               </div>
             </div>
 
@@ -243,10 +262,10 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
             <div className="bg-white rounded-xl border-2 border-indigo-500 p-6 mb-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2 sm:mb-0">
-                  {plan.name}
+                  {selectedPlan.name}
                 </h3>
                 <div className="text-2xl font-bold text-indigo-600">
-                  ₹{((isYearly ? plan.yearlyPrice : plan.monthlyPrice) / 100).toFixed(2)}
+                  ₹{displayPrice}
                   <span className="text-base text-gray-500 ml-1">
                     /{isYearly ? "year" : "month"}
                   </span>
@@ -254,7 +273,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
               </div>
 
               <ul className="grid gap-3 sm:grid-cols-2 mb-6">
-                {plan.features.map((feature, index) => (
+                {selectedPlan.features.map((feature, index) => (
                   <li key={index} className="flex items-center gap-2">
                     <FiCheck className="h-4 w-4 text-green-500 flex-shrink-0" />
                     <span className="text-sm text-gray-600">{feature}</span>
@@ -264,8 +283,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
 
               <div className="text-center">
                 <Button onClick={handleSubscription} className="w-full">
-                  Subscribe {isYearly ? "Yearly" : "Monthly"} - ₹
-                  {((isYearly ? plan.yearlyPrice : plan.monthlyPrice) / 100).toFixed(2)}
+                  Subscribe {isYearly ? "Yearly" : "Monthly"} - ₹{displayPrice}
                 </Button>
               </div>
             </div>

@@ -174,10 +174,10 @@ const RegisterPage: React.FC = () => {
           />
           <div className="flex flex-col items-center justify-center gap-0">
             <h2 className="text-4xl font-semibold text-white text-center">
-              Start Your Free Trial
+              Start for Free
             </h2>
             <p className="text-sm text-white/50 text-center">
-              3 Days free, then ₹99 per month
+              Up to 3 listings. Upgrade from ₹699 / month.
             </p>
           </div>
 

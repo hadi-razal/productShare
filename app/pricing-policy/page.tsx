@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
+import { siteConfig } from "@/lib/site";
 import React from 'react';
 
 export const metadata: Metadata = {
   title: "Pricing Policy — Product Share India",
   description:
-    "Product Share India pricing policy: Monthly plan at ₹499 and Yearly plan at ₹4,790 — both one-time payments with no auto-renewals. 14-day refund window. Read our full pricing terms.",
-  keywords: ["Product Share pricing policy", "catalog builder payment terms India", "₹499 monthly plan", "₹4790 yearly plan"],
+    "Product Share India pricing policy: Free plan with 3 listings. Monthly plan at ₹699 and Yearly plan at ₹6,990. 14-day refund window. Read our full pricing terms.",
+  keywords: ["Product Share pricing policy", "catalog builder payment terms India", "₹699 monthly plan", "₹6990 yearly plan"],
   alternates: { canonical: "https://productshare.in/pricing-policy" },
   robots: { index: true, follow: true },
   openGraph: {
     title: "Pricing Policy — Product Share India",
-    description: "Monthly ₹499 or Yearly ₹4,790 — one-time payments, no hidden fees, 14-day refund window.",
+    description: "Monthly ₹699 or Yearly ₹6,990 — 14-day refund window, no hidden fees.",
     url: "https://productshare.in/pricing-policy",
     type: "website",
   },
@@ -30,14 +31,17 @@ const PricingPolicy = () => {
         <section>
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">Pricing Plans</h2>
           <p className="text-gray-600 mb-4">
-            Choose the plan that best fits your needs, with both monthly and yearly options available. Both plans are single-time purchases with no auto-pay or recurring billing.
+            Choose the plan that best fits your catalog. A free plan is available, with paid monthly and yearly options for growing stores.
           </p>
           <ul className="list-disc pl-6 space-y-3 text-gray-600">
             <li>
-              <strong className="text-gray-900">Monthly Plan:</strong> <span className="font-semibold text-green-600">₹499</span> for a one-time payment. This plan gives you access to all features of our online catalogue builder for one month. You can renew the plan if you wish to continue using the service after the month ends.
+              <strong className="text-gray-900">Free Plan:</strong> <span className="font-semibold text-green-600">Free</span>. Up to 3 product listings, basic analytics, and a public sharing link.
             </li>
             <li>
-              <strong className="text-gray-900">Yearly Plan:</strong> <span className="font-semibold text-green-600">₹4,790</span> for a one-time payment. This plan provides access to all features for an entire year, offering better value for long-term users. You can renew or switch plans at the end of the year.
+              <strong className="text-gray-900">Monthly Plan:</strong> <span className="font-semibold text-green-600">₹699 / month</span>. Up to 50 product listings, customer behavior analytics, theme customization, priority support, custom alert banners, sales charts, product videos, performance graphs, AI insights, and bulk product editing.
+            </li>
+            <li>
+              <strong className="text-gray-900">Yearly Plan:</strong> <span className="font-semibold text-green-600">₹6,990 / year</span>. Up to 150 product listings, advanced analytics, everything in the monthly plan, plus team access and bulk CSV/Excel upload. This is equivalent to 10 months billed yearly (2 months free).
             </li>
           </ul>
         </section>
@@ -75,8 +79,9 @@ const PricingPolicy = () => {
             If you have any questions or need assistance regarding our pricing or plans, please don't hesitate to contact our support team. We're here to help!
           </p>
           <ul className="list-disc pl-6 space-y-2 text-gray-600">
-            <li>Phone: <a href="tel:9074063723" className="text-blue-600 underline">+91 9074063723</a></li>
-            <li>Email: <a href="mailto:hadhirasal22@gmail.com" className="text-blue-600 underline">hadhirasal22@gmail.com</a></li>
+            <li>Phone: <a href={`tel:${siteConfig.supportPhoneHref}`} className="text-blue-600 underline">{siteConfig.supportPhone}</a></li>
+            <li>WhatsApp: <a href={`https://wa.me/${siteConfig.supportWhatsAppNumber}`} className="text-blue-600 underline" target="_blank" rel="noreferrer">{siteConfig.supportPhone}</a></li>
+            <li>Email: <a href={`mailto:${siteConfig.supportEmail}`} className="text-blue-600 underline">{siteConfig.supportEmail}</a></li>
           </ul>
         </section>
       </div>

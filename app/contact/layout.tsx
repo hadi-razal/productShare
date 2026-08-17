@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contact Us — Product Share India",
   description:
-    "Get in touch with Product Share India. Reach our support team for questions, feedback, or business inquiries. Available Monday–Friday, 9am–5pm IST. Email: productshareindia@gmail.com | Phone: +91 8589920409.",
+    "Get in touch with Product Share India. Reach our support team for questions, feedback, or business inquiries. Available Monday–Friday, 9am–5pm IST. Email: productshareindia@gmail.com | Phone: +91 94002 44731.",
   keywords: [
     "contact Product Share India",
     "Product Share support",

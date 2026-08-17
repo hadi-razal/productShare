@@ -1,349 +1,211 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  FiCheckCircle,
-  FiBarChart2,
-  FiEdit3,
-  FiHeadphones,
-  FiBell,
-  FiPieChart,
-  FiSmile,
-  FiLock,
-  FiGlobe,
-  FiVideo,
-  FiTrendingUp,
-  FiMenu,
-  FiUsers,
-  FiUploadCloud,
-  FiShield,
-  FiZap,
-  FiLayers,
-} from "react-icons/fi";
-import { HiSparkles } from "react-icons/hi2";
+import React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 
-const features = [
+const plans = [
   {
-    icon: <FiCheckCircle className="text-green-500 w-5 h-5" />,
-    text: "Unlimited product listings",
+    key: "free",
+    name: "Free",
+    price: "Free",
+    period: "",
+    cta: "Try for Free",
+    href: "/register",
+    highlight: false,
   },
   {
-    icon: <FiBarChart2 className="text-blue-500 w-5 h-5" />,
-    text: "Customer behavior analytics",
+    key: "monthly",
+    name: "Monthly",
+    price: "₹699",
+    period: "/ month",
+    cta: "Get Started",
+    href: "/register",
+    highlight: false,
   },
   {
-    icon: <FiEdit3 className="text-yellow-500 w-5 h-5" />,
-    text: "Theme customization tools",
+    key: "yearly",
+    name: "Yearly",
+    price: "₹6,990",
+    period: "/ year",
+    cta: "Get Started",
+    href: "/register",
+    highlight: true,
   },
-  {
-    icon: <FiHeadphones className="text-purple-500 w-5 h-5" />,
-    text: "24/7 priority support",
-  },
-  {
-    icon: <FiBell className="text-orange-500 w-5 h-5" />,
-    text: "Custom alert banners",
-  },
-  {
-    icon: <FiPieChart className="text-pink-500 w-5 h-5" />,
-    text: "Sales & engagement charts",
-  },
-  {
-    icon: <FiVideo className="text-red-500 w-5 h-5" />,
-    text: "Add videos to product listings",
-  },
-  {
-    icon: <FiTrendingUp className="text-sky-500 w-5 h-5" />,
-    text: "Advanced performance graphs",
-  },
-  {
-    icon: <HiSparkles className="text-indigo-500 w-5 h-5" />,
-    text: "AI-generated customer insights",
-  },
-  {
-    icon: <FiMenu className="text-gray-700 w-5 h-5" />,
-    text: "Bulk edit tools for products",
-  },
-  {
-    icon: <FiUsers className="text-cyan-500 w-5 h-5" />,
-    text: "Team access & role-based permissions",
-  },
-  {
-    icon: <FiUploadCloud className="text-indigo-500 w-5 h-5" />,
-    text: "Bulk product upload via CSV/Excel",
-  },
-  {
-    icon: <FiShield className="text-red-500 w-5 h-5" />,
-    text: "Secure backups & data protection",
-  },
-  {
-    icon: <FiZap className="text-yellow-600 w-5 h-5" />,
-    text: "Integrations with top e-commerce tools",
-  },
-  {
-    icon: <FiLayers className="text-purple-600 w-5 h-5" />,
-    text: "Unlimited categories & collections",
-  },
+] as const;
+
+const rows: { label: string; free: string; monthly: string; yearly: string }[] = [
+  { label: "Product Listings", free: "Up to 3", monthly: "Up to 50", yearly: "Up to 150" },
+  { label: "Analytics", free: "Basic", monthly: "Customer behavior", yearly: "Advanced" },
+  { label: "Sharing", free: "Public link", monthly: "Public link", yearly: "Public link" },
+  { label: "Theme Customization", free: "—", monthly: "Yes", yearly: "Yes" },
+  { label: "Priority Support", free: "—", monthly: "Yes", yearly: "Yes" },
+  { label: "Custom Alert Banners", free: "—", monthly: "Yes", yearly: "Yes" },
+  { label: "Sales & Engagement Charts", free: "—", monthly: "Yes", yearly: "Yes" },
+  { label: "Product Videos", free: "—", monthly: "Yes", yearly: "Yes" },
+  { label: "Performance Graphs", free: "—", monthly: "Yes", yearly: "Yes" },
+  { label: "AI Customer Insights", free: "—", monthly: "Yes", yearly: "Yes" },
+  { label: "Bulk Product Editing", free: "—", monthly: "Yes", yearly: "Yes" },
+  { label: "Team Access", free: "—", monthly: "—", yearly: "Yes" },
+  { label: "Bulk CSV/Excel Upload", free: "—", monthly: "—", yearly: "Yes" },
 ];
 
-const freeFeatures = [
-  {
-    icon: <FiSmile className="text-green-500 w-5 h-5" />,
-    text: "Up to 3 product listings",
-  },
-  {
-    icon: <FiLock className="text-blue-500 w-5 h-5" />,
-    text: "Basic analytics dashboard",
-  },
-  {
-    icon: <FiGlobe className="text-purple-500 w-5 h-5" />,
-    text: "Public sharing link",
-  },
-];
-
-const pricingDetails: Record<string, { price: number; description: string }> = {
-  free: {
-    price: 0,
-    description: `Start for free and explore our platform`,
-  },
-  monthly: {
-    price: 499,
-    description: `One-time monthly purchase no recurring charges`,
-  },
-  yearly: {
-    price: Math.round(499 * 12 * 0.8), // 20% discount
-    description: `One-time yearly purchase save 20%`,
-  },
-};
-
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-};
+const cellValue = (plan: (typeof plans)[number], row: (typeof rows)[number]) =>
+  row[plan.key];
 
 const PricingPage = () => {
-  const [billingCycle, setBillingCycle] = useState("monthly");
-
   return (
-    <div className="min-h-screen bg-white px-4 pb-16 pt-28 sm:pt-32 md:px-16 lg:pt-36">
-      <motion.section
-        initial="hidden"
-        animate="visible"
-        variants={fadeIn}
-        className="mx-auto mb-14 max-w-4xl text-center md:mb-16"
-      >
-        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">
-          Plans for every stage
-        </p>
-        <h1 className="bg-gradient-to-r from-indigo-700 to-blue-600 bg-clip-text text-4xl font-bold leading-tight text-transparent sm:text-5xl">
-          Simple, transparent pricing
-        </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-          Choose the perfect plan for your business. Pay once, use without recurring fees.
-        </p>
-      </motion.section>
+    <div className="min-h-screen w-full bg-[radial-gradient(circle_at_top,_rgba(108,100,203,0.12),_transparent_42%)] pb-20 pt-24">
+      <div className="mx-auto max-w-[1440px] px-3 sm:px-5">
+        <div className="max-w-2xl">
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
+            Pricing
+          </p>
+          <h1 className="mt-3 text-[28px] font-bold uppercase leading-tight tracking-tight text-slate-900 md:text-[36px]">
+            Simple plans
+          </h1>
+          <p className="mt-4 text-sm leading-relaxed text-neutral-600">
+            Start free with 3 listings. Upgrade as your catalog grows. Yearly billing
+            includes 2 months free.
+          </p>
+        </div>
 
-      {/* Mobile view */}
-      <div className="md:hidden space-y-8">
-        <motion.div variants={fadeIn}>
-          <PricingCard
-            title="Free Plan"
-            description={pricingDetails.free.description}
-            price={pricingDetails.free.price}
-            billingCycle="free"
-            features={freeFeatures}
-          />
-        </motion.div>
+        <div className="mt-12 hidden overflow-x-auto md:block">
+          <table className="w-full min-w-[720px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-neutral-200">
+                <th className="w-[28%] py-4 pr-4 text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-400">
+                  Feature
+                </th>
+                {plans.map((plan) => (
+                  <th key={plan.key} className="py-4 pr-4 align-bottom">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-primary">
+                      {plan.name}
+                      {plan.highlight ? " · Best value" : ""}
+                    </p>
+                    <p
+                      className={`mt-2 text-2xl font-bold tracking-tight ${
+                        plan.highlight ? "text-primary" : "text-slate-900"
+                      }`}
+                    >
+                      {plan.price}
+                      {plan.period && (
+                        <span className="ml-1 text-sm font-normal text-neutral-500">
+                          {plan.period}
+                        </span>
+                      )}
+                    </p>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.label} className="border-b border-neutral-200">
+                  <td className="py-4 pr-4 text-[13px] text-neutral-600">{row.label}</td>
+                  {plans.map((plan) => (
+                    <td
+                      key={plan.key}
+                      className={`py-4 pr-4 text-[13px] ${
+                        cellValue(plan, row) === "—"
+                          ? "text-neutral-300"
+                          : "text-black"
+                      }`}
+                    >
+                      {cellValue(plan, row)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+              <tr>
+                <td className="pt-8" />
+                {plans.map((plan) => (
+                  <td key={plan.key} className="pt-8 pr-4">
+                    <Link
+                      href={plan.href}
+                      className={`inline-flex min-w-[140px] items-center justify-center px-5 py-3 text-[11px] font-medium uppercase tracking-[0.16em] ${
+                        plan.highlight
+                          ? "bg-primary text-white hover:bg-primary/90"
+                          : "border border-primary text-primary hover:bg-primary hover:text-white"
+                      }`}
+                    >
+                      {plan.cta}
+                    </Link>
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-        <motion.div
-          className="flex justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <div className="bg-gray-100 p-1 rounded-md inline-flex">
-            <button
-              onClick={() => setBillingCycle("monthly")}
-              className={`px-4 py-2 rounded-md transition-all ${billingCycle === "monthly"
-                ? "bg-indigo-600 text-white shadow-md"
-                : "text-gray-700 hover:bg-gray-200"
+        <div className="mt-10 space-y-10 md:hidden">
+          {plans.map((plan) => (
+            <div key={plan.key} className="border-t border-primary/15 pt-8">
+              <p className="text-[11px] uppercase tracking-[0.16em] text-primary">
+                {plan.name}
+                {plan.highlight ? " · Best value" : ""}
+              </p>
+              <p
+                className={`mt-2 text-3xl font-bold tracking-tight ${
+                  plan.highlight ? "text-primary" : "text-slate-900"
                 }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBillingCycle("yearly")}
-              className={`px-4 py-2 rounded-md transition-all ${billingCycle === "yearly"
-                ? "bg-indigo-600 text-white shadow-md"
-                : "text-gray-700 hover:bg-gray-200"
+              >
+                {plan.price}
+                {plan.period && (
+                  <span className="ml-1 text-sm font-normal text-neutral-500">
+                    {plan.period}
+                  </span>
+                )}
+              </p>
+              <ul className="mt-6 space-y-3">
+                {rows.map((row) => (
+                  <li
+                    key={row.label}
+                    className="flex items-baseline justify-between gap-4 text-[13px]"
+                  >
+                    <span className="text-neutral-500">{row.label}</span>
+                    <span
+                      className={
+                        cellValue(plan, row) === "—" ? "text-neutral-300" : "text-black"
+                      }
+                    >
+                      {cellValue(plan, row)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href={plan.href}
+                className={`mt-8 inline-flex w-full items-center justify-center py-3.5 text-[12px] font-medium uppercase tracking-[0.16em] ${
+                  plan.highlight
+                    ? "bg-primary text-white"
+                    : "border border-primary text-primary"
                 }`}
-            >
-              Yearly
-              <span className="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-md">
-                Save 20%
-              </span>
-            </button>
-          </div>
-        </motion.div>
+              >
+                {plan.cta}
+              </Link>
+            </div>
+          ))}
+        </div>
 
-        <motion.div variants={fadeIn} transition={{ delay: 0.3 }}>
-          <PricingCard
-            title="Product Share Premium"
-            description={pricingDetails[billingCycle].description}
-            price={pricingDetails[billingCycle].price}
-            billingCycle={billingCycle}
-            features={features}
-            highlight={billingCycle === "yearly"}
-          />
-        </motion.div>
-      </div>
-
-      {/* Desktop view */}
-      <motion.div
-        className="hidden md:grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          visible: {
-            transition: {
-              staggerChildren: 0.1,
-            },
-          },
-        }}
-      >
-        <motion.div variants={fadeIn}>
-          <PricingCard
-            title="Free Plan"
-            description={pricingDetails.free.description}
-            price={pricingDetails.free.price}
-            billingCycle="free"
-            features={freeFeatures}
-          />
-        </motion.div>
-        <motion.div variants={fadeIn}>
-          <PricingCard
-            title="Monthly Plan"
-            description={pricingDetails.monthly.description}
-            price={pricingDetails.monthly.price}
-            billingCycle="monthly"
-            features={features}
-          />
-        </motion.div>
-        <motion.div variants={fadeIn}>
-          <PricingCard
-            title="Yearly Plan"
-            description={pricingDetails.yearly.description}
-            price={pricingDetails.yearly.price}
-            billingCycle="yearly"
-            badge="Best Value"
-            features={features}
-            highlight
-          />
-        </motion.div>
-      </motion.div>
-
-      {/* Enterprise CTA */}
-      <motion.div
-        className="max-w-4xl mx-auto mt-20 text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-      >
-        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-8 md:p-10 border border-indigo-100">
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">Need enterprise solutions?</h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Custom pricing and features for large businesses with unique requirements.
+        <div className="mt-16 border-t border-primary/15 pt-10">
+          <p className="text-[11px] uppercase tracking-[0.16em] text-primary">
+            Enterprise
+          </p>
+          <h2 className="mt-2 text-xl font-bold uppercase tracking-tight text-slate-900">
+            Need a custom plan?
+          </h2>
+          <p className="mt-3 max-w-xl text-sm text-neutral-600">
+            Larger catalogs and teams can get tailored limits and support.
           </p>
           <Link
             href="/contact"
-            className="inline-block bg-white text-indigo-600 hover:bg-gray-50 font-medium px-6 py-3 rounded-md border border-indigo-200 transition shadow-sm hover:shadow-md"
+            className="mt-6 inline-flex items-center border-b border-primary pb-0.5 text-[12px] font-medium uppercase tracking-[0.16em] text-primary"
           >
-            Contact Sales →
+            Contact sales
           </Link>
         </div>
-      </motion.div>
+      </div>
     </div>
-  );
-};
-
-const PricingCard = ({
-  title,
-  description,
-  price,
-  billingCycle,
-  features,
-  badge,
-  highlight = false,
-}: {
-  title: string;
-  description: string;
-  price: number;
-  billingCycle: string;
-  features: { icon: JSX.Element; text: string }[];
-  badge?: string;
-  highlight?: boolean;
-}) => {
-  return (
-    <motion.div
-      whileHover={{ y: -5 }}
-      className={`relative h-full flex flex-col border rounded-md overflow-hidden transition-all ${highlight ? "border-indigo-300 shadow-lg" : "border-gray-200 shadow-sm"
-        }`}
-    >
-      {highlight && (
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-blue-500"></div>
-      )}
-      <div className="p-8 flex-1">
-        {badge && (
-          <div className="absolute top-4 right-4 bg-yellow-400 text-white text-xs font-semibold px-3 py-1 rounded-md">
-            {badge}
-          </div>
-        )}
-        <h3
-          className={`text-2xl font-bold mb-3 ${highlight ? "text-indigo-700" : "text-gray-900"
-            }`}
-        >
-          {title}
-        </h3>
-        <p className="text-gray-600 mb-6 text-sm">{description}</p>
-        <div
-          className={`text-5xl font-bold mb-6 ${highlight ? "text-indigo-600" : "text-gray-900"
-            }`}
-        >
-          {price === 0 ? "Free" : `₹${price}`}
-          {price !== 0 && (
-            <span className="text-lg text-gray-600 ml-1">
-              {billingCycle === "monthly"
-                ? "(one-time)"
-                : billingCycle === "yearly"
-                  ? "(one-time)"
-                  : ""}
-            </span>
-          )}
-        </div>
-
-        <ul className="space-y-3 text-left mb-8">
-          {features.map((item, index) => (
-            <li key={index} className="flex items-start gap-3">
-              <span className="mt-0.5">{item.icon}</span>
-              <span className="text-gray-700">{item.text}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="px-8 pb-8">
-        <Link
-          href="/register"
-          className={`block w-full text-center font-medium px-6 py-3 rounded-md transition ${highlight
-            ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg"
-            : "bg-gray-900 hover:bg-gray-800 text-white shadow-sm hover:shadow-md"
-            }`}
-        >
-          {price === 0 ? "Try for Free" : "Get Started"}
-        </Link>
-      </div>
-    </motion.div>
   );
 };
 

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { FiArrowRight, FiMail, FiMapPin, FiPhone } from "react-icons/fi";
+import { FiMail, FiMapPin, FiMessageCircle, FiPhone } from "react-icons/fi";
 import { siteConfig } from "@/lib/site";
 
 const marketingLinks = [
@@ -14,10 +15,10 @@ const marketingLinks = [
 
 const legalLinks = [
   { href: "/privacy-policy", label: "Privacy Policy" },
-  { href: "/terms-and-conditions", label: "Terms and Conditions" },
+  { href: "/terms-and-conditions", label: "Terms" },
   { href: "/pricing-policy", label: "Pricing Policy" },
-  { href: "/cancellations-and-refunds", label: "Refund Policy" },
-  { href: "/shipping-policy", label: "Shipping Policy" },
+  { href: "/cancellations-and-refunds", label: "Refunds" },
+  { href: "/shipping-policy", label: "Shipping" },
 ];
 
 const Footer = () => {
@@ -35,50 +36,36 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-slate-950 text-slate-200">
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-10 lg:grid-cols-[1.3fr_0.8fr_0.9fr_1fr]">
-          <div className="space-y-5">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-indigo-300">
-                Product Share India
-              </p>
-              <h2 className="mt-3 text-3xl font-bold text-white">
-                Build catalogs that are easy to share and ready to sell.
-              </h2>
-            </div>
-            <p className="max-w-md text-sm leading-6 text-slate-400">
-              Product Share helps businesses publish digital catalogs, menus, and
-              product pages without the overhead of a full ecommerce site.
+    <footer className="border-t border-primary/15 bg-white text-slate-700">
+      <div className="mx-auto max-w-[1440px] px-3 py-14 sm:px-5">
+        <div className="grid gap-12 lg:grid-cols-[1.2fr_0.7fr_0.7fr_1fr]">
+          <div>
+            <Link href="/" className="inline-flex">
+              <Image
+                alt="Product Share"
+                src="/productShareLV-cropped.svg"
+                width={124}
+                height={48}
+                className="h-10 w-auto"
+              />
+            </Link>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-neutral-600">
+              A digital catalog builder from India, made for local shops,
+              restaurants, and WhatsApp sellers. We are just getting started.
             </p>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="/register"
-                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90"
-              >
-                Start Free
-                <FiArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 rounded-md border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-900"
-              >
-                Talk to Support
-              </Link>
-            </div>
+            <p className="mt-4 text-[11px] font-medium uppercase tracking-[0.16em] text-primary">
+              Made in India
+            </p>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">
+            <h3 className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
               Explore
             </h3>
             <ul className="mt-5 space-y-3 text-sm">
               {marketingLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-slate-300 transition hover:text-white"
-                  >
+                  <Link href={link.href} className="text-neutral-600 hover:text-primary">
                     {link.label}
                   </Link>
                 </li>
@@ -87,16 +74,13 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">
+            <h3 className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
               Legal
             </h3>
             <ul className="mt-5 space-y-3 text-sm">
               {legalLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-slate-300 transition hover:text-white"
-                  >
+                  <Link href={link.href} className="text-neutral-600 hover:text-primary">
                     {link.label}
                   </Link>
                 </li>
@@ -105,39 +89,49 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">
+            <h3 className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
               Contact
             </h3>
-            <ul className="mt-5 space-y-4 text-sm text-slate-300">
+            <ul className="mt-5 space-y-3 text-sm text-neutral-600">
               <li className="flex items-start gap-3">
-                <FiMail className="mt-0.5 h-4 w-4 text-indigo-300" />
-                <a
-                  href={`mailto:${siteConfig.supportEmail}`}
-                  className="transition hover:text-white"
-                >
+                <FiMail className="mt-0.5 h-4 w-4 text-primary" />
+                <a href={`mailto:${siteConfig.supportEmail}`} className="hover:text-primary">
                   {siteConfig.supportEmail}
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <FiPhone className="mt-0.5 h-4 w-4 text-indigo-300" />
-                <a
-                  href={`tel:${siteConfig.supportPhoneHref}`}
-                  className="transition hover:text-white"
-                >
+                <FiPhone className="mt-0.5 h-4 w-4 text-primary" />
+                <a href={`tel:${siteConfig.supportPhoneHref}`} className="hover:text-primary">
                   {siteConfig.supportPhone}
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <FiMapPin className="mt-0.5 h-4 w-4 text-indigo-300" />
+                <FiMessageCircle className="mt-0.5 h-4 w-4 text-primary" />
+                <a
+                  href={`https://wa.me/${siteConfig.supportWhatsAppNumber}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-primary"
+                >
+                  WhatsApp {siteConfig.supportPhone}
+                </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <FiMapPin className="mt-0.5 h-4 w-4 text-primary" />
                 <span>Kerala, India</span>
               </li>
             </ul>
-            <p className="mt-5 text-sm text-slate-500">{siteConfig.supportHours}</p>
+            <p className="mt-5 text-[11px] uppercase tracking-[0.16em] text-neutral-400">
+              {siteConfig.supportHours}
+            </p>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-slate-800 pt-6 text-sm text-slate-500">
-          <p>&copy; {currentYear} {siteConfig.name}. All rights reserved.</p>
+        <div className="mt-12 flex flex-col gap-2 border-t border-primary/15 pt-6 text-sm text-neutral-500 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            &copy; {currentYear} {siteConfig.name}. All rights reserved.
+          </p>
+          <p>A product of Duoph Technologies, India.</p>
         </div>
       </div>
     </footer>

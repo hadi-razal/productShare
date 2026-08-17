@@ -68,16 +68,16 @@ export default function Page() {
       {
         "@type": "Offer",
         name: "Monthly Access",
-        price: "499",
+        price: "699",
         priceCurrency: "INR",
-        description: "Full access for 1 month",
+        description: "Full access for 1 month, up to 50 product listings",
       },
       {
         "@type": "Offer",
         name: "Yearly Access",
-        price: "4790",
+        price: "6990",
         priceCurrency: "INR",
-        description: "Full access for 1 year",
+        description: "Full access for 1 year, up to 150 product listings",
       },
     ],
   };
@@ -91,7 +91,7 @@ export default function Page() {
         name: "What is Product Share India?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Product Share India helps restaurants, retail stores, dropshippers, and small businesses create and share professional product catalogs and menus without needing a full website.",
+          text: "Product Share India is a catalog builder from Kerala, India. It helps restaurants, retail stores, and small businesses create and share product catalogs without a full website. The product is just launching.",
         },
       },
       {
@@ -99,7 +99,7 @@ export default function Page() {
         name: "How much does Product Share India cost?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Product Share India offers a free plan with up to 3 product listings. Premium access is available in monthly and yearly options priced at INR 499 and INR 4,790.",
+          text: "Product Share India offers a free plan with up to 3 product listings. The Monthly Plan is INR 699 with up to 50 listings, and the Yearly Plan is INR 6,990 with up to 150 listings.",
         },
       },
       {

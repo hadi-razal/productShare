@@ -33,7 +33,7 @@ const formatPrice = (value: number) =>
 
 const whatsappDigits = (value?: string | null) => {
   const digits = (value || "").replace(/\D/g, "");
-  return digits || "919074063723";
+  return digits || "919400244731";
 };
 
 const ProductSkeleton = () => (

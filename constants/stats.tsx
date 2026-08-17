@@ -1,8 +1,8 @@
-import { FiBarChart2, FiShoppingBag, FiShoppingCart, FiUsers } from "react-icons/fi";
+import { FiGlobe, FiShoppingBag, FiMessageCircle, FiFlag } from "react-icons/fi";
 
 export const stats = [
-  { icon: <FiShoppingCart size={24} />, value: '100+', label: 'Active Stores', subtext: '45% YoY Growth' },
-  { icon: <FiShoppingBag size={24} />, value: '500+', label: 'Products Listed', subtext: '100+ Categories' },
-  { icon: <FiUsers size={24} />, value: '10k+', label: 'Monthly Visitors', subtext: 'Across all stores' },
-  { icon: <FiBarChart2 size={24} />, value: '200%', label: 'Avg. Growth', subtext: 'For active stores' },
+  { icon: <FiFlag size={24} />, value: "India", label: "Based in Kerala", subtext: "Made in India" },
+  { icon: <FiShoppingBag size={24} />, value: "Now", label: "Just launching", subtext: "Early access" },
+  { icon: <FiMessageCircle size={24} />, value: "WhatsApp", label: "Share anywhere", subtext: "India-first" },
+  { icon: <FiGlobe size={24} />, value: "Free", label: "Plan to start", subtext: "Up to 3 listings" },
 ];

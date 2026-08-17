@@ -1,19 +1,17 @@
 import type { Metadata } from "next";
-import React from "react";
+import Link from "next/link";
 import {
   FiSmartphone,
   FiShoppingBag,
   FiGlobe,
-  FiUsers,
-  FiCrosshair,
 } from "react-icons/fi";
-import { HiSparkles, HiWrench, HiHandRaised } from "react-icons/hi2";
+import { HiWrench, HiHandRaised } from "react-icons/hi2";
 import { MdPalette } from "react-icons/md";
 
 export const metadata: Metadata = {
   title: "About Us — Product Share India",
   description:
-    "Learn about Product Share India — built by Duoph Technologies to help 10,000+ small businesses, restaurants, and dropshippers create and share professional digital catalogs with zero technical skills.",
+    "Learn about Product Share India — a digital catalog builder from Kerala, built by Duoph Technologies for Indian shops, restaurants, and WhatsApp sellers.",
   keywords: [
     "about Product Share India",
     "Duoph Technologies",
@@ -26,9 +24,9 @@ export const metadata: Metadata = {
     canonical: "https://productshare.in/about-us",
   },
   openGraph: {
-    title: "About Product Share India — Empowering Small Businesses",
+    title: "About Product Share India — Built in India",
     description:
-      "Built by Duoph Technologies, Product Share India helps 10,000+ businesses create and share professional digital catalogs — no coding required.",
+      "Product Share is an India-based catalog builder from Duoph Technologies. We are launching now for local shops, restaurants, and WhatsApp sellers.",
     url: "https://productshare.in/about-us",
     type: "website",
   },
@@ -36,168 +34,166 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "About Product Share India",
     description:
-      "Built by Duoph Technologies to help 10,000+ Indian small businesses go digital with beautiful product catalogs.",
+      "An India-based catalog builder from Duoph Technologies, made for Indian small businesses going digital.",
   },
 };
 
-const FeatureCard = ({ icon: Icon, title, description }: any) => (
-  <div className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md border border-gray-100 transition-all duration-300">
-    <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white mb-4 group-hover:scale-105 transition-transform">
-      <Icon className="w-7 h-7" />
-    </div>
-    <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-      {title}
-    </h3>
-    <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
-  </div>
-);
+const features = [
+  {
+    icon: FiShoppingBag,
+    title: "Create Product Catalogs",
+    description:
+      "Build stunning product showcases with photos, descriptions, and prices in minutes.",
+  },
+  {
+    icon: FiGlobe,
+    title: "Instant Web Sharing",
+    description:
+      "Get a unique, professional link for your catalog to share across platforms.",
+  },
+  {
+    icon: FiSmartphone,
+    title: "Mobile-Optimized",
+    description:
+      "Your catalogs look flawless on every device, especially smartphones.",
+  },
+  {
+    icon: HiWrench,
+    title: "Zero Technical Skills",
+    description: "No coding or design expertise needed. Launch in minutes.",
+  },
+  {
+    icon: HiHandRaised,
+    title: "Small Business Focused",
+    description:
+      "Built for entrepreneurs and small businesses to compete with larger brands.",
+  },
+  {
+    icon: MdPalette,
+    title: "Brand Customization",
+    description: "Add logos, colors, and layouts to match your brand identity.",
+  },
+];
 
-const StatsCard = ({ number, label, icon: Icon }: any) => (
-  <div className="text-center">
-    <div className="flex flex-col items-center">
-      <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-blue-50 mb-3">
-        <Icon className="w-6 h-6 text-blue-600" />
-      </div>
-      <div className="text-2xl font-bold text-blue-600">{number}</div>
-      <div className="text-gray-600 text-xs uppercase tracking-wide">
-        {label}
-      </div>
-    </div>
-  </div>
-);
+const facts = [
+  { number: "India", label: "Based in Kerala" },
+  { number: "Now", label: "Just launching" },
+  { number: "Free", label: "To get started" },
+];
 
 const AboutUs = () => {
-  const features = [
-    {
-      icon: FiShoppingBag,
-      title: "Create Product Catalogs",
-      description:
-        "Build stunning product showcases with photos, descriptions, and prices in minutes.",
-    },
-    {
-      icon: FiGlobe,
-      title: "Instant Web Sharing",
-      description:
-        "Get a unique, professional link for your catalog to share across platforms.",
-    },
-    {
-      icon: FiSmartphone,
-      title: "Mobile-Optimized",
-      description:
-        "Your catalogs look flawless on every device, especially smartphones.",
-    },
-    {
-      icon: HiWrench,
-      title: "Zero Technical Skills",
-      description:
-        "No coding or design expertise needed. Launch in minutes.",
-    },
-    {
-      icon: HiHandRaised,
-      title: "Small Business Focused",
-      description:
-        "Built for entrepreneurs and small businesses to compete with larger brands.",
-    },
-    {
-      icon: MdPalette,
-      title: "Brand Customization",
-      description:
-        "Add logos, colors, and layouts to match your brand identity.",
-    },
-  ];
-
-  const stats = [
-    { number: "10K+", label: "Businesses", icon: FiUsers },
-    { number: "500K+", label: "Products", icon: FiShoppingBag },
-    { number: "50+", label: "Countries", icon: FiGlobe },
-  ];
-
   return (
-    <div className="bg-white text-gray-900">
-      {/* Hero */}
-      <section className="container mx-auto px-6 py-16 text-center">
-        <div className="inline-flex items-center gap-2 bg-blue-50 px-5 py-2 rounded-full text-sm text-blue-600 mb-6">
-          <HiSparkles className="w-4 h-4" />
-          Empowering Small Businesses
-        </div>
-        <h1 className="text-4xl md:text-6xl font-extrabold mb-6">
-          About{" "}
-          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+    <div className="min-h-screen w-full bg-[radial-gradient(circle_at_top,_rgba(108,100,203,0.12),_transparent_42%)] pb-20 pt-24">
+      <div className="mx-auto max-w-[1440px] px-3 sm:px-5">
+        <section className="max-w-3xl pt-8">
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
+            About
+          </p>
+          <h1 className="mt-3 text-[28px] font-bold uppercase leading-tight tracking-tight text-slate-900 md:text-[36px]">
             Product Share
-          </span>
-        </h1>
-        <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10">
-          We believe every business deserves an affordable way to showcase their products online.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-xl mx-auto">
-          {stats.map((s, i) => (
-            <StatsCard key={i} {...s} />
+          </h1>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-neutral-600 md:text-base">
+            Product Share is an India-based catalog builder. We are just getting
+            started — building a simple way for local shops, restaurants, and
+            WhatsApp sellers to publish products online without a website.
+          </p>
+        </section>
+
+        <section className="mt-12 grid grid-cols-3 gap-4 border-y border-primary/15 py-8 max-w-xl">
+          {facts.map((fact) => (
+            <div key={fact.label}>
+              <p className="text-2xl font-bold tracking-tight text-primary md:text-3xl">
+                {fact.number}
+              </p>
+              <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-neutral-500">
+                {fact.label}
+              </p>
+            </div>
           ))}
-        </div>
-      </section>
+        </section>
 
-      {/* Story */}
-      <section className="container mx-auto px-6 py-16">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-blue-50 px-4 py-1.5 rounded-full text-sm text-blue-600 mb-4">
-            <FiCrosshair className="w-4 h-4" /> Our Story
+        <section className="mt-16 grid gap-10 lg:grid-cols-2 lg:gap-20">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
+              Our story
+            </p>
+            <h2 className="mt-3 text-[22px] font-bold uppercase tracking-tight text-slate-900">
+              Starting in India
+            </h2>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold">
-            Built for the{" "}
-            <span className="text-blue-600">Everyday Entrepreneur</span>
-          </h2>
-        </div>
-        <div className="bg-gray-50 rounded-2xl p-8 md:p-12 max-w-3xl mx-auto text-gray-700 space-y-5 leading-relaxed">
-          <p>
-            Product Share was born from a simple observation: traditional websites are expensive and complex for small business owners who just want to showcase products easily.
-          </p>
-          <p>
-            We created a platform that strips away complexity while amplifying impact. No coding, no design skills, no hosting fees—just simple product sharing that works.
-          </p>
-          <p>
-            As a sub-brand of <strong className="text-blue-600">Duoph Technologies</strong>, Product Share combines enterprise-grade reliability with small-business simplicity.
-          </p>
-        </div>
-      </section>
+          <div className="space-y-5 text-sm leading-relaxed text-neutral-600 md:text-[15px]">
+            <p>
+              Product Share is built in Kerala, India by Duoph Technologies. Many
+              local businesses still share products as scattered WhatsApp photos.
+              A full website is often too costly and too complex.
+            </p>
+            <p>
+              We are launching now. The platform is new — we are inviting shops,
+              restaurants, and independent sellers in India to create their first
+              catalog with us.
+            </p>
+            <p>
+              As a sub-brand of{" "}
+              <span className="font-semibold text-primary">Duoph Technologies</span>,
+              we are focused on a simple Indian-first product: photos, prices, and a
+              link you can share on WhatsApp.
+            </p>
+          </div>
+        </section>
 
-      {/* Features */}
-      <section className="container mx-auto px-6 py-16">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-blue-50 px-4 py-1.5 rounded-full text-sm text-blue-600 mb-4">
-            <HiSparkles className="w-4 h-4" /> Platform Features
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Tools to Help You <span className="text-blue-600">Succeed Online</span>
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Powerful tools designed for small businesses, entrepreneurs, and creators.
+        <section className="mt-20">
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
+            Platform
           </p>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {features.map((f, i) => (
-            <FeatureCard key={i} {...f} />
-          ))}
-        </div>
-      </section>
+          <h2 className="mt-3 text-[22px] font-bold uppercase tracking-tight text-slate-900">
+            Tools to help you succeed
+          </h2>
+          <p className="mt-3 max-w-xl text-sm text-neutral-600">
+            Built for Indian small businesses, home sellers, and local stores.
+          </p>
 
-      {/* Mission */}
-      <section className="bg-gray-50 py-16">
-        <div className="container mx-auto px-6 text-center max-w-4xl">
-          <div className="inline-flex items-center gap-2 bg-blue-50 px-5 py-2 rounded-full text-sm text-blue-600 mb-6">
-            <FiCrosshair className="w-4 h-4" /> Our Mission
+          <div className="mt-10 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature) => (
+              <div key={feature.title} className="border-t border-primary/15 pt-6">
+                <feature.icon className="h-5 w-5 text-primary" />
+                <h3 className="mt-4 text-[13px] font-semibold uppercase tracking-[0.08em] text-slate-900">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-blue-600 mb-6">
-            Democratizing Digital Commerce
-          </h2>
-          <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
-            Our mission is to make online product sharing simple, accessible, and affordable. From handmade crafts to clothing and food, we help your business shine.
+        </section>
+
+        <section className="mt-20 border-t border-primary/15 pt-12">
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
+            Mission
           </p>
-          <div className="inline-flex items-center gap-2 bg-blue-100 px-6 py-2 rounded-full text-blue-600 text-sm font-medium">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            Empowering businesses in 50+ countries
+          <h2 className="mt-3 max-w-2xl text-[22px] font-bold uppercase tracking-tight text-slate-900 md:text-[28px]">
+            Help Indian businesses go digital
+          </h2>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-neutral-600 md:text-[15px]">
+            Make product sharing simple and affordable for shops across India. We are
+            at the beginning — join early, share feedback, and grow with us.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href="/register"
+              className="inline-flex items-center justify-center bg-primary px-6 py-3.5 text-[12px] font-medium uppercase tracking-[0.16em] text-white hover:bg-primary/90"
+            >
+              Start for free
+            </Link>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center border border-primary px-6 py-3.5 text-[12px] font-medium uppercase tracking-[0.16em] text-primary hover:bg-primary hover:text-white"
+            >
+              Talk to us
+            </Link>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 };

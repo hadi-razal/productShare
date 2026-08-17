@@ -1,166 +1,77 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   FiSend,
   FiGlobe,
   FiPieChart,
   FiShield,
-  FiMessageSquare,
   FiMessageCircle,
   FiSettings,
-  FiStar,
-  FiUserPlus,
-  FiPackage,
-  FiShare2,
 } from "react-icons/fi";
-import Marquee from "react-fast-marquee";
-import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
 import { onAuthChange } from "@/lib/auth";
 import HeroSection from "./HeroSection";
 import PricingSection from "./PricingSection";
 import FaqSection from "./FaqSection";
 
-const primaryColor = "#6c64cb";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-
 const features = [
   {
-    icon: <FiSend className="w-6 h-6 text-white" />,
-    iconBg: "from-purple-500 to-primary",
-    title: "Rapid Catalog Creation",
-    description: "Streamline your product showcase with intelligent design tools and automated workflows",
-    num: "01",
+    icon: FiSend,
+    title: "Create a catalog fast",
+    description: "Add photos, prices, and details in minutes — no website to build.",
   },
   {
-    icon: <FiGlobe className="w-6 h-6 text-white" />,
-    iconBg: "from-green-400 to-green-600",
-    title: "Global Reach",
-    description: "Expand your market presence across multiple platforms and reach customers worldwide",
-    num: "02",
+    icon: FiGlobe,
+    title: "Share on WhatsApp",
+    description: "Send one link to customers across India on WhatsApp and Instagram.",
   },
   {
-    icon: <FiPieChart className="w-6 h-6 text-white" />,
-    iconBg: "from-blue-400 to-blue-600",
-    title: "Smart Analytics",
-    description: "Data-driven insights to optimize your business strategy and maximize growth",
-    num: "03",
+    icon: FiPieChart,
+    title: "See what works",
+    description: "Track visits and product views as your catalog starts to grow.",
   },
   {
-    icon: <FiShield className="w-6 h-6 text-white" />,
-    iconBg: "from-teal-400 to-teal-600",
-    title: "Secure Platform",
-    description: "Enterprise-grade security and data protection for your business",
-    num: "04",
+    icon: FiShield,
+    title: "Simple and secure",
+    description: "Your store data stays on a reliable platform built for small shops.",
   },
   {
-    icon: <FiSettings className="w-6 h-6 text-white" />,
-    iconBg: "from-orange-400 to-orange-600",
-    title: "Customizable Solutions",
-    description: "Tailor-made features to fit your unique business needs and requirements",
-    num: "05",
+    icon: FiSettings,
+    title: "Match your brand",
+    description: "Set colors, logo, and layout so the catalog looks like your shop.",
   },
   {
-    icon: <FiMessageCircle className="w-6 h-6 text-white" />,
-    iconBg: "from-red-400 to-red-600",
-    title: "24/7 Support",
-    description: "Round-the-clock assistance for uninterrupted operations and peace of mind",
-    num: "06",
+    icon: FiMessageCircle,
+    title: "Support from India",
+    description: "Reach the team by phone, email, or WhatsApp during business hours.",
   },
 ];
 
 const steps = [
   {
-    icon: <FiUserPlus className="w-7 h-7 text-white" />,
-    title: "Sign Up Free",
-    description: "Create your account in 30 seconds — no credit card required.",
+    step: "01",
+    title: "Sign up free",
+    description: "Create your account in seconds. No credit card required.",
   },
   {
-    icon: <FiPackage className="w-7 h-7 text-white" />,
-    title: "Add Your Products",
-    description: "Upload photos, set prices, and add descriptions in minutes.",
+    step: "02",
+    title: "Add products",
+    description: "Upload photos, set prices, and write short descriptions.",
   },
   {
-    icon: <FiShare2 className="w-7 h-7 text-white" />,
-    title: "Share & Sell",
-    description: "Share your catalog link on WhatsApp, Instagram, or anywhere your customers are.",
+    step: "03",
+    title: "Share the link",
+    description: "Post your catalog on WhatsApp, Instagram, or anywhere customers are.",
   },
 ];
 
-const testimonials = [
-  {
-    name: "Priya Sharma",
-    initials: "PS",
-    avatarBg: "bg-purple-500",
-    role: "E-commerce Entrepreneur",
-    quote: "This platform completely revolutionized the way we showcase and market our products. Our sales increased by 300% in just 3 months!",
-    location: "Mumbai",
-    rating: 5,
-    company: "Fashion Hub",
-  },
-  {
-    name: "Rahul Gupta",
-    initials: "RG",
-    avatarBg: "bg-indigo-500",
-    role: "Small Business Owner",
-    quote: "An incredibly intuitive and powerful marketing solution that helped boost my sales dramatically. The support team is amazing!",
-    location: "Delhi",
-    rating: 5,
-    company: "Tech Solutions",
-  },
-  {
-    name: "Anita Patel",
-    initials: "AP",
-    avatarBg: "bg-teal-500",
-    role: "Digital Marketer",
-    quote: "The analytics and insights provided are game-changing. I can now make data-driven decisions that actually impact my bottom line.",
-    location: "Bangalore",
-    rating: 5,
-    company: "Growth Co",
-  },
-];
-
-const stats = [
-  { value: "500+", label: "Active Sellers" },
-  { value: "10,000+", label: "Products Listed" },
-  { value: "₹2Cr+", label: "Revenue Generated" },
-  { value: "4.9★", label: "Average Rating" },
-];
-
-const marqueeMessages = [
-  "🚀 Boost Your Sales with Ease",
-  "🌟 Create Stunning E-Store Websites",
-  "⚡ Effortless Catalog Management",
-  "📈 Marketing Made Simple",
-  "💡 Sell Smarter, Not Harder",
-  "🎯 Your Online Store, Our Priority",
-  "🔥 Seamless Product Organization",
-  "🤖 AI-Powered Marketing Tools",
-  "📊 Your Growth, Our Mission",
-  "⏱️ Build Your Catalog in Minutes",
-  "💰 Maximize Your Revenue Potential",
-  "📱 Effortless Product Uploads",
-  "🎨 Your Catalog, Your Brand",
-  "✨ Customize Your Online Store",
-  "🔓 Unlock Digital Marketing Power",
-  "🌐 Transform How You Sell Online",
-  "📋 Optimize Your Product Listings",
-  "🕐 Sell Anywhere, Anytime",
-  "🎪 Reach More Customers Faster",
-  "👥 Increase Visibility & Engagement",
+const facts = [
+  { value: "India", label: "Based in Kerala" },
+  { value: "Now", label: "Just launching" },
+  { value: "WhatsApp", label: "Ready to share" },
+  { value: "Free", label: "Plan to start" },
 ];
 
 const Home = () => {
@@ -185,171 +96,77 @@ const Home = () => {
   }
 
   return (
-    <div className="bg-white text-gray-900 min-h-screen">
+    <div className="min-h-screen bg-white text-slate-900">
       <HeroSection />
 
-      {/* Stats Strip */}
-      <section className="bg-white border-y border-gray-100 py-10">
-        <div className="max-w-5xl mx-auto px-6">
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={containerVariants}
-          >
-            {stats.map((stat) => (
-              <motion.div key={stat.label} variants={itemVariants} className="space-y-1">
-                <p className="text-3xl font-bold" style={{ color: primaryColor }}>
-                  {stat.value}
-                </p>
-                <p className="text-sm text-gray-500">{stat.label}</p>
-              </motion.div>
-            ))}
-          </motion.div>
+      <section className="border-y border-primary/15">
+        <div className="mx-auto grid max-w-[1440px] grid-cols-2 gap-6 px-3 py-10 sm:px-5 md:grid-cols-4">
+          {facts.map((fact) => (
+            <div key={fact.label}>
+              <p className="text-2xl font-bold tracking-tight text-primary md:text-3xl">
+                {fact.value}
+              </p>
+              <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-neutral-500">
+                {fact.label}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Marquee Section */}
-      <div className="w-full flex flex-col gap-4 bg-purple-50 py-10">
-        <Marquee loop={0} speed={60} gradient={false} className="flex items-center">
-          {marqueeMessages.map((message, index) => (
-            <motion.div
-              key={index}
-              className="bg-white border border-gray-200 rounded-md px-6 mx-2 py-3 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
-              whileHover={{ scale: 1.05, y: -2 }}
-            >
-              <span className="text-gray-700 font-medium text-sm whitespace-nowrap">
-                {message}
-              </span>
-            </motion.div>
-          ))}
-        </Marquee>
+      <section id="features" className="mx-auto max-w-[1440px] scroll-mt-24 px-3 py-20 sm:px-5">
+        <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
+          Why Product Share
+        </p>
+        <h2 className="mt-3 max-w-xl text-[26px] font-bold uppercase tracking-tight text-slate-900 md:text-[32px]">
+          Everything you need to share products
+        </h2>
+        <p className="mt-3 max-w-xl text-sm text-neutral-600">
+          Built for Indian shops, restaurants, and WhatsApp sellers.
+        </p>
 
-        {/* <Marquee loop={0} speed={60} direction="right" gradient={false}>
-          {marqueeMessages2.map((message, index) => (
-            <motion.div
-              key={index}
-              className="bg-white border border-gray-200 rounded-full px-6 mx-2 py-3 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
-              whileHover={{ scale: 1.05, y: -2 }}
-            >
-              <span className="text-gray-700 font-medium text-sm whitespace-nowrap">
-                {message}
-              </span>
-            </motion.div>
-          ))}
-        </Marquee> */}
-      </div>
-
-      {/* Features Section */}
-      <section id="features" className="mx-auto max-w-7xl px-4 sm:px-6 py-24">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: primaryColor }}>
-            Why Product Share
-          </p>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900">
-            Everything You Need to Sell Online
-          </h2>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-            Discover the features that make us the preferred choice for businesses worldwide
-          </p>
-        </motion.div>
-
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              className="relative p-8 bg-white rounded-2xl border border-gray-100 hover:border-primary/20 hover:shadow-xl transition-all duration-300 group cursor-pointer"
-              variants={itemVariants}
-              whileHover={{ y: -4 }}
-            >
-              {/* Number badge */}
-              <span className="absolute top-6 right-6 text-2xl font-bold text-gray-200 group-hover:text-primary/20 transition-colors select-none">
-                {feature.num}
-              </span>
-
-              {/* Icon */}
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.iconBg} flex items-center justify-center mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}>
-                {feature.icon}
-              </div>
-
-              <h3 className="text-lg font-bold mb-3 text-gray-900 group-hover:text-primary transition-colors">
+        <div className="mt-12 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((feature) => (
+            <div key={feature.title} className="border-t border-primary/15 pt-6">
+              <feature.icon className="h-5 w-5 text-primary" />
+              <h3 className="mt-4 text-[13px] font-semibold uppercase tracking-[0.08em] text-slate-900">
                 {feature.title}
               </h3>
-              <p className="text-gray-500 text-sm leading-relaxed">
+              <p className="mt-2 text-sm leading-relaxed text-neutral-600">
                 {feature.description}
               </p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="bg-gradient-to-br from-purple-50 via-white to-indigo-50 py-24 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: primaryColor }}>
-              Simple Process
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              From Sign-Up to Sales in 3 Steps
-            </h2>
-            <p className="text-lg text-gray-500">
-              No tech skills needed. Get your catalog live in minutes.
-            </p>
-          </motion.div>
+      <section className="border-y border-primary/15 bg-[radial-gradient(circle_at_top,_rgba(108,100,203,0.08),_transparent_50%)]">
+        <div className="mx-auto max-w-[1440px] px-3 py-20 sm:px-5">
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
+            How it works
+          </p>
+          <h2 className="mt-3 max-w-xl text-[26px] font-bold uppercase tracking-tight text-slate-900 md:text-[32px]">
+            Live in three steps
+          </h2>
+          <p className="mt-3 max-w-xl text-sm text-neutral-600">
+            No tech skills needed. Get your catalog online in minutes.
+          </p>
 
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 relative"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {/* Connecting line (desktop) */}
-            <div className="hidden md:block absolute top-10 left-1/6 right-1/6 h-0.5 border-t-2 border-dashed border-primary/20 z-0" style={{ left: "16.67%", right: "16.67%" }} />
-
-            {steps.map((step, index) => (
-              <motion.div
-                key={index}
-                className="flex flex-col items-center text-center relative z-10"
-                variants={itemVariants}
-              >
-                <div
-                  className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5 shadow-lg"
-                  style={{ background: `linear-gradient(135deg, ${primaryColor}, #a78bfa)` }}
-                >
-                  {step.icon}
-                </div>
-                <div
-                  className="absolute -top-3 -right-3 w-7 h-7 rounded-full hidden md:flex items-center justify-center text-xs font-bold text-white shadow-md"
-                  style={{ backgroundColor: primaryColor }}
-                >
-                  {index + 1}
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed max-w-xs">{step.description}</p>
-              </motion.div>
+          <div className="mt-12 grid gap-10 md:grid-cols-3">
+            {steps.map((item) => (
+              <div key={item.step} className="border-t border-primary/20 pt-6">
+                <p className="text-[13px] font-semibold uppercase tracking-[0.16em] text-primary">
+                  {item.step}
+                </p>
+                <h3 className="mt-3 text-[15px] font-semibold uppercase tracking-tight text-slate-900">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+                  {item.description}
+                </p>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -357,109 +174,32 @@ const Home = () => {
 
       <PricingSection />
 
-      {/* Testimonials Section */}
-      <section className="py-24 px-4 sm:px-6 bg-gradient-to-br from-slate-50 via-purple-50/30 to-slate-50">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: primaryColor }}>
-              Testimonials
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900">
-              What Our Clients Say
-            </h2>
-            <p className="text-lg text-gray-500">
-              Real stories from real businesses that transformed their success
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                className="bg-white shadow-lg rounded-2xl p-8 relative hover:shadow-2xl transition-all duration-300 border border-gray-100"
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
-              >
-                <div
-                  className="absolute -top-4 left-8 w-8 h-8 rounded-full flex items-center justify-center shadow-md"
-                  style={{ backgroundColor: primaryColor }}
-                >
-                  <FiMessageSquare className="text-white w-4 h-4" />
-                </div>
-
-                <div className="flex items-center mb-4 pt-4">
-                  <div className={`w-12 h-12 rounded-full ${testimonial.avatarBg} flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
-                    {testimonial.initials}
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="text-base font-bold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-gray-500 text-sm">{testimonial.role}</p>
-                    <p className="text-gray-400 text-xs">{testimonial.company} · {testimonial.location}</p>
-                  </div>
-                </div>
-
-                <div className="flex mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <FiStar key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-
-                <p className="text-sm text-gray-600 leading-relaxed italic">
-                  <span aria-hidden="true">&ldquo;</span>
-                  {testimonial.quote}
-                  <span aria-hidden="true">&rdquo;</span>
-                </p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Bottom CTA Band */}
-      <section
-        className="py-20 px-4 sm:px-6 text-white"
-        style={{ background: `linear-gradient(135deg, ${primaryColor}, #7c3aed, #4f46e5)` }}
-      >
-        <motion.div
-          className="max-w-3xl mx-auto text-center space-y-6"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="text-3xl sm:text-4xl font-bold">
-            Ready to Grow Your Business?
-          </h2>
-          <p className="text-lg text-white/80">
-            Join 500+ sellers already using Product Share to showcase and sell their products online.
+      <section className="bg-primary">
+        <div className="mx-auto max-w-[1440px] px-3 py-16 sm:px-5">
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/70">
+            Launching in India
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => router.push("/register")}
-              className="bg-white text-primary font-bold px-8 py-3.5 rounded-xl hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+          <h2 className="mt-3 max-w-xl text-[26px] font-bold uppercase tracking-tight text-white md:text-[32px]">
+            Be among the first
+          </h2>
+          <p className="mt-3 max-w-xl text-sm text-white/80">
+            Create your catalog today and grow with Product Share from day one.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="/register"
+              className="inline-flex items-center justify-center bg-white px-6 py-3.5 text-[12px] font-medium uppercase tracking-[0.16em] text-primary hover:bg-white/90"
             >
-              Start Free Today →
-            </button>
-            <button
-              onClick={() => router.push("/pricing")}
-              className="border-2 border-white/60 text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-white/10 transition-all"
+              Start for free
+            </Link>
+            <Link
+              href="/pricing"
+              className="inline-flex items-center justify-center border border-white px-6 py-3.5 text-[12px] font-medium uppercase tracking-[0.16em] text-white hover:bg-white hover:text-primary"
             >
-              View Pricing
-            </button>
+              View pricing
+            </Link>
           </div>
-        </motion.div>
+        </div>
       </section>
     </div>
   );

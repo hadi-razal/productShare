@@ -1,107 +1,72 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import { FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { AnimatePresence, motion } from "framer-motion"
+import { useState } from "react";
+import { FiChevronDown } from "react-icons/fi";
 
 const faqs = [
   {
     question: "What is Product Share?",
-    answer: (
-      <div>
-        <p className="text-base text-gray-800 font-medium">
-          <strong>Empower Your Business in Minutes</strong><br />
-          Product Share helps small business owners create and share product catalogs online — without a website.
-        </p>
-        <ul className="list-disc pl-5 mt-2 text-sm text-gray-700 space-y-1">
-          <li>No coding</li>
-          <li>No website needed</li>
-          <li>Just your products, beautifully shared</li>
-        </ul>
-      </div>
-    )
+    answer:
+      "Product Share is an India-based catalog builder. Add products, get a link, and share it on WhatsApp — no website required.",
   },
   {
-    question: "How Does It Work?",
-    answer: (
-      <div>
-        <p className="text-base text-gray-800 font-medium">
-          <strong>From Products to Public in 3 Steps</strong>
-        </p>
-        <ol className="list-decimal pl-5 mt-2 text-sm text-gray-700 space-y-1">
-          <li>Add your products</li>
-          <li>Customize your catalog</li>
-          <li>Share the link anywhere</li>
-        </ol>
-      </div>
-    )
+    question: "How does it work?",
+    answer:
+      "Sign up, add your products with photos and prices, then share the catalog link anywhere your customers already are.",
   },
   {
-    question: "Who Is It For?",
-    answer: (
-      <div>
-        <p className="text-base text-gray-800 font-medium">
-          <strong>Built for Small Hustlers</strong>
-        </p>
-        <ul className="list-disc pl-5 mt-2 text-sm text-gray-700 space-y-1">
-          <li>Instagram sellers</li>
-          <li>Home-based businesses</li>
-          <li>Local shop owners</li>
-        </ul>
-      </div>
-    )
-  }
-]
+    question: "Who is it for?",
+    answer:
+      "WhatsApp and Instagram sellers, home-based businesses, local shops, and restaurants in India.",
+  },
+  {
+    question: "Where is Product Share based?",
+    answer:
+      "We are based in Kerala, India, as part of Duoph Technologies. The product is just launching, and we are inviting local businesses to create their first catalog with us.",
+  },
+];
 
 export default function FaqSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
-
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index)
-  }
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="py-10 px-4 md:px-10">
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8">
-          Product Share – FAQ
-        </h2>
+    <section className="mx-auto max-w-[1440px] px-3 py-20 sm:px-5">
+      <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
+        FAQ
+      </p>
+      <h2 className="mt-3 text-[26px] font-bold uppercase tracking-tight text-slate-900 md:text-[32px]">
+        Common questions
+      </h2>
 
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="bg-white border border-gray-200 rounded-md p-4 shadow-sm"
-            >
+      <div className="mt-10 max-w-3xl divide-y divide-primary/15 border-y border-primary/15">
+        {faqs.map((faq, index) => {
+          const open = openIndex === index;
+          return (
+            <div key={faq.question}>
               <button
-                onClick={() => toggleFAQ(index)}
-                className="w-full flex justify-between items-center text-left"
+                type="button"
+                onClick={() => setOpenIndex(open ? null : index)}
+                className="flex w-full items-center justify-between gap-6 py-5 text-left"
+                aria-expanded={open}
               >
-                <span className="text-base font-medium text-gray-800">{faq.question}</span>
-                {openIndex === index ? (
-                  <FiChevronUp className="w-4 h-4 text-blue-600" />
-                ) : (
-                  <FiChevronDown className="w-4 h-4 text-blue-600" />
-                )}
+                <span className="text-[13px] font-semibold uppercase tracking-[0.08em] text-slate-900">
+                  {faq.question}
+                </span>
+                <FiChevronDown
+                  className={`h-4 w-4 flex-shrink-0 text-primary transition-transform ${
+                    open ? "rotate-180" : ""
+                  }`}
+                />
               </button>
-
-              <AnimatePresence initial={false}>
-                {openIndex === index && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden mt-3 text-sm"
-                  >
-                    {faq.answer}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {open && (
+                <p className="pb-5 text-sm leading-relaxed text-neutral-600">
+                  {faq.answer}
+                </p>
+              )}
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </section>
-  )
+  );
 }

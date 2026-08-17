@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import React from 'react';
+import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Shipping Policy — Product Share India",
@@ -44,8 +45,9 @@ const ShippingPolicy = () => {
         For any questions or assistance regarding your account, store setup, or any issues with managing your online catalogue, please reach out to our customer support team. We are here to help you:
       </p>
       <ul>
-        <li>Phone: 9074063723</li>
-        <li>Email: <a href="mailto:hadhirasal22@gmail.com">hadhirasal22@gmail.com</a></li>
+        <li>Phone: <a href={`tel:${siteConfig.supportPhoneHref}`}>{siteConfig.supportPhone}</a></li>
+        <li>WhatsApp: <a href={`https://wa.me/${siteConfig.supportWhatsAppNumber}`} target="_blank" rel="noreferrer">{siteConfig.supportPhone}</a></li>
+        <li>Email: <a href={`mailto:${siteConfig.supportEmail}`}>{siteConfig.supportEmail}</a></li>
       </ul>
 
       <h3>Digital Services and Platform Accessibility</h3>

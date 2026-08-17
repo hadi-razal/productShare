@@ -2,14 +2,14 @@ export const siteConfig = {
   name: "Product Share India",
   shortName: "Product Share",
   description:
-    "Create digital catalogs, restaurant menus, and shareable product pages for your business in minutes.",
+    "India-based digital catalog builder for local shops, restaurants, and WhatsApp sellers. Launching now.",
   url: "https://productshare.in",
   locale: "en_IN",
   category: "Business Tools",
   supportEmail: "productshareindia@gmail.com",
-  supportPhone: "+91 8589920409",
-  supportPhoneHref: "+918589920409",
-  supportWhatsAppNumber: "918589920409",
+  supportPhone: "+91 94002 44731",
+  supportPhoneHref: "+919400244731",
+  supportWhatsAppNumber: "919400244731",
   supportHours: "Mon-Fri, 9am-5pm IST",
   twitterHandle: "@Hadi_Razal",
   keywords: [

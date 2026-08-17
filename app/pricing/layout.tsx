@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Pricing — Product Share India",
   description:
-    "Simple, transparent pricing for Product Share India. Free plan available. Monthly plan at ₹499 (one-time) and Yearly plan at ₹4,790 (one-time, save 20%). No auto-pay, no hidden fees.",
+    "Simple, transparent pricing for Product Share India. Free plan with 3 listings. Monthly plan at ₹699 and Yearly plan at ₹6,990 with up to 150 listings.",
   keywords: [
     "Product Share India pricing",
     "catalog builder price India",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     "yearly catalog plan",
     "affordable catalog builder",
     "free catalog builder India",
-    "₹499 catalog builder",
+    "₹699 catalog builder",
   ],
   alternates: {
     canonical: "https://productshare.in/pricing",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Pricing — Product Share India | Plans Starting Free",
     description:
-      "Start free or go premium. Monthly plan ₹499 • Yearly plan ₹4,790 (save 20%). One-time payments, no recurring charges.",
+      "Start free or go premium. Monthly plan ₹699 • Yearly plan ₹6,990 (2 months free).",
     url: "https://productshare.in/pricing",
     type: "website",
   },
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Product Share India Pricing — Plans Starting Free",
     description:
-      "Free plan available. Monthly ₹499 or Yearly ₹4,790 — one-time payments, no auto-renewals.",
+      "Free plan available. Monthly ₹699 or Yearly ₹6,990 — up to 150 product listings.",
   },
 };
 
@@ -61,20 +61,19 @@ export default function PricingLayout({
       {
         "@type": "Offer",
         name: "Monthly Plan",
-        price: "499",
+        price: "699",
         priceCurrency: "INR",
-        description:
-          "Unlimited products, analytics, customization, priority support — one-time monthly payment",
+        description: "Up to 50 products, customer behavior analytics, theme customization, priority support",
         eligibleRegion: { "@type": "Country", name: "India" },
         url: "https://productshare.in/register",
       },
       {
         "@type": "Offer",
         name: "Yearly Plan",
-        price: "4790",
+        price: "6990",
         priceCurrency: "INR",
         description:
-          "Everything in Monthly, full year access, save 20% — one-time yearly payment",
+          "Up to 150 products, advanced analytics, team access, bulk CSV/Excel upload",
         eligibleRegion: { "@type": "Country", name: "India" },
         url: "https://productshare.in/register",
       },

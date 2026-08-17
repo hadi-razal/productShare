@@ -7,7 +7,6 @@ import {
   FiMenu,
   FiX,
 } from "react-icons/fi";
-import { HiSparkles } from "react-icons/hi2";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -166,19 +165,31 @@ const Header = () => {
 
   if (hideHeader) return null;
 
+  const navLinkClass = (href: string) => {
+    const active = pathname === href;
+    if (isTransparentHeader) {
+      return active
+        ? "text-white"
+        : "text-white/75 hover:text-white";
+    }
+    return active
+      ? "text-primary"
+      : "text-slate-600 hover:text-primary";
+  };
+
   return (
     <>
       <header
         className={`fixed inset-x-0 top-0 z-30 transition-all duration-300 ${
           isTransparentHeader
             ? "bg-transparent"
-            : "border-b border-slate-200/80 bg-white/95 shadow-[0_8px_30px_rgba(15,23,42,0.06)] backdrop-blur-xl"
+            : "border-b border-primary/10 bg-white/95 backdrop-blur-xl"
         }`}
       >
-        <div className="relative mx-auto flex h-20 max-w-screen-xl items-center justify-between px-5 sm:px-6">
+        <div className="relative mx-auto flex h-20 max-w-[1440px] items-center justify-between px-3 sm:px-5">
           <Link
             href={isAuthenticated ? "/store" : "/"}
-            className="inline-flex items-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="inline-flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <Image
               alt="Product Share"
@@ -195,20 +206,12 @@ const Header = () => {
             />
           </Link>
 
-          <nav className="hidden items-center gap-1 md:flex" aria-label="Primary navigation">
+          <nav className="hidden items-center gap-6 md:flex" aria-label="Primary navigation">
             {links.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  isTransparentHeader
-                    ? pathname === href
-                      ? "bg-white/10 text-white font-semibold"
-                      : "text-white/85 hover:bg-white/10 hover:text-white"
-                    : pathname === href
-                      ? "bg-indigo-50 text-indigo-700 font-semibold"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
-                }`}
+                className={`text-[12px] font-medium uppercase tracking-[0.16em] transition-colors ${navLinkClass(href)}`}
               >
                 {label}
               </Link>
@@ -217,7 +220,11 @@ const Header = () => {
             {isStorePage && isAuthenticated && (
               <button
                 onClick={handleLogout}
-                className="text-sm font-medium text-red-600 border border-red-300 px-4 py-1.5 rounded-md hover:bg-red-50 transition"
+                className={`text-[12px] font-medium uppercase tracking-[0.16em] ${
+                  isTransparentHeader
+                    ? "text-white/80 hover:text-white"
+                    : "text-slate-500 hover:text-primary"
+                }`}
               >
                 Logout
               </button>
@@ -226,29 +233,27 @@ const Header = () => {
             {!isStorePage && !isAuthenticated && (
               <Link
                 href="/login"
-                className="ml-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+                className="bg-primary px-4 py-2 text-[12px] font-medium uppercase tracking-[0.16em] text-white hover:bg-primary/90"
               >
                 Login
               </Link>
             )}
 
             {!isStorePage && isAuthenticated && (
-              <Link
-                href="/pricing"
-                className="text-sm font-medium text-white bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-1.5 rounded-md hover:scale-105 transition-transform shadow flex items-center gap-1.5"
-              >
-                <HiSparkles className="w-4 h-4" />
-                Upgrade to Pro
-              </Link>
-            )}
-
-            {!isStorePage && isAuthenticated && (
-              <button
-                onClick={handleLogout}
-                className="text-sm font-medium text-white bg-red-600 border border-red-300 px-4 py-1.5 rounded-md hover:bg-red-400 transition"
-              >
-                Logout
-              </button>
+              <>
+                <Link
+                  href="/pricing"
+                  className="border border-primary px-4 py-2 text-[12px] font-medium uppercase tracking-[0.16em] text-primary hover:bg-primary hover:text-white"
+                >
+                  Upgrade
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="text-[12px] font-medium uppercase tracking-[0.16em] text-slate-500 hover:text-primary"
+                >
+                  Logout
+                </button>
+              </>
             )}
           </nav>
 
@@ -256,10 +261,10 @@ const Header = () => {
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              className={`inline-flex h-11 w-11 items-center justify-center rounded-xl border transition md:hidden ${
+              className={`inline-flex h-10 w-10 items-center justify-center md:hidden ${
                 isTransparentHeader
-                  ? "border-white/20 bg-white/10 text-white hover:bg-white/20"
-                  : "border-slate-200 bg-slate-50 text-slate-800 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
+                  ? "text-white"
+                  : "text-slate-800 hover:text-primary"
               }`}
               aria-label="Open navigation menu"
               aria-expanded={menuOpen}
@@ -279,7 +284,7 @@ const Header = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-slate-950/45 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-50 bg-slate-950/40 md:hidden"
             onClick={() => setMenuOpen(false)}
           >
             <motion.aside
@@ -291,10 +296,10 @@ const Header = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="ml-auto flex h-full w-[min(88vw,22rem)] flex-col bg-white shadow-2xl"
+              className="ml-auto flex h-full w-[min(88vw,22rem)] flex-col bg-white"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex h-20 items-center justify-between border-b border-slate-100 px-5">
+              <div className="flex h-20 items-center justify-between border-b border-primary/10 px-5">
                 <Link
                   href={isAuthenticated ? "/store" : "/"}
                   onClick={() => setMenuOpen(false)}
@@ -312,18 +317,18 @@ const Header = () => {
                 <button
                   type="button"
                   onClick={() => setMenuOpen(false)}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700 transition hover:bg-slate-100"
+                  className="inline-flex h-10 w-10 items-center justify-center text-slate-700 hover:text-primary"
                   aria-label="Close navigation menu"
                 >
                   <FiX size={21} />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto px-4 py-6">
-                <p className="px-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+              <div className="flex-1 overflow-y-auto px-5 py-8">
+                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
                   Explore
                 </p>
-                <nav className="mt-3 space-y-1" aria-label="Mobile navigation links">
+                <nav className="mt-5 space-y-1" aria-label="Mobile navigation links">
                   {links.map(({ href, label }) => {
                     const isActive = pathname === href;
 
@@ -332,29 +337,25 @@ const Header = () => {
                         key={href}
                         href={href}
                         onClick={() => setMenuOpen(false)}
-                        className={`flex items-center justify-between rounded-xl px-3 py-3.5 text-base font-medium transition ${
-                          isActive
-                            ? "bg-indigo-50 text-indigo-700"
-                            : "text-slate-700 hover:bg-slate-50 hover:text-slate-950"
+                        className={`flex items-center justify-between border-b border-primary/10 py-4 text-[13px] font-medium uppercase tracking-[0.14em] ${
+                          isActive ? "text-primary" : "text-slate-700"
                         }`}
                       >
                         <span>{label}</span>
-                        <FiArrowRight
-                          className={`h-4 w-4 ${isActive ? "text-indigo-500" : "text-slate-300"}`}
-                        />
+                        <FiArrowRight className="h-4 w-4" />
                       </Link>
                     );
                   })}
                 </nav>
               </div>
 
-              <div className="border-t border-slate-100 bg-slate-50/80 p-4">
+              <div className="border-t border-primary/10 p-5">
                 {!isAuthenticated ? (
                   <div className="grid gap-3">
                     <Link
                       href="/register"
                       onClick={() => setMenuOpen(false)}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+                      className="inline-flex items-center justify-center gap-2 bg-primary px-4 py-3 text-[12px] font-medium uppercase tracking-[0.16em] text-white hover:bg-primary/90"
                     >
                       Create your store
                       <FiArrowRight className="h-4 w-4" />
@@ -362,7 +363,7 @@ const Header = () => {
                     <Link
                       href="/login"
                       onClick={() => setMenuOpen(false)}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-indigo-200 hover:text-indigo-700"
+                      className="inline-flex items-center justify-center gap-2 border border-primary px-4 py-3 text-[12px] font-medium uppercase tracking-[0.16em] text-primary"
                     >
                       <FiLogIn className="h-4 w-4" />
                       Log in
@@ -374,10 +375,9 @@ const Header = () => {
                       <Link
                         href="/pricing"
                         onClick={() => setMenuOpen(false)}
-                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-3 text-sm font-semibold text-white shadow-sm"
+                        className="inline-flex items-center justify-center bg-primary px-4 py-3 text-[12px] font-medium uppercase tracking-[0.16em] text-white"
                       >
-                        <HiSparkles className="h-4 w-4" />
-                        Upgrade to Pro
+                        Upgrade
                       </Link>
                     )}
                     <button
@@ -386,7 +386,7 @@ const Header = () => {
                         void handleLogout();
                         setMenuOpen(false);
                       }}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+                      className="inline-flex items-center justify-center gap-2 border border-primary/20 px-4 py-3 text-[12px] font-medium uppercase tracking-[0.16em] text-slate-700"
                     >
                       <FiLogOut className="h-4 w-4" />
                       Log out
