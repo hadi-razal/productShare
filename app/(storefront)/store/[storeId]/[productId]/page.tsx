@@ -76,6 +76,8 @@ export default async function Page({ params }: ProductRouteProps) {
       storeId={storeId}
       initialProduct={storefrontProduct.product}
       initialUserId={storefrontProduct.store.id}
+      storeName={storefrontProduct.store.name}
+      storeWhatsapp={storefrontProduct.store.whatsappNumber}
     />
   );
 }

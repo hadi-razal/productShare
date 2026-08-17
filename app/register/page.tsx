@@ -1,17 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  fetchSignInMethodsForEmail,
-  onAuthStateChanged,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut,
-} from "firebase/auth";
-import { setDoc, doc, getDoc } from "firebase/firestore";
 import Link from "next/link";
-import { auth, db } from "@/lib/firebase";
+import {
+  authErrorMessage,
+  ensureStoreForUser,
+  onAuthChange,
+  signInWithGoogle,
+  signUpWithEmail,
+  usernameFromIdentity,
+} from "@/lib/auth";
+import { createStore, getStoreByEmail } from "@/lib/db";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FiEye, FiEyeOff } from "react-icons/fi";
@@ -30,11 +29,11 @@ const RegisterPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-  const googleProvider = new GoogleAuthProvider();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthChange(async (user) => {
       if (user && !showOtpStep) {
+        await ensureStoreForUser(user);
         router.push("/store");
       }
     });
@@ -51,16 +50,13 @@ const RegisterPage: React.FC = () => {
 
   const checkExistingUser = async (userEmail: string) => {
     try {
-      const methods = await fetchSignInMethodsForEmail(
-        auth,
-        userEmail.trim().toLowerCase(),
-      );
-      if (methods.length > 0) {
+      const existing = await getStoreByEmail(userEmail.trim().toLowerCase());
+      if (existing) {
         redirectToLogin(userEmail, true);
         return true;
       }
     } catch {
-      // Continue if email enumeration protection blocks lookup
+      // Continue if lookup fails
     }
     return false;
   };
@@ -133,41 +129,21 @@ const RegisterPage: React.FC = () => {
       if (exists) return;
 
       const normalizedEmail = email.trim().toLowerCase();
-
-      const credential = await createUserWithEmailAndPassword(
-        auth,
-        normalizedEmail,
-        password,
-      );
-
-      const rawUsername = email.split("@")[0] || "user";
-      const safeUsername = rawUsername
-        .replace(/[^a-zA-Z0-9]/g, "")
-        .toLowerCase();
-      const finalUsername = safeUsername + Math.floor(Math.random() * 1000);
-
-      await setDoc(doc(db, "users", credential.user.uid), {
-        uid: credential.user.uid,
-        username: finalUsername,
+      const user = await signUpWithEmail(normalizedEmail, password);
+      await createStore(user.uid, {
+        username: usernameFromIdentity(normalizedEmail),
         name: email.split("@")[0],
         email: normalizedEmail,
         premiumUser: false,
-        createdAt: new Date().toISOString(),
       });
 
-      // Keep session active — createUser already signs the user in.
-      // Forcing signOut here causes auth/invalid-credential on immediate re-login.
       redirectToLogin(normalizedEmail);
     } catch (err: unknown) {
-      const firebaseError = err as { code?: string; message?: string };
-
-      if (firebaseError.code === "auth/email-already-in-use") {
+      const message = authErrorMessage(err, "Registration failed. Please try again.");
+      if (message.toLowerCase().includes("already")) {
         redirectToLogin(email, true);
         return;
       }
-
-      const message =
-        firebaseError.message || "Registration failed. Please try again.";
       setError(message);
     } finally {
       setLoading(false);
@@ -179,37 +155,9 @@ const RegisterPage: React.FC = () => {
     setError("");
 
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-
-      const existingUser = await getDoc(doc(db, "users", user.uid));
-      if (existingUser.exists()) {
-        await signOut(auth);
-        router.push("/login");
-        return;
-      }
-
-      const rawUsername = user.email?.split("@")[0] || "user";
-      const safeUsername = rawUsername
-        .replace(/[^a-zA-Z0-9]/g, "")
-        .toLowerCase();
-      const finalUsername = safeUsername + Math.floor(Math.random() * 1000);
-
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        username: finalUsername,
-        name: user.displayName,
-        email: user.email,
-        premiumUser: false,
-        createdAt: new Date().toISOString(),
-      });
+      await signInWithGoogle();
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Google sign-in failed. Please try again.";
-      setError(message);
-    } finally {
+      setError(authErrorMessage(err, "Google sign-in failed. Please try again."));
       setLoading(false);
     }
   };

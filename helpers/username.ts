@@ -1,5 +1,4 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { isUsernameTaken } from "@/lib/db";
 
 export const USERNAME_REGEX = /^[a-z0-9]{3,30}$/;
 
@@ -13,15 +12,6 @@ export const isUsernameAvailable = async (
   username: string,
   excludeUserId?: string
 ): Promise<boolean> => {
-  const snapshot = await getDocs(
-    query(collection(db, "users"), where("username", "==", username))
-  );
-
-  if (snapshot.empty) return true;
-
-  return (
-    !!excludeUserId &&
-    snapshot.docs.length === 1 &&
-    snapshot.docs[0].id === excludeUserId
-  );
+  const taken = await isUsernameTaken(username, excludeUserId);
+  return !taken;
 };

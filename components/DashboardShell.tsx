@@ -2,6 +2,7 @@
 
 import React, { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import type { IconType } from "react-icons";
 import {
@@ -19,9 +20,8 @@ import {
   FiStar,
   FiTag,
 } from "react-icons/fi";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { getUsername } from "@/helpers/getUsername";
+import { getStoreById } from "@/lib/db";
+import { onAuthChange, signOutUser } from "@/lib/auth";
 
 const navigation: {
   name: string;
@@ -29,9 +29,10 @@ const navigation: {
   href: string;
   icon: IconType;
   exact?: boolean;
+  aliases?: string[];
 }[] = [
   { name: "Home", shortName: "Home", href: "/store", icon: FiHome, exact: true },
-  { name: "Products", shortName: "Products", href: "/store/add-product", icon: FiTag },
+  { name: "Products", shortName: "Products", href: "/store/products", icon: FiTag, aliases: ["/store/add-product"] },
   { name: "Reviews", shortName: "Reviews", href: "/store/reviews", icon: FiStar },
   { name: "Store settings", shortName: "Settings", href: "/store/settings", icon: FiSettings },
 ];
@@ -40,6 +41,10 @@ const pageMeta: Record<string, { title: string; subtitle: string }> = {
   "/store/add-product": {
     title: "Add a product",
     subtitle: "Create a polished listing for your storefront.",
+  },
+  "/store/products": {
+    title: "Products",
+    subtitle: "Manage your catalog, stock, and listings.",
   },
   "/store/reviews": {
     title: "Customer reviews",
@@ -56,6 +61,15 @@ const getPageMeta = (pathname: string) => {
   return match?.[1] ?? { title: "Dashboard", subtitle: "Your store at a glance." };
 };
 
+const isNavActive = (
+  item: (typeof navigation)[number],
+  pathname: string,
+) => {
+  if (item.exact) return pathname === item.href;
+  if (pathname.startsWith(item.href)) return true;
+  return (item.aliases ?? []).some((alias) => pathname.startsWith(alias));
+};
+
 const formatStoreName = (value: string) =>
   value
     .replace(/[-_]+/g, " ")
@@ -67,6 +81,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const [mobileAccountOpen, setMobileAccountOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [storeName, setStoreName] = useState("My Store");
+  const [shopName, setShopName] = useState("My Store");
   const [dateLabel, setDateLabel] = useState("Today");
   const [greeting, setGreeting] = useState("Welcome back");
   const accountRef = useRef<HTMLDivElement>(null);
@@ -91,14 +106,22 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       new URLSearchParams(window.location.search).get("preview") === "dashboard";
     if (localPreview) {
       setStoreName("Nira Home");
+      setShopName("Nira Home");
       return;
     }
 
-    const unsub = onAuthStateChanged(auth, async (user) => {
+    const unsub = onAuthChange(async (user) => {
       if (!user) return;
-      const username = await getUsername(user.uid);
-      const fallback = user.displayName || user.email?.split("@")[0];
-      setStoreName(formatStoreName(username || fallback || "My Store"));
+      const fallback = formatStoreName(user.displayName || user.email?.split("@")[0] || "My Store");
+      try {
+        const store = await getStoreById(user.uid);
+        const formattedUsername = formatStoreName(store?.username || fallback);
+        setStoreName(formattedUsername);
+        setShopName(String(store?.name || "").trim() || formattedUsername);
+      } catch {
+        setStoreName(fallback);
+        setShopName(fallback);
+      }
     });
     return () => unsub();
   }, []);
@@ -135,14 +158,14 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   );
 
   const handleSignOut = async () => {
-    await signOut(auth);
+    await signOutUser();
     window.location.href = "/login";
   };
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const input = event.currentTarget.elements.namedItem("dashboard-search") as HTMLInputElement;
-    if (input.value.trim()) window.location.href = "/store/add-product";
+    if (input.value.trim()) window.location.href = "/store/products";
   };
 
   const { title: pageTitle, subtitle: pageSubtitle } = getPageMeta(pathname);
@@ -150,7 +173,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
   const navItems = () =>
     navigation.map((item) => {
-      const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+      const active = isNavActive(item, pathname);
       return (
         <Link
           key={item.name}
@@ -171,8 +194,14 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       <aside className="ds-sidebar" aria-label="Dashboard navigation">
         <div className="ds-brand-block">
           <Link href="/store" className="ds-brand-link" aria-label="ProductShare dashboard">
-            <span className="ds-brand-icon"><FiTag /></span>
-            <span className="ds-brand-wordmark">ProductShare</span>
+            <Image
+              src="/productShareLV-cropped.svg"
+              alt="ProductShare"
+              width={124}
+              height={48}
+              priority
+              className="ds-brand-logo"
+            />
           </Link>
           <div className="ds-store-identity">
             <span className="ds-avatar">{initials || "PS"}</span>
@@ -218,7 +247,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       <div className="ds-main">
         <header className="ds-desktop-topbar">
           <div className="ds-topbar-heading">
-            <h1>{isHome ? `${greeting}, ${storeName.split(" ")[0]}` : pageTitle}</h1>
+            <h1>{isHome ? `${greeting}, ${shopName.split(" ")[0]}` : shopName}</h1>
             <p>{isHome ? dateLabel : pageSubtitle}</p>
           </div>
           <div className="ds-topbar-actions">
@@ -291,7 +320,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
       <nav className="ds-bottombar" aria-label="Quick navigation">
         {navigation.map((item) => {
-          const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+          const active = isNavActive(item, pathname);
           return (
             <Link key={item.name} href={item.href} className={`ds-tab ${active ? "active" : ""}`} aria-current={active ? "page" : undefined}>
               <item.icon className="ds-tab-icon" />

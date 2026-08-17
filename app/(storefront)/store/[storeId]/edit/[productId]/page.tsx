@@ -2,10 +2,9 @@
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { FiChevronLeft } from "react-icons/fi";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getProduct, updateProduct } from "@/lib/db";
+import { uploadPublicFile } from "@/lib/storage";
 import { useParams, useRouter } from "next/navigation";
-import { db, storage } from "@/lib/firebase";
 import { getUserId } from "@/helpers/getUserId";
 import { ProductType } from "@/type";
 
@@ -94,9 +93,8 @@ const EditProduct = () => {
       try {
         const userId = await getUserId(storeId as string);
         if (!userId || !productId) return;
-        const productSnap = await getDoc(doc(db, "users", userId, "products", productId as string));
-        if (productSnap.exists()) {
-          const data = productSnap.data() as ProductType;
+        const data = await getProduct(userId, productId as string);
+        if (data) {
           setProductData(data);
           setPreviewImages(data.images || []);
         }
@@ -144,12 +142,10 @@ const EditProduct = () => {
     setPreviewImages((prev) => [...prev, ...newFiles.map(URL.createObjectURL)]);
   };
 
-  const uploadImagesToFirebase = async () => {
+  const uploadImages = async () => {
     const urls: string[] = [];
     for (const file of imageFiles) {
-      const storageRef = ref(storage, `products/${file.name}`);
-      await uploadBytes(storageRef, file);
-      urls.push(await getDownloadURL(storageRef));
+      urls.push(await uploadPublicFile(`products/${Date.now()}_${file.name}`, file));
     }
     return urls;
   };
@@ -166,9 +162,9 @@ const EditProduct = () => {
     try {
       const userId = await getUserId(storeId as string);
       if (!userId) return;
-      const imageUrls = await uploadImagesToFirebase();
+      const imageUrls = await uploadImages();
       const updatedData = { ...productData, images: [...productData.images, ...imageUrls] };
-      await updateDoc(doc(db, "users", userId, "products", productId as string), updatedData);
+      await updateProduct(userId, productId as string, updatedData);
       router.push(`/store/${storeId}`);
     } catch (error) {
       console.error("Error updating product:", error);

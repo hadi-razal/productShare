@@ -17,8 +17,7 @@ import {
 import Marquee from "react-fast-marquee";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { onAuthChange } from "@/lib/auth";
 import HeroSection from "./HeroSection";
 import PricingSection from "./PricingSection";
 import FaqSection from "./FaqSection";
@@ -169,7 +168,7 @@ const Home = () => {
   const [isAuthResolved, setIsAuthResolved] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthChange((user) => {
       if (user) {
         router.replace("/store");
         return;

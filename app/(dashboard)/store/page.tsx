@@ -4,8 +4,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { onAuthStateChanged } from "firebase/auth";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { onAuthChange } from "@/lib/auth";
+import { getStoreById, listProductsByStore } from "@/lib/db";
 import {
   Bar,
   BarChart,
@@ -34,7 +34,6 @@ import {
   FiTrendingUp,
 } from "react-icons/fi";
 import toast from "react-hot-toast";
-import { auth, db } from "@/lib/firebase";
 import { getUsername } from "@/helpers/getUsername";
 import type { ProductType } from "@/type";
 
@@ -267,7 +266,7 @@ export default function StoreDashboard() {
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthChange((user) => {
       if (!user) {
         router.push("/login");
         return;
@@ -281,22 +280,18 @@ export default function StoreDashboard() {
   const fetchData = async (uid: string) => {
     try {
       setLoading(true);
-      const [uname, productSnapshot, userSnapshot] = await Promise.all([
+      const [uname, fetchedProducts, store] = await Promise.all([
         getUsername(uid),
-        getDocs(collection(db, "users", uid, "products")),
-        getDoc(doc(db, "users", uid)),
+        listProductsByStore(uid),
+        getStoreById(uid),
       ]);
-      const userData = userSnapshot.exists() ? userSnapshot.data() : {};
-      const fetchedProducts = productSnapshot.docs.map((product) => ({
-        id: product.id,
-        ...(product.data() as Omit<DashboardProduct, "id">),
-      }));
+      const userData = store;
       const sortedProducts = [...fetchedProducts].sort((a, b) => Number(b.views || 0) - Number(a.views || 0));
       const derivedLowStock = fetchedProducts.filter((product) => {
         const count = stockCount(product);
         return product.isInStock === false || (count !== null && count <= 3);
       }).length;
-      const readinessFields = [uname, userData.name, userData.whatsappNumber, userData.logoImage];
+      const readinessFields = [uname, userData?.name, userData?.whatsappNumber, userData?.logoImage];
       const readinessScore = 40 + readinessFields.filter(Boolean).length * 15;
 
       setUsername(uname);
@@ -304,10 +299,10 @@ export default function StoreDashboard() {
       setReadiness(Math.min(100, readinessScore));
       setPreviewChart(null);
       setStats({
-        products: productSnapshot.size,
-        visitors: Number(userData.visitCount || 0),
-        lowStockItems: Number(userData.lowStockItems ?? derivedLowStock),
-        visitorData: Array.isArray(userData.visitorData) ? userData.visitorData : [],
+        products: fetchedProducts.length,
+        visitors: Number(userData?.visitCount || 0),
+        lowStockItems: Number(userData?.lowStockItems ?? derivedLowStock),
+        visitorData: Array.isArray(userData?.visitorData) ? userData.visitorData : [],
       });
     } catch (error) {
       console.error("Dashboard error:", error);
@@ -381,7 +376,7 @@ export default function StoreDashboard() {
           <div className="ds-panel-header">
             <div><h2>Your products</h2><p>Performance and stock at a glance</p></div>
             {username ? (
-              <Link href={`/store/${username}`} target="_blank">View all <FiArrowRight /></Link>
+              <Link href="/store/products">View all <FiArrowRight /></Link>
             ) : (
               <Link href="/store/add-product">Add product <FiArrowRight /></Link>
             )}
@@ -401,7 +396,7 @@ export default function StoreDashboard() {
                 const content = (
                   <>
                     <span className="ds-product-cell">
-                      <Image src={image} alt="" width={56} height={56} sizes="56px" />
+                      <Image src={image} alt="" width={56} height={56} sizes="56px" unoptimized={image.startsWith("http")} />
                       <span><strong>{product.name || "Untitled product"}</strong><small>{product.category || "Product"}</small></span>
                     </span>
                     <span className="ds-product-price">{priceLabel(product)}</span>

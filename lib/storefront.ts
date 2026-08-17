@@ -1,13 +1,12 @@
 import { cache } from "react";
 import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
+  getProduct,
+  getStoreByUsername,
+  listProductsByStore,
+  listStores,
+  type ProductRecord,
+  type StoreRecord,
+} from "@/lib/db";
 import { ProductType, userType } from "@/type";
 
 export interface StorefrontStore extends userType {
@@ -21,38 +20,12 @@ export interface StorefrontProduct extends ProductType {
   id: string;
 }
 
-const mapProduct = (
-  productId: string,
-  data: Partial<ProductType>
-): StorefrontProduct => ({
-  id: productId,
-  name: data.name ?? "",
-  description: data.description ?? "",
-  category: data.category ?? "",
-  colors: data.colors ?? [],
-  sizes: data.sizes ?? [],
-  images: data.images ?? [],
-  regularPrice: data.regularPrice ?? null,
-  discountPrice: data.discountPrice ?? null,
-  createdAt:
-    typeof data.createdAt?.toMillis === "function"
-      ? data.createdAt.toMillis()
-      : data.createdAt ?? null,
-  video: data.video,
-  isNew: data.isNew ?? false,
-  isInStock: data.isInStock ?? false,
-  isBestSelling: data.isBestSelling ?? false,
-  views: data.views ?? 0,
-  rating: data.rating ?? 0,
-  totalReviews: data.totalReviews ?? 0,
-  ratingCount: data.ratingCount ?? 0,
-  availableStock: data.availableStock,
-  tags: data.tags ?? "",
-  isHidden: data.isHidden ?? false,
-  isFeatured: data.isFeatured ?? false,
-  isMostSelling: data.isMostSelling ?? false,
-  isFreeDelivery: data.isFreeDelivery ?? false,
+const toStorefrontStore = (store: StoreRecord): StorefrontStore => ({
+  ...store,
+  id: store.id,
 });
+
+const toStorefrontProduct = (product: ProductRecord): StorefrontProduct => product;
 
 export const getStorefrontStore = cache(
   async (username: string): Promise<StorefrontStore | null> => {
@@ -60,20 +33,8 @@ export const getStorefrontStore = cache(
       return null;
     }
 
-    const storeQuery = query(
-      collection(db, "users"),
-      where("username", "==", username)
-    );
-    const storeSnapshot = await getDocs(storeQuery);
-
-    if (storeSnapshot.empty) {
-      return null;
-    }
-
-    return {
-      id: storeSnapshot.docs[0].id,
-      ...(storeSnapshot.docs[0].data() as userType),
-    };
+    const store = await getStoreByUsername(username);
+    return store ? toStorefrontStore(store) : null;
   }
 );
 
@@ -85,13 +46,8 @@ export const getStorefrontProducts = cache(
       return [];
     }
 
-    const productsSnapshot = await getDocs(
-      collection(db, "users", store.id, "products")
-    );
-
-    return productsSnapshot.docs.map((productDoc) =>
-      mapProduct(productDoc.id, productDoc.data() as Partial<ProductType>)
-    );
+    const products = await listProductsByStore(store.id);
+    return products.map(toStorefrontProduct);
   }
 );
 
@@ -106,19 +62,15 @@ export const getStorefrontProduct = cache(
       return null;
     }
 
-    const productRef = doc(db, "users", store.id, "products", productId);
-    const productSnapshot = await getDoc(productRef);
+    const product = await getProduct(store.id, productId);
 
-    if (!productSnapshot.exists()) {
+    if (!product) {
       return null;
     }
 
     return {
       store,
-      product: mapProduct(
-        productSnapshot.id,
-        productSnapshot.data() as Partial<ProductType>
-      ),
+      product: toStorefrontProduct(product),
     };
   }
 );
@@ -130,32 +82,21 @@ export interface PublicStorefrontEntry {
 
 export const getPublicStorefrontEntries = cache(
   async (): Promise<PublicStorefrontEntry[]> => {
-    const storesSnapshot = await getDocs(collection(db, "users"));
+    const stores = await listStores();
 
     const entries = await Promise.all(
-      storesSnapshot.docs.map(async (storeDoc) => {
-        const storeData = storeDoc.data() as Partial<StorefrontStore>;
-
-        if (!storeData.username) {
+      stores.map(async (store) => {
+        if (!store.username) {
           return null;
         }
 
-        const productsSnapshot = await getDocs(
-          collection(db, "users", storeDoc.id, "products")
+        const products = (await listProductsByStore(store.id)).filter(
+          (product) => !product.isHidden && product.name,
         );
 
-        const products = productsSnapshot.docs
-          .map((productDoc) =>
-            mapProduct(productDoc.id, productDoc.data() as Partial<ProductType>)
-          )
-          .filter((product) => !product.isHidden && product.name);
-
         return {
-          store: {
-            id: storeDoc.id,
-            ...(storeData as StorefrontStore),
-          },
-          products,
+          store: toStorefrontStore(store),
+          products: products.map(toStorefrontProduct),
         };
       })
     );

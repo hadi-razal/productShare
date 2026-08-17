@@ -11,10 +11,10 @@ interface StoreSettingsPreviewProps {
 }
 
 const PLACEHOLDER_PRODUCTS = [
-  { name: "Sample Product", price: "₹499" },
-  { name: "Best Seller", price: "₹899" },
-  { name: "New Arrival", price: "₹649" },
-  { name: "Featured Item", price: "₹1,299" },
+  { name: "Sample Product", price: "RS. 499.00" },
+  { name: "Best Seller", price: "RS. 899.00" },
+  { name: "New Arrival", price: "RS. 649.00" },
+  { name: "Featured Item", price: "RS. 1,299.00" },
 ];
 
 const StoreSettingsPreview = ({
@@ -100,21 +100,15 @@ const StoreSettingsPreview = ({
           </div>
 
           {/* Product grid */}
-          <div className="p-3 grid grid-cols-2 gap-2">
+          <div className="p-3 grid grid-cols-2 gap-x-2 gap-y-4">
             {PLACEHOLDER_PRODUCTS.map((product) => (
-              <div
-                key={product.name}
-                className="rounded-lg border border-gray-100 bg-white overflow-hidden"
-              >
-                <div className="h-16 bg-gradient-to-br from-gray-100 to-gray-200" />
-                <div className="p-2">
-                  <p className="text-[10px] font-medium text-gray-800 truncate">
+              <div key={product.name}>
+                <div className="aspect-square bg-neutral-100" />
+                <div className="pt-1.5">
+                  <p className="text-[10px] font-bold uppercase tracking-tight text-black truncate">
                     {product.name}
                   </p>
-                  <p
-                    className="text-[10px] font-bold mt-0.5"
-                    style={{ color: themeColor }}
-                  >
+                  <p className="text-[10px] text-black mt-0.5">
                     {product.price}
                   </p>
                 </div>

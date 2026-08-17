@@ -1,18 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import {
-  collection,
-  doc,
-  getDocs,
-  increment,
-  updateDoc,
-} from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthChange } from "@/lib/auth";
 import { FiSearch, FiX, FiLayout, FiPlusSquare, FiSettings, FiMessageSquare, FiChevronLeft, FiChevronRight, FiExternalLink } from "react-icons/fi";
 import Link from "next/link";
 import { getUserId } from "@/helpers/getUserId";
-import { auth, db } from "@/lib/firebase";
+import { incrementStoreVisits, listProductsByStore } from "@/lib/db";
 import ProductCard from "@/components/ProductCard";
 import { ProductType } from "@/type";
 
@@ -68,7 +61,7 @@ const StoreProducts = ({
   }, [storeOwnerId]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthChange((user) => {
       setIsStoreOwner(!!(user && resolvedStoreOwnerId && user.uid === resolvedStoreOwnerId));
     });
 
@@ -86,7 +79,7 @@ const StoreProducts = ({
         return;
       }
 
-      await updateDoc(doc(db, "users", userID), { visitCount: increment(1) });
+      await incrementStoreVisits(userID);
       sessionStorage.setItem(`MyShop_${storeId}_View`, "true");
     } catch (error) {
       console.error("Error counting store visit:", error);
@@ -115,32 +108,7 @@ const StoreProducts = ({
 
       void countStoreView(userID);
 
-      const productsRef = collection(db, "users", userID, "products");
-      const querySnapshot = await getDocs(productsRef);
-
-      const productList: ProductType[] = querySnapshot.docs.map((productDoc) => {
-        const data = productDoc.data();
-        return {
-          id: productDoc.id,
-          name: data.name,
-          description: data.description || "",
-          colors: data.colors || [],
-          category: data.category || "",
-          images: data.images || [],
-          regularPrice: data.regularPrice,
-          discountPrice: data.discountPrice,
-          isNew: data.isNew || false,
-          isInStock: data.isInStock || false,
-          rating: data.rating || 0,
-          ratingCount: data.ratingCount || 0,
-          sizes: data.sizes || [],
-          isMostSelling: data.isMostSelling || false,
-          createdAt: getCreatedAtValue(data.createdAt),
-          tags: data.tags || "",
-          isFeatured: data.isFeatured || false,
-          isHidden: data.isHidden || false,
-        };
-      });
+      const productList = await listProductsByStore(userID);
 
       setProducts(productList);
       setFilteredProducts(productList);
@@ -243,40 +211,42 @@ const StoreProducts = ({
   const handleLoadMore = () => setVisibleProducts((prev) => prev + 20);
 
   return (
-    <div className="container relative min-h-screen max-w-7xl mx-auto pb-8 pt-5 px-4">
-      <div className="relative flex items-center w-full pb-3">
+    <div className="relative min-h-screen w-full bg-white pb-16 pt-24">
+      <div className="mx-auto max-w-[1440px] px-3 sm:px-5">
+      <div className="relative mb-5 flex items-center w-full">
         <input
           type="text"
           value={searchInput}
           onChange={handleSearchInputChange}
           onKeyDown={handleKeyPress}
-          placeholder="Search products or categories..."
-          className="w-full px-4 py-3 pr-12 text-sm border rounded-lg border-gray-200 focus:outline-none placeholder:text-gray-400"
+          placeholder="Search products..."
+          className="w-full border-0 border-b border-neutral-200 bg-transparent px-0 py-3 pr-16 text-sm text-black placeholder:text-neutral-400 focus:border-black focus:outline-none focus:ring-0"
         />
         <div className="absolute right-0 flex items-center justify-center h-full space-x-1">
           {searchInput && (
             <button
               onClick={clearSearchInput}
-              className="p-2 text-gray-400 hover:text-gray-600"
+              className="p-2 text-neutral-400 hover:text-black"
             >
               <FiX size={18} />
             </button>
           )}
           <button
             onClick={handleSearchClick}
-            className="rounded-md bg-primary px-4 py-3 text-white"
+            className="p-2 text-neutral-500 hover:text-black"
+            aria-label="Search products"
           >
             <FiSearch size={18} />
           </button>
         </div>
       </div>
 
-      <div className="flex flex-row items-center justify-end gap-2 pb-2">
+      <div className="flex flex-row items-center justify-end gap-2 pb-6">
         <select
           name="sort"
           value={sortOption}
           onChange={handleSortChange}
-          className="px-4 py-2 rounded-md border border-gray-200"
+          className="border-0 bg-transparent px-0 py-1 text-sm text-black focus:outline-none focus:ring-0"
         >
           <option value="" disabled>
             Sort by
@@ -287,7 +257,7 @@ const StoreProducts = ({
         </select>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-3 gap-y-8 md:gap-x-4 md:gap-y-10">
         {isLoading
           ? Array.from({ length: 8 }).map((_, idx) => (
               <ProductCard
@@ -309,16 +279,16 @@ const StoreProducts = ({
       </div>
 
       {visibleProducts < filteredProducts.length && (
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-12">
           <button
             onClick={handleLoadMore}
-            className="px-6 py-2.5 text-white font-medium rounded-xl transition-all hover:-translate-y-0.5"
-            style={{ background: 'linear-gradient(135deg, #0f172a, #1e1b4b)', boxShadow: '0 4px 14px rgba(15,23,42,0.25)' }}
+            className="border-b border-black pb-0.5 text-sm font-medium uppercase tracking-wide text-black"
           >
             Load More
           </button>
         </div>
       )}
+      </div>
 
       {/* ── Admin Slide-in Panel ── */}
       {isStoreOwner && (

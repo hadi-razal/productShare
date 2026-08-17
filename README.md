@@ -13,7 +13,7 @@ one responsive dashboard.
 - **Customer reviews** — collect and display customer feedback
 - **Payments** — create and manage Razorpay orders and subscriptions
 - **Email delivery** — send transactional email through an SMTP provider
-- **Secure authentication** — manage user accounts and sessions with Firebase
+- **Secure authentication** — manage user accounts and sessions with Supabase
 - **Responsive interface** — provide a consistent experience across devices
 
 ## Tech stack
@@ -21,7 +21,7 @@ one responsive dashboard.
 - [Next.js 15](https://nextjs.org/) and [React 18](https://react.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
-- [Firebase](https://firebase.google.com/) for Authentication, Firestore, and Storage
+- [Supabase](https://supabase.com/) for Authentication, Database, and Storage
 - [Razorpay](https://razorpay.com/) for payments
 - [Framer Motion](https://www.framer.com/motion/) for animations
 - [Recharts](https://recharts.org/) and Chart.js for analytics
@@ -33,7 +33,7 @@ one responsive dashboard.
 
 - [Node.js](https://nodejs.org/) 20 or later
 - npm
-- A Firebase project
+- A Supabase project
 
 Razorpay and SMTP accounts are also required to use payments and email.
 
@@ -55,13 +55,9 @@ Razorpay and SMTP accounts are also required to use payments and email.
 3. Create a `.env` file in the project root:
 
    ```env
-   # Firebase
-   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+   # Supabase
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
    # Razorpay
    NEXT_PUBLIC_RAZORPAY_KEY_ID=your_public_key_id

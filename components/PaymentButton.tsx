@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { FiCheck, FiX, FiZap } from "react-icons/fi";
-import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getStoreById, updateStore } from "@/lib/db";
 import toast from "react-hot-toast";
 
 // -----------------------------
@@ -157,10 +156,10 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
       handler: async (response: any) => {
         toast.success("Subscription started 🎉");
         // ✅ Save subscription to Firestore
-        await updateDoc(doc(db, "users", userId), {
+        await updateStore(userId, {
           isPremiumUser: true,
           subscriptionId: subscription.id,
-          subscribedAt: serverTimestamp(),
+          subscribedAt: new Date().toISOString(),
         });
         setIsOpen(false);
       },
@@ -180,9 +179,8 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
     }
     const fetchUser = async () => {
       try {
-        const userDoc = await getDoc(doc(db, "users", userId));
-        const userData = userDoc.exists() ? userDoc.data() : { isPremiumUser: false };
-        setIsPremiumUser(userData.isPremiumUser);
+        const userData = (await getStoreById(userId)) ?? { isPremiumUser: false };
+        setIsPremiumUser(Boolean(userData.isPremiumUser));
       } catch (error) {
         console.error("Error fetching user data: ", error);
       } finally {

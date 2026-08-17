@@ -1,11 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  confirmPasswordReset,
-  verifyPasswordResetCode,
-} from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { authErrorMessage, updatePassword } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -14,21 +11,8 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 const inputClass =
   "w-full px-4 py-3 bg-white border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
 
-const getResetErrorMessage = (code?: string) => {
-  switch (code) {
-    case "auth/expired-action-code":
-      return "This reset link has expired. Please request a new one.";
-    case "auth/invalid-action-code":
-      return "This reset link is invalid. Please request a new one.";
-    case "auth/weak-password":
-      return "Password must be at least 6 characters.";
-    default:
-      return "Failed to reset password. Please try again.";
-  }
-};
-
 const ResetPasswordPage: React.FC = () => {
-  const [oobCode, setOobCode] = useState<string | null>(null);
+  const [canReset, setCanReset] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -41,30 +25,16 @@ const ResetPasswordPage: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const init = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get("oobCode");
-      const mode = params.get("mode");
-
-      if (mode !== "resetPassword" || !code) {
-        setError("Invalid or missing reset link. Please request a new one.");
-        setVerifying(false);
-        return;
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" || session?.user) {
+        setCanReset(true);
+        setEmail(session?.user.email || "");
+        setError(null);
       }
+      setVerifying(false);
+    });
 
-      try {
-        const userEmail = await verifyPasswordResetCode(auth, code);
-        setOobCode(code);
-        setEmail(userEmail);
-      } catch (err: unknown) {
-        const firebaseError = err as { code?: string };
-        setError(getResetErrorMessage(firebaseError.code));
-      } finally {
-        setVerifying(false);
-      }
-    };
-
-    void init();
+    return () => data.subscription.unsubscribe();
   }, []);
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -72,7 +42,7 @@ const ResetPasswordPage: React.FC = () => {
     setError(null);
     setSuccess(null);
 
-    if (!oobCode) {
+    if (!canReset) {
       setError("Invalid reset link. Please request a new one.");
       return;
     }
@@ -90,13 +60,12 @@ const ResetPasswordPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await confirmPasswordReset(auth, oobCode, password);
+      await updatePassword(password);
       setSuccess("Password reset successfully! Redirecting to login...");
       setTimeout(() => router.push("/login"), 2000);
     } catch (err: unknown) {
-      const firebaseError = err as { code?: string; message?: string };
-      console.error("Reset password error:", firebaseError.code, firebaseError.message);
-      setError(getResetErrorMessage(firebaseError.code));
+      console.error("Reset password error:", err);
+      setError(authErrorMessage(err, "Failed to reset password. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -125,7 +94,7 @@ const ResetPasswordPage: React.FC = () => {
             </p>
           </div>
 
-          {!verifying && oobCode && !success && (
+          {!verifying && canReset && !success && (
             <form
               onSubmit={handleResetPassword}
               className="flex flex-col gap-2 w-full bg-white rounded-xl px-4 py-8 mt-4"
@@ -195,7 +164,7 @@ const ResetPasswordPage: React.FC = () => {
           {error && (
             <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md text-sm text-center w-full">
               {error}
-              {!oobCode && (
+              {!canReset && (
                 <Link
                   href="/forgot-password"
                   className="block mt-2 text-primary hover:underline"

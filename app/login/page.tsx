@@ -2,42 +2,20 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-} from "firebase/auth";
-import { auth, db } from "@/lib/firebase";
+  authErrorMessage,
+  ensureStoreForUser,
+  onAuthChange,
+  signInWithEmail,
+  signInWithGoogle,
+} from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import Link from "next/link";
 import Image from "next/image";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const inputClass =
   "w-full px-4 py-3 bg-white border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
-
-const getAuthErrorMessage = (code?: string) => {
-  switch (code) {
-    case "auth/invalid-credential":
-    case "auth/wrong-password":
-    case "auth/user-not-found":
-      return "Invalid email or password. Please try again.";
-    case "auth/invalid-email":
-      return "Please enter a valid email address.";
-    case "auth/user-disabled":
-      return "This account has been disabled.";
-    case "auth/too-many-requests":
-      return "Too many attempts. Please try again later.";
-    case "auth/account-exists-with-different-credential":
-      return "This email is registered with a password. Please sign in with email.";
-    case "auth/operation-not-allowed":
-      return "Email/password sign-in is not enabled. Contact support.";
-    default:
-      return "Login failed. Please try again.";
-  }
-};
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -68,9 +46,14 @@ const LoginPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+    const unsubscribe = onAuthChange(async (user) => {
+      if (!user) return;
+      try {
+        await ensureStoreForUser(user);
         router.replace("/store");
+      } catch (err) {
+        console.error("Failed to prepare store:", err);
+        setError("Signed in, but we could not open your store. Please try again.");
       }
     });
     return () => unsubscribe();
@@ -89,15 +72,10 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(
-        auth,
-        email.trim().toLowerCase(),
-        password,
-      );
+      await signInWithEmail(email.trim().toLowerCase(), password);
     } catch (err: unknown) {
-      const firebaseError = err as { code?: string; message?: string };
-      console.error("Email login failed:", firebaseError.code, firebaseError.message);
-      setError(getAuthErrorMessage(firebaseError.code));
+      console.error("Email login failed:", err);
+      setError(authErrorMessage(err, "Login failed. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -109,34 +87,10 @@ const LoginPage: React.FC = () => {
     setSuccess(null);
 
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      const userDocRef = doc(db, "users", user.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      if (!userDoc.exists()) {
-        const rawUsername = user.email?.split("@")[0] || "user";
-        const safeUsername = rawUsername
-          .replace(/[^a-zA-Z0-9]/g, "")
-          .toLowerCase();
-        const finalUsername = safeUsername + Math.floor(Math.random() * 1000);
-
-        await setDoc(userDocRef, {
-          uid: user.uid,
-          username: finalUsername,
-          name: user.displayName,
-          email: user.email,
-          premiumUser: false,
-          createdAt: new Date().toISOString(),
-        });
-      }
+      await signInWithGoogle();
     } catch (err: unknown) {
-      const firebaseError = err as { code?: string };
       console.error("Google login failed:", err);
-      setError(getAuthErrorMessage(firebaseError.code));
-    } finally {
+      setError(authErrorMessage(err, "Login failed. Please try again."));
       setLoading(false);
     }
   };

@@ -1,14 +1,12 @@
 "use client";
 
-import { db } from "@/lib/firebase";
 import { ProductType } from "@/type";
-import { deleteDoc, doc } from "firebase/firestore";
+import { deleteProduct } from "@/lib/db";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { FaStar } from "react-icons/fa";
 
 interface ProductCardProps {
   product?: ProductType;
@@ -18,6 +16,12 @@ interface ProductCardProps {
   isLoading?: boolean;
   refetchProducts?: () => void;
 }
+
+const formatPrice = (value: number) =>
+  `RS. ${value.toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
 
 const ProductCard = ({
   product,
@@ -53,13 +57,9 @@ const ProductCard = ({
   const discountPercentage = calculateDiscount();
   const isDiscounted = discountPercentage > 0;
 
-  const getDisplayPrice = () =>
-    isDiscounted
-      ? Number(product?.discountPrice).toLocaleString("en-IN")
-      : Number(product?.regularPrice).toLocaleString("en-IN");
-
-  const getOriginalPrice = () =>
-    Number(product?.regularPrice).toLocaleString("en-IN");
+  const displayPrice = isDiscounted
+    ? Number(product?.discountPrice)
+    : Number(product?.regularPrice);
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -74,7 +74,7 @@ const ProductCard = ({
         return;
       }
 
-      await deleteDoc(doc(db, "users", storeOwnerId, "products", product.id));
+      await deleteProduct(storeOwnerId, product.id);
       refetchProducts?.();
       toast.success("Product deleted successfully!");
       setShowDeleteModal(false);
@@ -86,15 +86,11 @@ const ProductCard = ({
 
   if (isLoading) {
     return (
-      <div className="relative w-full rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-        <div className="w-full h-48 bg-gray-200 animate-pulse" />
-        <div className="p-3 space-y-2">
-          <div className="h-3.5 w-3/4 bg-gray-200 rounded-full animate-pulse" />
-          <div className="h-3 w-1/2 bg-gray-200 rounded-full animate-pulse" />
-          <div className="flex gap-2 pt-1">
-            <div className="h-3.5 w-1/4 bg-gray-200 rounded-full animate-pulse" />
-            <div className="h-3.5 w-1/4 bg-gray-200 rounded-full animate-pulse" />
-          </div>
+      <div className="w-full">
+        <div className="aspect-square w-full bg-neutral-100 animate-pulse" />
+        <div className="mt-2.5 space-y-2">
+          <div className="h-3 w-3/4 bg-neutral-100 animate-pulse" />
+          <div className="h-3 w-1/3 bg-neutral-100 animate-pulse" />
         </div>
       </div>
     );
@@ -124,11 +120,11 @@ const ProductCard = ({
             void router.prefetch(productHref);
           }
         }}
-        className="cursor-pointer relative w-full rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+        className="cursor-pointer relative w-full bg-white"
       >
-        <div className="relative w-full h-48 bg-gray-100 rounded-t-xl overflow-hidden">
+        <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">
           {product.images?.[0] && !imgLoaded && (
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 animate-pulse" />
+            <div className="absolute inset-0 bg-neutral-100 animate-pulse" />
           )}
 
           {product.isHidden && isStoreOwner && (
@@ -141,88 +137,65 @@ const ProductCard = ({
             <Image
               src={product.images[0]}
               alt={product.name}
-              width={400}
-              height={300}
-              quality={65}
+              width={600}
+              height={600}
+              quality={70}
+              unoptimized
               loading="lazy"
               placeholder="blur"
-              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+"
-              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-              className={`w-full h-48 object-cover transition-opacity duration-300 ${
+              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PC9zdmc+"
+              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+              className={`h-full w-full object-cover transition-opacity duration-300 ${
                 imgLoaded ? "opacity-100" : "opacity-0"
               }`}
               onLoad={() => setImgLoaded(true)}
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-sm text-gray-400">
+            <div className="flex h-full items-center justify-center text-sm text-neutral-400">
               No image
             </div>
           )}
-
-          <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
-            {!product.isInStock && (
-              <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-600 text-white shadow">
-                Out of Stock
-              </span>
-            )}
-            {isDiscounted && product.isInStock && (
-              <span className="px-2 py-0.5 bg-red-600 text-white rounded-full text-[10px] font-bold shadow">
-                {Math.round(discountPercentage)}% OFF
-              </span>
-            )}
-          </div>
-
-          {product.isNew && (
-            <span className="absolute top-2 right-2 z-10 px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-500 text-white shadow">
-              New
-            </span>
-          )}
-
-          {product.isMostSelling && (
-            <span className="absolute bottom-0 right-0 z-10 px-2 py-1 text-[10px] flex items-center gap-0.5 font-bold bg-red-600 text-white rounded-tl-lg">
-              <FaStar className="text-yellow-300 w-2.5 h-2.5" /> Top Seller
-            </span>
-          )}
         </div>
 
-        <div className="p-2.5">
-          <h3 className="text-sm text-gray-800 line-clamp-2 leading-snug mb-1.5">
+        <div className="pt-2.5">
+          <h3 className="text-[13px] font-bold uppercase tracking-tight text-black leading-snug line-clamp-2">
             {product.name}
           </h3>
-          <div className="flex items-baseline gap-1.5">
-            <span
-              className={`text-sm font-semibold ${
-                isDiscounted ? "text-red-600" : "text-gray-900"
-              }`}
-            >
-              ₹{getDisplayPrice()}
+          <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2">
+            <span className="text-[13px] font-normal text-black">
+              {Number.isFinite(displayPrice) ? formatPrice(displayPrice) : "RS. 0.00"}
             </span>
             {isDiscounted && (
-              <span className="text-xs text-gray-400 line-through">
-                ₹{getOriginalPrice()}
+              <span className="text-[12px] text-neutral-400 line-through">
+                {formatPrice(Number(product.regularPrice))}
               </span>
             )}
           </div>
+          {!product.isInStock && (
+            <p className="mt-1 text-[11px] uppercase tracking-wide text-neutral-500">
+              Out of stock
+            </p>
+          )}
         </div>
 
         {isStoreOwner && (
-          <div className="flex gap-2 px-2.5 pb-2.5">
-            <button
-              onClick={handleDelete}
-              className="flex items-center justify-center gap-1 bg-red-500 hover:bg-red-600 py-1.5 px-3 w-full rounded-lg text-white text-xs font-medium transition-colors"
-            >
-              <FiTrash2 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Delete</span>
-            </button>
+          <div className="mt-2 flex gap-3">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 router.push(`/store/${storeId}/edit/${product.id}`);
               }}
-              className="flex items-center justify-center gap-1 bg-gray-500 hover:bg-gray-600 w-full py-1.5 px-3 rounded-lg text-white text-xs font-medium transition-colors"
+              className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-neutral-500 hover:text-black"
             >
-              <FiEdit2 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Edit</span>
+              <FiEdit2 className="w-3 h-3" />
+              Edit
+            </button>
+            <button
+              onClick={handleDelete}
+              className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-neutral-500 hover:text-red-600"
+            >
+              <FiTrash2 className="w-3 h-3" />
+              Delete
             </button>
           </div>
         )}

@@ -8,10 +8,9 @@ import React, {
   useRef,
 } from "react";
 import { motion } from "framer-motion";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { auth, db, storage } from "@/lib/firebase";
+import { onAuthChange } from "@/lib/auth";
+import { uploadPublicFile } from "@/lib/storage";
+import { getStoreById, updateStore } from "@/lib/db";
 import { useRouter } from "next/navigation";
 import { userType } from "@/type";
 import toast from "react-hot-toast";
@@ -40,7 +39,7 @@ const SettingsPage: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
+    const unsubscribe = onAuthChange(async (user) => {
       if (user) {
         setUserId(user.uid);
         await fetchUserData(user.uid);
@@ -54,10 +53,8 @@ const SettingsPage: React.FC = () => {
 
   const fetchUserData = async (userId: string) => {
     try {
-      const userDoc = doc(db, "users", userId);
-      const docSnap = await getDoc(userDoc);
-      if (docSnap.exists()) {
-        const data: userType = docSnap.data() as userType;
+      const data = await getStoreById(userId);
+      if (data) {
         setUsername(data.username || "");
         setOriginalUsername(data.username || "");
         setName(data.name || "");
@@ -118,14 +115,10 @@ const SettingsPage: React.FC = () => {
         try {
           const ts = new Date().toISOString().replace(/[:.]/g, "-");
           const safeName = logoImage.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-          const storageRef = ref(
-            storage,
+          updatedData.logoImage = await uploadPublicFile(
             `images/logo_${userId}_${ts}_${safeName}`,
+            logoImage,
           );
-          await uploadBytes(storageRef, logoImage, {
-            contentType: logoImage.type || "image/jpeg",
-          });
-          updatedData.logoImage = await getDownloadURL(storageRef);
         } catch (uploadError) {
           console.error("Error uploading logo:", uploadError);
           toast.error("Failed to upload logo. Please try again.");
@@ -133,7 +126,7 @@ const SettingsPage: React.FC = () => {
         }
       }
 
-      await updateDoc(doc(db, "users", userId), updatedData);
+      await updateStore(userId, updatedData);
       if (updatedData.logoImage) {
         setLogoImageUrl(updatedData.logoImage);
         setLogoImage(null);

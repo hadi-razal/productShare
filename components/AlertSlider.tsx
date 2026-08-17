@@ -3,8 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import Marquee from "react-fast-marquee";
-import { getDoc, doc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getStoreById } from "@/lib/db";
 import { useParams, usePathname } from "next/navigation";
 import { getUserId } from "@/helpers/getUserId";
 
@@ -18,10 +17,9 @@ const AlertMessageSlider = () => {
         const fetchPromoMessages = async () => {
             try {
                 const userId = await getUserId(storeId as string);
-                const userRef = doc(db, "users", userId);
-                const userDocSnap = await getDoc(userRef);
-                const user = userDocSnap.data()
-                setPromoMessage(user.additionalNotes);
+                if (!userId) return;
+                const user = await getStoreById(userId);
+                setPromoMessage(user?.additionalNotes || "");
             } catch (error) {
                 console.error("Error fetching promo messages: ", error);
             }

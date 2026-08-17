@@ -9,6 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           "/store/settings",
           "/store/add-product",
+          "/store/products",
           "/store/reviews",
           "/store/*/edit/",
           "/login",

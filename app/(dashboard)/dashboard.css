@@ -80,35 +80,14 @@
 .ds-brand-link {
   display: flex;
   align-items: center;
-  gap: 10px;
   width: fit-content;
   color: var(--ds-ink);
   text-decoration: none;
 }
 
-.ds-brand-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  color: white;
-  background: var(--ds-violet);
-  transform: rotate(-8deg);
-  flex: 0 0 auto;
-}
-
-.ds-brand-icon svg {
-  width: 18px;
-  height: 18px;
-}
-
-.ds-brand-wordmark {
-  font-size: 20px;
-  line-height: 1;
-  font-weight: 760;
-  letter-spacing: -0.045em;
+.ds-brand-logo {
+  height: 36px;
+  width: auto;
 }
 
 .ds-store-identity {
@@ -1596,6 +1575,374 @@
   font-size: 11px;
 }
 
+/* Products catalog */
+.ds-catalog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ds-catalog-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--ds-ink);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.ds-catalog-title svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ds-catalog-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ds-catalog-btn,
+.ds-catalog-btn-primary,
+.ds-catalog-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ds-catalog-btn {
+  border: 1px solid #d6d6d6;
+  background: #f7f7f7;
+  color: #303030;
+}
+
+.ds-catalog-btn:hover {
+  background: #f0f0f0;
+}
+
+.ds-catalog-btn-primary {
+  border: 1px solid #303030;
+  background: #303030;
+  color: white;
+}
+
+.ds-catalog-btn-primary:hover {
+  background: #1a1a1a;
+}
+
+.ds-catalog-btn-danger {
+  border: 1px solid #b91c1c;
+  background: #dc2626;
+  color: white;
+}
+
+.ds-catalog-btn-danger:disabled,
+.ds-catalog-menu button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ds-catalog-more {
+  position: relative;
+}
+
+.ds-catalog-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 12;
+  min-width: 180px;
+  padding: 6px;
+  border: 1px solid var(--ds-border);
+  border-radius: 10px;
+  background: white;
+  box-shadow: 0 10px 30px rgba(23, 27, 38, 0.12);
+}
+
+.ds-catalog-menu button {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #303030;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ds-catalog-menu button:hover:not(:disabled) {
+  background: #f6f6f7;
+}
+
+.ds-catalog-card {
+  overflow: hidden;
+  border: 1px solid var(--ds-border);
+  border-radius: 12px;
+  background: white;
+}
+
+.ds-catalog-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ds-border);
+}
+
+.ds-catalog-view {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.ds-catalog-view select {
+  appearance: none;
+  min-height: 32px;
+  padding: 0 28px 0 10px;
+  border: 0;
+  background: transparent;
+  color: var(--ds-ink);
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.ds-catalog-view svg {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  color: #6d7175;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.ds-catalog-search {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+  background: white;
+  color: #6d7175;
+}
+
+.ds-catalog-search svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+.ds-catalog-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 0 0 0 8px;
+  border: 0 !important;
+  background: transparent;
+  color: var(--ds-ink);
+  font-size: 13px;
+  box-shadow: none !important;
+}
+
+.ds-catalog-search input:focus {
+  outline: none;
+}
+
+.ds-catalog-columns {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: #6d7175;
+}
+
+.ds-catalog-table-wrap {
+  overflow-x: auto;
+}
+
+.ds-catalog-table {
+  min-width: 920px;
+}
+
+.ds-catalog-head,
+.ds-catalog-row {
+  display: grid;
+  grid-template-columns: 44px minmax(220px, 1.6fr) 110px 120px minmax(120px, 1fr) 80px 100px minmax(110px, 0.8fr);
+  align-items: center;
+  column-gap: 12px;
+  padding: 0 12px;
+}
+
+.ds-catalog-head {
+  min-height: 36px;
+  color: #616161;
+  background: #f7f7f7;
+  font-size: 12px;
+  font-weight: 620;
+}
+
+.ds-catalog-row {
+  min-height: 56px;
+  border-top: 1px solid #ebebeb;
+  color: #303030;
+  font-size: 13px;
+}
+
+.ds-catalog-row:hover {
+  background: #fafafa;
+}
+
+.ds-catalog-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ds-catalog-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: #303030;
+  cursor: pointer;
+}
+
+.ds-catalog-product {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.ds-catalog-product img,
+.ds-catalog-thumb {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f6f6f7;
+  flex: 0 0 auto;
+}
+
+.ds-catalog-product strong {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 550;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ds-status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 650;
+}
+
+.ds-status-pill.active {
+  background: #cdfee1;
+  color: #0c5132;
+}
+
+.ds-status-pill.hidden {
+  background: #e4e5e7;
+  color: #4a4a4a;
+}
+
+.ds-inventory-low {
+  color: #8e1f0b;
+}
+
+.ds-catalog-empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 56px 20px;
+  text-align: center;
+}
+
+.ds-catalog-empty strong {
+  font-size: 15px;
+}
+
+.ds-catalog-empty p {
+  margin: 0 0 8px;
+  color: var(--ds-muted);
+  font-size: 13px;
+}
+
+.ds-catalog-skeleton span {
+  height: 12px;
+  border-radius: 6px;
+  background: #ececec;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.ds-catalog-skeleton span:first-child {
+  width: 16px;
+  height: 16px;
+}
+
+.ds-catalog-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(23, 27, 38, 0.45);
+}
+
+.ds-catalog-modal > div {
+  width: min(100%, 380px);
+  padding: 22px;
+  border-radius: 14px;
+  background: white;
+}
+
+.ds-catalog-modal strong {
+  display: block;
+  font-size: 16px;
+}
+
+.ds-catalog-modal p {
+  margin: 6px 0 18px;
+  color: var(--ds-muted);
+  font-size: 13px;
+}
+
+.ds-catalog-modal > div > div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 /* Make existing add-product sections and previews belong to this system. */
 .ds-page form > div[class*="rounded-2xl"],
 .ds-page aside > div > div[class*="rounded-2xl"] {
@@ -1671,6 +2018,19 @@
 
   .ds-review-list {
     grid-template-columns: 1fr;
+  }
+
+  .ds-catalog-header {
+    align-items: flex-start;
+  }
+
+  .ds-catalog-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .ds-catalog-search {
+    order: 3;
+    flex: 1 1 100%;
   }
 }
 

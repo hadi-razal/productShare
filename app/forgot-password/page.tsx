@@ -1,26 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { authErrorMessage, sendPasswordReset } from "@/lib/auth";
 import Link from "next/link";
 import Image from "next/image";
 
 const inputClass =
   "w-full px-4 py-3 bg-white border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
-
-const getResetErrorMessage = (code?: string) => {
-  switch (code) {
-    case "auth/invalid-email":
-      return "Please enter a valid email address.";
-    case "auth/user-not-found":
-      return "No account found with this email address.";
-    case "auth/too-many-requests":
-      return "Too many attempts. Please try again later.";
-    default:
-      return "Failed to send password reset email. Please try again.";
-  }
-};
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -47,25 +33,15 @@ const ForgotPasswordPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const resetUrl = `${window.location.origin}/reset-password`;
-
-      await sendPasswordResetEmail(
-        auth,
-        email.trim().toLowerCase(),
-        {
-          url: resetUrl,
-          handleCodeInApp: true,
-        },
-      );
+      await sendPasswordReset(email.trim().toLowerCase());
 
       setMessage(
         "Password reset email sent! Check your inbox and spam folder.",
       );
       setEmail("");
     } catch (err: unknown) {
-      const firebaseError = err as { code?: string; message?: string };
-      console.error("Password reset error:", firebaseError.code, firebaseError.message);
-      setError(getResetErrorMessage(firebaseError.code));
+      console.error("Password reset error:", err);
+      setError(authErrorMessage(err, "Failed to send password reset email. Please try again."));
     } finally {
       setLoading(false);
     }

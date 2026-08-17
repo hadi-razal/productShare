@@ -13,6 +13,7 @@ const config: IConfig = {
     '/forgot-password',
     '/store/settings',
     '/store/add-product',
+    '/store/products',
     '/store/reviews',
     '/store/*/edit/*',
     '/api/*',

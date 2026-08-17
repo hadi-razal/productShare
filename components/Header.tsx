@@ -11,9 +11,8 @@ import { HiSparkles } from "react-icons/hi2";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth, db } from "@/lib/firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { onAuthChange, signOutUser } from "@/lib/auth";
+import { getStoreByUsername } from "@/lib/db";
 import Image from "next/image";
 
 const storeThemeCache = new Map<string, string | null>();
@@ -31,14 +30,8 @@ const getStoreThemeColor = async (username: string) => {
 
   const themePromise = (async () => {
     try {
-      const q = query(
-        collection(db, "users"),
-        where("username", "==", username),
-      );
-      const snapshot = await getDocs(q);
-      const color = snapshot.empty
-        ? null
-        : (snapshot.docs[0].data().themeColor as string | null) || null;
+      const store = await getStoreByUsername(username);
+      const color = store?.themeColor || null;
 
       storeThemeCache.set(username, color);
       return color;
@@ -57,6 +50,7 @@ const getStoreThemeColor = async (username: string) => {
 const HIDDEN_HEADER_ROUTES = [
   "/store",
   "/store/add-product",
+  "/store/products",
   "/store/reviews",
   "/store/settings",
   "/login",
@@ -75,12 +69,12 @@ const Header = () => {
   const pathname = usePathname();
   const isStorePage = pathname.startsWith("/store/");
   const hideHeader = HIDDEN_HEADER_ROUTES.includes(pathname);
-  const supportsTransparentHeader = pathname === "/" || isStorePage;
+  const supportsTransparentHeader = pathname === "/";
   const isTransparentHeader =
     supportsTransparentHeader && !isScrolled && !menuOpen;
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthChange((user) => {
       setIsAuthenticated(!!user);
     });
 
@@ -150,7 +144,7 @@ const Header = () => {
   }, [pathname, isStorePage]);
 
   const handleLogout = async () => {
-    await signOut(auth);
+    await signOutUser();
     router.push("/login");
   };
 

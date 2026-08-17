@@ -1,15 +1,9 @@
 "use client";
 
 import { useState, useEffect, ChangeEvent, FormEvent, ReactNode } from "react";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  serverTimestamp,
-} from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { auth, db, storage } from "@/lib/firebase";
+import { uploadPublicFile } from "@/lib/storage";
+import { getCurrentUser } from "@/lib/auth";
+import { createProduct, getStoreById } from "@/lib/db";
 import { ProductType } from "@/type";
 import { useRouter } from "next/navigation";
 import ProductPreview from "@/components/ProductPreview";
@@ -244,7 +238,7 @@ const CreateProduct = () => {
     }
   };
 
-  const uploadFilesToFirebase = async (
+  const uploadFiles = async (
     files: File[],
     type: "images" | "video",
   ) => {
@@ -255,9 +249,7 @@ const CreateProduct = () => {
           type === "video"
             ? `video_${ts}_${file.name}`
             : `image_${i}_${ts}_${file.name}`;
-        const storageRef = ref(storage, `${type}/${name}`);
-        await uploadBytes(storageRef, file);
-        return getDownloadURL(storageRef);
+        return uploadPublicFile(`${type}/${name}`, file);
       }),
     );
   };
@@ -282,34 +274,33 @@ const CreateProduct = () => {
     }
     setIsUploading(true);
     try {
-      const user = auth.currentUser;
+      const user = await getCurrentUser();
       if (!user) {
         alert("You must be logged in");
         setIsUploading(false);
         return;
       }
-      const userSnap = await getDoc(doc(db, "users", user.uid));
-      if (!userSnap.exists()) {
+      const store = await getStoreById(user.uid);
+      if (!store) {
         alert("User profile not found");
         setIsUploading(false);
         return;
       }
-      const imageUrls = await uploadFilesToFirebase(imageFiles, "images");
+      const imageUrls = await uploadFiles(imageFiles, "images");
       let videoUrl = "";
       if (videoFile) {
-        [videoUrl] = await uploadFilesToFirebase([videoFile], "video");
+        [videoUrl] = await uploadFiles([videoFile], "video");
       }
-      await addDoc(collection(db, "users", user.uid, "products"), {
+      await createProduct(user.uid, {
         ...productData,
         images: imageUrls,
         video: videoUrl,
-        createdAt: serverTimestamp(),
       });
       alert("Product created successfully!");
       router.push("/store");
     } catch (error) {
       console.error(error);
-      alert("Error creating product. Please try again.");
+      alert(error instanceof Error ? error.message : "Error creating product. Please try again.");
     } finally {
       setIsUploading(false);
     }
