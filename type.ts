@@ -37,4 +37,6 @@ export interface ProductType {
     username: string;
     isVisitedCount?: string;
     themeColor:string
+    storeTheme?: string;
+    isOffline?: boolean;
   }

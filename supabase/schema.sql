@@ -11,6 +11,7 @@ create table if not exists stores (
   logo_image text,
   image text,
   theme_color text default '#000000',
+  store_theme text not null default 'minimal',
   description text,
   visit_count integer not null default 0,
   visitor_data jsonb not null default '[]'::jsonb,
@@ -18,6 +19,7 @@ create table if not exists stores (
   is_premium_user boolean not null default false,
   subscription_id text,
   subscribed_at timestamptz,
+  is_offline boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -51,6 +53,9 @@ create table if not exists products (
 
 create index if not exists products_store_id_idx on products(store_id);
 create index if not exists stores_username_idx on stores(username);
+
+alter table stores add column if not exists is_offline boolean not null default false;
+alter table stores add column if not exists store_theme text not null default 'minimal';
 
 create or replace function increment_store_visits(p_id text)
 returns void

@@ -7,10 +7,9 @@ import { useRouter } from "next/navigation";
 import { onAuthChange } from "@/lib/auth";
 import {
   FiChevronDown,
-  FiColumns,
   FiPlus,
   FiSearch,
-  FiTag,
+  FiX,
 } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { deleteProduct, getStoreById, listProductsByStore } from "@/lib/db";
@@ -41,11 +40,11 @@ export default function ProductsPage() {
   const moreRef = useRef<HTMLDivElement>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState("");
-  const [shopName, setShopName] = useState("My Store");
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [selected, setSelected] = useState<string[]>([]);
   const [moreOpen, setMoreOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -57,7 +56,6 @@ export default function ProductsPage() {
       getStoreById(uid),
     ]);
     setUsername(String(store?.username || ""));
-    setShopName(String(store?.name || "").trim() || "My Store");
     setProducts(productsData);
   };
 
@@ -90,22 +88,33 @@ export default function ProductsPage() {
     return () => document.removeEventListener("mousedown", close);
   }, []);
 
+  const categories = useMemo(() => {
+    const unique = new Set(
+      products
+        .map((product) => String(product.category || "").trim())
+        .filter(Boolean),
+    );
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  }, [products]);
+
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
     return products.filter((product) => {
       const hidden = Boolean(product.isHidden);
       const outOfStock = product.isInStock === false;
+      const category = String(product.category || "").trim();
       if (statusFilter === "active" && hidden) return false;
       if (statusFilter === "hidden" && !hidden) return false;
       if (statusFilter === "out" && !outOfStock) return false;
+      if (categoryFilter !== "all" && category !== categoryFilter) return false;
       if (!term) return true;
       return (
         (product.name || "").toLowerCase().includes(term) ||
-        (product.category || "").toLowerCase().includes(term) ||
+        category.toLowerCase().includes(term) ||
         (product.tags || "").toLowerCase().includes(term)
       );
     });
-  }, [products, search, statusFilter]);
+  }, [categoryFilter, products, search, statusFilter]);
 
   const allVisibleSelected =
     filtered.length > 0 && filtered.every((product) => selected.includes(product.id));
@@ -126,7 +135,7 @@ export default function ProductsPage() {
 
   const exportCsv = () => {
     const rows = [
-      ["Name", "Status", "Inventory", "Category", "Price", "Views"].map(csvCell).join(","),
+      ["Name", "Status", "Inventory", "Price", "Views"].map(csvCell).join(","),
       ...filtered.map((product) => {
         const count = stockCount(product);
         const inventory =
@@ -139,7 +148,6 @@ export default function ProductsPage() {
           product.name || "Untitled product",
           product.isHidden ? "Hidden" : "Active",
           inventory,
-          product.category || "",
           priceLabel(product),
           Number(product.views || 0),
         ]
@@ -180,10 +188,14 @@ export default function ProductsPage() {
   return (
     <div className="ds-page ds-catalog">
       <div className="ds-catalog-header">
-        <h2 className="ds-catalog-title">
-          <FiTag />
-          Products
-        </h2>
+        <div className="ds-catalog-heading">
+          <h2 className="ds-catalog-title">Products</h2>
+          <p>
+            {loading
+              ? "Manage your catalog, stock, and listings."
+              : `${products.length} ${products.length === 1 ? "product" : "products"} in your catalog.`}
+          </p>
+        </div>
         <div className="ds-catalog-actions">
           <button type="button" className="ds-catalog-btn" onClick={exportCsv}>
             Export
@@ -223,31 +235,55 @@ export default function ProductsPage() {
 
       <section className="ds-catalog-card">
         <div className="ds-catalog-toolbar">
+          <div className="ds-catalog-search">
+            <FiSearch />
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search products"
+              aria-label="Search products"
+            />
+            {search && (
+              <button
+                type="button"
+                className="ds-catalog-search-clear"
+                onClick={() => setSearch("")}
+                aria-label="Clear search"
+              >
+                <FiX />
+              </button>
+            )}
+          </div>
           <label className="ds-catalog-view">
             <select
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
-              aria-label="Filter products"
+              aria-label="Filter by status"
             >
-              <option value="all">All</option>
+              <option value="all">All status</option>
               <option value="active">Active</option>
               <option value="hidden">Hidden</option>
               <option value="out">Out of stock</option>
             </select>
             <FiChevronDown />
           </label>
-          <div className="ds-catalog-search">
-            <FiSearch />
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search and filter"
-              aria-label="Search products"
-            />
-          </div>
-          <span className="ds-catalog-columns" aria-hidden="true">
-            <FiColumns />
-          </span>
+          {categories.length > 0 && (
+            <label className="ds-catalog-view">
+              <select
+                value={categoryFilter}
+                onChange={(event) => setCategoryFilter(event.target.value)}
+                aria-label="Filter by category"
+              >
+                <option value="all">All categories</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown />
+            </label>
+          )}
         </div>
 
         <div className="ds-catalog-table-wrap">
@@ -264,17 +300,13 @@ export default function ProductsPage() {
               <span>Product</span>
               <span>Status</span>
               <span>Inventory</span>
-              <span>Category</span>
               <span>Views</span>
               <span>Price</span>
-              <span>Vendor</span>
             </div>
 
             {loading ? (
               [0, 1, 2, 3, 4].map((item) => (
                 <div key={item} className="ds-catalog-row ds-catalog-skeleton" role="row">
-                  <span />
-                  <span />
                   <span />
                   <span />
                   <span />
@@ -323,10 +355,8 @@ export default function ProductsPage() {
                       </i>
                     </span>
                     <span className={low ? "ds-inventory-low" : undefined}>{inventory}</span>
-                    <span>{product.category || "—"}</span>
                     <span>{Number(product.views || 0).toLocaleString("en-IN")}</span>
                     <span>{priceLabel(product)}</span>
-                    <span>{shopName}</span>
                   </div>
                 );
               })

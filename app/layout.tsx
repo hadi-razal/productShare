@@ -9,7 +9,9 @@ import ProgressBar from "@/components/ProgressBar";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
 import Script from "next/script";
+import { headers } from "next/headers";
 import { absoluteUrl, defaultOgImage, siteConfig } from "@/lib/site";
+import { storefrontRequestContext } from "@/lib/storefront-url";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = localFont({
@@ -118,11 +120,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { username: storefrontUsername } = storefrontRequestContext(await headers());
+  const isStorefront = Boolean(storefrontUsername);
+
   return (
     <html lang="en-IN" dir="ltr">
       <body
@@ -194,13 +199,13 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <Header />
+        {!isStorefront && <Header />}
         <Toaster />
         <ProgressBar />
         <main id="main-content" role="main">
           {children}
         </main>
-        <Footer />
+        {!isStorefront && <Footer />}
         <Analytics />
       </body>
     </html>

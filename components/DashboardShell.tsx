@@ -1,27 +1,30 @@
 "use client";
 
-import React, { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import type { IconType } from "react-icons";
 import {
-  FiBell,
-  FiCheckCircle,
-  FiChevronDown,
   FiCreditCard,
   FiHelpCircle,
   FiHome,
   FiLogOut,
   FiPlus,
-  FiSearch,
   FiSettings,
-  FiShoppingBag,
   FiStar,
   FiTag,
 } from "react-icons/fi";
 import { getStoreById } from "@/lib/db";
-import { onAuthChange, signOutUser } from "@/lib/auth";
+import { getCurrentUser, onAuthChange, signOutUser } from "@/lib/auth";
+import {
+  DASHBOARD_THEME_EVENT,
+  DASHBOARD_THEME_STORAGE_KEY,
+  dashboardThemeCssVars,
+  normalizeStoreTheme,
+  STORE_THEME_MAP,
+  type StoreThemeId,
+} from "@/lib/store-themes";
 
 const navigation: {
   name: string;
@@ -37,28 +40,16 @@ const navigation: {
   { name: "Store settings", shortName: "Settings", href: "/store/settings", icon: FiSettings },
 ];
 
-const pageMeta: Record<string, { title: string; subtitle: string }> = {
-  "/store/add-product": {
-    title: "Add a product",
-    subtitle: "Create a polished listing for your storefront.",
-  },
-  "/store/products": {
-    title: "Products",
-    subtitle: "Manage your catalog, stock, and listings.",
-  },
-  "/store/reviews": {
-    title: "Customer reviews",
-    subtitle: "See feedback and understand what customers value.",
-  },
-  "/store/settings": {
-    title: "Store settings",
-    subtitle: "Manage your identity, contact details, and storefront style.",
-  },
+const pageTitles: Record<string, string> = {
+  "/store/add-product": "Add a product",
+  "/store/products": "Products",
+  "/store/reviews": "Customer reviews",
+  "/store/settings": "Store settings",
 };
 
-const getPageMeta = (pathname: string) => {
-  const match = Object.entries(pageMeta).find(([path]) => pathname.startsWith(path));
-  return match?.[1] ?? { title: "Dashboard", subtitle: "Your store at a glance." };
+const getPageTitle = (pathname: string) => {
+  const match = Object.entries(pageTitles).find(([path]) => pathname.startsWith(path));
+  return match?.[1] ?? "Dashboard";
 };
 
 const isNavActive = (
@@ -77,28 +68,13 @@ const formatStoreName = (value: string) =>
     .trim();
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
-  const [accountOpen, setAccountOpen] = useState(false);
   const [mobileAccountOpen, setMobileAccountOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [storeName, setStoreName] = useState("My Store");
-  const [shopName, setShopName] = useState("My Store");
-  const [dateLabel, setDateLabel] = useState("Today");
-  const [greeting, setGreeting] = useState("Welcome back");
-  const accountRef = useRef<HTMLDivElement>(null);
+  const [storeLogo, setStoreLogo] = useState<string | null>(null);
+  const [storeOffline, setStoreOffline] = useState(false);
+  const [storeTheme, setStoreTheme] = useState<StoreThemeId>("minimal");
   const mobileAccountRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-
-  useEffect(() => {
-    setDateLabel(
-      new Intl.DateTimeFormat("en-IN", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }).format(new Date()),
-    );
-    const hour = new Date().getHours();
-    setGreeting(hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening");
-  }, []);
 
   useEffect(() => {
     const localPreview =
@@ -106,7 +82,6 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       new URLSearchParams(window.location.search).get("preview") === "dashboard";
     if (localPreview) {
       setStoreName("Nira Home");
-      setShopName("Nira Home");
       return;
     }
 
@@ -115,28 +90,69 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       const fallback = formatStoreName(user.displayName || user.email?.split("@")[0] || "My Store");
       try {
         const store = await getStoreById(user.uid);
-        const formattedUsername = formatStoreName(store?.username || fallback);
-        setStoreName(formattedUsername);
-        setShopName(String(store?.name || "").trim() || formattedUsername);
+        const name = String(store?.name || "").trim();
+        setStoreName(name || formatStoreName(store?.username || fallback));
+        setStoreLogo(store?.logoImage || store?.image || null);
+        setStoreOffline(Boolean(store?.isOffline));
+        const themeId = normalizeStoreTheme(store?.storeTheme);
+        setStoreTheme(themeId);
+        try {
+          localStorage.setItem(DASHBOARD_THEME_STORAGE_KEY, themeId);
+        } catch {
+          /* ignore */
+        }
       } catch {
         setStoreName(fallback);
-        setShopName(fallback);
+        setStoreLogo(null);
+        setStoreOffline(false);
       }
     });
     return () => unsub();
   }, []);
 
   useEffect(() => {
-    setAccountOpen(false);
+    try {
+      const cached = localStorage.getItem(DASHBOARD_THEME_STORAGE_KEY);
+      if (cached) setStoreTheme(normalizeStoreTheme(cached));
+    } catch {
+      /* ignore */
+    }
+
+    const onTheme = (event: Event) => {
+      setStoreTheme(normalizeStoreTheme((event as CustomEvent<string>).detail));
+    };
+    window.addEventListener(DASHBOARD_THEME_EVENT, onTheme);
+    return () => window.removeEventListener(DASHBOARD_THEME_EVENT, onTheme);
+  }, []);
+
+  useEffect(() => {
     setMobileAccountOpen(false);
-    setNotificationsOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const refreshVisibility = async () => {
+      const user = await getCurrentUser();
+      if (!user || cancelled) return;
+      try {
+        const store = await getStoreById(user.uid);
+        if (cancelled) return;
+        setStoreOffline(Boolean(store?.isOffline));
+        if (pathname !== "/store/settings") {
+          setStoreTheme(normalizeStoreTheme(store?.storeTheme));
+        }
+      } catch {
+        if (!cancelled) setStoreOffline(false);
+      }
+    };
+    void refreshVisibility();
+    return () => {
+      cancelled = true;
+    };
   }, [pathname]);
 
   useEffect(() => {
     const closeAccountMenus = (event: MouseEvent) => {
-      if (accountRef.current && !accountRef.current.contains(event.target as Node)) {
-        setAccountOpen(false);
-      }
       if (mobileAccountRef.current && !mobileAccountRef.current.contains(event.target as Node)) {
         setMobileAccountOpen(false);
       }
@@ -162,14 +178,10 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     window.location.href = "/login";
   };
 
-  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const input = event.currentTarget.elements.namedItem("dashboard-search") as HTMLInputElement;
-    if (input.value.trim()) window.location.href = "/store/products";
-  };
-
-  const { title: pageTitle, subtitle: pageSubtitle } = getPageMeta(pathname);
+  const pageTitle = getPageTitle(pathname);
   const isHome = pathname === "/store";
+  const themeTokens = STORE_THEME_MAP[storeTheme];
+  const themeVars = dashboardThemeCssVars(themeTokens);
 
   const navItems = () =>
     navigation.map((item) => {
@@ -190,26 +202,34 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     });
 
   return (
-    <div className="ds-root">
+    <div
+      className="ds-root"
+      data-ds-theme={storeTheme}
+      data-ds-theme-mode={themeTokens.dark ? "dark" : "light"}
+      style={themeVars as React.CSSProperties}
+    >
       <aside className="ds-sidebar" aria-label="Dashboard navigation">
         <div className="ds-brand-block">
-          <Link href="/store" className="ds-brand-link" aria-label="ProductShare dashboard">
-            <Image
-              src="/productShareLV-cropped.svg"
-              alt="ProductShare"
-              width={124}
-              height={48}
-              priority
-              className="ds-brand-logo"
-            />
-          </Link>
-          <div className="ds-store-identity">
-            <span className="ds-avatar">{initials || "PS"}</span>
+          <Link href="/store" className="ds-store-identity" aria-label={`${storeName} dashboard`}>
+            {storeLogo ? (
+              <Image
+                src={storeLogo}
+                alt={`${storeName} logo`}
+                width={44}
+                height={44}
+                unoptimized={storeLogo.startsWith("http")}
+                className="ds-store-logo"
+              />
+            ) : (
+              <span className="ds-avatar">{initials || "PS"}</span>
+            )}
             <div className="ds-store-identity-copy">
               <strong>{storeName}</strong>
-              <span><i /> Live</span>
+              <span className={storeOffline ? "is-offline" : ""}>
+                <i /> {storeOffline ? "Offline" : "Live"}
+              </span>
             </div>
-          </div>
+          </Link>
         </div>
 
         <nav className="ds-nav">{navItems()}</nav>
@@ -223,62 +243,18 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             <FiHelpCircle />
             <span>Help & support</span>
           </Link>
-          <div className="ds-account" ref={accountRef}>
-            {accountOpen && (
-              <div className="ds-account-menu">
-                <Link href="/store/settings"><FiSettings /> Account settings</Link>
-                <button type="button" onClick={handleSignOut}><FiLogOut /> Sign out</button>
-              </div>
-            )}
-            <button
-              type="button"
-              className="ds-account-trigger"
-              onClick={() => setAccountOpen((open) => !open)}
-              aria-expanded={accountOpen}
-            >
-              <span className="ds-avatar ds-avatar-small">{initials || "PS"}</span>
-              <span className="ds-account-name">{storeName}</span>
-              <FiChevronDown className={accountOpen ? "rotate-180" : ""} />
-            </button>
-          </div>
+          <Link href="/store/settings" className="ds-sidebar-utility">
+            <FiSettings />
+            <span>Settings</span>
+          </Link>
+          <button type="button" className="ds-sidebar-utility" onClick={handleSignOut}>
+            <FiLogOut />
+            <span>Sign out</span>
+          </button>
         </div>
       </aside>
 
       <div className="ds-main">
-        <header className="ds-desktop-topbar">
-          <div className="ds-topbar-heading">
-            <h1>{isHome ? `${greeting}, ${shopName.split(" ")[0]}` : shopName}</h1>
-            <p>{isHome ? dateLabel : pageSubtitle}</p>
-          </div>
-          <div className="ds-topbar-actions">
-            <form className="ds-search" role="search" onSubmit={handleSearch}>
-              <FiSearch />
-              <input name="dashboard-search" aria-label="Search products" placeholder="Search products..." />
-            </form>
-            <div className="ds-notification-wrap">
-              <button
-                type="button"
-                className="ds-icon-button"
-                aria-label="Notifications"
-                aria-expanded={notificationsOpen}
-                onClick={() => setNotificationsOpen((open) => !open)}
-              >
-                <FiBell />
-                <span className="ds-notification-dot" />
-              </button>
-              {notificationsOpen && (
-                <div className="ds-notification-popover">
-                  <span className="ds-popover-icon"><FiCheckCircle /></span>
-                  <div><strong>You’re all caught up</strong><p>New store activity will appear here.</p></div>
-                </div>
-              )}
-            </div>
-            <Link href="/store/add-product" className="ds-primary-action">
-              <FiPlus /> Add product
-            </Link>
-          </div>
-        </header>
-
         <header className="ds-topbar">
           <div className="ds-mobile-account" ref={mobileAccountRef}>
             <button
@@ -294,8 +270,13 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               <div className="ds-mobile-account-menu">
                 <div className="ds-mobile-account-summary">
                   <strong>{storeName}</strong>
-                  <span><i /> Store is live</span>
+                  <span className={storeOffline ? "is-offline" : ""}>
+                    <i /> {storeOffline ? "Store is offline" : "Store is live"}
+                  </span>
                 </div>
+                <Link href="/store/settings" onClick={() => setMobileAccountOpen(false)}>
+                  <FiSettings /> Settings
+                </Link>
                 <Link href="/pricing" onClick={() => setMobileAccountOpen(false)}>
                   <FiCreditCard /> Plan
                 </Link>

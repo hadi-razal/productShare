@@ -15,6 +15,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { getUserId } from "@/helpers/getUserId";
 import { onAuthChange } from "@/lib/auth";
 import { ProductType } from "@/type";
+import { useStorefrontNav } from "@/components/storefront-nav";
 
 interface ProductPageProps {
   productId: string;
@@ -23,6 +24,7 @@ interface ProductPageProps {
   initialUserId?: string | null;
   storeName?: string | null;
   storeWhatsapp?: string | null;
+  isOffline?: boolean;
 }
 
 const formatPrice = (value: number) =>
@@ -37,27 +39,27 @@ const whatsappDigits = (value?: string | null) => {
 };
 
 const ProductSkeleton = () => (
-  <div className="min-h-screen w-full bg-white pb-16 pt-24">
+  <div className="sf-page w-full pb-16 pt-8">
     <div className="mx-auto max-w-[1440px] px-3 sm:px-5">
-      <div className="mb-8 h-3 w-28 bg-neutral-100 animate-pulse" />
+      <div className="mb-8 h-3 w-28 animate-pulse" style={{ background: "var(--sf-border)" }} />
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
         <div>
-          <div className="aspect-square w-full bg-neutral-100 animate-pulse" />
+          <div className="aspect-square w-full animate-pulse" style={{ background: "var(--sf-border)" }} />
           <div className="mt-3 flex gap-2">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-16 w-16 bg-neutral-100 animate-pulse" />
+              <div key={i} className="h-16 w-16 animate-pulse" style={{ background: "var(--sf-border)" }} />
             ))}
           </div>
         </div>
         <div className="space-y-4 pt-1">
-          <div className="h-3 w-20 bg-neutral-100 animate-pulse" />
-          <div className="h-7 w-3/4 bg-neutral-100 animate-pulse" />
-          <div className="h-4 w-28 bg-neutral-100 animate-pulse" />
-          <div className="h-12 w-full bg-neutral-100 animate-pulse" />
+          <div className="h-3 w-20 animate-pulse" style={{ background: "var(--sf-border)" }} />
+          <div className="h-7 w-3/4 animate-pulse" style={{ background: "var(--sf-border)" }} />
+          <div className="h-4 w-28 animate-pulse" style={{ background: "var(--sf-border)" }} />
+          <div className="h-12 w-full animate-pulse" style={{ background: "var(--sf-border)" }} />
           <div className="space-y-2 pt-6">
-            <div className="h-3 w-full bg-neutral-100 animate-pulse" />
-            <div className="h-3 w-5/6 bg-neutral-100 animate-pulse" />
-            <div className="h-3 w-2/3 bg-neutral-100 animate-pulse" />
+            <div className="h-3 w-full animate-pulse" style={{ background: "var(--sf-border)" }} />
+            <div className="h-3 w-5/6 animate-pulse" style={{ background: "var(--sf-border)" }} />
+            <div className="h-3 w-2/3 animate-pulse" style={{ background: "var(--sf-border)" }} />
           </div>
         </div>
       </div>
@@ -72,7 +74,9 @@ const ProductPage = ({
   initialUserId = null,
   storeName = null,
   storeWhatsapp = null,
+  isOffline = false,
 }: ProductPageProps) => {
+  const nav = useStorefrontNav();
   const [productData, setProductData] = useState<ProductType | null>(initialProduct);
   const [loading, setLoading] = useState<boolean>(!initialProduct);
   const [userId, setUserId] = useState<string | null>(initialUserId);
@@ -105,7 +109,7 @@ const ProductPage = ({
 
   const addProductCount = useCallback(
     async (resolvedUserId?: string | null) => {
-      if (typeof window === "undefined") return;
+      if (typeof window === "undefined" || isOffline) return;
       const userID = resolvedUserId ?? userId ?? (await getUserId(storeId));
       const isCounted = sessionStorage.getItem(`MyShop_Product_${productId}_View`);
       if (userID && !isCounted) {
@@ -113,7 +117,7 @@ const ProductPage = ({
         sessionStorage.setItem(`MyShop_Product_${productId}_View`, "true");
       }
     },
-    [productId, storeId, userId],
+    [isOffline, productId, storeId, userId],
   );
 
   useEffect(() => {
@@ -249,8 +253,8 @@ const ProductPage = ({
 
   if (!productData) {
     return (
-      <div className="flex min-h-[calc(100vh-90px)] items-center justify-center bg-white pt-24">
-        <h2 className="text-sm uppercase tracking-wide text-neutral-500">
+      <div className="sf-page flex min-h-[calc(100vh-90px)] items-center justify-center pt-8">
+        <h2 className="sf-muted text-sm uppercase tracking-wide">
           Product not found
         </h2>
       </div>
@@ -261,11 +265,11 @@ const ProductPage = ({
   const inStock = productData.isInStock !== false;
 
   return (
-    <div className="min-h-screen w-full bg-white pb-16 pt-24">
+    <div className="sf-page w-full pb-16 pt-8">
       <div className="mx-auto max-w-[1440px] px-3 sm:px-5">
         <Link
-          href={`/store/${storeId}`}
-          className="mb-8 inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-400 hover:text-black"
+          href={nav.catalogHref(storeId)}
+          className="sf-muted mb-8 inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-[0.16em] hover:opacity-80"
         >
           <FiChevronLeft className="h-3.5 w-3.5" />
           {storeName || "Back to catalog"}
@@ -273,7 +277,7 @@ const ProductPage = ({
 
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16 lg:items-start">
           <div className="lg:sticky lg:top-24">
-            <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">
+            <div className="relative aspect-square w-full overflow-hidden" style={{ background: "var(--sf-bg)" }}>
               {mediaArray.length > 0 ? (
                 currentMedia.type === "video" ? (
                   <video
@@ -287,7 +291,7 @@ const ProductPage = ({
                 ) : (
                   <>
                     {!mainImgLoaded && (
-                      <div className="absolute inset-0 bg-neutral-100 animate-pulse" />
+                      <div className="absolute inset-0 animate-pulse" style={{ background: "var(--sf-bg)" }} />
                     )}
                     <Image
                       src={currentMedia.src}
@@ -376,25 +380,25 @@ const ProductPage = ({
 
           <div className="lg:pt-2">
             {productData.category && (
-              <p className="text-[11px] uppercase tracking-[0.18em] text-neutral-400">
+              <p className="sf-kicker text-[11px] uppercase tracking-[0.18em]">
                 {productData.category}
               </p>
             )}
 
-            <h1 className="mt-2 text-[22px] font-bold uppercase leading-snug tracking-tight text-black md:text-[26px]">
+            <h1 className="sf-title mt-2 text-[22px] font-bold uppercase leading-snug tracking-tight md:text-[26px]">
               {productData.name}
             </h1>
 
             <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <span className="text-[15px] text-black">
+              <span className="text-[15px]">
                 {Number.isFinite(displayPrice) ? formatPrice(displayPrice) : "RS. 0.00"}
               </span>
               {isDiscounted && (
                 <>
-                  <span className="text-[13px] text-neutral-400 line-through">
+                  <span className="sf-muted text-[13px] line-through">
                     {formatPrice(regularPrice)}
                   </span>
-                  <span className="text-[11px] uppercase tracking-wide text-neutral-500">
+                  <span className="sf-muted text-[11px] uppercase tracking-wide">
                     {discountPercent}% off
                   </span>
                 </>
@@ -403,7 +407,7 @@ const ProductPage = ({
 
             <p
               className={`mt-3 text-[11px] uppercase tracking-[0.16em] ${
-                inStock ? "text-neutral-500" : "text-neutral-400"
+                inStock ? "sf-muted" : "sf-muted opacity-70"
               }`}
             >
               {inStock ? "In stock" : "Out of stock"}
@@ -411,7 +415,7 @@ const ProductPage = ({
 
             {productData.colors?.length > 0 && (
               <div className="mt-8">
-                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-500">
+                <p className="sf-muted text-[11px] font-medium uppercase tracking-[0.16em]">
                   Color{selectedColor ? ` — ${selectedColor}` : ""}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -421,10 +425,12 @@ const ProductPage = ({
                       type="button"
                       onClick={() => setSelectedColor(color)}
                       title={color}
-                      className={`h-8 w-8 border ${
-                        selectedColor === color ? "border-black" : "border-neutral-200"
-                      }`}
-                      style={{ backgroundColor: color }}
+                      className="h-8 w-8 border"
+                      style={{
+                        backgroundColor: color,
+                        borderColor:
+                          selectedColor === color ? "var(--sf-text)" : "var(--sf-border)",
+                      }}
                       aria-label={color}
                     />
                   ))}
@@ -434,7 +440,7 @@ const ProductPage = ({
 
             {productData.sizes?.length > 0 && (
               <div className="mt-8">
-                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-500">
+                <p className="sf-muted text-[11px] font-medium uppercase tracking-[0.16em]">
                   Size
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -443,11 +449,13 @@ const ProductPage = ({
                       key={size}
                       type="button"
                       onClick={() => setSelectedSize(size)}
-                      className={`min-w-[44px] px-3 py-2 text-sm ${
-                        selectedSize === size
-                          ? "border border-black text-black"
-                          : "border border-neutral-200 text-neutral-500 hover:border-black hover:text-black"
-                      }`}
+                      className="min-w-[44px] border px-3 py-2 text-sm"
+                      style={{
+                        borderColor:
+                          selectedSize === size ? "var(--sf-text)" : "var(--sf-border)",
+                        color:
+                          selectedSize === size ? "var(--sf-text)" : "var(--sf-muted)",
+                      }}
                     >
                       {size}
                     </button>
@@ -460,7 +468,7 @@ const ProductPage = ({
               <button
                 type="button"
                 onClick={handleEnquire}
-                className="inline-flex w-full items-center justify-center gap-2 bg-black py-3.5 text-[12px] font-medium uppercase tracking-[0.16em] text-white hover:bg-neutral-800"
+                className="sf-btn inline-flex w-full items-center justify-center gap-2 py-3.5 text-[12px] font-medium uppercase tracking-[0.16em]"
               >
                 <FaWhatsapp className="h-4 w-4" />
                 Enquire on WhatsApp
@@ -468,7 +476,7 @@ const ProductPage = ({
               <button
                 type="button"
                 onClick={() => setShareOpen(true)}
-                className="inline-flex w-full items-center justify-center gap-2 border border-black py-3.5 text-[12px] font-medium uppercase tracking-[0.16em] text-black hover:bg-black hover:text-white"
+                className="sf-ghost inline-flex w-full items-center justify-center gap-2 py-3.5 text-[12px] font-medium uppercase tracking-[0.16em]"
               >
                 <FiShare2 className="h-4 w-4" />
                 Share
@@ -476,28 +484,28 @@ const ProductPage = ({
             </div>
 
             {productData.isFreeDelivery && (
-              <p className="mt-5 text-[11px] uppercase tracking-[0.16em] text-neutral-500">
+              <p className="sf-muted mt-5 text-[11px] uppercase tracking-[0.16em]">
                 Free delivery available
               </p>
             )}
 
             {productData.description && (
-              <div className="mt-10 border-t border-neutral-200 pt-8">
-                <h2 className="text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-500">
+              <div className="mt-10 border-t pt-8" style={{ borderColor: "var(--sf-border)" }}>
+                <h2 className="sf-muted text-[11px] font-medium uppercase tracking-[0.16em]">
                   Details
                 </h2>
-                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-neutral-600">
+                <p className="sf-muted mt-3 whitespace-pre-line text-sm leading-relaxed">
                   {productData.description}
                 </p>
               </div>
             )}
 
             {isOwner && (
-              <div className="mt-10 flex items-center gap-5 text-[11px] uppercase tracking-[0.16em] text-neutral-400">
+              <div className="sf-muted mt-10 flex items-center gap-5 text-[11px] uppercase tracking-[0.16em]">
                 <span>{productData.views || 0} views</span>
                 <Link
-                  href={`/store/${storeId}/edit/${productId}`}
-                  className="inline-flex items-center gap-1 hover:text-black"
+                  href={nav.editHref(storeId, productId)}
+                  className="inline-flex items-center gap-1 hover:opacity-80"
                 >
                   <FiEdit2 className="h-3 w-3" />
                   Edit
@@ -514,17 +522,17 @@ const ProductPage = ({
           onClick={() => setShareOpen(false)}
         >
           <div
-            className="w-full max-w-sm bg-white p-6"
+            className="sf-card w-full max-w-sm p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-6 flex items-center justify-between">
-              <h3 className="text-[12px] font-medium uppercase tracking-[0.16em] text-black">
+              <h3 className="sf-title text-[12px] font-medium uppercase tracking-[0.16em]">
                 Share this product
               </h3>
               <button
                 type="button"
                 onClick={() => setShareOpen(false)}
-                className="p-1 text-neutral-400 hover:text-black"
+                className="sf-muted p-1 hover:opacity-80"
                 aria-label="Close"
               >
                 <FiX className="h-5 w-5" />
@@ -540,7 +548,7 @@ const ProductPage = ({
                   key={item.id}
                   type="button"
                   onClick={() => shareOnPlatform(item.id)}
-                  className="w-full border border-neutral-200 py-3 text-[12px] uppercase tracking-[0.16em] text-black hover:border-black"
+                  className="sf-ghost w-full py-3 text-[12px] uppercase tracking-[0.16em]"
                 >
                   {item.label}
                 </button>
@@ -548,7 +556,7 @@ const ProductPage = ({
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="w-full bg-black py-3 text-[12px] uppercase tracking-[0.16em] text-white"
+                className="sf-btn w-full py-3 text-[12px] uppercase tracking-[0.16em]"
               >
                 {copied ? "Copied" : "Copy link"}
               </button>

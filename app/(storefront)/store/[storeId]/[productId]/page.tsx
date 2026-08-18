@@ -1,7 +1,11 @@
 import ProductPage from "@/components/ProductPage";
+import OfflineStorefront from "@/components/OfflineStorefront";
+import StorefrontShell from "@/components/StorefrontShell";
 import { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getStorefrontProduct } from "@/lib/storefront";
+import { storefrontPublicUrl, storefrontRequestContext } from "@/lib/storefront-url";
 
 interface ProductRouteProps {
   params: Promise<{
@@ -18,6 +22,15 @@ export async function generateMetadata({
 
   const storefrontProduct = await getStorefrontProduct(storeId, productId);
   const productData = storefrontProduct?.product ?? null;
+  const storeName = storefrontProduct?.store.name ?? "Store";
+
+  if (storefrontProduct?.store.isOffline) {
+    return {
+      title: `${storeName} is currently unavailable`,
+      description: `${storeName} has taken this storefront offline for now.`,
+      robots: { index: false, follow: false },
+    };
+  }
 
   const productName = productData?.name ?? "Product";
   const title = productData
@@ -27,7 +40,7 @@ export async function generateMetadata({
     ? `${productData.description} — View ${productName} on Product Share India.`
     : `View details and pricing for ${productName} on Product Share India's digital catalog.`;
   const image = productData?.images?.[0] ?? null;
-  const productUrl = `https://productshare.in/store/${storeId}/${productId}`;
+  const productUrl = storefrontPublicUrl(storeId, `/${productId}`);
 
   return {
     title,
@@ -64,20 +77,46 @@ export async function generateMetadata({
 // Server component that renders the page
 export default async function Page({ params }: ProductRouteProps) {
   const { productId, storeId } = await params;
+  const { onSubdomain, apexOrigin } = storefrontRequestContext(await headers());
   const storefrontProduct = await getStorefrontProduct(storeId, productId);
 
   if (!storefrontProduct) {
     notFound();
   }
 
+  if (storefrontProduct.store.isOffline) {
+    return (
+      <StorefrontShell
+        theme={storefrontProduct.store.storeTheme}
+        onSubdomain={onSubdomain}
+        apexOrigin={apexOrigin}
+      >
+        <OfflineStorefront
+          storeId={storeId}
+          storeOwnerId={storefrontProduct.store.id}
+          storeName={storefrontProduct.store.name}
+          storeLogo={storefrontProduct.store.logoImage || storefrontProduct.store.image}
+          productId={productId}
+          storeWhatsapp={storefrontProduct.store.whatsappNumber}
+        />
+      </StorefrontShell>
+    );
+  }
+
   return (
-    <ProductPage
-      productId={productId}
-      storeId={storeId}
-      initialProduct={storefrontProduct.product}
-      initialUserId={storefrontProduct.store.id}
-      storeName={storefrontProduct.store.name}
-      storeWhatsapp={storefrontProduct.store.whatsappNumber}
-    />
+    <StorefrontShell
+      theme={storefrontProduct.store.storeTheme}
+      onSubdomain={onSubdomain}
+      apexOrigin={apexOrigin}
+    >
+      <ProductPage
+        productId={productId}
+        storeId={storeId}
+        initialProduct={storefrontProduct.product}
+        initialUserId={storefrontProduct.store.id}
+        storeName={storefrontProduct.store.name}
+        storeWhatsapp={storefrontProduct.store.whatsappNumber}
+      />
+    </StorefrontShell>
   );
 }

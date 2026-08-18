@@ -16,6 +16,8 @@ const config: IConfig = {
     '/store/products',
     '/store/reviews',
     '/store/*/edit/*',
+    '/store',
+    '/store/*',
     '/api/*',
   ],
   transform: async (config, path) => {

@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useStorefrontNav } from "@/components/storefront-nav";
 
 interface ProductCardProps {
   product?: ProductType;
@@ -32,10 +33,11 @@ const ProductCard = ({
   isLoading,
 }: ProductCardProps) => {
   const router = useRouter();
+  const nav = useStorefrontNav();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const productHref =
-    storeId && product?.id ? `/store/${storeId}/${product.id}` : null;
+    storeId && product?.id ? nav.productHref(storeId, product.id) : null;
 
   const calculateDiscount = (): number => {
     const regularPrice = Number(product?.regularPrice);
@@ -86,11 +88,11 @@ const ProductCard = ({
 
   if (isLoading) {
     return (
-      <div className="w-full">
-        <div className="aspect-square w-full bg-neutral-100 animate-pulse" />
-        <div className="mt-2.5 space-y-2">
-          <div className="h-3 w-3/4 bg-neutral-100 animate-pulse" />
-          <div className="h-3 w-1/3 bg-neutral-100 animate-pulse" />
+      <div className="sf-product-card w-full border p-2">
+        <div className="aspect-square w-full animate-pulse" style={{ background: "var(--sf-bg)", borderRadius: "var(--sf-radius-sm)" }} />
+        <div className="space-y-2 px-1 pb-2 pt-3">
+          <div className="h-3 w-3/4 animate-pulse rounded-full" style={{ background: "var(--sf-bg)" }} />
+          <div className="h-3 w-1/3 animate-pulse rounded-full" style={{ background: "var(--sf-bg)" }} />
         </div>
       </div>
     );
@@ -120,17 +122,28 @@ const ProductCard = ({
             void router.prefetch(productHref);
           }
         }}
-        className="cursor-pointer relative w-full bg-white"
+        className="sf-product-card group relative w-full cursor-pointer overflow-hidden border p-2 transition duration-200 hover:-translate-y-0.5"
       >
-        <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">
+        <div className="relative aspect-square w-full overflow-hidden" style={{ background: "var(--sf-bg)", borderRadius: "var(--sf-radius-sm)" }}>
           {product.images?.[0] && !imgLoaded && (
-            <div className="absolute inset-0 bg-neutral-100 animate-pulse" />
+            <div className="absolute inset-0 animate-pulse" style={{ background: "var(--sf-bg)" }} />
           )}
 
           {product.isHidden && isStoreOwner && (
-            <div className="absolute inset-0 z-10 bg-black/70 flex flex-col items-center justify-center">
-              <span className="text-white text-xs font-medium px-3 text-center">Hidden</span>
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-950/70">
+              <span className="rounded-full bg-white/15 px-3 py-1 text-center text-xs font-medium text-white">
+                Hidden
+              </span>
             </div>
+          )}
+
+          {isDiscounted && (
+            <span
+              className="absolute left-2.5 top-2.5 z-10 rounded-full px-2.5 py-1 text-[10px] font-bold shadow-sm"
+              style={{ background: "var(--sf-surface)", color: "var(--sf-accent)" }}
+            >
+              {discountPercentage}% off
+            </span>
           )}
 
           {product.images?.[0] ? (
@@ -145,7 +158,7 @@ const ProductCard = ({
               placeholder="blur"
               blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PC9zdmc+"
               sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
-              className={`h-full w-full object-cover transition-opacity duration-300 ${
+              className={`h-full w-full object-cover transition duration-300 group-hover:scale-[1.02] ${
                 imgLoaded ? "opacity-100" : "opacity-0"
               }`}
               onLoad={() => setImgLoaded(true)}
@@ -157,48 +170,49 @@ const ProductCard = ({
           )}
         </div>
 
-        <div className="pt-2.5">
-          <h3 className="text-[13px] font-bold uppercase tracking-tight text-black leading-snug line-clamp-2">
+        <div className="px-1 pb-2 pt-3">
+          <h3 className="line-clamp-2 text-sm font-semibold leading-snug tracking-[-0.01em]">
             {product.name}
           </h3>
-          <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2">
-            <span className="text-[13px] font-normal text-black">
+          <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2">
+            <span className="sf-price text-sm font-semibold">
               {Number.isFinite(displayPrice) ? formatPrice(displayPrice) : "RS. 0.00"}
             </span>
             {isDiscounted && (
-              <span className="text-[12px] text-neutral-400 line-through">
+              <span className="sf-muted text-xs line-through">
                 {formatPrice(Number(product.regularPrice))}
               </span>
             )}
           </div>
           {!product.isInStock && (
-            <p className="mt-1 text-[11px] uppercase tracking-wide text-neutral-500">
+            <p className="mt-2 w-fit rounded-full bg-amber-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
               Out of stock
             </p>
           )}
-        </div>
 
-        {isStoreOwner && (
-          <div className="mt-2 flex gap-3">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                router.push(`/store/${storeId}/edit/${product.id}`);
-              }}
-              className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-neutral-500 hover:text-black"
-            >
-              <FiEdit2 className="w-3 h-3" />
-              Edit
-            </button>
-            <button
-              onClick={handleDelete}
-              className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-neutral-500 hover:text-red-600"
-            >
-              <FiTrash2 className="w-3 h-3" />
-              Delete
-            </button>
-          </div>
-        )}
+          {isStoreOwner && (
+            <div className="mt-3 flex gap-3 border-t pt-3" style={{ borderColor: "var(--sf-border)" }}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!storeId) return;
+                  router.push(nav.editHref(storeId, product.id));
+                }}
+                className="sf-muted inline-flex items-center gap-1 text-[11px] font-semibold hover:opacity-80"
+              >
+                <FiEdit2 className="h-3 w-3" />
+                Edit
+              </button>
+              <button
+                onClick={handleDelete}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-red-600"
+              >
+                <FiTrash2 className="h-3 w-3" />
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {showDeleteModal && (

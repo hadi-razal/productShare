@@ -86,7 +86,7 @@ export const getPublicStorefrontEntries = cache(
 
     const entries = await Promise.all(
       stores.map(async (store) => {
-        if (!store.username) {
+        if (!store.username || store.isOffline) {
           return null;
         }
 

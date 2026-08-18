@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { absoluteUrl } from "@/lib/site";
 import { getPublicStorefrontEntries } from "@/lib/storefront";
+import { storefrontPublicUrl } from "@/lib/storefront-url";
 
 export const revalidate = 3600;
 
@@ -67,9 +68,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const storefrontEntries = await getPublicStorefrontEntries();
 
     const dynamicPages = storefrontEntries.flatMap((entry) => {
-      const storePath = `/store/${entry.store.username}`;
       const productPages = entry.products.map((product) => ({
-        url: absoluteUrl(`${storePath}/${product.id}`),
+        url: storefrontPublicUrl(entry.store.username, `/${product.id}`),
         lastModified,
         changeFrequency: "weekly" as const,
         priority: 0.7,
@@ -77,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
       return [
         {
-          url: absoluteUrl(storePath),
+          url: storefrontPublicUrl(entry.store.username),
           lastModified,
           changeFrequency: "weekly" as const,
           priority: 0.8,

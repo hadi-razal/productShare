@@ -127,7 +127,7 @@ const ProductPreview = ({
               <span className="w-2 h-2 rounded-full bg-green-400" />
             </div>
             <div className="flex-1 px-2 py-0.5 rounded bg-white border border-gray-200 text-[9px] text-gray-400 truncate">
-              productshare.in/store/you/product
+              yourname.productshare.in
             </div>
           </div>
 

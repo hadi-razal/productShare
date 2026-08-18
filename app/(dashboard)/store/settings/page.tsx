@@ -20,6 +20,14 @@ import {
   isValidUsername,
   normalizeUsername,
 } from "@/helpers/username";
+import { FiCheck, FiEye, FiEyeOff } from "react-icons/fi";
+import {
+  emitStoreThemeChange,
+  normalizeStoreTheme,
+  STORE_THEMES,
+  STORE_THEME_MAP,
+  type StoreThemeId,
+} from "@/lib/store-themes";
 
 const SettingsPage: React.FC = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -28,12 +36,14 @@ const SettingsPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [whatsappNumber, setWhatsappNumber] = useState<string>("");
-  const [themeColor, setThemeColor] = useState<string>("#000000");
+  const [storeTheme, setStoreTheme] = useState<StoreThemeId>("minimal");
   const [additionalNotes, setAdditionalNotes] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [logoImage, setLogoImage] = useState<File | null>(null);
   const [logoImageUrl, setLogoImageUrl] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState<string>("");
+  const [isOffline, setIsOffline] = useState(false);
+  const [visibilitySaving, setVisibilitySaving] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
@@ -62,7 +72,8 @@ const SettingsPage: React.FC = () => {
         setWhatsappNumber(data?.whatsappNumber || "");
         setAdditionalNotes(data?.additionalNotes || "");
         setLogoImageUrl(data?.logoImage || null);
-        setThemeColor(data?.themeColor || "#000000");
+        setStoreTheme(normalizeStoreTheme(data?.storeTheme));
+        setIsOffline(Boolean(data?.isOffline));
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -106,9 +117,11 @@ const SettingsPage: React.FC = () => {
       const updatedData: Partial<userType> = {
         name,
         username: normalizedUsername,
-        themeColor,
+        themeColor: STORE_THEME_MAP[storeTheme].accent,
+        storeTheme,
         additionalNotes,
         whatsappNumber,
+        isOffline,
       };
 
       if (logoImage) {
@@ -134,6 +147,7 @@ const SettingsPage: React.FC = () => {
       }
       setOriginalUsername(normalizedUsername);
       setUsername(normalizedUsername);
+      emitStoreThemeChange(storeTheme);
       toast.success("Changes saved successfully!");
       router.push("/store");
     } catch (error) {
@@ -157,6 +171,23 @@ const SettingsPage: React.FC = () => {
     setLogoImage(file);
   };
 
+  const handleVisibilityToggle = async () => {
+    if (!userId || visibilitySaving) return;
+    const next = !isOffline;
+    setIsOffline(next);
+    setVisibilitySaving(true);
+    try {
+      await updateStore(userId, { isOffline: next });
+      toast.success(next ? "Your store is now offline." : "Your store is live again.");
+    } catch (error) {
+      console.error("Error updating store visibility:", error);
+      setIsOffline(!next);
+      toast.error("Could not update store visibility.");
+    } finally {
+      setVisibilitySaving(false);
+    }
+  };
+
   const previewLogoUrl = useMemo(() => {
     if (logoImage) return URL.createObjectURL(logoImage);
     return logoImageUrl;
@@ -168,7 +199,7 @@ const SettingsPage: React.FC = () => {
   }, [logoImage, previewLogoUrl]);
 
   return (
-    <div className="ds-page">
+    <div className="ds-page ds-settings">
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6">
         <section className="ds-card min-w-0">
           <div className="ds-form-group">
@@ -220,13 +251,61 @@ const SettingsPage: React.FC = () => {
           ))}
 
           <div className="ds-form-group">
-            <label className="ds-form-label">Theme Color</label>
-            <input
-              type="color"
-              value={themeColor}
-              onChange={(e) => setThemeColor(e.target.value)}
-              className="ds-form-input h-12 cursor-pointer p-1"
-            />
+            <label className="ds-form-label mb-0">Store theme</label>
+            <p className="ds-form-hint mb-3">
+              Applies to your dashboard and storefront. The ProductShare homepage stays unchanged.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {STORE_THEMES.map((theme) => {
+                const selected = storeTheme === theme.id;
+                return (
+                  <button
+                    key={theme.id}
+                    type="button"
+                    onClick={() => {
+                      setStoreTheme(theme.id);
+                      emitStoreThemeChange(theme.id);
+                    }}
+                    aria-pressed={selected}
+                    className={`relative overflow-hidden rounded-md border p-2.5 text-left transition ${
+                      selected
+                        ? "border-[color:var(--ds-violet)] bg-[color:var(--ds-violet-soft)]"
+                        : "border-[color:var(--ds-border)] bg-[color:var(--ds-canvas)] hover:border-[color:var(--ds-violet)]"
+                    }`}
+                  >
+                    <div
+                      className="rounded-md border p-2"
+                      style={{
+                        background: theme.previewSurface,
+                        borderColor: theme.border,
+                      }}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span className="h-3 w-3 rounded" style={{ background: theme.accent }} />
+                        <span
+                          className="h-1.5 w-12 rounded-full"
+                          style={{ background: theme.border }}
+                        />
+                      </div>
+                      <div className="mt-2 grid grid-cols-2 gap-1.5">
+                        <span className="aspect-square rounded-sm" style={{ background: theme.previewBg }} />
+                        <span className="aspect-square rounded-sm" style={{ background: theme.previewBg }} />
+                      </div>
+                    </div>
+                    <div className="mt-2 px-0.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-semibold" style={{ color: "var(--ds-ink)" }}>{theme.name}</span>
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold" style={{ color: selected ? "var(--ds-violet-dark)" : "var(--ds-muted)" }}>
+                          {selected ? <FiCheck /> : null}
+                          {selected ? "Selected" : "Use"}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-[10px] leading-4" style={{ color: "var(--ds-muted)" }}>{theme.description}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="ds-form-group">
@@ -238,6 +317,35 @@ const SettingsPage: React.FC = () => {
               className="ds-form-input resize-none"
               placeholder="Promo message shown on your storefront..."
             />
+          </div>
+
+          <div className="ds-form-group">
+            <div className={`ds-visibility-card ${isOffline ? "is-offline" : ""}`}>
+              <div className="ds-visibility-copy">
+                <span className="ds-visibility-badge">
+                  {isOffline ? <FiEyeOff /> : <FiEye />}
+                  {isOffline ? "Offline" : "Live"}
+                </span>
+                <label className="ds-form-label mb-0" htmlFor="store-offline-toggle">
+                  Store visibility
+                </label>
+                <p>
+                  Take your storefront offline so visitors cannot open it. You can still preview it while signed in.
+                </p>
+              </div>
+              <button
+                id="store-offline-toggle"
+                type="button"
+                role="switch"
+                aria-checked={!isOffline}
+                aria-label={isOffline ? "Turn store online" : "Store is live"}
+                disabled={!userId || visibilitySaving}
+                onClick={() => void handleVisibilityToggle()}
+                className={`ds-visibility-switch ${isOffline ? "" : "is-live"}`}
+              >
+                <i />
+              </button>
+            </div>
           </div>
 
           <motion.button
@@ -254,8 +362,10 @@ const SettingsPage: React.FC = () => {
             name={name}
             username={username}
             logoUrl={previewLogoUrl}
-            themeColor={themeColor}
+            themeColor={STORE_THEME_MAP[storeTheme].accent}
+            storeTheme={storeTheme}
             additionalNotes={additionalNotes}
+            isOffline={isOffline}
           />
         </aside>
       </div>

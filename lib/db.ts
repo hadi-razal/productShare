@@ -27,6 +27,7 @@ type StoreRow = {
   logo_image?: string | null;
   image?: string | null;
   theme_color?: string | null;
+  store_theme?: string | null;
   description?: string | null;
   visit_count?: number | null;
   visitor_data?: unknown;
@@ -34,6 +35,7 @@ type StoreRow = {
   is_premium_user?: boolean | null;
   subscription_id?: string | null;
   subscribed_at?: string | null;
+  is_offline?: boolean | null;
   created_at?: string | null;
 };
 
@@ -79,6 +81,7 @@ const storeFromRow = (row: StoreRow): StoreRecord => ({
   logoImage: row.logo_image ?? undefined,
   image: row.image ?? undefined,
   themeColor: row.theme_color ?? "#000000",
+  storeTheme: row.store_theme ?? "minimal",
   description: row.description ?? undefined,
   visitCount: row.visit_count ?? 0,
   visitorData: Array.isArray(row.visitor_data) ? row.visitor_data : [],
@@ -87,6 +90,7 @@ const storeFromRow = (row: StoreRow): StoreRecord => ({
   premiumUser: Boolean(row.is_premium_user),
   subscriptionId: row.subscription_id ?? undefined,
   subscribedAt: row.subscribed_at ?? null,
+  isOffline: Boolean(row.is_offline),
   createdAt: row.created_at ?? undefined,
   isVisitedCount: String(row.visit_count ?? 0),
 });
@@ -219,6 +223,7 @@ export const updateStore = async (
   if (input.logoImage !== undefined) row.logo_image = input.logoImage;
   if (input.image !== undefined) row.image = input.image;
   if (input.themeColor !== undefined) row.theme_color = input.themeColor;
+  if (input.storeTheme !== undefined) row.store_theme = input.storeTheme;
   if (input.description !== undefined) row.description = input.description;
   if (input.visitCount !== undefined) row.visit_count = input.visitCount;
   if (input.visitorData !== undefined) row.visitor_data = input.visitorData;
@@ -227,9 +232,21 @@ export const updateStore = async (
   if (input.premiumUser !== undefined) row.is_premium_user = input.premiumUser;
   if (input.subscriptionId !== undefined) row.subscription_id = input.subscriptionId;
   if (input.subscribedAt !== undefined) row.subscribed_at = input.subscribedAt;
+  if (input.isOffline !== undefined) row.is_offline = input.isOffline;
 
   const { error } = await supabase.from("stores").update(row).eq("id", id);
-  if (error) throw error;
+  if (error) {
+    const missingOptionalColumn =
+      /store_theme|is_offline/i.test(error.message) || error.code === "PGRST204";
+    if (missingOptionalColumn) {
+      delete row.store_theme;
+      delete row.is_offline;
+      const retry = await supabase.from("stores").update(row).eq("id", id);
+      if (retry.error) throw retry.error;
+      return;
+    }
+    throw error;
+  }
 };
 
 export const incrementStoreVisits = async (id: string): Promise<void> => {
