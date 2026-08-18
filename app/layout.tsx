@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
 import Script from "next/script";
 import { absoluteUrl, defaultOgImage, siteConfig } from "@/lib/site";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -200,6 +201,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <Analytics />
       </body>
     </html>
   );
