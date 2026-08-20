@@ -12,6 +12,7 @@ import {
   FiSettings,
 } from "react-icons/fi";
 import { onAuthChange } from "@/lib/auth";
+import { signedInHomePath } from "@/lib/super-admin";
 import HeroSection from "./HeroSection";
 import PricingSection from "./PricingSection";
 import FaqSection from "./FaqSection";
@@ -81,7 +82,7 @@ const Home = () => {
   useEffect(() => {
     const unsubscribe = onAuthChange((user) => {
       if (user) {
-        router.replace("/store");
+        router.replace(signedInHomePath(user.email));
         return;
       }
 

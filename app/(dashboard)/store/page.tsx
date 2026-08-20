@@ -45,6 +45,7 @@ import {
   storefrontPublicUrl,
 } from "@/lib/storefront-url";
 import type { ProductType } from "@/type";
+import { isStoreProfileComplete, STORE_SETTINGS_PATH } from "@/lib/store-profile";
 
 type DashboardProduct = Partial<ProductType> & { id: string };
 type ChartPoint = { name: string; views: number };
@@ -357,10 +358,12 @@ function Readiness({
   score,
   lowStock,
   loading,
+  profileComplete,
 }: {
   score: number;
   lowStock: number | null;
   loading: boolean;
+  profileComplete: boolean;
 }) {
   const chartData = [{ name: "readiness", value: score, fill: "var(--ds-teal)" }];
   return (
@@ -391,7 +394,7 @@ function Readiness({
           <div><strong>Add WhatsApp contact</strong><p>Let customers reach you easily</p></div>
           <FiArrowRight />
         </Link>
-        <Link href="/store/add-product" className="ds-next-step">
+        <Link href={profileComplete ? "/store/add-product" : STORE_SETTINGS_PATH} className="ds-next-step">
           <span className="amber"><FiPackage /></span>
           <div><strong>{lowStock ? `Review ${lowStock} low-stock item${lowStock === 1 ? "" : "s"}` : "Add your next product"}</strong><p>{lowStock ? "Keep your catalog ready to sell" : "Keep your storefront growing"}</p></div>
           <FiArrowRight />
@@ -415,6 +418,7 @@ export default function StoreDashboard() {
   const [copied, setCopied] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [readiness, setReadiness] = useState(50);
+  const [profileComplete, setProfileComplete] = useState(true);
   const [previewChart, setPreviewChart] = useState<ChartPoint[] | null>(null);
   const router = useRouter();
 
@@ -485,6 +489,7 @@ export default function StoreDashboard() {
       setUsername(uname);
       setProducts(sortedProducts);
       setReadiness(Math.min(100, readinessScore));
+      setProfileComplete(isStoreProfileComplete(userData ? { ...userData, username: uname } : { username: uname }));
       setPreviewChart(null);
       setStats({
         products: fetchedProducts.length,
@@ -558,7 +563,7 @@ export default function StoreDashboard() {
           products={products}
         />
         {(loading || readiness < 100) && (
-          <Readiness score={readiness} lowStock={stats.lowStockItems} loading={loading} />
+          <Readiness score={readiness} lowStock={stats.lowStockItems} loading={loading} profileComplete={profileComplete} />
         )}
       </div>
 
@@ -569,7 +574,7 @@ export default function StoreDashboard() {
             {username ? (
               <Link href="/store/products">View all <FiArrowRight /></Link>
             ) : (
-              <Link href="/store/add-product">Add product <FiArrowRight /></Link>
+              <Link href={profileComplete ? "/store/add-product" : STORE_SETTINGS_PATH}>Add product <FiArrowRight /></Link>
             )}
           </div>
 
@@ -606,7 +611,7 @@ export default function StoreDashboard() {
             <div className="ds-products-empty">
               <span><FiPackage /></span>
               <div><strong>Your catalog is ready for its first product</strong><p>Add photos, pricing, and details in a few minutes.</p></div>
-              <Link href="/store/add-product">Add product <FiArrowRight /></Link>
+              <Link href={profileComplete ? "/store/add-product" : STORE_SETTINGS_PATH}>Add product <FiArrowRight /></Link>
             </div>
           )}
         </section>

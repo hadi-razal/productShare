@@ -38,7 +38,7 @@ const PrivacyPolicy: FC = () => {
         <section>
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. Subscription Model and Trial Period</h2>
           <p className="text-gray-600">
-            Our premium services are offered as a Monthly Plan at ₹699 per month or a Yearly Plan at ₹6,990 per year.
+            Our premium services are offered as a Starter Plan at ₹499 per month or a Pro Plan at ₹999 per month.
           </p>
         </section>
 

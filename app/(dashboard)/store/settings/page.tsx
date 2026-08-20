@@ -20,7 +20,7 @@ import {
   isValidUsername,
   normalizeUsername,
 } from "@/helpers/username";
-import { FiCheck, FiEye, FiEyeOff } from "react-icons/fi";
+import { FiCheck, FiEye, FiEyeOff, FiPlus, FiX } from "react-icons/fi";
 import {
   emitStoreThemeChange,
   normalizeStoreTheme,
@@ -28,6 +28,16 @@ import {
   STORE_THEME_MAP,
   type StoreThemeId,
 } from "@/lib/store-themes";
+import {
+  addCustomCategory,
+  DEFAULT_PRODUCT_CATEGORIES,
+  removeCustomCategory,
+} from "@/lib/product-categories";
+import {
+  isStoreProfileComplete,
+  missingStoreProfileFields,
+  storeProfileIncompleteMessage,
+} from "@/lib/store-profile";
 
 const SettingsPage: React.FC = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -44,6 +54,10 @@ const SettingsPage: React.FC = () => {
   const [newPassword, setNewPassword] = useState<string>("");
   const [isOffline, setIsOffline] = useState(false);
   const [visibilitySaving, setVisibilitySaving] = useState(false);
+  const [productCategories, setProductCategories] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState("");
+  const [categorySaving, setCategorySaving] = useState(false);
+  const [savedProfileComplete, setSavedProfileComplete] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
@@ -74,6 +88,8 @@ const SettingsPage: React.FC = () => {
         setLogoImageUrl(data?.logoImage || null);
         setStoreTheme(normalizeStoreTheme(data?.storeTheme));
         setIsOffline(Boolean(data?.isOffline));
+        setProductCategories(data?.productCategories ?? []);
+        setSavedProfileComplete(isStoreProfileComplete(data));
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -83,6 +99,11 @@ const SettingsPage: React.FC = () => {
 
   const handleSaveChanges = async () => {
     if (!userId) return;
+
+    if (!name.trim()) {
+      toast.error("Store name is required.");
+      return;
+    }
 
     if (!/^\d{10}$/.test(whatsappNumber)) {
       toast.error("WhatsApp Number must be 10 digits.");
@@ -122,6 +143,7 @@ const SettingsPage: React.FC = () => {
         additionalNotes,
         whatsappNumber,
         isOffline,
+        productCategories,
       };
 
       if (logoImage) {
@@ -147,6 +169,7 @@ const SettingsPage: React.FC = () => {
       }
       setOriginalUsername(normalizedUsername);
       setUsername(normalizedUsername);
+      setSavedProfileComplete(true);
       emitStoreThemeChange(storeTheme);
       toast.success("Changes saved successfully!");
       router.push("/store");
@@ -156,6 +179,41 @@ const SettingsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const persistCategories = async (next: string[]) => {
+    if (!userId) return;
+    setCategorySaving(true);
+    try {
+      await updateStore(userId, { productCategories: next });
+      setProductCategories(next);
+    } catch (error) {
+      console.error("Error saving categories:", error);
+      toast.error("Could not save category.");
+    } finally {
+      setCategorySaving(false);
+    }
+  };
+
+  const handleAddCategory = async () => {
+    if (!savedProfileComplete) {
+      toast.error(
+        storeProfileIncompleteMessage({ username, name, whatsappNumber }) ||
+          "Save your username, store name, and WhatsApp number first.",
+      );
+      return;
+    }
+    const next = addCustomCategory(productCategories, newCategory);
+    if (next.length === productCategories.length) {
+      toast.error("Enter a unique category name.");
+      return;
+    }
+    await persistCategories(next);
+    setNewCategory("");
+  };
+
+  const handleRemoveCategory = async (name: string) => {
+    await persistCategories(removeCustomCategory(productCategories, name));
   };
 
   const handleProfilePicChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -193,6 +251,8 @@ const SettingsPage: React.FC = () => {
     return logoImageUrl;
   }, [logoImage, logoImageUrl]);
 
+  const missingFields = missingStoreProfileFields({ username, name, whatsappNumber });
+
   useEffect(() => {
     if (!logoImage || !previewLogoUrl) return;
     return () => URL.revokeObjectURL(previewLogoUrl);
@@ -200,6 +260,13 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="ds-page ds-settings">
+      {missingFields.length > 0 && (
+        <div className="ds-profile-banner" role="status">
+          <p>
+            <strong>Complete your store profile.</strong> Username, store name, and WhatsApp number must be saved before you can create products or categories.
+          </p>
+        </div>
+      )}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6">
         <section className="ds-card min-w-0">
           <div className="ds-form-group">
@@ -223,7 +290,7 @@ const SettingsPage: React.FC = () => {
               hint: "3–30 characters, letters and numbers only. Must be unique.",
             },
             { label: "Email", value: email, disabled: true },
-            { label: "Shop Name", value: name, onChange: setName },
+            { label: "Store name", value: name, onChange: setName },
             {
               label: "WhatsApp Number",
               value: whatsappNumber,
@@ -305,6 +372,68 @@ const SettingsPage: React.FC = () => {
                   </button>
                 );
               })}
+            </div>
+          </div>
+
+          <div className="ds-form-group">
+            <label className="ds-form-label mb-0">Product categories</label>
+            <p className="ds-form-hint mb-3">
+              Create categories for your catalog. They appear when you add or edit a product.
+              {!savedProfileComplete
+                ? " Save your username, store name, and WhatsApp number first."
+                : ""}
+            </p>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {DEFAULT_PRODUCT_CATEGORIES.map((category) => (
+                <span
+                  key={category.value}
+                  className="rounded-full border border-[color:var(--ds-border)] px-3 py-1 text-xs text-[color:var(--ds-muted)]"
+                >
+                  {category.label}
+                </span>
+              ))}
+              {productCategories.map((category) => (
+                <span
+                  key={category}
+                  className="inline-flex items-center gap-1 rounded-full border border-[color:var(--ds-violet)] bg-[color:var(--ds-violet-soft)] px-3 py-1 text-xs font-medium text-[color:var(--ds-ink)]"
+                >
+                  {category}
+                  <button
+                    type="button"
+                    onClick={() => void handleRemoveCategory(category)}
+                    disabled={categorySaving}
+                    className="text-[color:var(--ds-muted)] hover:text-red-500"
+                    aria-label={`Remove ${category}`}
+                  >
+                    <FiX />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newCategory}
+                onChange={(event) => setNewCategory(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    void handleAddCategory();
+                  }
+                }}
+                className="ds-form-input"
+                placeholder="e.g. Snacks, Jewellery"
+                maxLength={40}
+                disabled={categorySaving || !savedProfileComplete}
+              />
+              <button
+                type="button"
+                onClick={() => void handleAddCategory()}
+                disabled={categorySaving || !newCategory.trim() || !savedProfileComplete}
+                className="ds-btn-primary flex-shrink-0 px-4"
+              >
+                <FiPlus /> {categorySaving ? "Adding..." : "Add"}
+              </button>
             </div>
           </div>
 

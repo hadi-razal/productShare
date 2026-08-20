@@ -28,7 +28,8 @@ const Footer = () => {
     pathname.startsWith("/store") ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
-    pathname.startsWith("/forgot-password")
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/admin")
   ) {
     return null;
   }

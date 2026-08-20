@@ -14,39 +14,40 @@ const plans = [
     highlight: false,
   },
   {
-    key: "monthly",
-    name: "Monthly",
-    price: "₹699",
+    key: "starter",
+    name: "Starter",
+    price: "₹499",
     period: "/ month",
     cta: "Get Started",
     href: "/register",
     highlight: false,
   },
   {
-    key: "yearly",
-    name: "Yearly",
-    price: "₹6,990",
-    period: "/ year",
+    key: "pro",
+    name: "Pro",
+    price: "₹999",
+    period: "/ month",
     cta: "Get Started",
     href: "/register",
     highlight: true,
   },
 ] as const;
 
-const rows: { label: string; free: string; monthly: string; yearly: string }[] = [
-  { label: "Product Listings", free: "Up to 3", monthly: "Up to 50", yearly: "Up to 150" },
-  { label: "Analytics", free: "Basic", monthly: "Customer behavior", yearly: "Advanced" },
-  { label: "Sharing", free: "Public link", monthly: "Public link", yearly: "Public link" },
-  { label: "Theme Customization", free: "—", monthly: "Yes", yearly: "Yes" },
-  { label: "Priority Support", free: "—", monthly: "Yes", yearly: "Yes" },
-  { label: "Custom Alert Banners", free: "—", monthly: "Yes", yearly: "Yes" },
-  { label: "Sales & Engagement Charts", free: "—", monthly: "Yes", yearly: "Yes" },
-  { label: "Product Videos", free: "—", monthly: "Yes", yearly: "Yes" },
-  { label: "Performance Graphs", free: "—", monthly: "Yes", yearly: "Yes" },
-  { label: "AI Customer Insights", free: "—", monthly: "Yes", yearly: "Yes" },
-  { label: "Bulk Product Editing", free: "—", monthly: "Yes", yearly: "Yes" },
-  { label: "Team Access", free: "—", monthly: "—", yearly: "Yes" },
-  { label: "Bulk CSV/Excel Upload", free: "—", monthly: "—", yearly: "Yes" },
+const rows: { label: string; free: string; starter: string; pro: string }[] = [
+  { label: "Product Listings", free: "Up to 3", starter: "Up to 25", pro: "Up to 150" },
+  { label: "Prebuilt Themes", free: "—", starter: "5", pro: "12" },
+  { label: "Analytics", free: "Basic", starter: "Customer behavior", pro: "Advanced" },
+  { label: "Sharing", free: "Public link", starter: "Public link", pro: "Public link" },
+  { label: "Theme Customization", free: "—", starter: "Yes", pro: "Yes" },
+  { label: "Priority Support", free: "—", starter: "Yes", pro: "Yes" },
+  { label: "Custom Alert Banners", free: "—", starter: "Yes", pro: "Yes" },
+  { label: "Sales & Engagement Charts", free: "—", starter: "Yes", pro: "Yes" },
+  { label: "Product Videos", free: "—", starter: "Yes", pro: "Yes" },
+  { label: "Performance Graphs", free: "—", starter: "Yes", pro: "Yes" },
+  { label: "AI Customer Insights", free: "—", starter: "Yes", pro: "Yes" },
+  { label: "Bulk Product Editing", free: "—", starter: "Yes", pro: "Yes" },
+  { label: "Team Access", free: "—", starter: "—", pro: "Yes" },
+  { label: "Bulk CSV/Excel Upload", free: "—", starter: "—", pro: "Yes" },
 ];
 
 const cellValue = (plan: (typeof plans)[number], row: (typeof rows)[number]) =>
@@ -64,8 +65,8 @@ const PricingPage = () => {
             Simple plans
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-neutral-600">
-            Start free with 3 listings. Upgrade as your catalog grows. Yearly billing
-            includes 2 months free.
+            Start free with 3 listings. Upgrade to Starter for 25 products and 5
+            themes, or Pro for 150 products and 12 themes.
           </p>
         </div>
 

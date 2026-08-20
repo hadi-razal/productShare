@@ -3,16 +3,16 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Pricing — Product Share India",
   description:
-    "Simple, transparent pricing for Product Share India. Free plan with 3 listings. Monthly plan at ₹699 and Yearly plan at ₹6,990 with up to 150 listings.",
+    "Simple, transparent pricing for Product Share India. Free plan with 3 listings. Starter plan at ₹499 with 25 products and 5 themes. Pro plan at ₹999 with 150 products and 12 themes.",
   keywords: [
     "Product Share India pricing",
     "catalog builder price India",
     "digital catalog subscription",
     "monthly catalog plan India",
-    "yearly catalog plan",
     "affordable catalog builder",
     "free catalog builder India",
-    "₹699 catalog builder",
+    "₹499 catalog builder",
+    "₹999 catalog builder",
   ],
   alternates: {
     canonical: "https://productshare.in/pricing",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Pricing — Product Share India | Plans Starting Free",
     description:
-      "Start free or go premium. Monthly plan ₹699 • Yearly plan ₹6,990 (2 months free).",
+      "Start free or go premium. Starter plan ₹499 • Pro plan ₹999.",
     url: "https://productshare.in/pricing",
     type: "website",
   },
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Product Share India Pricing — Plans Starting Free",
     description:
-      "Free plan available. Monthly ₹699 or Yearly ₹6,990 — up to 150 product listings.",
+      "Free plan available. Starter ₹499 (25 products, 5 themes) or Pro ₹999 (150 products, 12 themes).",
   },
 };
 
@@ -60,20 +60,20 @@ export default function PricingLayout({
       },
       {
         "@type": "Offer",
-        name: "Monthly Plan",
-        price: "699",
+        name: "Starter Plan",
+        price: "499",
         priceCurrency: "INR",
-        description: "Up to 50 products, customer behavior analytics, theme customization, priority support",
+        description: "Up to 25 products, 5 prebuilt themes, customer behavior analytics, theme customization, priority support",
         eligibleRegion: { "@type": "Country", name: "India" },
         url: "https://productshare.in/register",
       },
       {
         "@type": "Offer",
-        name: "Yearly Plan",
-        price: "6990",
+        name: "Pro Plan",
+        price: "999",
         priceCurrency: "INR",
         description:
-          "Up to 150 products, advanced analytics, team access, bulk CSV/Excel upload",
+          "Up to 150 products, 12 prebuilt themes, advanced analytics, team access, bulk CSV/Excel upload",
         eligibleRegion: { "@type": "Country", name: "India" },
         url: "https://productshare.in/register",
       },

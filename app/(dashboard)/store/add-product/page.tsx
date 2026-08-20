@@ -3,10 +3,18 @@
 import { useState, useEffect, ChangeEvent, FormEvent, ReactNode } from "react";
 import { uploadPublicFile } from "@/lib/storage";
 import { getCurrentUser } from "@/lib/auth";
-import { createProduct, getStoreById } from "@/lib/db";
+import { createProduct, getStoreById, listProductsByStore, updateStore } from "@/lib/db";
 import { ProductType } from "@/type";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import ProductPreview from "@/components/ProductPreview";
+import CategorySelect from "@/components/CategorySelect";
+import { asCategoryList, isClothingCategory } from "@/lib/product-categories";
+import {
+  isStoreProfileComplete,
+  STORE_SETTINGS_PATH,
+  storeProfileIncompleteMessage,
+} from "@/lib/store-profile";
 // @ts-ignore
 import { ChromePicker, ColorResult } from "react-color";
 
@@ -66,6 +74,7 @@ const CreateProduct = () => {
     category: "",
     sizes: [],
     isInStock: true,
+    availableStock: "",
     images: [],
     tags: "",
     views: 0,
@@ -82,8 +91,52 @@ const CreateProduct = () => {
   const [previewVideo, setPreviewVideo] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
   const [videoCompressing, setVideoCompressing] = useState(false);
+  const [storeId, setStoreId] = useState<string | null>(null);
+  const [customCategories, setCustomCategories] = useState<string[]>([]);
+  const [profileReady, setProfileReady] = useState(false);
 
   const router = useRouter();
+
+  useEffect(() => {
+    const loadStore = async () => {
+      const user = await getCurrentUser();
+      if (!user) return;
+      setStoreId(user.uid);
+      const [store, products] = await Promise.all([
+        getStoreById(user.uid),
+        listProductsByStore(user.uid),
+      ]);
+      if (!isStoreProfileComplete(store)) {
+        toast.error(storeProfileIncompleteMessage(store));
+        router.replace(STORE_SETTINGS_PATH);
+        return;
+      }
+      setProfileReady(true);
+      setCustomCategories(
+        asCategoryList([
+          ...(store?.productCategories ?? []),
+          ...products.map((product) => product.category),
+        ]),
+      );
+    };
+    void loadStore();
+  }, [router]);
+
+  const saveCustomCategories = async (categories: string[]) => {
+    setCustomCategories(categories);
+    if (!storeId) return;
+    try {
+      const store = await getStoreById(storeId);
+      if (!isStoreProfileComplete(store)) {
+        toast.error(storeProfileIncompleteMessage(store));
+        router.replace(STORE_SETTINGS_PATH);
+        return;
+      }
+      await updateStore(storeId, { productCategories: categories });
+    } catch (error) {
+      console.error("Failed to save category:", error);
+    }
+  };
 
   const compressVideo = async (file: File): Promise<File> => {
     return new Promise((resolve, reject) => {
@@ -167,7 +220,21 @@ const CreateProduct = () => {
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-    setProductData((prev) => ({ ...prev, [name]: checked }));
+    setProductData((prev) => ({
+      ...prev,
+      [name]: checked,
+      ...(name === "isInStock" && !checked ? { availableStock: "0" } : {}),
+    }));
+  };
+
+  const handleStockChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const count = Number(value);
+    setProductData((prev) => ({
+      ...prev,
+      availableStock: value,
+      isInStock: value === "" ? prev.isInStock : count > 0,
+    }));
   };
 
   const handleSizeChange = (size: string) => {
@@ -197,12 +264,11 @@ const CreateProduct = () => {
     }));
   };
 
-  const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const newCategory = e.target.value;
+  const handleCategoryChange = (newCategory: string) => {
     setProductData((prev) => ({
       ...prev,
       category: newCategory,
-      sizes: newCategory !== "clothing" ? [] : prev.sizes,
+      sizes: isClothingCategory(newCategory) ? prev.sizes : [],
     }));
   };
 
@@ -286,6 +352,12 @@ const CreateProduct = () => {
         setIsUploading(false);
         return;
       }
+      if (!isStoreProfileComplete(store)) {
+        toast.error(storeProfileIncompleteMessage(store));
+        router.replace(STORE_SETTINGS_PATH);
+        setIsUploading(false);
+        return;
+      }
       const imageUrls = await uploadFiles(imageFiles, "images");
       let videoUrl = "";
       if (videoFile) {
@@ -319,6 +391,14 @@ const CreateProduct = () => {
   };
 
   const busy = isUploading || videoCompressing;
+
+  if (!profileReady) {
+    return (
+      <div className="ds-page text-sm">
+        <p className="text-gray-500">Checking your store profile...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="ds-page text-sm">
@@ -421,30 +501,18 @@ const CreateProduct = () => {
           {/* Category & Sizes */}
           <Section title="Category & Sizes">
             <div className="space-y-4">
-              <div>
-                <label className={labelCls}>
-                  Category <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="category"
-                  value={productData.category}
-                  onChange={handleCategoryChange}
-                  disabled={busy}
-                  className={inputCls}
-                  required
-                >
-                  <option value="">Select a category</option>
-                  <option value="electronics">Electronics</option>
-                  <option value="clothing">Clothing</option>
-                  <option value="home">Home & Garden</option>
-                  <option value="sports">Sports & Outdoors</option>
-                  <option value="autoMobiles">Automobiles</option>
-                  <option value="books">Books</option>
-                  <option value="toys">Toys & Games</option>
-                </select>
-              </div>
+              <CategorySelect
+                value={productData.category}
+                customCategories={customCategories}
+                onChange={handleCategoryChange}
+                onCustomCategoriesChange={saveCustomCategories}
+                disabled={busy}
+                required
+                className={inputCls}
+                labelClassName={labelCls}
+              />
 
-              {productData.category === "clothing" && (
+              {isClothingCategory(productData.category) && (
                 <div>
                   <label className={labelCls}>Available Sizes</label>
                   <div className="flex flex-wrap gap-2">
@@ -640,6 +708,22 @@ const CreateProduct = () => {
 
           {/* Options */}
           <Section title="Product Options">
+            <div className="mb-4">
+              <label className={labelCls}>Stock count</label>
+              <input
+                type="number"
+                name="availableStock"
+                value={productData.availableStock ?? ""}
+                onChange={handleStockChange}
+                disabled={busy}
+                className={inputCls}
+                placeholder="e.g. 25"
+                min="0"
+              />
+              <p className="text-xs text-gray-500 mt-2">
+                Leave empty if you don&apos;t track quantity. 0 marks the product as out of stock.
+              </p>
+            </div>
             <div className="divide-y divide-gray-50">
               <Toggle
                 name="isInStock"

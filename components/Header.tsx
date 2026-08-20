@@ -49,13 +49,16 @@ const getStoreThemeColor = async (username: string) => {
 const HIDDEN_HEADER_ROUTES = [
   "/store",
   "/store/add-product",
+  "/store/edit",
   "/store/products",
+  "/store/categories",
   "/store/reviews",
   "/store/settings",
   "/login",
   "/register",
   "/forgot-password",
   "/reset-password",
+  "/admin",
 ];
 
 const Header = () => {
@@ -67,7 +70,9 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
   const isStorePage = pathname.startsWith("/store/");
-  const hideHeader = HIDDEN_HEADER_ROUTES.includes(pathname);
+  const hideHeader = HIDDEN_HEADER_ROUTES.some(
+    (route) => pathname === route || (route !== "/store" && pathname.startsWith(`${route}/`)),
+  );
   const supportsTransparentHeader = pathname === "/";
   const isTransparentHeader =
     supportsTransparentHeader && !isScrolled && !menuOpen;

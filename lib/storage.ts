@@ -30,3 +30,29 @@ export const uploadPublicFile = async (path: string, file: File) => {
   const { data } = supabase.storage.from(UPLOADS_BUCKET).getPublicUrl(safePath);
   return data.publicUrl;
 };
+
+export const publicUrlToStoragePath = (url: string) => {
+  try {
+    const parsed = new URL(url);
+    const marker = `/storage/v1/object/public/${UPLOADS_BUCKET}/`;
+    const index = parsed.pathname.indexOf(marker);
+    if (index === -1) return null;
+    return decodeURIComponent(parsed.pathname.slice(index + marker.length));
+  } catch {
+    return null;
+  }
+};
+
+export const deletePublicFiles = async (urls: Array<string | null | undefined>) => {
+  const paths = Array.from(
+    new Set(
+      urls
+        .map((url) => (typeof url === "string" ? publicUrlToStoragePath(url) : null))
+        .filter((path): path is string => Boolean(path)),
+    ),
+  );
+  if (!paths.length) return;
+
+  const { error } = await supabase.storage.from(UPLOADS_BUCKET).remove(paths);
+  if (error) throw error;
+};

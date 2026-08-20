@@ -39,4 +39,5 @@ export interface ProductType {
     themeColor:string
     storeTheme?: string;
     isOffline?: boolean;
+    productCategories?: string[];
   }

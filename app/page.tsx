@@ -67,17 +67,17 @@ export default function Page() {
       },
       {
         "@type": "Offer",
-        name: "Monthly Access",
-        price: "699",
+        name: "Starter Plan",
+        price: "499",
         priceCurrency: "INR",
-        description: "Full access for 1 month, up to 50 product listings",
+        description: "Up to 25 product listings and 5 prebuilt themes",
       },
       {
         "@type": "Offer",
-        name: "Yearly Access",
-        price: "6990",
+        name: "Pro Plan",
+        price: "999",
         priceCurrency: "INR",
-        description: "Full access for 1 year, up to 150 product listings",
+        description: "Up to 150 product listings and 12 prebuilt themes",
       },
     ],
   };
@@ -99,7 +99,7 @@ export default function Page() {
         name: "How much does Product Share India cost?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Product Share India offers a free plan with up to 3 product listings. The Monthly Plan is INR 699 with up to 50 listings, and the Yearly Plan is INR 6,990 with up to 150 listings.",
+          text: "Product Share India offers a free plan with up to 3 product listings. The Starter Plan is INR 499 per month with up to 25 listings and 5 prebuilt themes. The Pro Plan is INR 999 per month with up to 150 listings and 12 prebuilt themes.",
         },
       },
       {

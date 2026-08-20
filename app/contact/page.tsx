@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { submitContactMessage } from "@/lib/db";
 import { siteConfig } from "@/lib/site";
 
 const ContactPage = () => {
@@ -9,6 +11,7 @@ const ContactPage = () => {
     email: "",
     message: "",
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -20,20 +23,26 @@ const ContactPage = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const subject = `Website enquiry from ${formData.name}`;
-    const body = [
-      `Name: ${formData.name}`,
-      `Email: ${formData.email}`,
-      "",
-      formData.message,
-    ].join("\n");
-
-    window.location.href = `mailto:${siteConfig.supportEmail}?subject=${encodeURIComponent(
-      subject,
-    )}&body=${encodeURIComponent(body)}`;
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const result = await submitContactMessage(formData);
+      toast.success(
+        result.updated
+          ? "We already had an enquiry from this email. Your details were updated."
+          : "Enquiry sent. We will get back to you soon.",
+      );
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error instanceof Error ? error.message : "Could not send enquiry. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const fieldClass =
@@ -99,7 +108,7 @@ const ContactPage = () => {
             Send an enquiry
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-neutral-600">
-            This opens your email app with the message ready to send.
+            Send a message and we will follow up by email. One enquiry is kept per email address.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
@@ -162,9 +171,10 @@ const ContactPage = () => {
 
             <button
               type="submit"
-              className="inline-flex w-full items-center justify-center bg-primary py-3.5 text-[12px] font-medium uppercase tracking-[0.16em] text-white hover:bg-primary/90"
+              disabled={submitting}
+              className="inline-flex w-full items-center justify-center bg-primary py-3.5 text-[12px] font-medium uppercase tracking-[0.16em] text-white hover:bg-primary/90 disabled:opacity-60"
             >
-              Compose email
+              {submitting ? "Sending..." : "Send enquiry"}
             </button>
           </form>
         </section>

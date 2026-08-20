@@ -19,6 +19,8 @@ export const RESERVED_USERNAMES = new Set([
   "billing",
   "blog",
   "cdn",
+  "categories",
+  "category",
   "checkout",
   "contact",
   "dashboard",

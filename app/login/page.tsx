@@ -8,6 +8,7 @@ import {
   signInWithEmail,
   signInWithGoogle,
 } from "@/lib/auth";
+import { signedInHomePath } from "@/lib/super-admin";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
@@ -43,6 +44,11 @@ const LoginPage: React.FC = () => {
         "An account with this email already exists. Please sign in with your existing password.",
       );
     }
+
+    const oauthError = params.get("error_description") || params.get("error");
+    if (oauthError) {
+      setError(authErrorMessage(new Error(oauthError), "Google sign-in failed. Please try again."));
+    }
   }, []);
 
   useEffect(() => {
@@ -50,7 +56,7 @@ const LoginPage: React.FC = () => {
       if (!user) return;
       try {
         await ensureStoreForUser(user);
-        router.replace("/store");
+        router.replace(signedInHomePath(user.email));
       } catch (err) {
         console.error("Failed to prepare store:", err);
         setError("Signed in, but we could not open your store. Please try again.");

@@ -12,6 +12,7 @@ import {
 const APEX_ONLY_PREFIXES = [
   "/login",
   "/register",
+  "/auth",
   "/forgot-password",
   "/reset-password",
   "/pricing",
@@ -23,6 +24,7 @@ const APEX_ONLY_PREFIXES = [
   "/shipping-policy",
   "/pricing-policy",
   "/api",
+  "/admin",
 ];
 
 const isDashboardPath = (pathname: string) => {
@@ -30,7 +32,10 @@ const isDashboardPath = (pathname: string) => {
   return (
     pathname.startsWith("/store/settings") ||
     pathname.startsWith("/store/products") ||
+    pathname.startsWith("/store/categories") ||
     pathname.startsWith("/store/add-product") ||
+    pathname === "/store/edit" ||
+    pathname.startsWith("/store/edit/") ||
     pathname.startsWith("/store/reviews")
   );
 };
@@ -74,11 +79,7 @@ export function middleware(request: NextRequest) {
     }
 
     if (pathname.startsWith("/edit/")) {
-      return redirectToApex(
-        request,
-        storefrontInternalPath(usernameFromHost, pathname),
-        search,
-      );
+      return redirectToApex(request, `/store${pathname}`, search);
     }
 
     const prefixed = `/store/${usernameFromHost}`;
@@ -95,8 +96,13 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith("/store/")) {
     const segments = pathname.split("/").filter(Boolean);
     const candidate = segments[1];
+    const extra = segments.slice(2);
+    if (candidate && extra[0] === "edit" && extra[1]) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/store/edit/${extra[1]}`;
+      return NextResponse.redirect(url);
+    }
     if (candidate && isValidUsername(candidate) && !isDashboardPath(pathname)) {
-      const extra = segments.slice(2);
       if (isApexHost(host) && extra[0] !== "edit") {
         return NextResponse.redirect(
           storefrontPublicUrl(candidate, extra.length ? `/${extra.join("/")}` : "/") + search,

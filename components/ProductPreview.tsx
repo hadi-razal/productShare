@@ -3,22 +3,13 @@
 import { FaStar } from "react-icons/fa";
 import { FiTruck } from "react-icons/fi";
 import { ProductType } from "@/type";
+import { categoryLabel as labelForCategory, isClothingCategory } from "@/lib/product-categories";
 
 interface ProductPreviewProps {
   product: ProductType;
   previewImages: string[];
   previewVideo: string;
 }
-
-const CATEGORY_LABELS: Record<string, string> = {
-  electronics: "Electronics",
-  clothing: "Clothing",
-  home: "Home & Garden",
-  sports: "Sports & Outdoors",
-  autoMobiles: "Automobiles",
-  books: "Books",
-  toys: "Toys & Games",
-};
 
 const ProductPreview = ({
   product,
@@ -39,8 +30,7 @@ const ProductPreview = ({
   const displayPrice = hasDiscount ? discount : regular;
   const mainImage = previewImages[0];
   const productName = product.name.trim() || "Product Name";
-  const categoryLabel =
-    CATEGORY_LABELS[product.category] || product.category || "Category";
+  const categoryLabel = labelForCategory(product.category) || "Category";
 
   return (
     <div className="w-full">
@@ -179,11 +169,15 @@ const ProductPreview = ({
             </div>
 
             <div className="flex flex-wrap gap-1.5">
-              {!product.isInStock && (
+              {!product.isInStock || Number(product.availableStock) === 0 ? (
                 <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
                   Out of Stock
                 </span>
-              )}
+              ) : String(product.availableStock || "").trim() ? (
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                  {Number(product.availableStock).toLocaleString("en-IN")} in stock
+                </span>
+              ) : null}
               {product.isFreeDelivery && (
                 <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-0.5">
                   <FiTruck className="w-2.5 h-2.5" /> Free Delivery
@@ -224,7 +218,7 @@ const ProductPreview = ({
               </p>
             )}
 
-            {product.category === "clothing" && product.sizes.length > 0 && (
+            {isClothingCategory(product.category) && product.sizes.length > 0 && (
               <div>
                 <p className="text-[10px] font-semibold text-gray-500 mb-1.5">
                   Sizes

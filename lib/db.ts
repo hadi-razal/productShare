@@ -1,4 +1,7 @@
 import { supabase } from "@/lib/supabase";
+import { asCategoryList } from "@/lib/product-categories";
+import { ensureStoreProfileComplete } from "@/lib/store-profile";
+import { deletePublicFiles } from "@/lib/storage";
 import type { ProductType, userType } from "@/type";
 
 export type StoreRecord = userType & {
@@ -36,6 +39,7 @@ type StoreRow = {
   subscription_id?: string | null;
   subscribed_at?: string | null;
   is_offline?: boolean | null;
+  product_categories?: unknown;
   created_at?: string | null;
 };
 
@@ -91,6 +95,7 @@ const storeFromRow = (row: StoreRow): StoreRecord => ({
   subscriptionId: row.subscription_id ?? undefined,
   subscribedAt: row.subscribed_at ?? null,
   isOffline: Boolean(row.is_offline),
+  productCategories: asCategoryList(row.product_categories),
   createdAt: row.created_at ?? undefined,
   isVisitedCount: String(row.visit_count ?? 0),
 });
@@ -190,6 +195,18 @@ export const listStores = async (): Promise<StoreRecord[]> => {
   return (data ?? []).map((row) => storeFromRow(row as StoreRow));
 };
 
+export const listProductCountsByStore = async (): Promise<Record<string, number>> => {
+  const { data, error } = await supabase.from("products").select("store_id");
+  if (error) throw error;
+  const counts: Record<string, number> = {};
+  for (const row of data ?? []) {
+    const id = String((row as { store_id?: string }).store_id || "");
+    if (!id) continue;
+    counts[id] = (counts[id] || 0) + 1;
+  }
+  return counts;
+};
+
 export const createStore = async (
   id: string,
   input: {
@@ -233,14 +250,19 @@ export const updateStore = async (
   if (input.subscriptionId !== undefined) row.subscription_id = input.subscriptionId;
   if (input.subscribedAt !== undefined) row.subscribed_at = input.subscribedAt;
   if (input.isOffline !== undefined) row.is_offline = input.isOffline;
+  if (input.productCategories !== undefined) {
+    row.product_categories = asCategoryList(input.productCategories);
+  }
 
   const { error } = await supabase.from("stores").update(row).eq("id", id);
   if (error) {
     const missingOptionalColumn =
-      /store_theme|is_offline/i.test(error.message) || error.code === "PGRST204";
+      /store_theme|is_offline|product_categories/i.test(error.message) ||
+      error.code === "PGRST204";
     if (missingOptionalColumn) {
       delete row.store_theme;
       delete row.is_offline;
+      delete row.product_categories;
       const retry = await supabase.from("stores").update(row).eq("id", id);
       if (retry.error) throw retry.error;
       return;
@@ -278,6 +300,9 @@ export const createProduct = async (
   storeId: string,
   product: Partial<ProductType>,
 ): Promise<string> => {
+  const store = await getStoreById(storeId);
+  ensureStoreProfileComplete(store);
+
   const id = crypto.randomUUID();
   const { error } = await supabase.from("products").insert({
     id,
@@ -300,13 +325,69 @@ export const updateProduct = async (
   if (error) throw error;
 };
 
+export const reassignProductCategory = async (
+  storeId: string,
+  from: string[],
+  to: string,
+): Promise<void> => {
+  const keys = new Set(from.map((value) => value.trim().toLowerCase()).filter(Boolean));
+  if (!keys.size) return;
+
+  const products = await listProductsByStore(storeId);
+  const matches = products.filter((product) =>
+    keys.has(String(product.category || "").trim().toLowerCase()),
+  );
+
+  await Promise.all(
+    matches.map(async (product) => {
+      const { error } = await supabase
+        .from("products")
+        .update({ category: to })
+        .eq("store_id", storeId)
+        .eq("id", product.id);
+      if (error) throw error;
+    }),
+  );
+};
+
 export const deleteProduct = async (storeId: string, productId: string): Promise<void> => {
+  const product = await getProduct(storeId, productId);
+
   const { error } = await supabase
     .from("products")
     .delete()
     .eq("store_id", storeId)
     .eq("id", productId);
   if (error) throw error;
+
+  if (!product) return;
+
+  try {
+    await deletePublicFiles([...(product.images || []), product.video]);
+  } catch (storageError) {
+    console.error("Product deleted, but files could not be removed from storage:", storageError);
+  }
+};
+
+export const deleteStore = async (storeId: string): Promise<void> => {
+  const [store, products] = await Promise.all([
+    getStoreById(storeId),
+    listProductsByStore(storeId),
+  ]);
+
+  for (const product of products) {
+    await deleteProduct(storeId, product.id);
+  }
+
+  const { error } = await supabase.from("stores").delete().eq("id", storeId);
+  if (error) throw error;
+
+  if (!store) return;
+  try {
+    await deletePublicFiles([store.logoImage, store.image]);
+  } catch (storageError) {
+    console.error("Store deleted, but logo could not be removed from storage:", storageError);
+  }
 };
 
 export const incrementProductViews = async (productId: string): Promise<void> => {
@@ -325,4 +406,185 @@ export const isUsernameTaken = async (
   if (error) throw error;
   if (!data?.length) return false;
   return !(excludeUserId && data.length === 1 && data[0].id === excludeUserId);
+};
+
+export type ContactMessageSource = "website" | "store";
+
+export type ContactMessageRecord = {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  source: ContactMessageSource;
+  storeId: string;
+  storeName: string;
+  topic: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type ContactMessageRow = {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  message?: string | null;
+  source?: string | null;
+  store_id?: string | null;
+  store_name?: string | null;
+  topic?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
+
+const contactFromRow = (row: ContactMessageRow): ContactMessageRecord => ({
+  id: row.id,
+  name: row.name ?? "",
+  email: row.email ?? "",
+  message: row.message ?? "",
+  source: row.source === "store" ? "store" : "website",
+  storeId: row.store_id ?? "",
+  storeName: row.store_name ?? "",
+  topic: row.topic ?? "",
+  createdAt: row.created_at ?? "",
+  updatedAt: row.updated_at ?? row.created_at ?? "",
+});
+
+const contactTableMissing = (error: { message?: string; code?: string } | null) =>
+  Boolean(
+    error &&
+      (/contact_messages/i.test(error.message || "") ||
+        error.code === "42P01" ||
+        error.code === "PGRST205"),
+  );
+
+const contactOptionalColumnMissing = (error: { message?: string; code?: string } | null) =>
+  Boolean(
+    error &&
+      (/source|store_id|store_name|topic/i.test(error.message || "") ||
+        error.code === "PGRST204"),
+  );
+
+const contactSetupError =
+  "Messages are not set up yet. Run the latest contact_messages SQL in Supabase.";
+
+export const submitContactMessage = async (input: {
+  name: string;
+  email: string;
+  message: string;
+}): Promise<{ updated: boolean }> => {
+  const name = input.name.trim();
+  const email = input.email.trim().toLowerCase();
+  const message = input.message.trim();
+  if (!name || !email || !message) {
+    throw new Error("Name, email, and message are required.");
+  }
+
+  const now = new Date().toISOString();
+  const lookup = async (withSource: boolean) => {
+    let query = supabase.from("contact_messages").select("id").eq("email", email);
+    if (withSource) query = query.eq("source", "website");
+    return query.maybeSingle();
+  };
+
+  let existing = await lookup(true);
+  if (existing.error && contactOptionalColumnMissing(existing.error)) {
+    existing = await lookup(false);
+  }
+  if (existing.error) {
+    if (contactTableMissing(existing.error)) throw new Error(contactSetupError);
+    throw existing.error;
+  }
+
+  if (existing.data?.id) {
+    const { error } = await supabase
+      .from("contact_messages")
+      .update({ name, message, updated_at: now })
+      .eq("id", existing.data.id);
+    if (error) throw error;
+    return { updated: true };
+  }
+
+  const insertRow: Record<string, string> = {
+    name,
+    email,
+    message,
+    source: "website",
+    created_at: now,
+    updated_at: now,
+  };
+  let { error } = await supabase.from("contact_messages").insert(insertRow);
+  if (error && contactOptionalColumnMissing(error)) {
+    delete insertRow.source;
+    const retry = await supabase.from("contact_messages").insert(insertRow);
+    error = retry.error;
+  }
+  if (error) {
+    if (error.code === "23505") {
+      const retry = await supabase
+        .from("contact_messages")
+        .update({ name, message, updated_at: now })
+        .eq("email", email);
+      if (retry.error) throw retry.error;
+      return { updated: true };
+    }
+    if (contactTableMissing(error)) throw new Error(contactSetupError);
+    throw error;
+  }
+  return { updated: false };
+};
+
+export const submitStoreMessage = async (input: {
+  name: string;
+  email: string;
+  message: string;
+  topic?: string;
+  storeId?: string;
+  storeName?: string;
+}): Promise<void> => {
+  const name = input.name.trim();
+  const email = input.email.trim().toLowerCase();
+  const message = input.message.trim();
+  const topic = (input.topic || "").trim();
+  if (!name || !email || !message) {
+    throw new Error("Name, email, and message are required.");
+  }
+
+  const now = new Date().toISOString();
+  const { error } = await supabase.from("contact_messages").insert({
+    name,
+    email,
+    message,
+    source: "store",
+    store_id: input.storeId || null,
+    store_name: (input.storeName || "").trim() || null,
+    topic,
+    created_at: now,
+    updated_at: now,
+  });
+  if (error) {
+    if (contactTableMissing(error) || contactOptionalColumnMissing(error) || error.code === "23505") {
+      throw new Error(contactSetupError);
+    }
+    throw error;
+  }
+};
+
+export const listContactMessages = async (
+  source?: ContactMessageSource,
+): Promise<ContactMessageRecord[]> => {
+  const { data, error } = await supabase
+    .from("contact_messages")
+    .select("*")
+    .order("updated_at", { ascending: false });
+  if (error) {
+    if (contactTableMissing(error)) return [];
+    throw error;
+  }
+  const rows = (data || []).map((row) => contactFromRow(row as ContactMessageRow));
+  return source ? rows.filter((row) => row.source === source) : rows;
+};
+
+export const deleteContactMessage = async (id: string): Promise<void> => {
+  const { error } = await supabase.from("contact_messages").delete().eq("id", id);
+  if (error) throw error;
 };

@@ -20,10 +20,8 @@ export const createStorefrontNav = (
   catalogHref: (username) => (onSubdomain ? "/" : `/store/${username}`),
   productHref: (username, productId) =>
     onSubdomain ? `/${productId}` : `/store/${username}/${productId}`,
-  editHref: (username, productId) =>
-    onSubdomain
-      ? `${apexOrigin}/store/${username}/edit/${productId}`
-      : `/store/${username}/edit/${productId}`,
+  editHref: (_username, productId) =>
+    onSubdomain ? `${apexOrigin}/store/edit/${productId}` : `/store/edit/${productId}`,
   dashboardHref: (path) => (onSubdomain ? `${apexOrigin}${path}` : path),
 });
 

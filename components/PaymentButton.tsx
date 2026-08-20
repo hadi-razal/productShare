@@ -49,53 +49,16 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-interface SwitchProps {
-  checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
-}
-const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange }) => (
-  <button
-    role="switch"
-    aria-checked={checked}
-    onClick={() => onCheckedChange(!checked)}
-    className={`relative inline-flex h-6 w-11 rounded-full transition-colors ${
-      checked ? "bg-indigo-600" : "bg-gray-200"
-    }`}
-  >
-    <span
-      className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-md transition-transform ${
-        checked ? "translate-x-5" : "translate-x-0.5"
-      }`}
-    />
-  </button>
-);
-
-interface BadgeProps {
-  children: React.ReactNode;
-  variant?: "default" | "secondary";
-}
-const Badge: React.FC<BadgeProps> = ({ children, variant = "default" }) => {
-  const variants = {
-    default: "bg-gray-100 text-gray-900",
-    secondary: "bg-green-100 text-green-700",
-  };
-  return (
-    <span
-      className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${variants[variant]}`}
-    >
-      {children}
-    </span>
-  );
-};
-
 // -----------------------------
 // Plan Config
 // -----------------------------
-const monthlyPlan = {
-  name: "Monthly Plan",
-  pricePaise: 69900,
+const starterPlan = {
+  key: "starter" as const,
+  name: "Starter Plan",
+  pricePaise: 49900,
   features: [
-    "Up to 50 product listings",
+    "Up to 25 product listings",
+    "5 prebuilt themes",
     "Customer behavior analytics",
     "Public sharing link",
     "Theme customization",
@@ -109,11 +72,13 @@ const monthlyPlan = {
   ],
 };
 
-const yearlyPlan = {
-  name: "Yearly Plan",
-  pricePaise: 699000,
+const proPlan = {
+  key: "pro" as const,
+  name: "Pro Plan",
+  pricePaise: 99900,
   features: [
     "Up to 150 product listings",
+    "12 prebuilt themes",
     "Advanced analytics",
     "Public sharing link",
     "Theme customization",
@@ -138,10 +103,10 @@ interface PricingButtonProps {
 
 const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isYearly, setIsYearly] = useState(false);
+  const [selectedKey, setSelectedKey] = useState<"starter" | "pro">("starter");
   const [isPremiumUser, setIsPremiumUser] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
-  const selectedPlan = isYearly ? yearlyPlan : monthlyPlan;
+  const selectedPlan = selectedKey === "pro" ? proPlan : starterPlan;
   const displayPrice = (selectedPlan.pricePaise / 100).toLocaleString("en-IN");
 
   // ✅ Load Razorpay script
@@ -155,9 +120,10 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
 
   // ✅ Handle subscription flow
   const handleSubscription = async () => {
-    const planId = isYearly
-      ? process.env.NEXT_PUBLIC_RZP_YEARLY_PLAN_ID
-      : process.env.NEXT_PUBLIC_RZP_MONTHLY_PLAN_ID;
+    const planId =
+      selectedKey === "pro"
+        ? process.env.NEXT_PUBLIC_RZP_YEARLY_PLAN_ID
+        : process.env.NEXT_PUBLIC_RZP_MONTHLY_PLAN_ID;
 
     const res = await fetch("/api/create-order", {
       method: "POST",
@@ -171,7 +137,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       subscription_id: subscription.id,
       name: "Product Share",
-      description: `${isYearly ? yearlyPlan.name : monthlyPlan.name} subscription`,
+      description: `${selectedPlan.name} subscription`,
       handler: async (response: any) => {
         toast.success("Subscription started 🎉");
         // ✅ Save subscription to Firestore
@@ -236,29 +202,36 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
               </h2>
             </div>
 
-            {/* Toggle */}
-            <div className="flex items-center justify-center gap-4 mb-8">
-              <span
-                className={`text-sm ${
-                  !isYearly ? "text-indigo-600 font-medium" : "text-gray-600"
-                }`}
-              >
-                Monthly
-              </span>
-              <Switch checked={isYearly} onCheckedChange={setIsYearly} />
-              <div className="flex items-center gap-2">
-                <span
-                  className={`text-sm ${
-                    isYearly ? "text-indigo-600 font-medium" : "text-gray-600"
-                  }`}
-                >
-                  Yearly
-                </span>
-                <Badge variant="secondary">2 months free</Badge>
-              </div>
+            <div className="grid gap-3 sm:grid-cols-2 mb-6">
+              {[starterPlan, proPlan].map((plan) => {
+                const selected = selectedKey === plan.key;
+                const price = (plan.pricePaise / 100).toLocaleString("en-IN");
+                return (
+                  <button
+                    key={plan.key}
+                    type="button"
+                    onClick={() => setSelectedKey(plan.key)}
+                    className={`rounded-xl border-2 p-4 text-left transition ${
+                      selected
+                        ? "border-indigo-500 bg-indigo-50"
+                        : "border-gray-200 hover:border-indigo-300"
+                    }`}
+                  >
+                    <p className="text-sm font-semibold text-gray-900">{plan.name}</p>
+                    <p className="mt-1 text-xl font-bold text-indigo-600">
+                      ₹{price}
+                      <span className="ml-1 text-sm font-medium text-gray-500">/ month</span>
+                    </p>
+                    <p className="mt-2 text-xs text-gray-600">
+                      {plan.key === "starter"
+                        ? "25 products · 5 themes"
+                        : "150 products · 12 themes"}
+                    </p>
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Pricing Card */}
             <div className="bg-white rounded-xl border-2 border-indigo-500 p-6 mb-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2 sm:mb-0">
@@ -266,9 +239,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
                 </h3>
                 <div className="text-2xl font-bold text-indigo-600">
                   ₹{displayPrice}
-                  <span className="text-base text-gray-500 ml-1">
-                    /{isYearly ? "year" : "month"}
-                  </span>
+                  <span className="text-base text-gray-500 ml-1">/month</span>
                 </div>
               </div>
 
@@ -283,7 +254,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
 
               <div className="text-center">
                 <Button onClick={handleSubscription} className="w-full">
-                  Subscribe {isYearly ? "Yearly" : "Monthly"} - ₹{displayPrice}
+                  Subscribe {selectedPlan.name} - ₹{displayPrice}
                 </Button>
               </div>
             </div>

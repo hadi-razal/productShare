@@ -410,7 +410,12 @@ const ProductPage = ({
                 inStock ? "sf-muted" : "sf-muted opacity-70"
               }`}
             >
-              {inStock ? "In stock" : "Out of stock"}
+              {inStock
+                ? Number.isFinite(Number(productData.availableStock)) &&
+                  String(productData.availableStock).trim() !== ""
+                  ? `${Number(productData.availableStock).toLocaleString("en-IN")} in stock`
+                  : "In stock"
+                : "Out of stock"}
             </p>
 
             {productData.colors?.length > 0 && (

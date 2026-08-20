@@ -11,6 +11,7 @@ import {
   usernameFromIdentity,
 } from "@/lib/auth";
 import { createStore, getStoreByEmail } from "@/lib/db";
+import { signedInHomePath, isSuperAdminEmail } from "@/lib/super-admin";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FiEye, FiEyeOff } from "react-icons/fi";
@@ -34,7 +35,7 @@ const RegisterPage: React.FC = () => {
     const unsubscribe = onAuthChange(async (user) => {
       if (user && !showOtpStep) {
         await ensureStoreForUser(user);
-        router.push("/store");
+        router.push(signedInHomePath(user.email));
       }
     });
     return () => unsubscribe();
@@ -130,12 +131,14 @@ const RegisterPage: React.FC = () => {
 
       const normalizedEmail = email.trim().toLowerCase();
       const user = await signUpWithEmail(normalizedEmail, password);
-      await createStore(user.uid, {
-        username: usernameFromIdentity(normalizedEmail),
-        name: email.split("@")[0],
-        email: normalizedEmail,
-        premiumUser: false,
-      });
+      if (!isSuperAdminEmail(normalizedEmail)) {
+        await createStore(user.uid, {
+          username: usernameFromIdentity(normalizedEmail),
+          name: email.split("@")[0],
+          email: normalizedEmail,
+          premiumUser: false,
+        });
+      }
 
       redirectToLogin(normalizedEmail);
     } catch (err: unknown) {
@@ -177,7 +180,7 @@ const RegisterPage: React.FC = () => {
               Start for Free
             </h2>
             <p className="text-sm text-white/50 text-center">
-              Up to 3 listings. Upgrade from ₹699 / month.
+              Up to 3 listings. Upgrade from ₹499 / month.
             </p>
           </div>
 

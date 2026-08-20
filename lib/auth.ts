@@ -1,6 +1,7 @@
 import type { User } from "@supabase/supabase-js";
 import { createStore, getStoreById } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
+import { isSuperAdminEmail } from "@/lib/super-admin";
 
 export type AuthUser = {
   uid: string;
@@ -53,10 +54,41 @@ export const signInWithGoogle = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/login`,
+      redirectTo: `${window.location.origin}/auth/callback`,
+      queryParams: {
+        access_type: "offline",
+        prompt: "select_account",
+      },
     },
   });
   if (error) throw error;
+};
+
+const oauthErrorFromUrl = () => {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  return (
+    params.get("error_description") ||
+    params.get("error") ||
+    hash.get("error_description") ||
+    hash.get("error")
+  );
+};
+
+export const completeOAuthRedirect = async (): Promise<AuthUser | null> => {
+  const oauthError = oauthErrorFromUrl();
+  if (oauthError) throw new Error(oauthError);
+
+  const { data: existing } = await supabase.auth.getSession();
+  if (existing.session?.user) return toAuthUser(existing.session.user);
+
+  const code = new URLSearchParams(window.location.search).get("code");
+  if (!code) return null;
+
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+  if (error) throw error;
+  return data.user ? toAuthUser(data.user) : null;
 };
 
 export const sendPasswordReset = async (email: string) => {
@@ -86,6 +118,15 @@ export const authErrorMessage = (err: unknown, fallback: string) => {
   if (lower.includes("too many")) {
     return "Too many attempts. Please try again later.";
   }
+  if (
+    lower.includes("provider is not enabled") ||
+    lower.includes("unsupported provider")
+  ) {
+    return "Google sign-in is not enabled yet. Please use email, or enable the Google provider in Supabase Auth.";
+  }
+  if (lower.includes("redirect") && lower.includes("not allowed")) {
+    return "Google sign-in is misconfigured. Add this site URL to the Supabase Auth redirect allowlist.";
+  }
   if (lower.includes("password")) {
     return "Password must be at least 6 characters.";
   }
@@ -100,6 +141,8 @@ export const usernameFromIdentity = (email?: string | null, name?: string | null
 };
 
 export const ensureStoreForUser = async (user: AuthUser) => {
+  if (isSuperAdminEmail(user.email)) return null;
+
   const existing = await getStoreById(user.uid);
   if (existing) return existing;
 

@@ -14,6 +14,8 @@ import {
 import toast from "react-hot-toast";
 import { deleteProduct, getStoreById, listProductsByStore } from "@/lib/db";
 import type { ProductType } from "@/type";
+import { categoryLabel } from "@/lib/product-categories";
+import { isStoreProfileComplete, STORE_SETTINGS_PATH } from "@/lib/store-profile";
 
 type CatalogProduct = Partial<ProductType> & { id: string };
 type StatusFilter = "all" | "active" | "hidden" | "out";
@@ -40,6 +42,7 @@ export default function ProductsPage() {
   const moreRef = useRef<HTMLDivElement>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState("");
+  const [profileComplete, setProfileComplete] = useState(true);
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -56,6 +59,7 @@ export default function ProductsPage() {
       getStoreById(uid),
     ]);
     setUsername(String(store?.username || ""));
+    setProfileComplete(isStoreProfileComplete(store));
     setProducts(productsData);
   };
 
@@ -79,6 +83,11 @@ export default function ProductsPage() {
   }, [router]);
 
   useEffect(() => {
+    const fromQuery = new URLSearchParams(window.location.search).get("category");
+    if (fromQuery) setCategoryFilter(fromQuery);
+  }, []);
+
+  useEffect(() => {
     const close = (event: MouseEvent) => {
       if (moreRef.current && !moreRef.current.contains(event.target as Node)) {
         setMoreOpen(false);
@@ -94,8 +103,9 @@ export default function ProductsPage() {
         .map((product) => String(product.category || "").trim())
         .filter(Boolean),
     );
+    if (categoryFilter !== "all") unique.add(categoryFilter);
     return Array.from(unique).sort((a, b) => a.localeCompare(b));
-  }, [products]);
+  }, [categoryFilter, products]);
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -185,6 +195,8 @@ export default function ProductsPage() {
     }
   };
 
+  const addProductHref = profileComplete ? "/store/add-product" : STORE_SETTINGS_PATH;
+
   return (
     <div className="ds-page ds-catalog">
       <div className="ds-catalog-header">
@@ -227,7 +239,7 @@ export default function ProductsPage() {
               </div>
             )}
           </div>
-          <Link href="/store/add-product" className="ds-catalog-btn-primary">
+          <Link href={addProductHref} className="ds-catalog-btn-primary">
             <FiPlus /> Add product
           </Link>
         </div>
@@ -277,7 +289,7 @@ export default function ProductsPage() {
                 <option value="all">All categories</option>
                 {categories.map((category) => (
                   <option key={category} value={category}>
-                    {category}
+                    {categoryLabel(category)}
                   </option>
                 ))}
               </select>
@@ -328,8 +340,8 @@ export default function ProductsPage() {
                     : `${count} in stock`;
                 const image = product.images?.[0];
                 const href = username
-                  ? `/store/${username}/edit/${product.id}`
-                  : "/store/add-product";
+                  ? `/store/edit/${product.id}`
+                  : STORE_SETTINGS_PATH;
 
                 return (
                   <div key={product.id} className="ds-catalog-row" role="row">
@@ -369,7 +381,7 @@ export default function ProductsPage() {
                     : "Add your first product to start building your catalog."}
                 </p>
                 {!products.length && (
-                  <Link href="/store/add-product" className="ds-catalog-btn-primary">
+                  <Link href={addProductHref} className="ds-catalog-btn-primary">
                     <FiPlus /> Add product
                   </Link>
                 )}
