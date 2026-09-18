@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isValidUsername } from "@/lib/username-rules";
 import {
+  getApexOrigin,
+  getRequestOrigin,
   getStorefrontUsernameFromHost,
   isApexHost,
-  isLocalHost,
-  SITE_HOST,
   storefrontInternalPath,
   storefrontPublicUrl,
 } from "@/lib/storefront-url";
@@ -53,20 +53,24 @@ const rewriteToStorefront = (request: NextRequest, username: string, extraPath =
   return NextResponse.rewrite(rewriteUrl, { request: { headers } });
 };
 
-const absoluteApexUrl = (request: NextRequest, pathname: string, search: string) => {
-  const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
-  const port = request.nextUrl.port;
-  const origin = isLocalHost(host)
-    ? `http://localhost${port ? `:${port}` : ""}`
-    : `https://${SITE_HOST}`;
-  return `${origin}${pathname}${search}`;
-};
+const requestHost = (request: NextRequest) =>
+  request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
+
+const requestProto = (request: NextRequest) => request.headers.get("x-forwarded-proto");
+
+const absoluteApexUrl = (request: NextRequest, pathname: string, search: string) =>
+  `${getApexOrigin(requestHost(request), requestProto(request))}${pathname}${search}`;
 
 const redirectToApex = (request: NextRequest, pathname: string, search: string) =>
   new NextResponse(null, {
     status: 307,
     headers: { Location: absoluteApexUrl(request, pathname, search) },
   });
+
+const redirectPreservingHost = (request: NextRequest, pathname: string) => {
+  const origin = getRequestOrigin(requestHost(request), requestProto(request));
+  return NextResponse.redirect(`${origin}${pathname}${request.nextUrl.search}`);
+};
 
 export function middleware(request: NextRequest) {
   const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
@@ -85,9 +89,7 @@ export function middleware(request: NextRequest) {
     const prefixed = `/store/${usernameFromHost}`;
     if (pathname === prefixed || pathname.startsWith(`${prefixed}/`)) {
       const rest = pathname.slice(prefixed.length) || "/";
-      const url = request.nextUrl.clone();
-      url.pathname = rest;
-      return NextResponse.redirect(url);
+      return redirectPreservingHost(request, rest);
     }
 
     return rewriteToStorefront(request, usernameFromHost, pathname);
@@ -98,9 +100,7 @@ export function middleware(request: NextRequest) {
     const candidate = segments[1];
     const extra = segments.slice(2);
     if (candidate && extra[0] === "edit" && extra[1]) {
-      const url = request.nextUrl.clone();
-      url.pathname = `/store/edit/${extra[1]}`;
-      return NextResponse.redirect(url);
+      return redirectPreservingHost(request, `/store/edit/${extra[1]}`);
     }
     if (candidate && isValidUsername(candidate) && !isDashboardPath(pathname)) {
       if (isApexHost(host) && extra[0] !== "edit") {

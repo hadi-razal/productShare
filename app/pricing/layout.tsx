@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import {
+  MONTHLY_PRICE_INR,
+  YEARLY_DISCOUNT_PERCENT,
+  YEARLY_PRICE_INR,
+  inrLabel,
+} from "@/lib/pricing";
 
 export const metadata: Metadata = {
   title: "Pricing — Product Share India",
   description:
-    "Simple, transparent pricing for Product Share India. Free plan with 3 listings. Starter plan at ₹499 with 25 products and 5 themes. Pro plan at ₹999 with 150 products and 12 themes.",
+    `Simple, transparent pricing for Product Share India. Free plan with 3 listings. Monthly plan at ${inrLabel(MONTHLY_PRICE_INR)}. Yearly plan at ${inrLabel(YEARLY_PRICE_INR)} with ${YEARLY_DISCOUNT_PERCENT}% off.`,
   keywords: [
     "Product Share India pricing",
     "catalog builder price India",
@@ -11,8 +17,8 @@ export const metadata: Metadata = {
     "monthly catalog plan India",
     "affordable catalog builder",
     "free catalog builder India",
-    "₹499 catalog builder",
-    "₹999 catalog builder",
+    `${inrLabel(MONTHLY_PRICE_INR)} catalog builder`,
+    "yearly catalog plan India",
   ],
   alternates: {
     canonical: "https://productshare.in/pricing",
@@ -20,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Pricing — Product Share India | Plans Starting Free",
     description:
-      "Start free or go premium. Starter plan ₹499 • Pro plan ₹999.",
+      `Start free or go premium. Monthly ${inrLabel(MONTHLY_PRICE_INR)} • Yearly ${inrLabel(YEARLY_PRICE_INR)} (${YEARLY_DISCOUNT_PERCENT}% off).`,
     url: "https://productshare.in/pricing",
     type: "website",
   },
@@ -28,7 +34,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Product Share India Pricing — Plans Starting Free",
     description:
-      "Free plan available. Starter ₹499 (25 products, 5 themes) or Pro ₹999 (150 products, 12 themes).",
+      `Free plan available. Monthly ${inrLabel(MONTHLY_PRICE_INR)}, or yearly ${inrLabel(YEARLY_PRICE_INR)} with ${YEARLY_DISCOUNT_PERCENT}% off.`,
   },
 };
 
@@ -60,8 +66,8 @@ export default function PricingLayout({
       },
       {
         "@type": "Offer",
-        name: "Starter Plan",
-        price: "499",
+        name: "Monthly Plan",
+        price: String(MONTHLY_PRICE_INR),
         priceCurrency: "INR",
         description: "Up to 25 products, 5 prebuilt themes, customer behavior analytics, theme customization, priority support",
         eligibleRegion: { "@type": "Country", name: "India" },
@@ -69,11 +75,11 @@ export default function PricingLayout({
       },
       {
         "@type": "Offer",
-        name: "Pro Plan",
-        price: "999",
+        name: "Yearly Plan",
+        price: String(YEARLY_PRICE_INR),
         priceCurrency: "INR",
         description:
-          "Up to 150 products, 12 prebuilt themes, advanced analytics, team access, bulk CSV/Excel upload",
+          `Up to 150 products, 12 prebuilt themes, advanced analytics, team access, bulk CSV/Excel upload. ${YEARLY_DISCOUNT_PERCENT}% off yearly billing.`,
         eligibleRegion: { "@type": "Country", name: "India" },
         url: "https://productshare.in/register",
       },

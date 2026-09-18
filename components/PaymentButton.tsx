@@ -3,6 +3,15 @@
 import React, { useEffect, useState } from "react";
 import { FiCheck, FiX, FiZap } from "react-icons/fi";
 import { getStoreById, updateStore } from "@/lib/db";
+import {
+  MONTHLY_PRICE_INR,
+  YEARLY_DISCOUNT_PERCENT,
+  YEARLY_EFFECTIVE_MONTHLY_INR,
+  YEARLY_FULL_PRICE_INR,
+  YEARLY_PRICE_INR,
+  formatInrAmount,
+  inrLabel,
+} from "@/lib/pricing";
 import toast from "react-hot-toast";
 
 // -----------------------------
@@ -52,10 +61,11 @@ const Button: React.FC<ButtonProps> = ({
 // -----------------------------
 // Plan Config
 // -----------------------------
-const starterPlan = {
-  key: "starter" as const,
-  name: "Starter Plan",
-  pricePaise: 49900,
+const monthlyPlan = {
+  key: "monthly" as const,
+  name: "Monthly",
+  pricePaise: MONTHLY_PRICE_INR * 100,
+  period: "/month",
   features: [
     "Up to 25 product listings",
     "5 prebuilt themes",
@@ -72,10 +82,11 @@ const starterPlan = {
   ],
 };
 
-const proPlan = {
-  key: "pro" as const,
-  name: "Pro Plan",
-  pricePaise: 99900,
+const yearlyPlan = {
+  key: "yearly" as const,
+  name: "Yearly",
+  pricePaise: YEARLY_PRICE_INR * 100,
+  period: "/year",
   features: [
     "Up to 150 product listings",
     "12 prebuilt themes",
@@ -103,11 +114,11 @@ interface PricingButtonProps {
 
 const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedKey, setSelectedKey] = useState<"starter" | "pro">("starter");
+  const [selectedKey, setSelectedKey] = useState<"monthly" | "yearly">("yearly");
   const [isPremiumUser, setIsPremiumUser] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
-  const selectedPlan = selectedKey === "pro" ? proPlan : starterPlan;
-  const displayPrice = (selectedPlan.pricePaise / 100).toLocaleString("en-IN");
+  const selectedPlan = selectedKey === "yearly" ? yearlyPlan : monthlyPlan;
+  const displayPrice = formatInrAmount(selectedPlan.pricePaise / 100);
 
   // ✅ Load Razorpay script
   useEffect(() => {
@@ -121,7 +132,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
   // ✅ Handle subscription flow
   const handleSubscription = async () => {
     const planId =
-      selectedKey === "pro"
+      selectedKey === "yearly"
         ? process.env.NEXT_PUBLIC_RZP_YEARLY_PLAN_ID
         : process.env.NEXT_PUBLIC_RZP_MONTHLY_PLAN_ID;
 
@@ -203,9 +214,10 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 mb-6">
-              {[starterPlan, proPlan].map((plan) => {
+              {[monthlyPlan, yearlyPlan].map((plan) => {
                 const selected = selectedKey === plan.key;
-                const price = (plan.pricePaise / 100).toLocaleString("en-IN");
+                const price = formatInrAmount(plan.pricePaise / 100);
+                const isYearly = plan.key === "yearly";
                 return (
                   <button
                     key={plan.key}
@@ -217,16 +229,30 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
                         : "border-gray-200 hover:border-indigo-300"
                     }`}
                   >
-                    <p className="text-sm font-semibold text-gray-900">{plan.name}</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm font-semibold text-gray-900">{plan.name}</p>
+                      {isYearly && (
+                        <span className="rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                          {YEARLY_DISCOUNT_PERCENT}% off
+                        </span>
+                      )}
+                    </div>
                     <p className="mt-1 text-xl font-bold text-indigo-600">
                       ₹{price}
-                      <span className="ml-1 text-sm font-medium text-gray-500">/ month</span>
+                      <span className="ml-1 text-sm font-medium text-gray-500">
+                        {plan.period}
+                      </span>
                     </p>
-                    <p className="mt-2 text-xs text-gray-600">
-                      {plan.key === "starter"
-                        ? "25 products · 5 themes"
-                        : "150 products · 12 themes"}
-                    </p>
+                    {isYearly ? (
+                      <p className="mt-2 text-xs text-gray-600">
+                        <span className="mr-1 line-through">
+                          {inrLabel(YEARLY_FULL_PRICE_INR)}
+                        </span>
+                        {inrLabel(YEARLY_EFFECTIVE_MONTHLY_INR)} / month billed yearly
+                      </p>
+                    ) : (
+                      <p className="mt-2 text-xs text-gray-600">25 products · 5 themes</p>
+                    )}
                   </button>
                 );
               })}
@@ -240,7 +266,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
                 </h3>
                 <div className="text-2xl font-bold text-indigo-600">
                   ₹{displayPrice}
-                  <span className="text-base text-gray-500 ml-1">/month</span>
+                  <span className="text-base text-gray-500 ml-1">{selectedPlan.period}</span>
                 </div>
               </div>
 

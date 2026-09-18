@@ -1,7 +1,10 @@
 import type { User } from "@supabase/supabase-js";
 import { createStore, getStoreById } from "@/lib/db";
+import { getAuthRedirectOrigin } from "@/lib/storefront-url";
 import { supabase } from "@/lib/supabase";
 import { isSuperAdminEmail } from "@/lib/super-admin";
+
+const authRedirectUrl = (path: string) => `${getAuthRedirectOrigin()}${path}`;
 
 export type AuthUser = {
   uid: string;
@@ -39,7 +42,13 @@ export const signInWithEmail = async (email: string, password: string) => {
 };
 
 export const signUpWithEmail = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: authRedirectUrl("/auth/callback"),
+    },
+  });
   if (error) throw error;
   if (!data.user) throw new Error("Registration failed. Please try again.");
   return toAuthUser(data.user);
@@ -54,7 +63,7 @@ export const signInWithGoogle = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: authRedirectUrl("/auth/callback"),
       queryParams: {
         access_type: "offline",
         prompt: "select_account",
@@ -93,7 +102,7 @@ export const completeOAuthRedirect = async (): Promise<AuthUser | null> => {
 
 export const sendPasswordReset = async (email: string) => {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/reset-password`,
+    redirectTo: authRedirectUrl("/reset-password"),
   });
   if (error) throw error;
 };

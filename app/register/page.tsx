@@ -180,7 +180,7 @@ const RegisterPage: React.FC = () => {
               Start for Free
             </h2>
             <p className="text-sm text-white/50 text-center">
-              Up to 3 listings. Upgrade from ₹499 / month.
+              Up to 3 listings. Upgrade from ₹199 / month.
             </p>
           </div>
 

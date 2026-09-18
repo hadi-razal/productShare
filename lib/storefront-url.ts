@@ -61,11 +61,36 @@ export const storefrontInternalPath = (username: string, extraPath = "") => {
   return path ? `/store/${username}/${path}` : `/store/${username}`;
 };
 
-export const getApexOrigin = (hostHeader: string, protoHeader?: string | null) => {
-  if (isLocalHost(hostHeader)) {
-    const proto = protoHeader === "https" ? "https" : "http";
-    const port = hostPort(hostHeader);
-    return `${proto}://localhost${port ? `:${port}` : ""}`;
+const localDevOrigin = (hostHeader: string, protoHeader?: string | null, apex = false) => {
+  const proto = protoHeader === "https" ? "https" : "http";
+  const port = hostPort(hostHeader);
+  const hostname = apex ? "localhost" : stripPort(hostHeader) || "localhost";
+  return `${proto}://${hostname}${port ? `:${port}` : ""}`;
+};
+
+export const getRequestOrigin = (
+  hostHeader: string,
+  protoHeader?: string | null,
+  options?: { apex?: boolean },
+) => {
+  const allowLocal = process.env.NODE_ENV !== "production";
+  if (allowLocal && isLocalHost(hostHeader)) {
+    return localDevOrigin(hostHeader, protoHeader, Boolean(options?.apex));
+  }
+
+  if (options?.apex || !hostHeader.trim() || isLocalHost(hostHeader)) {
+    return siteConfig.url;
+  }
+
+  return `https://${stripPort(hostHeader)}`;
+};
+
+export const getApexOrigin = (hostHeader: string, protoHeader?: string | null) =>
+  getRequestOrigin(hostHeader, protoHeader, { apex: true });
+
+export const getAuthRedirectOrigin = () => {
+  if (typeof window !== "undefined" && isLocalHost(window.location.host)) {
+    return window.location.origin;
   }
   return siteConfig.url;
 };
@@ -92,7 +117,7 @@ export const storefrontOpenUrl = (
   const host =
     currentHost ||
     (typeof window !== "undefined" ? window.location.host : SITE_HOST);
-  if (isLocalHost(host)) {
+  if (isLocalHost(host) && process.env.NODE_ENV !== "production") {
     const origin =
       typeof window !== "undefined"
         ? `${window.location.protocol}//localhost${window.location.port ? `:${window.location.port}` : ""}`

@@ -2,6 +2,14 @@
 
 import React from "react";
 import Link from "next/link";
+import {
+  MONTHLY_PRICE_INR,
+  YEARLY_DISCOUNT_PERCENT,
+  YEARLY_EFFECTIVE_MONTHLY_INR,
+  YEARLY_FULL_PRICE_INR,
+  YEARLY_PRICE_INR,
+  inrLabel,
+} from "@/lib/pricing";
 
 const plans = [
   {
@@ -9,24 +17,27 @@ const plans = [
     name: "Free",
     price: "Free",
     period: "",
+    note: "",
     cta: "Try for Free",
     href: "/register",
     highlight: false,
   },
   {
     key: "starter",
-    name: "Starter",
-    price: "₹499",
+    name: "Monthly",
+    price: inrLabel(MONTHLY_PRICE_INR),
     period: "/ month",
+    note: "",
     cta: "Get Started",
     href: "/register",
     highlight: false,
   },
   {
     key: "pro",
-    name: "Pro",
-    price: "₹999",
-    period: "/ month",
+    name: "Yearly",
+    price: inrLabel(YEARLY_PRICE_INR),
+    period: "/ year",
+    note: `${YEARLY_DISCOUNT_PERCENT}% off · ${inrLabel(YEARLY_EFFECTIVE_MONTHLY_INR)}/month`,
     cta: "Get Started",
     href: "/register",
     highlight: true,
@@ -65,8 +76,8 @@ const PricingPage = () => {
             Simple plans
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-neutral-600">
-            Start free with 3 listings. Upgrade to Starter for 25 products and 5
-            themes, or Pro for 150 products and 12 themes.
+            Start free with 3 listings. Upgrade monthly at {inrLabel(MONTHLY_PRICE_INR)},
+            or save {YEARLY_DISCOUNT_PERCENT}% with yearly billing at {inrLabel(YEARLY_PRICE_INR)}.
           </p>
         </div>
 
@@ -81,7 +92,7 @@ const PricingPage = () => {
                   <th key={plan.key} className="py-4 pr-4 align-bottom">
                     <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-primary">
                       {plan.name}
-                      {plan.highlight ? " · Best value" : ""}
+                      {plan.highlight ? ` · ${YEARLY_DISCOUNT_PERCENT}% off` : ""}
                     </p>
                     <p
                       className={`mt-2 text-2xl font-bold tracking-tight ${
@@ -95,6 +106,12 @@ const PricingPage = () => {
                         </span>
                       )}
                     </p>
+                    {plan.note ? (
+                      <p className="mt-1 text-xs font-medium text-neutral-500">
+                        <span className="mr-1 line-through">{inrLabel(YEARLY_FULL_PRICE_INR)}</span>
+                        {plan.note}
+                      </p>
+                    ) : null}
                   </th>
                 ))}
               </tr>
@@ -143,7 +160,7 @@ const PricingPage = () => {
             <div key={plan.key} className="border-t border-primary/15 pt-8">
               <p className="text-[11px] uppercase tracking-[0.16em] text-primary">
                 {plan.name}
-                {plan.highlight ? " · Best value" : ""}
+                {plan.highlight ? ` · ${YEARLY_DISCOUNT_PERCENT}% off` : ""}
               </p>
               <p
                 className={`mt-2 text-3xl font-bold tracking-tight ${
@@ -157,6 +174,12 @@ const PricingPage = () => {
                   </span>
                 )}
               </p>
+              {plan.note ? (
+                <p className="mt-1 text-xs font-medium text-neutral-500">
+                  <span className="mr-1 line-through">{inrLabel(YEARLY_FULL_PRICE_INR)}</span>
+                  {plan.note}
+                </p>
+              ) : null}
               <ul className="mt-6 space-y-3">
                 {rows.map((row) => (
                   <li

@@ -15,12 +15,23 @@ import {
   FiUsers,
   FiVideo,
 } from "react-icons/fi";
+import {
+  YEARLY_DISCOUNT_PERCENT,
+  YEARLY_EFFECTIVE_MONTHLY_INR,
+  YEARLY_FULL_PRICE_INR,
+  inrLabel,
+  MONTHLY_PRICE_INR,
+  YEARLY_PRICE_INR,
+} from "@/lib/pricing";
 
 const plans = [
   {
     name: "Free Plan",
     price: "Free",
     period: "",
+    originalPrice: "",
+    badge: "",
+    note: "",
     description: "Start with a public catalog",
     features: [
       { icon: FiCheckCircle, text: "Up to 3 product listings" },
@@ -32,9 +43,12 @@ const plans = [
     highlight: false,
   },
   {
-    name: "Starter Plan",
-    price: "₹499",
+    name: "Monthly",
+    price: inrLabel(MONTHLY_PRICE_INR),
     period: "/ month",
+    originalPrice: "",
+    badge: "",
+    note: "",
     description: "Grow with analytics and 5 prebuilt themes",
     features: [
       { icon: FiCheckCircle, text: "Up to 25 product listings" },
@@ -52,9 +66,12 @@ const plans = [
     highlight: false,
   },
   {
-    name: "Pro Plan",
-    price: "₹999",
-    period: "/ month",
+    name: "Yearly",
+    price: inrLabel(YEARLY_PRICE_INR),
+    period: "/ year",
+    originalPrice: inrLabel(YEARLY_FULL_PRICE_INR),
+    badge: `${YEARLY_DISCOUNT_PERCENT}% off`,
+    note: `${inrLabel(YEARLY_EFFECTIVE_MONTHLY_INR)} / month billed yearly`,
     description: "Larger catalogs and the full theme library",
     features: [
       { icon: FiCheckCircle, text: "Up to 150 product listings" },
@@ -95,9 +112,9 @@ const PricingSection = () => {
               plan.highlight ? "border-primary" : "border-primary/15"
             }`}
           >
-            {plan.highlight && (
+            {(plan.highlight || plan.badge) && (
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-primary">
-                Best value
+                {plan.badge || "Best value"}
               </p>
             )}
             <h3 className="text-xl font-semibold text-slate-900">{plan.name}</h3>
@@ -110,6 +127,12 @@ const PricingSection = () => {
                 </span>
               )}
             </div>
+            {plan.originalPrice ? (
+              <p className="mt-1 text-sm text-slate-500">
+                <span className="mr-2 line-through">{plan.originalPrice}</span>
+                {plan.note}
+              </p>
+            ) : null}
             <ul className="mt-6 flex-1 space-y-3 text-left text-sm text-slate-600">
               {plan.features.map((feature) => (
                 <li key={feature.text} className="flex items-start gap-2">
