@@ -133,34 +133,42 @@ body {
   background: var(--sf-surface);
 }
 
-.sf-search-sticky {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  margin-top: 16px;
-  margin-left: -1rem;
-  margin-right: -1rem;
-  padding: 8px 1rem 12px;
-  background: var(--sf-bg);
-  box-shadow: 0 10px 18px -12px rgba(15, 23, 42, 0.28);
+.sf-store-header {
+  padding-top: 8px;
+}
+
+.sf-store-note {
+  overflow: hidden;
+  margin: 14px 0 0;
+  max-width: 40rem;
+  color: var(--sf-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sf-store-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
 }
 
 @media (min-width: 640px) {
-  .sf-search-sticky {
-    margin-left: -1.5rem;
-    margin-right: -1.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+  .sf-store-tools {
+    flex-direction: row;
+    align-items: center;
   }
 }
 
-@media (min-width: 1024px) {
-  .sf-search-sticky {
-    margin-left: -2rem;
-    margin-right: -2rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
+.sf-store-tools.has-manage {
+  padding-right: 2.5rem;
+}
+
+.sf-store-tools .sf-input,
+.sf-store-tools .sf-select {
+  background: var(--sf-surface);
 }
 
 .sf-kicker {

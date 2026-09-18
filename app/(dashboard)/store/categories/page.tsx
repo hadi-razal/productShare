@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FiEdit2, FiPlus, FiTag, FiTrash2 } from "react-icons/fi";
+import { FiPlus } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { onAuthChange } from "@/lib/auth";
 import {
@@ -25,13 +25,6 @@ import {
   STORE_SETTINGS_PATH,
   storeProfileIncompleteMessage,
 } from "@/lib/store-profile";
-
-const TILE_TONES = ["violet", "teal", "amber", "rose", "sky", "lime"] as const;
-
-const toneFor = (value: string) => {
-  const hash = Array.from(value).reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  return TILE_TONES[hash % TILE_TONES.length];
-};
 
 export default function CategoriesPage() {
   const router = useRouter();
@@ -208,83 +201,85 @@ export default function CategoriesPage() {
               setAdding(true);
             }}
           >
-            <FiPlus /> Add new category
+            <FiPlus /> Add category
           </button>
         </div>
       </div>
 
-      <section>
-        <h3 className="ds-category-section-title">All categories</h3>
-        <div className="ds-category-grid">
-          {loading
-            ? [0, 1, 2, 3, 4, 5].map((item) => (
-                <div key={item} className="ds-category-tile ds-category-skeleton" />
-              ))
-            : categories.map((category) => {
-                const count = countFor(category.value, category.label);
-                return (
-                  <article
-                    key={category.value}
-                    className="ds-category-tile"
-                    data-tone={toneFor(category.value)}
-                  >
-                    <div className="ds-category-tile-top">
-                      <span className="ds-category-icon" aria-hidden="true">
-                        <FiTag />
-                      </span>
-                      <div className="ds-category-tile-actions">
-                        <button
-                          type="button"
-                          className="ds-category-action"
-                          onClick={() => {
-                            setEditing(category);
-                            setEditDraft(category.label);
-                          }}
-                          aria-label={`Edit ${category.label}`}
-                          title="Edit"
-                        >
-                          <FiEdit2 />
-                        </button>
-                        <button
-                          type="button"
-                          className="ds-category-action is-danger"
-                          onClick={() => setConfirmDelete(category)}
-                          aria-label={`Delete ${category.label}`}
-                          title="Delete"
-                        >
-                          <FiTrash2 />
-                        </button>
-                      </div>
-                    </div>
-                    <Link
-                      href={`/store/products?category=${encodeURIComponent(category.value)}`}
-                      className="ds-category-tile-body"
-                    >
-                      <strong>{category.label}</strong>
-                      <span>
-                        {count} {count === 1 ? "product" : "products"}
-                      </span>
-                    </Link>
-                  </article>
-                );
-              })}
-          {!loading && (
+      <section className="ds-catalog-card">
+        {loading ? (
+          <div className="ds-category-list">
+            <div className="ds-category-head">
+              <span>Category</span>
+              <span>Products</span>
+              <span />
+            </div>
+            {[0, 1, 2, 3].map((item) => (
+              <div key={item} className="ds-category-row ds-category-skeleton">
+                <span />
+                <span />
+                <span />
+              </div>
+            ))}
+          </div>
+        ) : categories.length === 0 ? (
+          <div className="ds-catalog-empty">
+            <strong>No categories yet</strong>
+            <p>Add a category to group products in your catalog.</p>
             <button
               type="button"
-              className="ds-category-tile ds-category-tile-add"
+              className="ds-catalog-btn-primary"
               onClick={() => {
                 if (!requireCompleteProfile()) return;
                 setAdding(true);
               }}
             >
-              <span className="ds-category-icon" aria-hidden="true">
-                <FiPlus />
-              </span>
-              <strong>Add new category</strong>
-              <span>Create a custom category</span>
+              <FiPlus /> Add category
             </button>
-          )}
-        </div>
+          </div>
+        ) : (
+          <ul className="ds-category-list">
+            <li className="ds-category-head">
+              <span>Category</span>
+              <span>Products</span>
+              <span />
+            </li>
+            {categories.map((category) => {
+              const count = countFor(category.value, category.label);
+              return (
+                <li key={category.value} className="ds-category-row">
+                  <Link
+                    href={`/store/products?category=${encodeURIComponent(category.value)}`}
+                    className="ds-category-main"
+                  >
+                    <strong>{category.label}</strong>
+                  </Link>
+                  <span className="ds-category-count">
+                    {count} {count === 1 ? "product" : "products"}
+                  </span>
+                  <div className="ds-category-tools">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditing(category);
+                        setEditDraft(category.label);
+                      }}
+                    >
+                      Rename
+                    </button>
+                    <button
+                      type="button"
+                      className="is-danger"
+                      onClick={() => setConfirmDelete(category)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </section>
 
       {adding && (

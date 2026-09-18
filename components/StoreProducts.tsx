@@ -15,7 +15,6 @@ import {
 } from "react-icons/fi";
 import Link from "next/link";
 import Image from "next/image";
-import Marquee from "react-fast-marquee";
 import { getUserId } from "@/helpers/getUserId";
 import { incrementStoreVisits, listProductsByStore } from "@/lib/db";
 import ProductCard from "@/components/ProductCard";
@@ -47,6 +46,31 @@ const getCreatedAtValue = (createdAt: ProductType["createdAt"]) => {
   }
 
   return 0;
+};
+
+const sortProducts = (items: ProductType[], option: string): ProductType[] => {
+  switch (option) {
+    case "price-low-high":
+      return [...items].sort(
+        (a, b) =>
+          (a.discountPrice || a.regularPrice) -
+          (b.discountPrice || b.regularPrice)
+      );
+    case "price-high-low":
+      return [...items].sort(
+        (a, b) =>
+          (b.discountPrice || b.regularPrice) -
+          (a.discountPrice || a.regularPrice)
+      );
+    case "newest":
+      return [...items].sort((a, b) => {
+        const dateA = getCreatedAtValue(a.createdAt);
+        const dateB = getCreatedAtValue(b.createdAt);
+        return dateB - dateA;
+      });
+    default:
+      return items;
+  }
 };
 
 const StoreProducts = ({
@@ -162,20 +186,26 @@ const StoreProducts = ({
     setSearchInput(event.target.value);
   };
 
-  const filterProducts = () => {
+  const handleLoadMore = () => setVisibleProducts((prev) => prev + 20);
+  const displayStoreName = storeName?.trim() || storeId || "Online Store";
+  const visibleProductCount = filteredProducts.filter(
+    (product) => !product.isHidden || isStoreOwner
+  ).length;
+  const announcement = storeNote?.trim() || "";
+  const description =
+    storeDescription?.trim() || "Browse products, prices, and details from this catalog.";
+
+  useEffect(() => {
     let results = [...products];
 
     if (searchInput.trim()) {
+      const searchTerm = searchInput.toLowerCase();
       results = results.filter((product) => {
-        const searchTerm = searchInput.toLowerCase();
         return (
           product.name.toLowerCase().includes(searchTerm) ||
           product.description.toLowerCase().includes(searchTerm) ||
-          product.colors.some((color) =>
-            color.toLowerCase().includes(searchTerm)
-          ) ||
-          (product.category &&
-            product.category.toLowerCase().includes(searchTerm)) ||
+          product.colors.some((color) => color.toLowerCase().includes(searchTerm)) ||
+          (product.category && product.category.toLowerCase().includes(searchTerm)) ||
           (product.tags && product.tags.toLowerCase().includes(searchTerm))
         );
       });
@@ -186,175 +216,100 @@ const StoreProducts = ({
     }
 
     setFilteredProducts(results);
-  };
-
-  const sortProducts = (
-    items: ProductType[],
-    option: string
-  ): ProductType[] => {
-    switch (option) {
-      case "price-low-high":
-        return [...items].sort(
-          (a, b) =>
-            (a.discountPrice || a.regularPrice) -
-            (b.discountPrice || b.regularPrice)
-        );
-      case "price-high-low":
-        return [...items].sort(
-          (a, b) =>
-            (b.discountPrice || b.regularPrice) -
-            (a.discountPrice || a.regularPrice)
-        );
-      case "newest":
-        return [...items].sort((a, b) => {
-          const dateA = getCreatedAtValue(a.createdAt);
-          const dateB = getCreatedAtValue(b.createdAt);
-          return dateB - dateA;
-        });
-      default:
-        return items;
-    }
-  };
-
-  const handleSearchClick = () => filterProducts();
-
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") filterProducts();
-  };
-
-  const clearSearchInput = () => {
-    setSearchInput("");
-    setFilteredProducts(products);
-  };
-
-  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortOption(event.target.value);
-    filterProducts();
-  };
-
-  const handleLoadMore = () => setVisibleProducts((prev) => prev + 20);
-  const displayStoreName = storeName?.trim() || storeId || "Online Store";
-  const visibleProductCount = filteredProducts.filter(
-    (product) => !product.isHidden || isStoreOwner
-  ).length;
+  }, [products, searchInput, sortOption]);
 
   return (
-    <div className="sf-page relative w-full pb-20 pt-8">
+    <div className="sf-page relative w-full pb-20 pt-6">
       <div className="mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8">
-        <section className="sf-card mt-6">
-          <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
-            <div className="flex min-w-0 items-center gap-4">
-              {storeLogo ? (
-                <Image
-                  src={storeLogo}
-                  alt={`${displayStoreName} logo`}
-                  width={72}
-                  height={72}
-                  unoptimized={storeLogo.startsWith("http")}
-                  className="h-16 w-16 rounded-md border object-cover sm:h-[72px] sm:w-[72px]"
-                  style={{ borderColor: "var(--sf-border)", borderRadius: "var(--sf-radius-sm)" }}
-                />
-              ) : (
-                <div
-                  className="flex h-16 w-16 shrink-0 items-center justify-center text-xl font-bold sm:h-[72px] sm:w-[72px]"
-                  style={{
-                    background: "var(--sf-accent-soft)",
-                    color: "var(--sf-accent)",
-                    borderRadius: "var(--sf-radius-sm)",
-                  }}
-                >
-                  {displayStoreName.charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div className="min-w-0">
-                <p className="sf-kicker text-[11px] font-semibold uppercase tracking-[0.18em]">
-                  Online store
-                </p>
-                <h1 className="sf-title mt-1 truncate text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">
-                  {displayStoreName}
-                </h1>
-                <p className="sf-muted mt-1 max-w-2xl text-sm leading-6">
-                  {storeDescription?.trim() || "Browse our latest products and find something made for you."}
-                </p>
+        <header className="sf-store-header">
+          <div className="flex items-start gap-4">
+            {storeLogo ? (
+              <Image
+                src={storeLogo}
+                alt={`${displayStoreName} logo`}
+                width={56}
+                height={56}
+                unoptimized={storeLogo.startsWith("http")}
+                className="h-14 w-14 shrink-0 object-contain"
+                style={{
+                  border: "1px solid var(--sf-border)",
+                  borderRadius: "var(--sf-radius-sm)",
+                  background: "var(--sf-surface)",
+                }}
+              />
+            ) : (
+              <div
+                className="flex h-14 w-14 shrink-0 items-center justify-center text-lg font-semibold"
+                style={{
+                  background: "var(--sf-surface)",
+                  color: "var(--sf-text)",
+                  border: "1px solid var(--sf-border)",
+                  borderRadius: "var(--sf-radius-sm)",
+                }}
+              >
+                {displayStoreName.charAt(0).toUpperCase()}
               </div>
-            </div>
-            <div
-              className="inline-flex w-fit items-center gap-2 rounded-md border px-3 py-2 text-xs font-medium"
-              style={{ borderColor: "var(--sf-border)", background: "var(--sf-bg)", color: "var(--sf-muted)" }}
-            >
-              <FiPackage className="sf-kicker" />
-              {products.length} {products.length === 1 ? "product" : "products"}
+            )}
+            <div className="min-w-0 pt-0.5">
+              <h1 className="sf-title truncate text-[22px] font-semibold tracking-[-0.03em] sm:text-2xl">
+                {displayStoreName}
+              </h1>
+              <p className="sf-muted mt-1 max-w-xl text-sm leading-6 line-clamp-2">
+                {description}
+              </p>
+              <p className="sf-muted mt-2 text-xs">
+                {products.length} {products.length === 1 ? "product" : "products"}
+              </p>
             </div>
           </div>
-          {storeNote?.trim() && (
-            <div className="sf-note sf-note-marquee border-t" aria-label={storeNote.trim()}>
-              <Marquee pauseOnHover speed={38} gradient={false} autoFill>
-                <span className="sf-note-item">{storeNote.trim()}</span>
-              </Marquee>
-            </div>
-          )}
-        </section>
 
-        <div className="sf-search-sticky">
-          <section className="sf-card p-3 sm:p-4">
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <div className="relative flex min-w-0 flex-1 items-center">
-                <FiSearch className="sf-muted pointer-events-none absolute left-3.5 h-4 w-4" />
-                <input
-                  type="search"
-                  value={searchInput}
-                  onChange={handleSearchInputChange}
-                  onKeyDown={handleKeyPress}
-                  placeholder="Search products"
-                  className="sf-input h-11 w-full rounded-md border pl-10 pr-20 text-sm outline-none transition"
-                  style={{ borderRadius: "var(--sf-radius-sm)" }}
-                />
-                <div className="absolute right-1.5 flex items-center gap-1">
-                  {searchInput && (
-                    <button
-                      type="button"
-                      onClick={clearSearchInput}
-                      className="sf-muted flex h-8 w-8 items-center justify-center rounded-md transition hover:opacity-80"
-                      aria-label="Clear search"
-                    >
-                      <FiX size={16} />
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={handleSearchClick}
-                    className="sf-btn flex h-8 items-center justify-center rounded-md px-3 text-xs font-semibold"
-                  >
-                    Search
-                  </button>
-                </div>
-              </div>
-              <select
-                name="sort"
-                value={sortOption}
-                onChange={handleSortChange}
-                aria-label="Sort products"
-                className="sf-select h-11 rounded-md border px-3 text-sm outline-none transition sm:w-52"
+          {announcement ? (
+            <p className="sf-store-note">{announcement}</p>
+          ) : null}
+
+          <div className={`sf-store-tools${isStoreOwner ? " has-manage" : ""}`}>
+            <div className="relative min-w-0 flex-1">
+              <FiSearch className="sf-muted pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+              <input
+                type="search"
+                value={searchInput}
+                onChange={handleSearchInputChange}
+                placeholder="Search products"
+                aria-label="Search products"
+                className="sf-input h-11 w-full border pl-10 pr-10 text-sm outline-none"
                 style={{ borderRadius: "var(--sf-radius-sm)" }}
-              >
-                <option value="">Featured</option>
-                <option value="newest">Newly added</option>
-                <option value="price-low-high">Price: low to high</option>
-                <option value="price-high-low">Price: high to low</option>
-              </select>
+              />
+              {searchInput ? (
+                <button
+                  type="button"
+                  onClick={() => setSearchInput("")}
+                  className="sf-muted absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center"
+                  aria-label="Clear search"
+                >
+                  <FiX size={16} />
+                </button>
+              ) : null}
             </div>
-          </section>
-        </div>
+            <select
+              name="sort"
+              value={sortOption}
+              onChange={(event) => setSortOption(event.target.value)}
+              aria-label="Sort products"
+              className="sf-select h-11 border px-3 text-sm outline-none sm:w-44"
+              style={{ borderRadius: "var(--sf-radius-sm)" }}
+            >
+              <option value="">Featured</option>
+              <option value="newest">Newly added</option>
+              <option value="price-low-high">Price: low to high</option>
+              <option value="price-high-low">Price: high to low</option>
+            </select>
+          </div>
+        </header>
 
         <div className="mb-4 mt-8 flex items-end justify-between gap-4">
-          <div>
-            <p className="sf-muted text-[11px] font-semibold uppercase tracking-[0.16em]">
-              Catalog
-            </p>
-            <h2 className="sf-title mt-1 text-lg font-semibold tracking-tight">
-              All products
-            </h2>
-          </div>
+          <h2 className="sf-title text-base font-semibold tracking-tight sm:text-lg">
+            All products
+          </h2>
           <p className="sf-muted text-xs">
             {visibleProductCount} {visibleProductCount === 1 ? "item" : "items"}
           </p>
