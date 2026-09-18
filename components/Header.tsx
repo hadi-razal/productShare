@@ -162,6 +162,7 @@ const Header = () => {
         href: isAuthenticated ? "/store" : "/",
         label: isAuthenticated ? "My Store" : "Home",
       },
+      { href: "/solutions", label: "Solutions" },
       { href: "/pricing", label: "Pricing" },
       { href: "/about-us", label: "About" },
       { href: "/contact", label: "Contact" },
@@ -171,7 +172,10 @@ const Header = () => {
   if (hideHeader) return null;
 
   const navLinkClass = (href: string) => {
-    const active = pathname === href;
+    const active =
+      href === "/"
+        ? pathname === "/"
+        : pathname === href || pathname.startsWith(`${href}/`);
     if (isTransparentHeader) {
       return active
         ? "text-white"
@@ -335,7 +339,10 @@ const Header = () => {
                 </p>
                 <nav className="mt-5 space-y-1" aria-label="Mobile navigation links">
                   {links.map(({ href, label }) => {
-                    const isActive = pathname === href;
+                    const isActive =
+                      href === "/"
+                        ? pathname === "/"
+                        : pathname === href || pathname.startsWith(`${href}/`);
 
                     return (
                       <Link

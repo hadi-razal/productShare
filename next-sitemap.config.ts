@@ -2,7 +2,7 @@ import type { IConfig } from 'next-sitemap';
 
 const config: IConfig = {
   siteUrl: 'https://productshare.in',
-  generateRobotsTxt: false, // handled by app/robots.ts (Next.js native)
+  generateRobotsTxt: false,
   generateIndexSitemap: true,
   sitemapSize: 7000,
   changefreq: 'weekly',
@@ -11,6 +11,7 @@ const config: IConfig = {
     '/login',
     '/register',
     '/forgot-password',
+    '/reset-password',
     '/admin',
     '/admin/*',
     '/store/settings',
@@ -28,13 +29,22 @@ const config: IConfig = {
   transform: async (config, path) => {
     const priorities: Record<string, number> = {
       '/': 1.0,
+      '/what-is-product-share': 0.95,
+      '/solutions': 0.9,
       '/pricing': 0.9,
-      '/about-us': 0.8,
+      '/solutions/whatsapp-catalog': 0.85,
+      '/solutions/digital-menu': 0.85,
+      '/solutions/online-catalogue': 0.85,
+      '/solutions/small-business': 0.8,
+      '/guides/create-a-digital-catalog': 0.8,
+      '/faq': 0.8,
+      '/about-us': 0.75,
       '/contact': 0.7,
     };
     const changefreqs: Record<string, IConfig['changefreq']> = {
       '/': 'weekly',
       '/pricing': 'weekly',
+      '/solutions': 'weekly',
       '/about-us': 'monthly',
       '/contact': 'monthly',
     };

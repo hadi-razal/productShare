@@ -1,28 +1,24 @@
 import { MetadataRoute } from "next";
+import { AI_CRAWLERS, PRIVATE_ROBOT_PATHS } from "@/lib/seo";
+import { siteConfig } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
+  const disallow = [...PRIVATE_ROBOT_PATHS];
+
   return {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: [
-          "/store/settings",
-          "/store/add-product",
-          "/store/edit",
-          "/store/products",
-          "/store/categories",
-          "/store/reviews",
-          "/store/*/edit/",
-          "/login",
-          "/register",
-          "/forgot-password",
-          "/admin",
-          "/api/",
-        ],
+        allow: ["/", "/llms.txt", "/llms-full.txt", "/ai.txt"],
+        disallow,
       },
+      ...AI_CRAWLERS.map((userAgent) => ({
+        userAgent,
+        allow: ["/", "/llms.txt", "/llms-full.txt", "/ai.txt"],
+        disallow,
+      })),
     ],
-    sitemap: "https://productshare.in/sitemap.xml",
-    host: "https://productshare.in",
+    sitemap: `${siteConfig.url}/sitemap.xml`,
+    host: siteConfig.url.replace(/^https?:\/\//, ""),
   };
 }

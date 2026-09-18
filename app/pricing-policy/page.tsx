@@ -9,14 +9,14 @@ import { siteConfig } from "@/lib/site";
 import React from 'react';
 
 export const metadata: Metadata = {
-  title: "Pricing Policy — Product Share India",
+  title: "Pricing Policy",
   description:
-    `Product Share India pricing policy: Free plan with 3 listings. Monthly plan at ${inrLabel(MONTHLY_PRICE_INR)} and yearly plan at ${inrLabel(YEARLY_PRICE_INR)} with ${YEARLY_DISCOUNT_PERCENT}% off. 14-day refund window. Read our full pricing terms.`,
-  keywords: ["Product Share pricing policy", "catalog builder payment terms India", "₹199 monthly plan", "yearly catalog plan"],
+    `Product Share pricing policy: Free catalog plan with 3 listings. Monthly plan at ${inrLabel(MONTHLY_PRICE_INR)} and yearly plan at ${inrLabel(YEARLY_PRICE_INR)} with ${YEARLY_DISCOUNT_PERCENT}% off. 14-day refund window.`,
+  keywords: ["Product Share pricing policy", "catalog software payment terms", "digital catalogue subscription"],
   alternates: { canonical: "https://productshare.in/pricing-policy" },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Pricing Policy — Product Share India",
+    title: "Pricing Policy | Product Share",
     description: `Monthly ${inrLabel(MONTHLY_PRICE_INR)} or yearly ${inrLabel(YEARLY_PRICE_INR)} with ${YEARLY_DISCOUNT_PERCENT}% off — 14-day refund window, no hidden fees.`,
     url: "https://productshare.in/pricing-policy",
     type: "website",

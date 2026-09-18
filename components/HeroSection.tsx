@@ -18,16 +18,17 @@ export default function Hero() {
 
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1440px] flex-col justify-center px-3 pb-16 pt-28 sm:px-5">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-primary">
-          Made in India · Now launching
+          Global catalog software · Founded in India
         </p>
         <h1 className="mt-4 max-w-3xl text-[36px] font-bold uppercase leading-[1.05] tracking-tight text-white sm:text-5xl md:text-[64px]">
-          Showcase your products.
+          One digital catalog.
           <br />
-          Share on WhatsApp.
+          Shared everywhere.
         </h1>
         <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/75 sm:text-base">
-          Create a catalog for your Indian shop in minutes. No website, no coding.
-          We are just getting started.
+          Create an online product catalogue, restaurant menu, or WhatsApp
+          catalog in minutes. No website. No coding. Built for businesses
+          worldwide.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
@@ -37,10 +38,10 @@ export default function Hero() {
             Start for free
           </Link>
           <Link
-            href="#features"
+            href="/solutions"
             className="inline-flex items-center justify-center border border-white/40 px-6 py-3.5 text-[12px] font-medium uppercase tracking-[0.16em] text-white hover:border-white hover:bg-white/10"
           >
-            See how it works
+            See solutions
           </Link>
         </div>
       </div>

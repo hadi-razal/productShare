@@ -1,9 +1,12 @@
 import ProductPage from "@/components/ProductPage";
 import OfflineStorefront from "@/components/OfflineStorefront";
 import StorefrontShell from "@/components/StorefrontShell";
+import JsonLd from "@/components/JsonLd";
 import { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import { breadcrumbJsonLd, productJsonLd } from "@/lib/json-ld";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 import { getStorefrontProduct } from "@/lib/storefront";
 import { storefrontPublicUrl, storefrontRequestContext } from "@/lib/storefront-url";
 
@@ -34,11 +37,11 @@ export async function generateMetadata({
 
   const productName = productData?.name ?? "Product";
   const title = productData
-    ? `${productName} — Buy Online | Product Share India`
-    : "Product Not Found | Product Share India";
+    ? `${productName} | ${storeName} catalog`
+    : `Product Not Found | ${siteConfig.name}`;
   const description = productData?.description
-    ? `${productData.description} — View ${productName} on Product Share India.`
-    : `View details and pricing for ${productName} on Product Share India's digital catalog.`;
+    ? `${productData.description} View ${productName} in ${storeName}'s catalog on Product Share.`
+    : `View details and pricing for ${productName} in ${storeName}'s digital catalog on Product Share.`;
   const image = productData?.images?.[0] ?? null;
   const productUrl = storefrontPublicUrl(storeId, `/${productId}`);
 
@@ -48,28 +51,30 @@ export async function generateMetadata({
     keywords: productData
       ? [
           productName,
-          `buy ${productName} online India`,
           `${productName} price`,
-          "Product Share India",
+          `${storeName} ${productName}`,
+          `${productName} catalog`,
+          siteConfig.name,
           "digital catalog product",
-          "small business products India",
         ]
-      : ["Product Share India"],
+      : [siteConfig.name],
     alternates: { canonical: productUrl },
     openGraph: {
       title,
       description,
       url: productUrl,
+      siteName: siteConfig.name,
       type: "website",
+      locale: siteConfig.locale,
       images: image
         ? [{ url: image, width: 800, height: 600, alt: productName }]
-        : [{ url: "https://productshare.in/og-image.png", width: 1200, height: 630, alt: "Product Share India" }],
+        : [{ url: defaultOgImage, width: 1200, height: 630, alt: siteConfig.name }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: image ? [image] : ["https://productshare.in/og-image.png"],
+      images: image ? [image] : [defaultOgImage],
     },
   };
 }
@@ -109,6 +114,20 @@ export default async function Page({ params }: ProductRouteProps) {
       onSubdomain={onSubdomain}
       apexOrigin={apexOrigin}
     >
+      <JsonLd
+        data={productJsonLd({
+          product: storefrontProduct.product,
+          store: storefrontProduct.store,
+          url: storefrontPublicUrl(storeId, `/${productId}`),
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: storefrontProduct.store.name, path: storefrontPublicUrl(storeId) },
+          { name: storefrontProduct.product.name, path: storefrontPublicUrl(storeId, `/${productId}`) },
+        ])}
+      />
       <ProductPage
         productId={productId}
         storeId={storeId}

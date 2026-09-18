@@ -7,83 +7,79 @@ import {
 } from "react-icons/fi";
 import { HiWrench, HiHandRaised } from "react-icons/hi2";
 import { MdPalette } from "react-icons/md";
+import JsonLd from "@/components/JsonLd";
+import { aboutPageJsonLd, breadcrumbJsonLd } from "@/lib/json-ld";
+import { pageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "About Us — Product Share India",
+export const metadata: Metadata = pageMetadata({
+  title: "About Product Share — Global Catalog Software from India",
   description:
-    "Learn about Product Share India — a digital catalog builder from Kerala, built by Duoph Technologies for Indian shops, restaurants, and WhatsApp sellers.",
+    "Product Share is a global digital catalog and catalogue builder from Duoph Technologies in Kerala, India. Built for shops, restaurants, and WhatsApp sellers worldwide.",
+  path: "/about-us",
   keywords: [
-    "about Product Share India",
+    "about Product Share",
     "Duoph Technologies",
-    "digital catalog builder team",
-    "small business catalog platform",
-    "Indian startup catalog builder",
-    "product showcase platform India",
+    "digital catalog builder company",
+    "Product Share India",
+    "catalog software from Kerala",
   ],
-  alternates: {
-    canonical: "https://productshare.in/about-us",
-  },
-  openGraph: {
-    title: "About Product Share India — Built in India",
-    description:
-      "Product Share is an India-based catalog builder from Duoph Technologies. We are launching now for local shops, restaurants, and WhatsApp sellers.",
-    url: "https://productshare.in/about-us",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "About Product Share India",
-    description:
-      "An India-based catalog builder from Duoph Technologies, made for Indian small businesses going digital.",
-  },
-};
+});
 
 const features = [
   {
     icon: FiShoppingBag,
-    title: "Create Product Catalogs",
+    title: "Create product catalogs",
     description:
-      "Build stunning product showcases with photos, descriptions, and prices in minutes.",
+      "Build product showcases with photos, descriptions, and prices in minutes.",
   },
   {
     icon: FiGlobe,
-    title: "Instant Web Sharing",
+    title: "Share anywhere",
     description:
-      "Get a unique, professional link for your catalog to share across platforms.",
+      "One professional link for WhatsApp, Instagram, QR codes, and the web.",
   },
   {
     icon: FiSmartphone,
-    title: "Mobile-Optimized",
+    title: "Mobile-first",
     description:
-      "Your catalogs look flawless on every device, especially smartphones.",
+      "Catalogs look sharp on every phone, which is where customers actually browse.",
   },
   {
     icon: HiWrench,
-    title: "Zero Technical Skills",
+    title: "Zero technical skills",
     description: "No coding or design expertise needed. Launch in minutes.",
   },
   {
     icon: HiHandRaised,
-    title: "Small Business Focused",
+    title: "Small business focused",
     description:
-      "Built for entrepreneurs and small businesses to compete with larger brands.",
+      "Built for independent sellers who need to look established without a full website.",
   },
   {
     icon: MdPalette,
-    title: "Brand Customization",
+    title: "Brand customization",
     description: "Add logos, colors, and layouts to match your brand identity.",
   },
 ];
 
 const facts = [
-  { number: "India", label: "Based in Kerala" },
-  { number: "Now", label: "Just launching" },
+  { number: "Global", label: "Built to share anywhere" },
+  { number: "India", label: "Founded in Kerala" },
   { number: "Free", label: "To get started" },
 ];
 
 const AboutUs = () => {
   return (
     <div className="min-h-screen w-full bg-[radial-gradient(circle_at_top,_rgba(108,100,203,0.12),_transparent_42%)] pb-20 pt-24">
+      <JsonLd data={aboutPageJsonLd()} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "About", path: "/about-us" },
+        ])}
+      />
+
       <div className="mx-auto max-w-[1440px] px-3 sm:px-5">
         <section className="max-w-3xl pt-8">
           <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
@@ -93,9 +89,7 @@ const AboutUs = () => {
             Product Share
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-neutral-600 md:text-base">
-            Product Share is an India-based catalog builder. We are just getting
-            started — building a simple way for local shops, restaurants, and
-            WhatsApp sellers to publish products online without a website.
+            {siteConfig.longDescription}
           </p>
         </section>
 
@@ -118,25 +112,26 @@ const AboutUs = () => {
               Our story
             </p>
             <h2 className="mt-3 text-[22px] font-bold uppercase tracking-tight text-slate-900">
-              Starting in India
+              Founded in India, built for the world
             </h2>
           </div>
           <div className="space-y-5 text-sm leading-relaxed text-neutral-600 md:text-[15px]">
             <p>
-              Product Share is built in Kerala, India by Duoph Technologies. Many
-              local businesses still share products as scattered WhatsApp photos.
-              A full website is often too costly and too complex.
+              Product Share is built in Kerala, India by{" "}
+              <span className="font-semibold text-primary">Duoph Technologies</span>.
+              Businesses everywhere still share products as scattered chat photos
+              or outdated PDFs. A full website is often too slow and too expensive
+              when you only need a catalog.
             </p>
             <p>
-              We are launching now. The platform is new — we are inviting shops,
-              restaurants, and independent sellers in India to create their first
-              catalog with us.
+              We started with shops, restaurants, and WhatsApp sellers who needed
+              a clean link they could send today. That same product now serves as
+              global catalog software: an online product catalogue, digital menu,
+              and no-code storefront.
             </p>
             <p>
-              As a sub-brand of{" "}
-              <span className="font-semibold text-primary">Duoph Technologies</span>,
-              we are focused on a simple Indian-first product: photos, prices, and a
-              link you can share on WhatsApp.
+              India is our home. The catalog is for anyone, anywhere, who needs
+              to show products clearly and share them fast.
             </p>
           </div>
         </section>
@@ -146,10 +141,10 @@ const AboutUs = () => {
             Platform
           </p>
           <h2 className="mt-3 text-[22px] font-bold uppercase tracking-tight text-slate-900">
-            Tools to help you succeed
+            Tools to help you sell
           </h2>
           <p className="mt-3 max-w-xl text-sm text-neutral-600">
-            Built for Indian small businesses, home sellers, and local stores.
+            Built for restaurants, retailers, makers, and chat-first sellers.
           </p>
 
           <div className="mt-10 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
@@ -172,11 +167,14 @@ const AboutUs = () => {
             Mission
           </p>
           <h2 className="mt-3 max-w-2xl text-[22px] font-bold uppercase tracking-tight text-slate-900 md:text-[28px]">
-            Help Indian businesses go digital
+            Make product sharing simple for every business
           </h2>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-neutral-600 md:text-[15px]">
-            Make product sharing simple and affordable for shops across India. We are
-            at the beginning — join early, share feedback, and grow with us.
+            Affordable digital catalogs and catalogues, without forcing anyone
+            into a complicated website project. Learn more in{" "}
+            <Link href="/what-is-product-share" className="text-primary hover:underline">
+              What is Product Share?
+            </Link>
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link

@@ -3,7 +3,10 @@ import { headers } from "next/headers";
 import StoreProducts from "@/components/StoreProducts";
 import OfflineStorefront from "@/components/OfflineStorefront";
 import StorefrontShell from "@/components/StorefrontShell";
+import JsonLd from "@/components/JsonLd";
 import { notFound } from "next/navigation";
+import { breadcrumbJsonLd, storeCollectionJsonLd } from "@/lib/json-ld";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 import { getStorefrontProducts, getStorefrontStore } from "@/lib/storefront";
 import { storefrontPublicUrl, storefrontRequestContext } from "@/lib/storefront-url";
 
@@ -34,12 +37,12 @@ export async function generateMetadata({
     };
   }
   const title = storeData
-    ? `${storeName} — Online Catalog | Product Share India`
-    : "Store Not Found | Product Share India";
+    ? `${storeName} — Online Catalog | ${siteConfig.name}`
+    : `Store Not Found | ${siteConfig.name}`;
   const description = storeData?.description
-    ? `${storeData.description} — Browse ${storeName}'s product catalog on Product Share India.`
-    : `Browse ${storeName}'s digital product catalog on Product Share India. Discover products, prices, and more.`;
-  const storeImage = storeData?.image || storeData?.logoImage || "https://productshare.in/og-image.png";
+    ? `${storeData.description} Browse ${storeName}'s product catalog on Product Share.`
+    : `Browse ${storeName}'s digital product catalog on Product Share. Photos, prices, and a shareable catalogue link.`;
+  const storeImage = storeData?.image || storeData?.logoImage || defaultOgImage;
   const storeUrl = storefrontPublicUrl(storeId);
 
   return {
@@ -48,26 +51,29 @@ export async function generateMetadata({
     keywords: storeData
       ? [
           storeName,
-          `${storeName} products`,
           `${storeName} catalog`,
+          `${storeName} catalogue`,
+          `${storeName} products`,
           `${storeName} online store`,
-          "Product Share India store",
-          "digital catalog India",
-          "buy products online India",
+          "digital catalog",
+          "online product catalogue",
+          siteConfig.name,
         ]
-      : ["store not found", "Product Share India"],
+      : ["store not found", siteConfig.name],
     alternates: { canonical: storeUrl },
     openGraph: {
       title,
       description,
       url: storeUrl,
+      siteName: siteConfig.name,
       type: "website",
+      locale: siteConfig.locale,
       images: [
         {
           url: storeImage,
           width: 800,
           height: 600,
-          alt: `${storeName} — Product Catalog on Product Share India`,
+          alt: `${storeName} product catalog`,
         },
       ],
     },
@@ -110,6 +116,7 @@ export default async function Page({ params }: StorePageProps) {
   }
 
   const initialProducts = await getStorefrontProducts(storeId);
+  const storeUrl = storefrontPublicUrl(storeId);
 
   return (
     <StorefrontShell
@@ -117,6 +124,19 @@ export default async function Page({ params }: StorePageProps) {
       onSubdomain={onSubdomain}
       apexOrigin={apexOrigin}
     >
+      <JsonLd
+        data={storeCollectionJsonLd({
+          store: storeData,
+          url: storeUrl,
+          products: initialProducts,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: storeData.name, path: storeUrl },
+        ])}
+      />
       <StoreProducts
         storeId={storeId}
         initialProducts={initialProducts}

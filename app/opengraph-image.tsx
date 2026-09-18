@@ -60,7 +60,7 @@ export default function OpenGraphImage() {
               width: "auto",
             }}
           >
-            Digital catalog builder for modern businesses
+            Digital catalog & catalogue software
           </div>
           <div
             style={{
@@ -72,7 +72,7 @@ export default function OpenGraphImage() {
               letterSpacing: "-0.04em",
             }}
           >
-            Create catalog pages that are easy to share and built to sell.
+            Catalogs that shops, restaurants, and WhatsApp sellers can share worldwide.
           </div>
         </div>
 
@@ -81,11 +81,11 @@ export default function OpenGraphImage() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            fontSize: 28,
+            fontSize: 26,
             color: "#334155",
           }}
         >
-          <div style={{ display: "flex" }}>WhatsApp sharing, QR codes, mobile-ready pages</div>
+          <div style={{ display: "flex" }}>WhatsApp · QR menus · online catalogues</div>
           <div style={{ display: "flex", color: "#4338ca", fontWeight: 700 }}>
             productshare.in
           </div>

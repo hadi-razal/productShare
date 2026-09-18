@@ -1,4 +1,3 @@
-// app/layout.tsx or app/root-layout.tsx
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import localFont from "next/font/local";
@@ -10,9 +9,15 @@ import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
 import Script from "next/script";
 import { headers } from "next/headers";
-import { absoluteUrl, defaultOgImage, siteConfig } from "@/lib/site";
+import { defaultOgImage, siteConfig } from "@/lib/site";
 import { storefrontRequestContext } from "@/lib/storefront-url";
 import { Analytics } from "@vercel/analytics/next";
+import JsonLd from "@/components/JsonLd";
+import {
+  organizationJsonLd,
+  softwareApplicationJsonLd,
+  websiteJsonLd,
+} from "@/lib/json-ld";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -49,14 +54,16 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
     default:
-      "Product Share India - Digital Catalog Builder for Restaurants, Stores, and Small Businesses",
+      "Product Share — Digital Catalog & Catalogue Builder for Shops, Restaurants & WhatsApp Sellers",
     template: `%s | ${siteConfig.name}`,
   },
-  description:
-    "Create polished digital catalogs, menus, and shareable product pages for your business. Product Share India helps restaurants, retailers, and small businesses publish faster and share anywhere.",
+  description: siteConfig.description,
   keywords: [...siteConfig.keywords],
-  authors: [{ name: "Duoph Technologies", url: "https://www.duoph.in/" }],
-  creator: "Duoph Technologies",
+  authors: [
+    { name: siteConfig.parentOrganization.name, url: siteConfig.parentOrganization.url },
+    { name: siteConfig.name, url: siteConfig.url },
+  ],
+  creator: siteConfig.parentOrganization.name,
   publisher: siteConfig.name,
   robots: {
     index: true,
@@ -81,19 +88,19 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.webmanifest",
   openGraph: {
-    title: siteConfig.name,
-    description:
-      "Create digital catalogs, menus, and shareable product pages for your business in minutes.",
+    title: `${siteConfig.name} — ${siteConfig.tagline}`,
+    description: siteConfig.description,
     url: siteConfig.url,
     siteName: siteConfig.name,
     type: "website",
     locale: siteConfig.locale,
+    alternateLocale: [...siteConfig.alternateLocales],
     images: [
       {
         url: defaultOgImage,
         width: 1200,
         height: 630,
-        alt: `${siteConfig.name} preview image`,
+        alt: `${siteConfig.name} digital catalog preview`,
       },
     ],
   },
@@ -101,16 +108,22 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: siteConfig.twitterHandle,
     creator: siteConfig.twitterHandle,
-    title: siteConfig.name,
-    description:
-      "Build digital catalogs and menus that look professional and are easy to share.",
+    title: `${siteConfig.name} — Digital Catalog Builder`,
+    description: siteConfig.description,
     images: [defaultOgImage],
   },
   alternates: {
     canonical: siteConfig.url,
+    languages: {
+      "x-default": siteConfig.url,
+      en: siteConfig.url,
+    },
+    types: {
+      "text/plain": "/llms.txt",
+    },
   },
   category: siteConfig.category,
-  classification: "Digital Catalog Builder",
+  classification: siteConfig.classification,
   other: {
     "msapplication-TileColor": "#2563eb",
     "theme-color": "#ffffff",
@@ -129,69 +142,18 @@ export default async function RootLayout({
   const isStorefront = Boolean(storefrontUsername);
 
   return (
-    <html lang="en-IN" dir="ltr">
+    <html lang={siteConfig.language} dir="ltr">
       <body
         className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* Load Razorpay script globally */}
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="lazyOnload"
         />
 
-        {/* Organization JSON-LD */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: siteConfig.name,
-              url: siteConfig.url,
-              logo: absoluteUrl("/icon.png"),
-              description:
-                "Digital catalog builder for small businesses, restaurants, and sellers.",
-              contactPoint: {
-                "@type": "ContactPoint",
-                telephone: siteConfig.supportPhone,
-                email: siteConfig.supportEmail,
-                contactType: "customer service",
-                availableLanguage: ["English", "Hindi", "Malayalam"],
-                areaServed: "IN",
-              },
-              address: {
-                "@type": "PostalAddress",
-                addressRegion: "Kerala",
-                addressCountry: "IN",
-              },
-              foundingDate: "2023",
-              brand: {
-                "@type": "Brand",
-                name: siteConfig.name,
-              },
-              parentOrganization: {
-                "@type": "Organization",
-                name: "Duoph Technologies",
-                url: "https://www.duoph.in/",
-              },
-              sameAs: [`https://twitter.com/${siteConfig.twitterHandle.replace("@", "")}`],
-            }),
-          }}
-        />
-        {/* WebSite JSON-LD */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: siteConfig.name,
-              url: siteConfig.url,
-              description: siteConfig.description,
-              inLanguage: "en-IN",
-            }),
-          }}
-        />
+        <JsonLd data={organizationJsonLd()} />
+        <JsonLd data={websiteJsonLd()} />
+        <JsonLd data={softwareApplicationJsonLd()} />
 
         <a
           href="#main-content"

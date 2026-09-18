@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms and Conditions — Product Share India",
+  title: "Terms and Conditions",
   description:
-    "Review the Terms and Conditions for using Product Share India's digital catalog builder. Understand your rights, responsibilities, and our service policies.",
-  keywords: ["Product Share terms and conditions", "catalog builder terms of service", "user agreement India"],
+    "Terms of service for Product Share digital catalog software. Understand your rights and responsibilities when publishing an online catalogue.",
+  keywords: ["Product Share terms and conditions", "catalog builder terms of service", "user agreement"],
   alternates: { canonical: "https://productshare.in/terms-and-conditions" },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Terms and Conditions — Product Share India",
-    description: "Terms of service for using Product Share India's catalog builder platform.",
+    title: "Terms and Conditions | Product Share",
+    description: "Terms of service for using Product Share catalog software.",
     url: "https://productshare.in/terms-and-conditions",
     type: "website",
   },

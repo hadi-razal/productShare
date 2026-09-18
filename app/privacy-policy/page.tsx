@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import { FC } from 'react';
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Product Share India",
+  title: "Privacy Policy",
   description:
-    "Read Product Share India's Privacy Policy to understand how we collect, use, and protect your personal data when you use our digital catalog builder platform.",
-  keywords: ["Product Share privacy policy", "data protection", "user data policy India"],
+    "Read how Product Share collects, uses, and protects personal data when you use our digital catalog and catalogue platform.",
+  keywords: ["Product Share privacy policy", "catalog software data protection", "user data policy"],
   alternates: { canonical: "https://productshare.in/privacy-policy" },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Privacy Policy — Product Share India",
-    description: "How Product Share India handles and protects your personal information.",
+    title: "Privacy Policy | Product Share",
+    description: "How Product Share handles and protects your personal information.",
     url: "https://productshare.in/privacy-policy",
     type: "website",
   },

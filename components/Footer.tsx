@@ -8,9 +8,19 @@ import { siteConfig } from "@/lib/site";
 
 const marketingLinks = [
   { href: "/", label: "Home" },
+  { href: "/solutions", label: "Solutions" },
   { href: "/pricing", label: "Pricing" },
   { href: "/about-us", label: "About" },
+  { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
+];
+
+const solutionLinks = [
+  { href: "/what-is-product-share", label: "What is Product Share?" },
+  { href: "/solutions/whatsapp-catalog", label: "WhatsApp catalog" },
+  { href: "/solutions/digital-menu", label: "Digital menu" },
+  { href: "/solutions/online-catalogue", label: "Online catalogue" },
+  { href: "/guides/create-a-digital-catalog", label: "Create a catalog" },
 ];
 
 const legalLinks = [
@@ -39,11 +49,11 @@ const Footer = () => {
   return (
     <footer className="border-t border-primary/15 bg-white text-slate-700">
       <div className="mx-auto max-w-[1440px] px-3 py-14 sm:px-5">
-        <div className="grid gap-12 lg:grid-cols-[1.2fr_0.7fr_0.7fr_1fr]">
+        <div className="grid gap-12 lg:grid-cols-[1.2fr_0.7fr_0.7fr_0.7fr_1fr]">
           <div>
             <Link href="/" className="inline-flex">
               <Image
-                alt="Product Share"
+                alt="Product Share — digital catalog builder"
                 src="/productShareLV-cropped.svg"
                 width={124}
                 height={48}
@@ -51,11 +61,12 @@ const Footer = () => {
               />
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-neutral-600">
-              A digital catalog builder from India, made for local shops,
-              restaurants, and WhatsApp sellers. We are just getting started.
+              Global digital catalog and catalogue software for shops,
+              restaurants, and WhatsApp sellers. Founded in India. Built to
+              share anywhere.
             </p>
             <p className="mt-4 text-[11px] font-medium uppercase tracking-[0.16em] text-primary">
-              Made in India
+              Catalogs worldwide
             </p>
           </div>
 
@@ -65,6 +76,21 @@ const Footer = () => {
             </h3>
             <ul className="mt-5 space-y-3 text-sm">
               {marketingLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-neutral-600 hover:text-primary">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-[11px] font-medium uppercase tracking-[0.18em] text-primary">
+              Catalogs
+            </h3>
+            <ul className="mt-5 space-y-3 text-sm">
+              {solutionLinks.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-neutral-600 hover:text-primary">
                     {link.label}
@@ -132,7 +158,12 @@ const Footer = () => {
           <p>
             &copy; {currentYear} {siteConfig.name}. All rights reserved.
           </p>
-          <p>A product of Duoph Technologies, India.</p>
+          <p className="flex flex-wrap gap-x-4 gap-y-1">
+            <span>A product of Duoph Technologies.</span>
+            <Link href="/llms.txt" className="hover:text-primary">
+              llms.txt
+            </Link>
+          </p>
         </div>
       </div>
     </footer>

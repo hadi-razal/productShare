@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { marketingRoutes } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import { getPublicStorefrontEntries } from "@/lib/storefront";
 import { storefrontPublicUrl } from "@/lib/storefront-url";
@@ -7,62 +8,12 @@ export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
-  const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: absoluteUrl("/"),
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: absoluteUrl("/about-us"),
-      lastModified,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: absoluteUrl("/pricing"),
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: absoluteUrl("/contact"),
-      lastModified,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: absoluteUrl("/privacy-policy"),
-      lastModified,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: absoluteUrl("/terms-and-conditions"),
-      lastModified,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: absoluteUrl("/cancellations-and-refunds"),
-      lastModified,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: absoluteUrl("/shipping-policy"),
-      lastModified,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: absoluteUrl("/pricing-policy"),
-      lastModified,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-  ];
+  const staticPages: MetadataRoute.Sitemap = marketingRoutes.map((route) => ({
+    url: absoluteUrl(route.path),
+    lastModified,
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
+  }));
 
   try {
     const storefrontEntries = await getPublicStorefrontEntries();

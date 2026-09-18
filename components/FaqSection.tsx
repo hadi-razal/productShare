@@ -1,30 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { FiChevronDown } from "react-icons/fi";
-
-const faqs = [
-  {
-    question: "What is Product Share?",
-    answer:
-      "Product Share is an India-based catalog builder. Add products, get a link, and share it on WhatsApp — no website required.",
-  },
-  {
-    question: "How does it work?",
-    answer:
-      "Sign up, add your products with photos and prices, then share the catalog link anywhere your customers already are.",
-  },
-  {
-    question: "Who is it for?",
-    answer:
-      "WhatsApp and Instagram sellers, home-based businesses, local shops, and restaurants in India.",
-  },
-  {
-    question: "Where is Product Share based?",
-    answer:
-      "We are based in Kerala, India, as part of Duoph Technologies. The product is just launching, and we are inviting local businesses to create their first catalog with us.",
-  },
-];
+import { homeFaqs } from "@/lib/seo";
 
 export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -39,7 +18,7 @@ export default function FaqSection() {
       </h2>
 
       <div className="mt-10 max-w-3xl divide-y divide-primary/15 border-y border-primary/15">
-        {faqs.map((faq, index) => {
+        {homeFaqs.map((faq, index) => {
           const open = openIndex === index;
           return (
             <div key={faq.question}>
@@ -67,6 +46,12 @@ export default function FaqSection() {
           );
         })}
       </div>
+      <Link
+        href="/faq"
+        className="mt-8 inline-flex text-[12px] font-medium uppercase tracking-[0.16em] text-primary hover:underline"
+      >
+        View all questions
+      </Link>
     </section>
   );
 }

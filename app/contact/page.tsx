@@ -59,8 +59,8 @@ const ContactPage = () => {
             Talk to the team
           </h1>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-neutral-600">
-            Support, pricing, onboarding, or partnerships. We usually reply during
-            business hours.
+            Support, pricing, onboarding, or partnerships for catalogs anywhere.
+            We usually reply during business hours.
           </p>
 
           <div className="mt-10 divide-y divide-primary/15 border-y border-primary/15">
