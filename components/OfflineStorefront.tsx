@@ -85,12 +85,12 @@ export default function OfflineStorefront({
             width={72}
             height={72}
             unoptimized={storeLogo.startsWith("http")}
-            className="mx-auto h-[72px] w-[72px] rounded-2xl border object-cover"
+            className="mx-auto h-[72px] w-[72px] rounded-md border object-cover"
             style={{ borderColor: "var(--sf-border)" }}
           />
         ) : (
           <span
-            className="mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-2xl"
+            className="mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-md"
             style={{ background: "var(--sf-bg)", color: "var(--sf-muted)" }}
           >
             <FiEyeOff size={28} />
@@ -105,7 +105,7 @@ export default function OfflineStorefront({
         </p>
         <Link
           href={nav.dashboardHref("/")}
-          className="sf-btn mt-8 inline-flex min-h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold"
+          className="sf-btn mt-8 inline-flex min-h-11 items-center justify-center rounded-md px-5 text-sm font-semibold"
         >
           Back to ProductShare
         </Link>

@@ -185,7 +185,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <div className="bg-white rounded-xl shadow-2xl">
+        <div className="bg-white rounded-md shadow-2xl">
           <div className="relative p-6">
             {/* Close */}
             <button
@@ -232,7 +232,8 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
               })}
             </div>
 
-            <div className="bg-white rounded-xl border-2 border-indigo-500 p-6 mb-6">
+            {/* Pricing Card */}
+            <div className="bg-white rounded-md border-2 border-indigo-500 p-6 mb-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2 sm:mb-0">
                   {selectedPlan.name}

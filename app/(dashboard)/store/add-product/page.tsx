@@ -49,7 +49,7 @@ const Section = ({
   children: ReactNode;
 }) => (
   <div
-    className="bg-white rounded-2xl border border-gray-200 overflow-hidden"
+    className="bg-white rounded-md border border-gray-200 overflow-hidden"
   >
     <div className="px-6 py-4 border-b border-gray-200 bg-gray-50/70">
       <h3 className="font-semibold text-gray-900 text-[15px]">{title}</h3>
@@ -60,7 +60,7 @@ const Section = ({
 
 // ── Field ────────────────────────────────────────────────────────────────────
 const inputCls =
-  "w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
+  "w-full px-4 py-3 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
 const labelCls = "block text-sm font-semibold text-gray-700 mb-1.5";
 
 const CreateProduct = () => {
@@ -486,7 +486,7 @@ const CreateProduct = () => {
               productData.regularPrice &&
               Number(productData.discountPrice) <
                 Number(productData.regularPrice) && (
-                <p className="mt-3 text-xs text-green-600 font-medium bg-green-50 px-3 py-2 rounded-lg">
+                <p className="mt-3 text-xs text-green-600 font-medium bg-green-50 px-3 py-2 rounded-md">
                   {Math.round(
                     ((Number(productData.regularPrice) -
                       Number(productData.discountPrice)) /
@@ -522,7 +522,7 @@ const CreateProduct = () => {
                         type="button"
                         disabled={busy}
                         onClick={() => handleSizeChange(size)}
-                        className={`px-4 py-2 rounded-xl text-sm font-medium border-2 transition-all ${
+                        className={`px-4 py-2 rounded-md text-sm font-medium border-2 transition-all ${
                           productData.sizes.includes(size)
                             ? "bg-primary text-white border-primary shadow-sm"
                             : "bg-white text-gray-600 border-gray-200 hover:border-primary/40"
@@ -545,7 +545,7 @@ const CreateProduct = () => {
                   {productData.colors.map((color, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2"
+                      className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-md px-3 py-2"
                     >
                       <div
                         className="w-5 h-5 rounded-full border border-gray-300 shadow-sm flex-shrink-0"
@@ -570,7 +570,7 @@ const CreateProduct = () => {
                   <button
                     type="button"
                     onClick={() => setShowColorPicker(!showColorPicker)}
-                    className="w-10 h-10 rounded-xl border-2 border-gray-200 shadow-sm hover:border-primary/40 transition-colors"
+                    className="w-10 h-10 rounded-md border-2 border-gray-200 shadow-sm hover:border-primary/40 transition-colors"
                     style={{ backgroundColor: currentColor || "#ffffff" }}
                   />
                   {showColorPicker && (
@@ -579,7 +579,7 @@ const CreateProduct = () => {
                         className="fixed inset-0"
                         onClick={() => setShowColorPicker(false)}
                       />
-                      <div className="relative z-10 shadow-xl rounded-xl overflow-hidden">
+                      <div className="relative z-10 shadow-xl rounded-md overflow-hidden">
                         <ChromePicker
                           color={currentColor}
                           onChange={(c: ColorResult) => setCurrentColor(c.hex)}
@@ -599,7 +599,7 @@ const CreateProduct = () => {
                   type="button"
                   onClick={handleAddColor}
                   disabled={!currentColor.trim()}
-                  className="px-4 py-3 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 disabled:opacity-40 transition-all flex-shrink-0"
+                  className="px-4 py-3 bg-primary text-white rounded-md text-sm font-semibold hover:bg-primary/90 disabled:opacity-40 transition-all flex-shrink-0"
                 >
                   Add
                 </button>
@@ -616,7 +616,7 @@ const CreateProduct = () => {
                     <img
                       src={image}
                       alt={`Product ${index + 1}`}
-                      className="w-full h-full object-cover rounded-xl border border-gray-200"
+                      className="w-full h-full object-cover rounded-md border border-gray-200"
                     />
                     {index === 0 && (
                       <span className="absolute bottom-1 left-1 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">
@@ -633,7 +633,7 @@ const CreateProduct = () => {
                   </div>
                 ))}
                 {imageFiles.length < 10 && (
-                  <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
+                  <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
                     <span className="text-xs text-gray-500 group-hover:text-primary font-medium">
                       Add
                     </span>
@@ -661,7 +661,7 @@ const CreateProduct = () => {
           <Section title="Product Video (Optional)">
             <div className="space-y-3">
               {videoCompressing && (
-                <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl text-sm font-medium">
+                <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-3 rounded-md text-sm font-medium">
                   <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                   Compressing video...
                 </div>
@@ -671,7 +671,7 @@ const CreateProduct = () => {
                   <video
                     src={previewVideo}
                     controls
-                    className="w-full max-w-xs h-40 object-cover rounded-xl border border-gray-200"
+                    className="w-full max-w-xs h-40 object-cover rounded-md border border-gray-200"
                   />
                   <button
                     type="button"
@@ -683,7 +683,7 @@ const CreateProduct = () => {
                 </div>
               ) : (
                 !videoCompressing && (
-                  <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
+                  <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
                     <span className="text-sm text-gray-500 group-hover:text-primary font-medium">
                       Upload a video
                     </span>
@@ -772,7 +772,7 @@ const CreateProduct = () => {
           <button
             type="submit"
             disabled={busy}
-            className="w-full py-4 rounded-2xl text-white font-bold text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
+            className="w-full py-4 rounded-md text-white font-bold text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
             style={{
               background: busy
                 ? "#9ca3af"

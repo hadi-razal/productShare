@@ -18,7 +18,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import Image from "next/image";
 
 const inputClass =
-  "w-full px-4 py-3 bg-white border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
+  "w-full px-4 py-3 bg-white border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
 
 const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -184,7 +184,7 @@ const RegisterPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex flex-col gap-2 w-full bg-white rounded-xl px-4 py-8 mt-4">
+          <div className="flex flex-col gap-2 w-full bg-white rounded-md px-4 py-8 mt-4">
             {!showOtpStep ? (
               <>
                 <input
@@ -220,7 +220,7 @@ const RegisterPage: React.FC = () => {
                 <button
                   onClick={handleRegister}
                   disabled={loading}
-                  className="w-full px-4 py-3 bg-primary text-white rounded-xl transition-all text-sm disabled:opacity-50 hover:opacity-90"
+                  className="w-full px-4 py-3 bg-primary text-white rounded-md transition-all text-sm disabled:opacity-50 hover:opacity-90"
                 >
                   {loading ? "Sending code..." : "Register"}
                 </button>
@@ -246,7 +246,7 @@ const RegisterPage: React.FC = () => {
                 <button
                   onClick={handleVerifyOtp}
                   disabled={loading}
-                  className="w-full px-4 py-3 bg-primary text-white rounded-xl transition-all text-sm disabled:opacity-50 hover:opacity-90"
+                  className="w-full px-4 py-3 bg-primary text-white rounded-md transition-all text-sm disabled:opacity-50 hover:opacity-90"
                 >
                   {loading ? "Verifying..." : "Verify & Create Account"}
                 </button>

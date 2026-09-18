@@ -13,8 +13,8 @@
   --ds-canvas: #f6f8fa;
   --ds-surface: #ffffff;
   --ds-sidebar: #fbfaf8;
-  --ds-radius: 8px;
-  --ds-radius-sm: 6px;
+  --ds-radius: 6px;
+  --ds-radius-sm: 4px;
 }
 
 .ds-root,
@@ -94,7 +94,7 @@
   width: 44px;
   height: 44px;
   border: 1px solid var(--ds-border);
-  border-radius: 12px;
+  border-radius: var(--ds-radius);
   object-fit: cover;
   background: var(--ds-surface);
   flex: 0 0 auto;
@@ -103,7 +103,7 @@
 .ds-store-identity .ds-avatar {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
+  border-radius: var(--ds-radius);
   font-size: 13px;
 }
 
@@ -268,7 +268,7 @@
   min-height: 58px;
   padding: 10px;
   border: 1px solid var(--ds-border);
-  border-radius: 12px;
+  border-radius: var(--ds-radius);
   background: var(--ds-surface);
   color: var(--ds-ink);
   cursor: pointer;
@@ -308,7 +308,7 @@
   left: 0;
   padding: 6px;
   border: 1px solid var(--ds-border);
-  border-radius: 12px;
+  border-radius: var(--ds-radius);
   background: var(--ds-surface);
   box-shadow: 0 14px 36px rgba(29, 35, 52, 0.12);
 }
@@ -321,7 +321,7 @@
   width: 100%;
   padding: 10px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--ds-radius);
   background: transparent;
   color: var(--ds-muted);
   font-size: 12px;
@@ -371,7 +371,7 @@
   width: 42px;
   height: 42px;
   border: 1px solid var(--ds-border);
-  border-radius: 11px;
+  border-radius: var(--ds-radius);
   background: var(--ds-surface);
   color: var(--ds-ink);
   cursor: pointer;
@@ -416,7 +416,7 @@
   width: 232px;
   padding: 7px;
   border: 1px solid var(--ds-border);
-  border-radius: 13px;
+  border-radius: var(--ds-radius);
   background: var(--ds-surface);
   box-shadow: 0 18px 44px rgba(29, 35, 52, 0.16);
 }
@@ -462,7 +462,7 @@
   gap: 10px;
   padding: 8px 10px;
   border: 0;
-  border-radius: 9px;
+  border-radius: var(--ds-radius);
   background: transparent;
   color: var(--ds-muted);
   font-size: 12px;
@@ -610,7 +610,7 @@
   align-items: center;
   gap: 4px;
   padding: 7px 2px;
-  border-radius: 10px;
+  border-radius: var(--ds-radius);
   color: var(--ds-muted);
   text-decoration: none;
 }
@@ -1689,7 +1689,7 @@
   width: 100%;
   padding: 8px 10px;
   border: 0;
-  border-radius: 7px;
+  border-radius: var(--ds-radius-sm);
   background: transparent;
   color: var(--ds-ink);
   font-size: 13px;
@@ -1862,7 +1862,7 @@
   width: 40px;
   height: 40px;
   border: 1px solid var(--ds-border);
-  border-radius: 12px;
+  border-radius: var(--ds-radius);
   object-fit: cover;
   background: var(--ds-hover);
   flex: 0 0 auto;
@@ -1881,7 +1881,7 @@
   align-items: center;
   min-height: 22px;
   padding: 0 8px;
-  border-radius: 999px;
+  border-radius: var(--ds-radius);
   font-size: 12px;
   font-style: normal;
   font-weight: 650;

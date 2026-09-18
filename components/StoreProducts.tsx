@@ -15,6 +15,7 @@ import {
 } from "react-icons/fi";
 import Link from "next/link";
 import Image from "next/image";
+import Marquee from "react-fast-marquee";
 import { getUserId } from "@/helpers/getUserId";
 import { incrementStoreVisits, listProductsByStore } from "@/lib/db";
 import ProductCard from "@/components/ProductCard";
@@ -250,7 +251,7 @@ const StoreProducts = ({
                   width={72}
                   height={72}
                   unoptimized={storeLogo.startsWith("http")}
-                  className="h-16 w-16 rounded-2xl border object-cover sm:h-[72px] sm:w-[72px]"
+                  className="h-16 w-16 rounded-md border object-cover sm:h-[72px] sm:w-[72px]"
                   style={{ borderColor: "var(--sf-border)", borderRadius: "var(--sf-radius-sm)" }}
                 />
               ) : (
@@ -278,7 +279,7 @@ const StoreProducts = ({
               </div>
             </div>
             <div
-              className="inline-flex w-fit items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium"
+              className="inline-flex w-fit items-center gap-2 rounded-md border px-3 py-2 text-xs font-medium"
               style={{ borderColor: "var(--sf-border)", background: "var(--sf-bg)", color: "var(--sf-muted)" }}
             >
               <FiPackage className="sf-kicker" />
@@ -286,60 +287,64 @@ const StoreProducts = ({
             </div>
           </div>
           {storeNote?.trim() && (
-            <div className="sf-note border-t px-5 py-3 text-sm sm:px-7">
-              {storeNote}
+            <div className="sf-note sf-note-marquee border-t" aria-label={storeNote.trim()}>
+              <Marquee pauseOnHover speed={38} gradient={false} autoFill>
+                <span className="sf-note-item">{storeNote.trim()}</span>
+              </Marquee>
             </div>
           )}
         </section>
 
-        <section className="sf-card mt-4 p-3 sm:p-4">
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <div className="relative flex min-w-0 flex-1 items-center">
-              <FiSearch className="sf-muted pointer-events-none absolute left-3.5 h-4 w-4" />
-              <input
-                type="search"
-                value={searchInput}
-                onChange={handleSearchInputChange}
-                onKeyDown={handleKeyPress}
-                placeholder="Search products"
-                className="sf-input h-11 w-full rounded-xl border pl-10 pr-20 text-sm outline-none transition"
-                style={{ borderRadius: "var(--sf-radius-sm)" }}
-              />
-              <div className="absolute right-1.5 flex items-center gap-1">
-                {searchInput && (
+        <div className="sf-search-sticky">
+          <section className="sf-card p-3 sm:p-4">
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="relative flex min-w-0 flex-1 items-center">
+                <FiSearch className="sf-muted pointer-events-none absolute left-3.5 h-4 w-4" />
+                <input
+                  type="search"
+                  value={searchInput}
+                  onChange={handleSearchInputChange}
+                  onKeyDown={handleKeyPress}
+                  placeholder="Search products"
+                  className="sf-input h-11 w-full rounded-md border pl-10 pr-20 text-sm outline-none transition"
+                  style={{ borderRadius: "var(--sf-radius-sm)" }}
+                />
+                <div className="absolute right-1.5 flex items-center gap-1">
+                  {searchInput && (
+                    <button
+                      type="button"
+                      onClick={clearSearchInput}
+                      className="sf-muted flex h-8 w-8 items-center justify-center rounded-md transition hover:opacity-80"
+                      aria-label="Clear search"
+                    >
+                      <FiX size={16} />
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={clearSearchInput}
-                    className="sf-muted flex h-8 w-8 items-center justify-center rounded-lg transition hover:opacity-80"
-                    aria-label="Clear search"
+                    onClick={handleSearchClick}
+                    className="sf-btn flex h-8 items-center justify-center rounded-md px-3 text-xs font-semibold"
                   >
-                    <FiX size={16} />
+                    Search
                   </button>
-                )}
-                <button
-                  type="button"
-                  onClick={handleSearchClick}
-                  className="sf-btn flex h-8 items-center justify-center rounded-lg px-3 text-xs font-semibold"
-                >
-                  Search
-                </button>
+                </div>
               </div>
+              <select
+                name="sort"
+                value={sortOption}
+                onChange={handleSortChange}
+                aria-label="Sort products"
+                className="sf-select h-11 rounded-md border px-3 text-sm outline-none transition sm:w-52"
+                style={{ borderRadius: "var(--sf-radius-sm)" }}
+              >
+                <option value="">Featured</option>
+                <option value="newest">Newly added</option>
+                <option value="price-low-high">Price: low to high</option>
+                <option value="price-high-low">Price: high to low</option>
+              </select>
             </div>
-            <select
-              name="sort"
-              value={sortOption}
-              onChange={handleSortChange}
-              aria-label="Sort products"
-              className="sf-select h-11 rounded-xl border px-3 text-sm outline-none transition sm:w-52"
-              style={{ borderRadius: "var(--sf-radius-sm)" }}
-            >
-              <option value="">Featured</option>
-              <option value="newest">Newly added</option>
-              <option value="price-low-high">Price: low to high</option>
-              <option value="price-high-low">Price: high to low</option>
-            </select>
-          </div>
-        </section>
+          </section>
+        </div>
 
         <div className="mb-4 mt-8 flex items-end justify-between gap-4">
           <div>
@@ -391,7 +396,7 @@ const StoreProducts = ({
             <button
               type="button"
               onClick={handleLoadMore}
-              className="sf-ghost rounded-xl px-5 py-3 text-sm font-semibold"
+              className="sf-ghost rounded-md px-5 py-3 text-sm font-semibold"
               style={{ borderRadius: "var(--sf-radius-sm)" }}
             >
               Load more
@@ -442,7 +447,7 @@ const StoreProducts = ({
             <div className="border-b border-slate-200 px-5 py-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-violet-100">
                     <FiLayout className="h-5 w-5 text-violet-700" />
                   </div>
                   <div>
@@ -453,7 +458,7 @@ const StoreProducts = ({
                 <button
                   type="button"
                   onClick={() => setAdminPanelOpen(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-800"
+                  className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-800"
                   aria-label="Close store controls"
                 >
                   <FiX className="h-4 w-4" />
@@ -475,9 +480,9 @@ const StoreProducts = ({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="mb-1 flex items-center gap-3 rounded-xl px-3 py-3 text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                  className="mb-1 flex items-center gap-3 rounded-md px-3 py-3 text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
                 >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-violet-600">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white text-violet-600">
                     <item.icon className="h-[18px] w-[18px]" />
                   </div>
                   <div>
@@ -492,7 +497,7 @@ const StoreProducts = ({
             <div className="border-t border-slate-200 p-4">
               <Link
                 href="/store"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-violet-700"
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-violet-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-violet-700"
               >
                 <FiExternalLink className="h-4 w-4" />
                 Open dashboard

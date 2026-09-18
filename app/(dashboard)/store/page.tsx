@@ -115,7 +115,7 @@ const demoChart: ChartPoint[] = [
 ];
 
 const Pulse = ({ className = "" }: { className?: string }) => (
-  <div className={`animate-pulse rounded-xl ${className}`} style={{ background: "var(--ds-border)" }} />
+  <div className={`animate-pulse rounded-md ${className}`} style={{ background: "var(--ds-border)" }} />
 );
 
 const priceLabel = (product: DashboardProduct) => {

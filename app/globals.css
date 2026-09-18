@@ -94,8 +94,8 @@ body {
   --sf-border: #e2e8f0;
   --sf-accent: #7c3aed;
   --sf-accent-soft: #ede9fe;
-  --sf-radius: 24px;
-  --sf-radius-sm: 12px;
+  --sf-radius: 6px;
+  --sf-radius-sm: 4px;
   min-height: 100vh;
   background: var(--sf-bg);
   color: var(--sf-text);
@@ -131,6 +131,36 @@ body {
   border: 1px solid var(--sf-border);
   border-radius: var(--sf-radius);
   background: var(--sf-surface);
+}
+
+.sf-search-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  margin-top: 16px;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding: 8px 1rem 12px;
+  background: var(--sf-bg);
+  box-shadow: 0 10px 18px -12px rgba(15, 23, 42, 0.28);
+}
+
+@media (min-width: 640px) {
+  .sf-search-sticky {
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sf-search-sticky {
+    margin-left: -2rem;
+    margin-right: -2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }
 
 .sf-kicker {
@@ -179,6 +209,62 @@ body {
   border-color: var(--sf-border);
   background: var(--sf-accent-soft);
   color: var(--sf-text);
+}
+
+.sf-note-marquee {
+  overflow: hidden;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.sf-note-track {
+  display: flex;
+  width: max-content;
+  animation: sf-note-scroll 28s linear infinite;
+}
+
+.sf-note-marquee:hover .sf-note-track {
+  animation-play-state: paused;
+}
+
+.sf-note-item {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 10px 40px 10px 0;
+  font-size: 13px;
+  font-weight: 550;
+  letter-spacing: 0.01em;
+}
+
+.sf-note-item::after {
+  content: "•";
+  margin-left: 40px;
+  opacity: 0.45;
+}
+
+@keyframes sf-note-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-note-track {
+    animation: none;
+  }
+}
+
+.storefront-root :is(.rounded-3xl, .rounded-2xl, .rounded-xl, .rounded-lg) {
+  border-radius: var(--sf-radius-sm);
+}
+
+.ds-root :is(.rounded-3xl, .rounded-2xl, .rounded-xl, .rounded-lg) {
+  border-radius: var(--ds-radius);
 }
 
 .storefront-root .sf-product-card {

@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const inputClass =
-  "w-full px-4 py-3 bg-white border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
+  "w-full px-4 py-3 bg-white border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-gray-900 placeholder:text-gray-400 text-sm disabled:opacity-50 hover:border-gray-300";
 
 const ResetPasswordPage: React.FC = () => {
   const [canReset, setCanReset] = useState(false);
@@ -97,7 +97,7 @@ const ResetPasswordPage: React.FC = () => {
           {!verifying && canReset && !success && (
             <form
               onSubmit={handleResetPassword}
-              className="flex flex-col gap-2 w-full bg-white rounded-xl px-4 py-8 mt-4"
+              className="flex flex-col gap-2 w-full bg-white rounded-md px-4 py-8 mt-4"
             >
               <div className="relative">
                 <input
@@ -148,7 +148,7 @@ const ResetPasswordPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-4 py-3 bg-primary text-white rounded-xl transition-all text-sm disabled:opacity-50 hover:opacity-90"
+                className="w-full px-4 py-3 bg-primary text-white rounded-md transition-all text-sm disabled:opacity-50 hover:opacity-90"
               >
                 {loading ? "Resetting..." : "Reset Password"}
               </button>

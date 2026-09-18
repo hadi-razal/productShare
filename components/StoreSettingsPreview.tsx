@@ -99,10 +99,11 @@ const StoreSettingsPreview = ({
             </div>
 
             {additionalNotes.trim() && (
-              <div className="sf-note marquee">
-                <div className="marquee-content py-1.5">
-                  <span className="text-[10px] px-4">
-                    {additionalNotes} &nbsp;&nbsp;&nbsp; {additionalNotes}
+              <div className="sf-note sf-note-marquee">
+                <div className="sf-note-track">
+                  <span className="sf-note-item text-[10px] py-1.5">{additionalNotes.trim()}</span>
+                  <span className="sf-note-item text-[10px] py-1.5" aria-hidden>
+                    {additionalNotes.trim()}
                   </span>
                 </div>
               </div>

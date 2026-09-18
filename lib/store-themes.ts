@@ -46,8 +46,8 @@ export const STORE_THEMES: StoreTheme[] = [
     text: "#0f172a",
     muted: "#64748b",
     border: "#e2e8f0",
-    radius: "24px",
-    radiusSm: "12px",
+    radius: "6px",
+    radiusSm: "4px",
     previewBg: "#f6f7fb",
     previewSurface: "#ffffff",
   },
@@ -79,8 +79,8 @@ export const STORE_THEMES: StoreTheme[] = [
     text: "#f1f5f9",
     muted: "#94a3b8",
     border: "#2a333c",
-    radius: "14px",
-    radiusSm: "10px",
+    radius: "6px",
+    radiusSm: "4px",
     dark: true,
     previewBg: "#101418",
     previewSurface: "#181e24",
@@ -96,8 +96,8 @@ export const STORE_THEMES: StoreTheme[] = [
     text: "#3f272c",
     muted: "#9f7a82",
     border: "#f4d5db",
-    radius: "20px",
-    radiusSm: "12px",
+    radius: "6px",
+    radiusSm: "4px",
     previewBg: "#fff5f7",
     previewSurface: "#ffffff",
   },
@@ -129,8 +129,8 @@ export const STORE_THEMES: StoreTheme[] = [
     text: "#0f2a38",
     muted: "#5b7382",
     border: "#cfe0ea",
-    radius: "16px",
-    radiusSm: "10px",
+    radius: "6px",
+    radiusSm: "4px",
     previewBg: "#eef4f8",
     previewSurface: "#ffffff",
   },
@@ -145,8 +145,8 @@ export const STORE_THEMES: StoreTheme[] = [
     text: "#243126",
     muted: "#6b7a6c",
     border: "#d5e0d2",
-    radius: "18px",
-    radiusSm: "12px",
+    radius: "6px",
+    radiusSm: "4px",
     previewBg: "#f3f6f1",
     previewSurface: "#fbfdf8",
   },
@@ -178,8 +178,8 @@ export const STORE_THEMES: StoreTheme[] = [
     text: "#3b2414",
     muted: "#8d6b52",
     border: "#f0ddc8",
-    radius: "10px",
-    radiusSm: "8px",
+    radius: "6px",
+    radiusSm: "4px",
     previewBg: "#fffaf5",
     previewSurface: "#ffffff",
   },
@@ -294,6 +294,15 @@ export const emitStoreThemeChange = (id: StoreThemeId) => {
   }
 };
 
+const MAX_RADIUS = 6;
+const MAX_RADIUS_SM = 4;
+
+const clampRadius = (value: string, max: number) => {
+  const px = Number.parseFloat(value);
+  if (!Number.isFinite(px)) return `${max}px`;
+  return `${Math.min(Math.max(px, 0), max)}px`;
+};
+
 export const storeThemeCssVars = (
   theme: StoreTheme,
 ): Record<`--${string}`, string> => ({
@@ -304,8 +313,8 @@ export const storeThemeCssVars = (
   "--sf-border": theme.border,
   "--sf-accent": theme.accent,
   "--sf-accent-soft": theme.accentSoft,
-  "--sf-radius": theme.radius,
-  "--sf-radius-sm": theme.radiusSm,
+  "--sf-radius": clampRadius(theme.radius, MAX_RADIUS),
+  "--sf-radius-sm": clampRadius(theme.radiusSm, MAX_RADIUS_SM),
 });
 
 export const dashboardThemeCssVars = (

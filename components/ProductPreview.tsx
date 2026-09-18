@@ -38,16 +38,16 @@ const ProductPreview = ({
         Live Preview
       </p>
 
-      <div className="rounded-2xl border border-gray-200 bg-gray-100 p-3 shadow-sm space-y-3">
+      <div className="rounded-md border border-gray-200 bg-gray-100 p-3 shadow-sm space-y-3">
         {/* Catalog card preview */}
-        <div className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
+        <div className="rounded-md border border-gray-200 bg-white overflow-hidden shadow-sm">
           <div className="px-3 py-2 border-b border-gray-100 bg-gray-50">
             <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">
               Catalog view
             </p>
           </div>
           <div className="p-3 grid grid-cols-2 gap-2">
-            <div className="rounded-lg border border-indigo-200 bg-white overflow-hidden ring-2 ring-indigo-400/30 col-span-1">
+            <div className="rounded-md border border-indigo-200 bg-white overflow-hidden ring-2 ring-indigo-400/30 col-span-1">
               <div className="relative h-20 bg-gray-100">
                 {mainImage ? (
                   <img
@@ -98,7 +98,7 @@ const ProductPreview = ({
                 </div>
               </div>
             </div>
-            <div className="rounded-lg border border-gray-100 bg-white overflow-hidden opacity-40">
+            <div className="rounded-md border border-gray-100 bg-white overflow-hidden opacity-40">
               <div className="h-20 bg-gradient-to-br from-gray-100 to-gray-200" />
               <div className="p-2">
                 <p className="text-[10px] text-gray-400">Other product</p>
@@ -109,7 +109,7 @@ const ProductPreview = ({
         </div>
 
         {/* Product page preview */}
-        <div className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
+        <div className="rounded-md border border-gray-200 bg-white overflow-hidden shadow-sm">
           <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-100 bg-gray-50">
             <div className="flex gap-1.5">
               <span className="w-2 h-2 rounded-full bg-red-400" />
@@ -122,7 +122,7 @@ const ProductPreview = ({
           </div>
 
           <div className="p-3 space-y-3">
-            <div className="relative h-36 rounded-lg overflow-hidden bg-gray-100">
+            <div className="relative h-36 rounded-md overflow-hidden bg-gray-100">
               {previewVideo ? (
                 <video
                   src={previewVideo}
@@ -270,7 +270,7 @@ const ProductPreview = ({
             <button
               type="button"
               disabled
-              className="w-full py-2.5 rounded-lg text-white text-xs font-semibold"
+              className="w-full py-2.5 rounded-md text-white text-xs font-semibold"
               style={{ background: "linear-gradient(135deg, #25D366, #128C7E)" }}
             >
               Buy on WhatsApp

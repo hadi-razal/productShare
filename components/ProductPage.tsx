@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { getProduct, incrementProductViews } from "@/lib/db";
 import {
   FiChevronLeft,
@@ -16,6 +15,7 @@ import { getUserId } from "@/helpers/getUserId";
 import { onAuthChange } from "@/lib/auth";
 import { ProductType } from "@/type";
 import { useStorefrontNav } from "@/components/storefront-nav";
+import StorefrontImage, { usableMediaSrc } from "@/components/StorefrontImage";
 
 interface ProductPageProps {
   productId: string;
@@ -85,7 +85,6 @@ const ProductPage = ({
   const [zoomOpen, setZoomOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
-  const [mainImgLoaded, setMainImgLoaded] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
@@ -94,16 +93,21 @@ const ProductPage = ({
   const mediaArray = useMemo(() => {
     if (!productData) return [];
     const media: { type: "video" | "image"; src: string; alt: string }[] = [];
-    if (productData.video) {
-      media.push({ type: "video", src: productData.video, alt: "Product Video" });
-    }
-    productData.images?.forEach((image, index) => {
+    (productData.images ?? []).forEach((image, index) => {
+      const src = usableMediaSrc(image);
+      if (!src) return;
       media.push({
         type: "image",
-        src: image,
-        alt: `${productData.name} - Image ${index + 1}`,
+        src,
+        alt: `${productData.name} — ${index + 1}`,
       });
     });
+    const video = usableMediaSrc(
+      typeof productData.video === "string" ? productData.video : "",
+    );
+    if (video) {
+      media.push({ type: "video", src: video, alt: "Product video" });
+    }
     return media;
   }, [productData]);
 
@@ -158,8 +162,8 @@ const ProductPage = ({
   }, [userId]);
 
   useEffect(() => {
-    setMainImgLoaded(false);
-  }, [currentImageIndex]);
+    setCurrentImageIndex(0);
+  }, [productId]);
 
   useEffect(() => {
     if (!productData) return;
@@ -261,7 +265,7 @@ const ProductPage = ({
     );
   }
 
-  const currentMedia = mediaArray[currentImageIndex];
+  const currentMedia = mediaArray[Math.min(currentImageIndex, Math.max(mediaArray.length - 1, 0))];
   const inStock = productData.isInStock !== false;
 
   return (
@@ -275,9 +279,16 @@ const ProductPage = ({
           {storeName || "Back to catalog"}
         </Link>
 
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16 lg:items-start">
-          <div className="lg:sticky lg:top-24">
-            <div className="relative aspect-square w-full overflow-hidden" style={{ background: "var(--sf-bg)" }}>
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14 lg:items-start">
+          <div className="lg:sticky lg:top-8">
+            <div
+              className="sf-gallery relative aspect-square w-full overflow-hidden"
+              style={{
+                background: "var(--sf-bg)",
+                borderRadius: "var(--sf-radius)",
+                border: "1px solid var(--sf-border)",
+              }}
+            >
               {mediaArray.length > 0 ? (
                 currentMedia.type === "video" ? (
                   <video
@@ -286,33 +297,21 @@ const ProductPage = ({
                     muted
                     loop
                     playsInline
-                    className="h-full w-full object-cover"
+                    controls
+                    className="h-full w-full object-contain"
                   />
                 ) : (
-                  <>
-                    {!mainImgLoaded && (
-                      <div className="absolute inset-0 animate-pulse" style={{ background: "var(--sf-bg)" }} />
-                    )}
-                    <Image
-                      src={currentMedia.src}
-                      alt={currentMedia.alt}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      quality={80}
-                      unoptimized
-                      placeholder="blur"
-                      blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjgwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PC9zdmc+"
-                      className={`cursor-zoom-in object-cover transition-opacity duration-300 ${
-                        mainImgLoaded ? "opacity-100" : "opacity-0"
-                      }`}
-                      onLoad={() => setMainImgLoaded(true)}
-                      onClick={() => setZoomOpen(true)}
-                      priority={currentImageIndex === 0}
-                    />
-                  </>
+                  <StorefrontImage
+                    src={currentMedia.src}
+                    alt={currentMedia.alt}
+                    fit="contain"
+                    priority={currentImageIndex === 0}
+                    className="cursor-zoom-in p-3"
+                    onClick={() => setZoomOpen(true)}
+                  />
                 )
               ) : (
-                <div className="flex h-full items-center justify-center text-sm text-neutral-400">
+                <div className="flex h-full items-center justify-center text-sm" style={{ color: "var(--sf-muted)" }}>
                   No image
                 </div>
               )}
@@ -322,7 +321,8 @@ const ProductPage = ({
                   <button
                     type="button"
                     onClick={prevImage}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 p-2 text-black hover:bg-white"
+                    className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full p-2 shadow-sm"
+                    style={{ background: "var(--sf-surface)", color: "var(--sf-text)" }}
                     aria-label="Previous image"
                   >
                     <FiChevronLeft className="h-5 w-5" />
@@ -330,12 +330,16 @@ const ProductPage = ({
                   <button
                     type="button"
                     onClick={nextImage}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 p-2 text-black hover:bg-white"
+                    className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full p-2 shadow-sm"
+                    style={{ background: "var(--sf-surface)", color: "var(--sf-text)" }}
                     aria-label="Next image"
                   >
                     <FiChevronRight className="h-5 w-5" />
                   </button>
-                  <div className="absolute bottom-3 right-3 bg-black/70 px-2 py-1 text-[10px] tracking-wide text-white">
+                  <div
+                    className="absolute bottom-3 right-3 z-10 rounded-md px-2.5 py-1 text-[10px] font-semibold tracking-wide"
+                    style={{ background: "var(--sf-surface)", color: "var(--sf-muted)" }}
+                  >
                     {currentImageIndex + 1} / {mediaArray.length}
                   </div>
                 </>
@@ -343,33 +347,37 @@ const ProductPage = ({
             </div>
 
             {mediaArray.length > 1 && (
-              <div className="mt-3 flex gap-2 overflow-x-auto">
+              <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
                 {mediaArray.map((media, i) => (
                   <button
                     key={`${media.src}-${i}`}
                     type="button"
                     onClick={() => setCurrentImageIndex(i)}
-                    className={`relative h-16 w-16 flex-shrink-0 overflow-hidden bg-neutral-100 ${
-                      i === currentImageIndex
-                        ? "ring-1 ring-black"
-                        : "opacity-70 hover:opacity-100"
-                    }`}
-                    aria-label={`View image ${i + 1}`}
+                    className="relative h-[72px] w-[72px] flex-shrink-0 overflow-hidden"
+                    style={{
+                      borderRadius: "var(--sf-radius-sm)",
+                      border: `2px solid ${
+                        i === currentImageIndex ? "var(--sf-accent)" : "var(--sf-border)"
+                      }`,
+                      opacity: i === currentImageIndex ? 1 : 0.72,
+                      background: "var(--sf-bg)",
+                    }}
+                    aria-label={`View ${media.type} ${i + 1}`}
+                    aria-current={i === currentImageIndex}
                   >
                     {media.type === "video" ? (
-                      <div className="flex h-full w-full items-center justify-center text-[10px] uppercase tracking-wide text-neutral-500">
+                      <div
+                        className="flex h-full w-full items-center justify-center text-[10px] uppercase tracking-wide"
+                        style={{ color: "var(--sf-muted)" }}
+                      >
                         Video
                       </div>
                     ) : (
-                      <Image
+                      <StorefrontImage
                         src={media.src}
                         alt={`Thumbnail ${i + 1}`}
-                        width={64}
-                        height={64}
-                        quality={40}
-                        unoptimized
-                        loading="lazy"
-                        className="h-full w-full object-cover"
+                        fit="cover"
+                        className="h-full w-full"
                       />
                     )}
                   </button>
@@ -390,7 +398,7 @@ const ProductPage = ({
             </h1>
 
             <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <span className="text-[15px]">
+              <span className="sf-price text-[22px] font-semibold tracking-tight">
                 {Number.isFinite(displayPrice) ? formatPrice(displayPrice) : "RS. 0.00"}
               </span>
               {isDiscounted && (
@@ -610,15 +618,15 @@ const ProductPage = ({
             </>
           )}
           <div
-            className="relative h-[85vh] w-full max-w-5xl"
+            className="relative h-[85vh] w-full max-w-5xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
+            <StorefrontImage
               src={currentMedia.src}
               alt={currentMedia.alt}
-              fill
-              unoptimized
-              className="object-contain"
+              fit="contain"
+              priority
+              className="h-full w-full"
             />
           </div>
         </div>

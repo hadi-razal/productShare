@@ -55,7 +55,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, products, se
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-            <div className="bg-white max-w-3xl mx-auto rounded-lg w-11/12 md:w-2/3 p-8 shadow-lg relative animate-fadeIn">
+            <div className="bg-white max-w-3xl mx-auto rounded-md w-11/12 md:w-2/3 p-8 shadow-lg relative animate-fadeIn">
                 <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl">
                     <FiX />
                 </button>
