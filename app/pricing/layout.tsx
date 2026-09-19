@@ -1,24 +1,23 @@
 import type { Metadata } from "next";
 import JsonLd from "@/components/JsonLd";
 import {
-  MONTHLY_PRICE_INR,
+  PLANS,
   YEARLY_DISCOUNT_PERCENT,
-  YEARLY_PRICE_INR,
   inrLabel,
 } from "@/lib/pricing";
 import { breadcrumbJsonLd } from "@/lib/json-ld";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Pricing — Free Digital Catalog Plans & Paid Catalog Software",
-  description: `Product Share pricing: free catalog plan with 3 listings. Monthly plan at ${inrLabel(MONTHLY_PRICE_INR)}. Yearly plan at ${inrLabel(YEARLY_PRICE_INR)} with ${YEARLY_DISCOUNT_PERCENT}% off. Catalog software for businesses worldwide.`,
+  title: "Pricing — Plus and Pro Catalog Plans",
+  description: `Product Share pricing: Plus at ${inrLabel(PLANS.plus.monthlyPriceInr)} / month with 30 products and 3 themes. Pro at ${inrLabel(PLANS.pro.monthlyPriceInr)} / month with 120 products and 10+ themes. Yearly billing is ${YEARLY_DISCOUNT_PERCENT}% off, paid upfront.`,
   path: "/pricing",
   keywords: [
     "Product Share pricing",
     "digital catalog builder price",
-    "free catalog builder",
     "WhatsApp catalog pricing",
     "online catalogue subscription",
+    "catalog software Plus Pro plans",
   ],
 });
 

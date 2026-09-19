@@ -105,7 +105,7 @@ export const homeFaqs: FaqItem[] = [
   {
     question: "How much does Product Share cost?",
     answer:
-      "There is a free plan with up to 3 listings. Paid plans add more products, themes, analytics, and uploads. See current prices on the Product Share pricing page.",
+      "Plus is ₹249 / month with up to 30 listings and 3 themes. Pro is ₹499 / month with up to 120 listings, 10+ themes, and extra catalog tools. Both plans get 15% off when billed annually. See the Product Share pricing page.",
   },
   {
     question: "Do I need a website or coding skills?",
@@ -378,7 +378,7 @@ export const solutionPages: ContentPage[] = [
         heading: "Look established on day one",
         paragraphs: [
           "Customers judge a shop by how products are presented. A branded digital catalog signals that you are real, in stock, and easy to buy from — whether you operate from a high-street store, a studio, or home.",
-          "Add a logo, pick a theme, upload photos, and share. You can start on the free plan and grow listings as the business grows.",
+          "Add a logo, pick a theme, upload photos, and share. Choose Plus or Pro as the catalog grows.",
         ],
       },
       {
@@ -396,9 +396,9 @@ export const solutionPages: ContentPage[] = [
     ],
     faqs: [
       {
-        question: "Is there a free catalog plan for small businesses?",
+        question: "What catalog plans are available?",
         answer:
-          "Yes. Product Share offers a free plan with a public sharing link and a small number of listings so you can launch before you pay.",
+          "Create an account, then choose Plus or Pro. Plus includes 30 listings and 3 themes. Pro includes 120 listings, 10+ themes, and extra catalog tools.",
       },
       {
         question: "Do I need a developer?",
@@ -470,7 +470,7 @@ export const guidePage: ContentPage = {
     {
       question: "How long does it take to publish a catalog?",
       answer:
-        "Most sellers publish a first catalog the same day they sign up. A three-product free catalog can go live in minutes.",
+        "Most sellers publish a first catalog the same day they sign up. A small catalog can go live in minutes.",
     },
     {
       question: "Can I use this as a WhatsApp catalogue?",
@@ -717,8 +717,9 @@ Restaurants, cafes, cloud kitchens, retail shops, boutiques, home businesses, Wh
 
 Plans are billed in Indian rupees. International businesses can still use the product; checkout currently uses Razorpay.
 
-- Free: up to 3 listings, public sharing link, basic analytics
-- Monthly and yearly paid plans: more listings, themes, analytics, product videos, bulk upload on higher tiers
+- Plus: ₹249 / month, up to 30 listings, 3 themes
+- Pro: ₹499 / month, up to 120 listings, 10+ themes, extra catalog tools
+- Yearly billing for both plans is 15% off, paid upfront
 - Always confirm live prices at ${absoluteUrl("/pricing")}
 
 ## Support

@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { authErrorMessage, sendPasswordReset } from "@/lib/auth";
+import AuthBackLink from "@/components/AuthBackLink";
+import { isValidEmail, normalizeEmail } from "@/lib/email";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -25,15 +27,20 @@ const ForgotPasswordPage: React.FC = () => {
     setMessage(null);
     setError(null);
 
-    if (!email.trim()) {
+    const normalizedEmail = normalizeEmail(email);
+    if (!normalizedEmail) {
       setError("Please enter your email address.");
+      return;
+    }
+    if (!isValidEmail(normalizedEmail)) {
+      setError("Enter a valid email address.");
       return;
     }
 
     setLoading(true);
 
     try {
-      await sendPasswordReset(email.trim().toLowerCase());
+      await sendPasswordReset(normalizedEmail);
 
       setMessage(
         "Password reset email sent! Check your inbox and spam folder.",
@@ -48,7 +55,8 @@ const ForgotPasswordPage: React.FC = () => {
   };
 
   return (
-    <section className="bg-black w-full h-screen">
+    <section className="relative bg-black w-full h-screen">
+      <AuthBackLink href="/login" />
       <div className="min-h-[calc(100vh-10vh)] flex items-center justify-center pt-4">
         <div className="rounded-md p-8 max-w-md w-full flex flex-col items-center justify-center">
           <Image
@@ -68,6 +76,7 @@ const ForgotPasswordPage: React.FC = () => {
 
           <form
             onSubmit={handlePasswordReset}
+            noValidate
             className="flex flex-col gap-2 w-full bg-white rounded-md px-4 py-8 mt-4"
           >
             <input

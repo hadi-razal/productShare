@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { authErrorMessage, updatePassword } from "@/lib/auth";
+import AuthBackLink from "@/components/AuthBackLink";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
@@ -72,7 +73,8 @@ const ResetPasswordPage: React.FC = () => {
   };
 
   return (
-    <section className="bg-black w-full h-screen">
+    <section className="relative bg-black w-full h-screen">
+      <AuthBackLink href="/login" />
       <div className="min-h-[calc(100vh-10vh)] flex items-center justify-center pt-4">
         <div className="rounded-md p-8 max-w-md w-full flex flex-col items-center justify-center">
           <Image

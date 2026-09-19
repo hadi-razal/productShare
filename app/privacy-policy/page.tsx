@@ -38,7 +38,7 @@ const PrivacyPolicy: FC = () => {
         <section>
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. Subscription Model and Trial Period</h2>
           <p className="text-gray-600">
-            Our premium services are offered at ₹199 per month, or ₹1,194 per year with 50% off.
+            Paid catalog plans are Plus at ₹249 per month and Pro at ₹499 per month. Yearly billing for both plans is 15% off and paid upfront.
           </p>
         </section>
 

@@ -243,10 +243,15 @@ export const DEFAULT_STORE_THEME: StoreThemeId = "minimal";
 export const DASHBOARD_THEME_EVENT = "productshare:store-theme";
 export const DASHBOARD_THEME_STORAGE_KEY = "ps-store-theme";
 
-export const normalizeStoreTheme = (value?: string | null): StoreThemeId =>
-  STORE_THEME_IDS.includes(value as StoreThemeId)
-    ? (value as StoreThemeId)
+export const themeIdFromStoredValue = (value?: string | null) =>
+  String(value ?? "").split("::")[0];
+
+export const normalizeStoreTheme = (value?: string | null): StoreThemeId => {
+  const themeId = themeIdFromStoredValue(value);
+  return STORE_THEME_IDS.includes(themeId as StoreThemeId)
+    ? (themeId as StoreThemeId)
     : DEFAULT_STORE_THEME;
+};
 
 const parseHex = (hex: string): [number, number, number] | null => {
   const raw = hex.replace("#", "");

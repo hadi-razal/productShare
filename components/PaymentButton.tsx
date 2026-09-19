@@ -4,19 +4,20 @@ import React, { useEffect, useState } from "react";
 import { FiCheck, FiX, FiZap } from "react-icons/fi";
 import { getStoreById, updateStore } from "@/lib/db";
 import {
-  MONTHLY_PRICE_INR,
+  PLAN_LIST,
+  PLANS,
   YEARLY_DISCOUNT_PERCENT,
-  YEARLY_EFFECTIVE_MONTHLY_INR,
-  YEARLY_FULL_PRICE_INR,
-  YEARLY_PRICE_INR,
   formatInrAmount,
   inrLabel,
+  planPriceInr,
+  razorpayPlanId,
+  yearlyEffectiveMonthlyInr,
+  yearlyFullPriceInr,
+  type BillingCycle,
+  type PlanId,
 } from "@/lib/pricing";
 import toast from "react-hot-toast";
 
-// -----------------------------
-// UI Components (same as before)
-// -----------------------------
 interface DialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -58,87 +59,33 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-// -----------------------------
-// Plan Config
-// -----------------------------
-const monthlyPlan = {
-  key: "monthly" as const,
-  name: "Monthly",
-  pricePaise: MONTHLY_PRICE_INR * 100,
-  period: "/month",
-  features: [
-    "Up to 25 product listings",
-    "5 prebuilt themes",
-    "Customer behavior analytics",
-    "Public sharing link",
-    "Theme customization",
-    "Priority support",
-    "Custom alert banners",
-    "Sales & engagement charts",
-    "Product videos",
-    "Performance graphs",
-    "AI customer insights",
-    "Bulk product editing",
-  ],
-};
-
-const yearlyPlan = {
-  key: "yearly" as const,
-  name: "Yearly",
-  pricePaise: YEARLY_PRICE_INR * 100,
-  period: "/year",
-  features: [
-    "Up to 150 product listings",
-    "12 prebuilt themes",
-    "Advanced analytics",
-    "Public sharing link",
-    "Theme customization",
-    "Priority support",
-    "Custom alert banners",
-    "Sales & engagement charts",
-    "Product videos",
-    "Performance graphs",
-    "AI customer insights",
-    "Bulk product editing",
-    "Team access",
-    "Bulk CSV/Excel upload",
-  ],
-};
-
-// -----------------------------
-// Main Component
-// -----------------------------
 interface PricingButtonProps {
   userId: string;
 }
 
 const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedKey, setSelectedKey] = useState<"monthly" | "yearly">("yearly");
+  const [planId, setPlanId] = useState<PlanId>("pro");
+  const [cycle, setCycle] = useState<BillingCycle>("yearly");
   const [isPremiumUser, setIsPremiumUser] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
-  const selectedPlan = selectedKey === "yearly" ? yearlyPlan : monthlyPlan;
-  const displayPrice = formatInrAmount(selectedPlan.pricePaise / 100);
+  const selectedPlan = PLANS[planId];
+  const price = planPriceInr(selectedPlan, cycle);
+  const displayPrice = formatInrAmount(price);
 
-  // ✅ Load Razorpay script
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
-    script.onload = () => console.log("Razorpay SDK loaded ✅");
     document.body.appendChild(script);
   }, []);
 
-  // ✅ Handle subscription flow
   const handleSubscription = async () => {
-    const planId =
-      selectedKey === "yearly"
-        ? process.env.NEXT_PUBLIC_RZP_YEARLY_PLAN_ID
-        : process.env.NEXT_PUBLIC_RZP_MONTHLY_PLAN_ID;
+    const razorpayId = razorpayPlanId(planId, cycle);
 
     const res = await fetch("/api/create-order", {
       method: "POST",
-      body: JSON.stringify({ planId }),
+      body: JSON.stringify({ planId: razorpayId }),
       headers: { "Content-Type": "application/json" },
     });
 
@@ -148,10 +95,9 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       subscription_id: subscription.id,
       name: "Product Share",
-      description: `${selectedPlan.name} subscription`,
-      handler: async (response: any) => {
+      description: `${selectedPlan.name} ${cycle} subscription`,
+      handler: async () => {
         toast.success("Subscription started 🎉");
-        // ✅ Save subscription to Firestore
         await updateStore(userId, {
           isPremiumUser: true,
           subscriptionId: subscription.id,
@@ -166,10 +112,8 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
     rzp.open();
   };
 
-  // ✅ Fetch user to check premium status
   useEffect(() => {
     if (!userId) {
-      console.warn("userId is undefined");
       setLoading(false);
       return;
     }
@@ -192,13 +136,12 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
     <div>
       <Button onClick={() => setIsOpen(true)}>
         <FiZap className="w-4 h-4 mr-2" />
-        Upgrade to Pro
+        Upgrade
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <div className="bg-white rounded-md shadow-2xl">
           <div className="relative p-6">
-            {/* Close */}
             <button
               onClick={() => setIsOpen(false)}
               className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100"
@@ -206,23 +149,42 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
               <FiX className="h-4 w-4" />
             </button>
 
-            {/* Header */}
             <div className="text-center mb-6">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                Choose Your Growth Plan
+                Choose Plus or Pro
               </h2>
             </div>
 
+            <div className="mb-4 flex justify-center">
+              <div className="inline-flex border border-gray-200 p-1">
+                {(["monthly", "yearly"] as const).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setCycle(option)}
+                    className={`px-4 py-2 text-xs font-semibold uppercase tracking-wide ${
+                      cycle === option
+                        ? "bg-indigo-600 text-white"
+                        : "text-gray-600 hover:text-indigo-600"
+                    }`}
+                  >
+                    {option === "yearly"
+                      ? `Yearly · ${YEARLY_DISCOUNT_PERCENT}% off`
+                      : "Monthly"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="grid gap-3 sm:grid-cols-2 mb-6">
-              {[monthlyPlan, yearlyPlan].map((plan) => {
-                const selected = selectedKey === plan.key;
-                const price = formatInrAmount(plan.pricePaise / 100);
-                const isYearly = plan.key === "yearly";
+              {PLAN_LIST.map((plan) => {
+                const selected = planId === plan.id;
+                const planPrice = planPriceInr(plan, cycle);
                 return (
                   <button
-                    key={plan.key}
+                    key={plan.id}
                     type="button"
-                    onClick={() => setSelectedKey(plan.key)}
+                    onClick={() => setPlanId(plan.id)}
                     className={`rounded-xl border-2 p-4 text-left transition ${
                       selected
                         ? "border-indigo-500 bg-indigo-50"
@@ -231,34 +193,35 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
                   >
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-sm font-semibold text-gray-900">{plan.name}</p>
-                      {isYearly && (
+                      {plan.id === "pro" && (
                         <span className="rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
-                          {YEARLY_DISCOUNT_PERCENT}% off
+                          Most popular
                         </span>
                       )}
                     </div>
                     <p className="mt-1 text-xl font-bold text-indigo-600">
-                      ₹{price}
+                      ₹{formatInrAmount(planPrice)}
                       <span className="ml-1 text-sm font-medium text-gray-500">
-                        {plan.period}
+                        {cycle === "yearly" ? "/year" : "/month"}
                       </span>
                     </p>
-                    {isYearly ? (
+                    {cycle === "yearly" ? (
                       <p className="mt-2 text-xs text-gray-600">
                         <span className="mr-1 line-through">
-                          {inrLabel(YEARLY_FULL_PRICE_INR)}
+                          {inrLabel(yearlyFullPriceInr(plan.monthlyPriceInr))}
                         </span>
-                        {inrLabel(YEARLY_EFFECTIVE_MONTHLY_INR)} / month billed yearly
+                        {inrLabel(yearlyEffectiveMonthlyInr(plan.monthlyPriceInr))} / month billed annually
                       </p>
                     ) : (
-                      <p className="mt-2 text-xs text-gray-600">25 products · 5 themes</p>
+                      <p className="mt-2 text-xs text-gray-600">
+                        {plan.productLimit} products · {plan.themeLabel}
+                      </p>
                     )}
                   </button>
                 );
               })}
             </div>
 
-            {/* Pricing Card */}
             <div className="bg-white rounded-md border-2 border-indigo-500 p-6 mb-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-2 sm:mb-0">
@@ -266,13 +229,15 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
                 </h3>
                 <div className="text-2xl font-bold text-indigo-600">
                   ₹{displayPrice}
-                  <span className="text-base text-gray-500 ml-1">{selectedPlan.period}</span>
+                  <span className="text-base text-gray-500 ml-1">
+                    {cycle === "yearly" ? "/year" : "/month"}
+                  </span>
                 </div>
               </div>
 
               <ul className="grid gap-3 sm:grid-cols-2 mb-6">
-                {selectedPlan.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2">
+                {selectedPlan.features.map((feature) => (
+                  <li key={feature} className="flex items-center gap-2">
                     <FiCheck className="h-4 w-4 text-green-500 flex-shrink-0" />
                     <span className="text-sm text-gray-600">{feature}</span>
                   </li>
@@ -281,7 +246,7 @@ const PricingButton: React.FC<PricingButtonProps> = ({ userId }) => {
 
               <div className="text-center">
                 <Button onClick={handleSubscription} className="w-full">
-                  Subscribe {selectedPlan.name} - ₹{displayPrice}
+                  Subscribe {selectedPlan.name} — ₹{displayPrice}
                 </Button>
               </div>
             </div>

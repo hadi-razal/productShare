@@ -72,7 +72,7 @@ const facts = [
   { value: "Global", label: "Catalogs, anywhere" },
   { value: "Minutes", label: "To go live" },
   { value: "WhatsApp", label: "Ready to share" },
-  { value: "Free", label: "Plan to start" },
+  { value: "₹249", label: "Plus plan" },
 ];
 
 const useCases = [

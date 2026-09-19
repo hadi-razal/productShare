@@ -96,9 +96,13 @@ body {
   --sf-accent-soft: #ede9fe;
   --sf-radius: 6px;
   --sf-radius-sm: 4px;
+  --sf-font-body: var(--font-poppins);
+  --sf-font-title: var(--font-poppins);
+  --sf-title-tracking: inherit;
   min-height: 100vh;
   background: var(--sf-bg);
   color: var(--sf-text);
+  font-family: var(--sf-font-body);
 }
 
 .storefront-root.storefront-preview {
@@ -112,10 +116,18 @@ body {
   border-radius: 4px;
 }
 
-.storefront-root[data-store-serif="true"] .sf-title,
-.storefront-root[data-store-serif="true"] .sf-page h1,
-.storefront-root[data-store-serif="true"] .sf-page h2,
-.storefront-root[data-store-serif="true"] .sf-page h3 {
+.storefront-root .sf-title,
+.storefront-root .sf-page h1,
+.storefront-root .sf-page h2,
+.storefront-root .sf-page h3 {
+  font-family: var(--sf-font-title);
+  letter-spacing: var(--sf-title-tracking);
+}
+
+.storefront-root[data-store-font="default"][data-store-serif="true"] .sf-title,
+.storefront-root[data-store-font="default"][data-store-serif="true"] .sf-page h1,
+.storefront-root[data-store-font="default"][data-store-serif="true"] .sf-page h2,
+.storefront-root[data-store-font="default"][data-store-serif="true"] .sf-page h3 {
   font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
   letter-spacing: -0.03em;
 }

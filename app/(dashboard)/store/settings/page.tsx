@@ -29,6 +29,13 @@ import {
   type StoreThemeId,
 } from "@/lib/store-themes";
 import {
+  ensureStoreFontStylesheet,
+  normalizeStoreFont,
+  STORE_FONTS,
+  STORE_FONTS_CATALOG_STYLESHEET,
+  type StoreFontId,
+} from "@/lib/store-fonts";
+import {
   addCustomCategory,
   DEFAULT_PRODUCT_CATEGORIES,
   removeCustomCategory,
@@ -47,6 +54,7 @@ const SettingsPage: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [whatsappNumber, setWhatsappNumber] = useState<string>("");
   const [storeTheme, setStoreTheme] = useState<StoreThemeId>("minimal");
+  const [storeFont, setStoreFont] = useState<StoreFontId>("default");
   const [additionalNotes, setAdditionalNotes] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [logoImage, setLogoImage] = useState<File | null>(null);
@@ -87,6 +95,7 @@ const SettingsPage: React.FC = () => {
         setAdditionalNotes(data?.additionalNotes || "");
         setLogoImageUrl(data?.logoImage || null);
         setStoreTheme(normalizeStoreTheme(data?.storeTheme));
+        setStoreFont(normalizeStoreFont(data?.storeFont));
         setIsOffline(Boolean(data?.isOffline));
         setProductCategories(data?.productCategories ?? []);
         setSavedProfileComplete(isStoreProfileComplete(data));
@@ -140,6 +149,7 @@ const SettingsPage: React.FC = () => {
         username: normalizedUsername,
         themeColor: STORE_THEME_MAP[storeTheme].accent,
         storeTheme,
+        storeFont,
         additionalNotes,
         whatsappNumber,
         isOffline,
@@ -252,6 +262,10 @@ const SettingsPage: React.FC = () => {
   }, [logoImage, logoImageUrl]);
 
   const missingFields = missingStoreProfileFields({ username, name, whatsappNumber });
+
+  useEffect(() => {
+    ensureStoreFontStylesheet(STORE_FONTS_CATALOG_STYLESHEET);
+  }, []);
 
   useEffect(() => {
     if (!logoImage || !previewLogoUrl) return;
@@ -376,6 +390,63 @@ const SettingsPage: React.FC = () => {
           </div>
 
           <div className="ds-form-group">
+            <label className="ds-form-label mb-0">Storefront type</label>
+            <p className="ds-form-hint mb-3">
+              Changes the font on your public catalog. Your dashboard stays the same.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {STORE_FONTS.map((font) => {
+                const selected = storeFont === font.id;
+                return (
+                  <button
+                    key={font.id}
+                    type="button"
+                    onClick={() => setStoreFont(font.id)}
+                    aria-pressed={selected}
+                    className={`rounded-md border p-3 text-left transition ${
+                      selected
+                        ? "border-[color:var(--ds-violet)] bg-[color:var(--ds-violet-soft)]"
+                        : "border-[color:var(--ds-border)] bg-[color:var(--ds-canvas)] hover:border-[color:var(--ds-violet)]"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <p
+                        className="text-lg leading-none"
+                        style={{ fontFamily: font.title, letterSpacing: font.titleTracking }}
+                      >
+                        Ag
+                      </p>
+                      <span
+                        className="inline-flex items-center gap-1 text-[10px] font-semibold"
+                        style={{ color: selected ? "var(--ds-violet-dark)" : "var(--ds-muted)" }}
+                      >
+                        {selected ? <FiCheck /> : null}
+                        {selected ? "Selected" : "Use"}
+                      </span>
+                    </div>
+                    <p
+                      className="mt-2 text-sm font-semibold"
+                      style={{
+                        color: "var(--ds-ink)",
+                        fontFamily: font.title,
+                        letterSpacing: font.titleTracking,
+                      }}
+                    >
+                      {font.name}
+                    </p>
+                    <p
+                      className="mt-1 text-[11px] leading-4"
+                      style={{ color: "var(--ds-muted)", fontFamily: font.body }}
+                    >
+                      {font.description}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="ds-form-group">
             <label className="ds-form-label mb-0">Product categories</label>
             <p className="ds-form-hint mb-3">
               Create categories for your catalog. They appear when you add or edit a product.
@@ -493,6 +564,7 @@ const SettingsPage: React.FC = () => {
             logoUrl={previewLogoUrl}
             themeColor={STORE_THEME_MAP[storeTheme].accent}
             storeTheme={storeTheme}
+            storeFont={storeFont}
             additionalNotes={additionalNotes}
             isOffline={isOffline}
           />

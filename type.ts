@@ -38,6 +38,7 @@ export interface ProductType {
     isVisitedCount?: string;
     themeColor:string
     storeTheme?: string;
+    storeFont?: string;
     isOffline?: boolean;
     productCategories?: string[];
   }

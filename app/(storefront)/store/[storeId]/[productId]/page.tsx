@@ -93,6 +93,7 @@ export default async function Page({ params }: ProductRouteProps) {
     return (
       <StorefrontShell
         theme={storefrontProduct.store.storeTheme}
+        font={storefrontProduct.store.storeFont}
         onSubdomain={onSubdomain}
         apexOrigin={apexOrigin}
       >
@@ -111,6 +112,7 @@ export default async function Page({ params }: ProductRouteProps) {
   return (
     <StorefrontShell
       theme={storefrontProduct.store.storeTheme}
+      font={storefrontProduct.store.storeFont}
       onSubdomain={onSubdomain}
       apexOrigin={apexOrigin}
     >

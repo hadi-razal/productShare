@@ -1,3 +1,4 @@
+import { isValidEmail, normalizeEmail } from "@/lib/email";
 import { generateOtp, storeOtp } from "@/lib/otp-store";
 import { sendOtpEmail } from "@/lib/mailer";
 
@@ -9,11 +10,10 @@ export async function POST(request: Request) {
       return Response.json({ error: "Email is required" }, { status: 400 });
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const normalizedEmail = normalizeEmail(email);
 
-    if (!emailRegex.test(normalizedEmail)) {
-      return Response.json({ error: "Invalid email address" }, { status: 400 });
+    if (!isValidEmail(normalizedEmail)) {
+      return Response.json({ error: "Enter a valid email address." }, { status: 400 });
     }
 
     const otp = generateOtp();

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import {
-  MONTHLY_PRICE_INR,
+  PLANS,
   YEARLY_DISCOUNT_PERCENT,
-  YEARLY_PRICE_INR,
   inrLabel,
+  yearlyEffectiveMonthlyInr,
+  yearlyPriceInr,
 } from "@/lib/pricing";
 import { siteConfig } from "@/lib/site";
 import React from 'react';
@@ -11,13 +12,13 @@ import React from 'react';
 export const metadata: Metadata = {
   title: "Pricing Policy",
   description:
-    `Product Share pricing policy: Free catalog plan with 3 listings. Monthly plan at ${inrLabel(MONTHLY_PRICE_INR)} and yearly plan at ${inrLabel(YEARLY_PRICE_INR)} with ${YEARLY_DISCOUNT_PERCENT}% off. 14-day refund window.`,
+    `Product Share pricing policy: Plus ${inrLabel(PLANS.plus.monthlyPriceInr)} / month and Pro ${inrLabel(PLANS.pro.monthlyPriceInr)} / month. Yearly billing is ${YEARLY_DISCOUNT_PERCENT}% off, paid upfront. 14-day refund window.`,
   keywords: ["Product Share pricing policy", "catalog software payment terms", "digital catalogue subscription"],
   alternates: { canonical: "https://productshare.in/pricing-policy" },
   robots: { index: true, follow: true },
   openGraph: {
     title: "Pricing Policy | Product Share",
-    description: `Monthly ${inrLabel(MONTHLY_PRICE_INR)} or yearly ${inrLabel(YEARLY_PRICE_INR)} with ${YEARLY_DISCOUNT_PERCENT}% off — 14-day refund window, no hidden fees.`,
+    description: `Plus ${inrLabel(PLANS.plus.monthlyPriceInr)} or Pro ${inrLabel(PLANS.pro.monthlyPriceInr)} / month. Yearly billing is ${YEARLY_DISCOUNT_PERCENT}% off — 14-day refund window, no hidden fees.`,
     url: "https://productshare.in/pricing-policy",
     type: "website",
   },
@@ -37,17 +38,14 @@ const PricingPolicy = () => {
         <section>
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">Pricing Plans</h2>
           <p className="text-gray-600 mb-4">
-            Choose the plan that best fits your catalog. A free plan is available, with monthly and yearly paid options for growing stores.
+            Choose Plus or Pro. Both can be billed monthly or annually. Annual billing is {YEARLY_DISCOUNT_PERCENT}% off and paid upfront.
           </p>
           <ul className="list-disc pl-6 space-y-3 text-gray-600">
             <li>
-              <strong className="text-gray-900">Free Plan:</strong> <span className="font-semibold text-green-600">Free</span>. Up to 3 product listings, basic analytics, and a public sharing link.
+              <strong className="text-gray-900">Plus:</strong> <span className="font-semibold text-green-600">{inrLabel(PLANS.plus.monthlyPriceInr)} / month</span>, or <span className="font-semibold text-green-600">{inrLabel(yearlyPriceInr(PLANS.plus.monthlyPriceInr))} / year</span> <span className="text-sm text-gray-500">({YEARLY_DISCOUNT_PERCENT}% off, {inrLabel(yearlyEffectiveMonthlyInr(PLANS.plus.monthlyPriceInr))} / month billed annually)</span>. Up to {PLANS.plus.productLimit} product listings and 3 storefront themes, plus a public catalog link, theme customization, catalog analytics, and standard support.
             </li>
             <li>
-              <strong className="text-gray-900">Monthly Plan:</strong> <span className="font-semibold text-green-600">₹199 / month</span>. Up to 25 product listings, 5 prebuilt themes, customer behavior analytics, theme customization, priority support, custom alert banners, sales charts, product videos, performance graphs, AI insights, and bulk product editing.
-            </li>
-            <li>
-              <strong className="text-gray-900">Yearly Plan:</strong> <span className="font-semibold text-green-600">₹1,194 / year</span> <span className="text-sm text-gray-500">(50% off, equivalent to ₹99.50 / month)</span>. Up to 150 product listings, 12 prebuilt themes, advanced analytics, everything in the monthly plan, plus team access and bulk CSV/Excel upload.
+              <strong className="text-gray-900">Pro:</strong> <span className="font-semibold text-green-600">{inrLabel(PLANS.pro.monthlyPriceInr)} / month</span>, or <span className="font-semibold text-green-600">{inrLabel(yearlyPriceInr(PLANS.pro.monthlyPriceInr))} / year</span> <span className="text-sm text-gray-500">({YEARLY_DISCOUNT_PERCENT}% off, {inrLabel(yearlyEffectiveMonthlyInr(PLANS.pro.monthlyPriceInr))} / month billed annually)</span>. Up to {PLANS.pro.productLimit} product listings, 10+ storefront themes, everything in Plus, plus advanced analytics, product videos, custom banners, charts, AI insights, bulk editing, CSV/Excel upload, team access, and priority support.
             </li>
           </ul>
         </section>

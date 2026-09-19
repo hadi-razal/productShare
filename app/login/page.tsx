@@ -8,6 +8,8 @@ import {
   signInWithEmail,
   signInWithGoogle,
 } from "@/lib/auth";
+import AuthBackLink from "@/components/AuthBackLink";
+import { normalizeEmail } from "@/lib/email";
 import { signedInHomePath } from "@/lib/super-admin";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
@@ -78,7 +80,7 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await signInWithEmail(email.trim().toLowerCase(), password);
+      await signInWithEmail(normalizeEmail(email), password);
     } catch (err: unknown) {
       console.error("Email login failed:", err);
       setError(authErrorMessage(err, "Login failed. Please try again."));
@@ -102,7 +104,8 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <section className="bg-black w-full h-screen">
+    <section className="relative bg-black w-full h-screen">
+      <AuthBackLink href="/" />
       <div className="min-h-[calc(100vh-10vh)] flex items-center justify-center pt-4">
         <div className="rounded-md p-8 max-w-md w-full flex flex-col items-center justify-center">
           <Image
@@ -122,6 +125,7 @@ const LoginPage: React.FC = () => {
 
           <form
             onSubmit={handleEmailLogin}
+            noValidate
             className="flex flex-col gap-2 w-full bg-white rounded-md px-4 py-8 mt-4"
           >
             <input

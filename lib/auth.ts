@@ -1,5 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 import { createStore, getStoreById } from "@/lib/db";
+import { normalizeEmail } from "@/lib/email";
 import { getAuthRedirectOrigin } from "@/lib/storefront-url";
 import { supabase } from "@/lib/supabase";
 import { isSuperAdminEmail } from "@/lib/super-admin";
@@ -37,21 +38,35 @@ export const getCurrentUser = async (): Promise<AuthUser | null> => {
 };
 
 export const signInWithEmail = async (email: string, password: string) => {
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithPassword({
+    email: normalizeEmail(email),
+    password,
+  });
   if (error) throw error;
 };
 
 export const signUpWithEmail = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signUp({
-    email,
+    email: normalizeEmail(email),
     password,
     options: {
       emailRedirectTo: authRedirectUrl("/auth/callback"),
     },
   });
   if (error) throw error;
+  if (data.user && (data.user.identities?.length ?? 1) === 0) {
+    throw new Error("An account with this email already exists. Please sign in.");
+  }
   if (!data.user) throw new Error("Registration failed. Please try again.");
   return toAuthUser(data.user);
+};
+
+const authErrorCode = (err: unknown) => {
+  if (err && typeof err === "object" && "code" in err) {
+    const code = (err as { code?: unknown }).code;
+    if (typeof code === "string") return code;
+  }
+  return "";
 };
 
 export const signOutUser = async () => {
@@ -101,7 +116,7 @@ export const completeOAuthRedirect = async (): Promise<AuthUser | null> => {
 };
 
 export const sendPasswordReset = async (email: string) => {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  const { error } = await supabase.auth.resetPasswordForEmail(normalizeEmail(email), {
     redirectTo: authRedirectUrl("/reset-password"),
   });
   if (error) throw error;
@@ -113,18 +128,38 @@ export const updatePassword = async (password: string) => {
 };
 
 export const authErrorMessage = (err: unknown, fallback: string) => {
+  const code = authErrorCode(err);
   const message = err instanceof Error ? err.message : "";
   const lower = message.toLowerCase();
-  if (lower.includes("invalid login") || lower.includes("invalid credentials")) {
-    return "Invalid email or password. Please try again.";
+
+  if (
+    code === "email_address_invalid" ||
+    (lower.includes("email address") && lower.includes("invalid"))
+  ) {
+    return "This email could not be used to create an account. Check the address, or sign in if you already registered.";
   }
-  if (lower.includes("already registered") || lower.includes("already been registered")) {
+  if (code === "email_address_not_authorized") {
+    return "This email could not be verified by the auth provider. Use the code we send, then try again.";
+  }
+  if (
+    code === "email_exists" ||
+    code === "user_already_exists" ||
+    lower.includes("already registered") ||
+    lower.includes("already been registered")
+  ) {
     return "An account with this email already exists. Please sign in.";
   }
-  if (lower.includes("email not confirmed")) {
-    return "Please confirm your email, then try again.";
+  if (code === "email_not_confirmed" || lower.includes("email not confirmed")) {
+    return "This email is not confirmed yet. Register again to get a new code.";
   }
-  if (lower.includes("too many")) {
+  if (
+    code === "invalid_credentials" ||
+    lower.includes("invalid login") ||
+    lower.includes("invalid credentials")
+  ) {
+    return "Invalid email or password. If you do not have an account yet, register first.";
+  }
+  if (code === "over_email_send_rate_limit" || lower.includes("too many")) {
     return "Too many attempts. Please try again later.";
   }
   if (
@@ -136,7 +171,7 @@ export const authErrorMessage = (err: unknown, fallback: string) => {
   if (lower.includes("redirect") && lower.includes("not allowed")) {
     return "Google sign-in is misconfigured. Add this site URL to the Supabase Auth redirect allowlist.";
   }
-  if (lower.includes("password")) {
+  if (code === "weak_password" || (lower.includes("password") && lower.includes("6"))) {
     return "Password must be at least 6 characters.";
   }
   return message || fallback;

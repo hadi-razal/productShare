@@ -1,3 +1,4 @@
+import { normalizeEmail } from "@/lib/email";
 import { verifyOtp } from "@/lib/otp-store";
 
 export async function POST(request: Request) {
@@ -11,7 +12,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const isValid = verifyOtp(email.trim().toLowerCase(), String(otp).trim());
+    const isValid = verifyOtp(normalizeEmail(String(email || "")), String(otp).trim());
 
     if (!isValid) {
       return Response.json(

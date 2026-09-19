@@ -3,6 +3,12 @@
 import { type CSSProperties } from "react";
 import { FiSearch } from "react-icons/fi";
 import {
+  normalizeStoreFont,
+  STORE_FONT_MAP,
+  storeFontCssVars,
+  type StoreFontId,
+} from "@/lib/store-fonts";
+import {
   normalizeStoreTheme,
   STORE_THEME_MAP,
   storeThemeCssVars,
@@ -16,6 +22,7 @@ interface StoreSettingsPreviewProps {
   logoUrl: string | null;
   themeColor: string;
   storeTheme?: StoreThemeId | string;
+  storeFont?: StoreFontId | string;
   additionalNotes: string;
   isOffline?: boolean;
 }
@@ -33,6 +40,7 @@ const StoreSettingsPreview = ({
   logoUrl,
   themeColor,
   storeTheme,
+  storeFont,
   additionalNotes,
   isOffline = false,
 }: StoreSettingsPreviewProps) => {
@@ -42,6 +50,8 @@ const StoreSettingsPreview = ({
     : "yourname.productshare.in";
   const themeId = normalizeStoreTheme(storeTheme);
   const theme = STORE_THEME_MAP[themeId];
+  const fontId = normalizeStoreFont(storeFont);
+  const font = STORE_FONT_MAP[fontId];
   const accent = themeColor?.trim() || theme.accent;
 
   return (
@@ -68,10 +78,12 @@ const StoreSettingsPreview = ({
             className="storefront-root storefront-preview"
             data-store-theme={themeId}
             data-store-theme-mode={theme.dark ? "dark" : "light"}
+            data-store-font={fontId}
             data-store-serif={theme.serif ? "true" : undefined}
             style={
               {
                 ...storeThemeCssVars(theme),
+                ...storeFontCssVars(font),
                 "--sf-radius": "4px",
                 "--sf-radius-sm": "4px",
               } as CSSProperties
@@ -155,7 +167,7 @@ const StoreSettingsPreview = ({
       </div>
 
       <p className="text-xs text-gray-400 mt-3 text-center">
-        {theme.name} theme — updates as you edit your settings
+        {theme.name} theme · {font.name} type — updates as you edit your settings
       </p>
     </div>
   );

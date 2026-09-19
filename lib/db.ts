@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { asCategoryList } from "@/lib/product-categories";
 import { ensureStoreProfileComplete } from "@/lib/store-profile";
 import { deletePublicFiles } from "@/lib/storage";
+import { fontIdFromStoredTheme, packedStoreThemeValue } from "@/lib/store-fonts";
 import type { ProductType, userType } from "@/type";
 
 export type StoreRecord = userType & {
@@ -31,6 +32,7 @@ type StoreRow = {
   image?: string | null;
   theme_color?: string | null;
   store_theme?: string | null;
+  store_font?: string | null;
   description?: string | null;
   visit_count?: number | null;
   visitor_data?: unknown;
@@ -86,6 +88,7 @@ const storeFromRow = (row: StoreRow): StoreRecord => ({
   image: row.image ?? undefined,
   themeColor: row.theme_color ?? "#000000",
   storeTheme: row.store_theme ?? "minimal",
+  storeFont: row.store_font ?? fontIdFromStoredTheme(row.store_theme) ?? "default",
   description: row.description ?? undefined,
   visitCount: row.visit_count ?? 0,
   visitorData: Array.isArray(row.visitor_data) ? row.visitor_data : [],
@@ -241,6 +244,7 @@ export const updateStore = async (
   if (input.image !== undefined) row.image = input.image;
   if (input.themeColor !== undefined) row.theme_color = input.themeColor;
   if (input.storeTheme !== undefined) row.store_theme = input.storeTheme;
+  if (input.storeFont !== undefined) row.store_font = input.storeFont;
   if (input.description !== undefined) row.description = input.description;
   if (input.visitCount !== undefined) row.visit_count = input.visitCount;
   if (input.visitorData !== undefined) row.visitor_data = input.visitorData;
@@ -256,11 +260,30 @@ export const updateStore = async (
 
   const { error } = await supabase.from("stores").update(row).eq("id", id);
   if (error) {
+    const missingColumn =
+      error.message.match(/'([^']+)' column/i)?.[1] ??
+      error.message.match(/column \w+\.(\w+) does not exist/i)?.[1];
+    if (missingColumn && missingColumn in row) {
+      delete row[missingColumn];
+      if (
+        missingColumn === "store_font" &&
+        input.storeTheme !== undefined &&
+        input.storeFont
+      ) {
+        row.store_theme = packedStoreThemeValue(
+          String(input.storeTheme),
+          String(input.storeFont),
+        );
+      }
+      const retry = await supabase.from("stores").update(row).eq("id", id);
+      if (!retry.error) return;
+    }
     const missingOptionalColumn =
-      /store_theme|is_offline|product_categories/i.test(error.message) ||
+      /store_theme|store_font|is_offline|product_categories/i.test(error.message) ||
       error.code === "PGRST204";
     if (missingOptionalColumn) {
       delete row.store_theme;
+      delete row.store_font;
       delete row.is_offline;
       delete row.product_categories;
       const retry = await supabase.from("stores").update(row).eq("id", id);

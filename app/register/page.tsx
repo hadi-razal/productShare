@@ -5,13 +5,16 @@ import Link from "next/link";
 import {
   authErrorMessage,
   ensureStoreForUser,
+  getCurrentUser,
   onAuthChange,
+  signInWithEmail,
   signInWithGoogle,
   signUpWithEmail,
-  usernameFromIdentity,
 } from "@/lib/auth";
-import { createStore, getStoreByEmail } from "@/lib/db";
-import { signedInHomePath, isSuperAdminEmail } from "@/lib/super-admin";
+import AuthBackLink from "@/components/AuthBackLink";
+import { isValidEmail, normalizeEmail } from "@/lib/email";
+import { getStoreByEmail } from "@/lib/db";
+import { signedInHomePath } from "@/lib/super-admin";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FiEye, FiEyeOff } from "react-icons/fi";
@@ -43,7 +46,7 @@ const RegisterPage: React.FC = () => {
 
   const redirectToLogin = (userEmail: string, exists = false) => {
     const params = new URLSearchParams({
-      email: userEmail.trim().toLowerCase(),
+      email: normalizeEmail(userEmail),
       ...(exists ? { exists: "true" } : { registered: "true" }),
     });
     router.push(`/login?${params.toString()}`);
@@ -51,7 +54,7 @@ const RegisterPage: React.FC = () => {
 
   const checkExistingUser = async (userEmail: string) => {
     try {
-      const existing = await getStoreByEmail(userEmail.trim().toLowerCase());
+      const existing = await getStoreByEmail(normalizeEmail(userEmail));
       if (existing) {
         redirectToLogin(userEmail, true);
         return true;
@@ -64,9 +67,15 @@ const RegisterPage: React.FC = () => {
 
   const handleRegister = async () => {
     setError("");
+    const normalizedEmail = normalizeEmail(email);
 
-    if (!email.trim() || !password) {
+    if (!normalizedEmail || !password) {
       setError("Please enter your email and password.");
+      return;
+    }
+
+    if (!isValidEmail(normalizedEmail)) {
+      setError("Enter a valid email address.");
       return;
     }
 
@@ -78,13 +87,13 @@ const RegisterPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const exists = await checkExistingUser(email.trim());
+      const exists = await checkExistingUser(normalizedEmail);
       if (exists) return;
 
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: normalizedEmail }),
       });
 
       const data = await res.json();
@@ -105,6 +114,7 @@ const RegisterPage: React.FC = () => {
 
   const handleVerifyOtp = async () => {
     setError("");
+    const normalizedEmail = normalizeEmail(email);
 
     if (!otp.trim()) {
       setError("Please enter the verification code.");
@@ -114,30 +124,44 @@ const RegisterPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const verifyRes = await fetch("/api/auth/verify-otp", {
+      const completeRes = await fetch("/api/auth/complete-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), otp: otp.trim() }),
+        body: JSON.stringify({
+          email: normalizedEmail,
+          password,
+          otp: otp.trim(),
+        }),
       });
-
-      const verifyData = await verifyRes.json();
-
-      if (!verifyRes.ok) {
-        throw new Error(verifyData.error || "Invalid verification code.");
+      const completeData = await completeRes.json();
+      if (!completeRes.ok) {
+        throw new Error(completeData.error || "Invalid verification code.");
       }
 
-      const exists = await checkExistingUser(email.trim());
-      if (exists) return;
+      try {
+        await signInWithEmail(normalizedEmail, password);
+      } catch (signInError) {
+        try {
+          await signUpWithEmail(normalizedEmail, password);
+          await signInWithEmail(normalizedEmail, password);
+        } catch (signUpError) {
+          const message = authErrorMessage(
+            signUpError,
+            authErrorMessage(signInError, "Registration failed. Please try again."),
+          );
+          if (message.toLowerCase().includes("already")) {
+            redirectToLogin(normalizedEmail, true);
+            return;
+          }
+          throw signUpError;
+        }
+      }
 
-      const normalizedEmail = email.trim().toLowerCase();
-      const user = await signUpWithEmail(normalizedEmail, password);
-      if (!isSuperAdminEmail(normalizedEmail)) {
-        await createStore(user.uid, {
-          username: usernameFromIdentity(normalizedEmail),
-          name: email.split("@")[0],
-          email: normalizedEmail,
-          premiumUser: false,
-        });
+      const user = await getCurrentUser();
+      if (user) {
+        await ensureStoreForUser(user);
+        router.push(signedInHomePath(user.email));
+        return;
       }
 
       redirectToLogin(normalizedEmail);
@@ -148,6 +172,25 @@ const RegisterPage: React.FC = () => {
         return;
       }
       setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: normalizeEmail(email) }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send verification code.");
+      setOtp("");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to send verification code.");
     } finally {
       setLoading(false);
     }
@@ -166,7 +209,8 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <section className="bg-black w-full h-screen">
+    <section className="relative bg-black w-full h-screen">
+      <AuthBackLink href="/" />
       <div className="min-h-[calc(100vh-10vh)] flex items-center justify-center pt-4">
         <div className="rounded-md p-8 max-w-md w-full flex flex-col items-center justify-center">
           <Image
@@ -177,10 +221,10 @@ const RegisterPage: React.FC = () => {
           />
           <div className="flex flex-col items-center justify-center gap-0">
             <h2 className="text-4xl font-semibold text-white text-center">
-              Start for Free
+              Create your catalog
             </h2>
             <p className="text-sm text-white/50 text-center">
-              Up to 3 listings. Upgrade from ₹199 / month.
+              Plus from ₹249 / month. Pro at ₹499.
             </p>
           </div>
 
@@ -218,6 +262,7 @@ const RegisterPage: React.FC = () => {
                   </button>
                 </div>
                 <button
+                  type="button"
                   onClick={handleRegister}
                   disabled={loading}
                   className="w-full px-4 py-3 bg-primary text-white rounded-md transition-all text-sm disabled:opacity-50 hover:opacity-90"
@@ -244,11 +289,20 @@ const RegisterPage: React.FC = () => {
                   className={`${inputClass} text-center tracking-[0.4em] font-semibold`}
                 />
                 <button
+                  type="button"
                   onClick={handleVerifyOtp}
                   disabled={loading}
                   className="w-full px-4 py-3 bg-primary text-white rounded-md transition-all text-sm disabled:opacity-50 hover:opacity-90"
                 >
                   {loading ? "Verifying..." : "Verify & Create Account"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void handleResendCode()}
+                  disabled={loading}
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Resend code
                 </button>
                 <button
                   type="button"
@@ -274,6 +328,7 @@ const RegisterPage: React.FC = () => {
                 </div>
 
                 <button
+                  type="button"
                   onClick={handleGoogleRegister}
                   disabled={loading}
                   className="flex items-center justify-center w-full px-6 py-3 rounded-md text-base font-medium transition-all duration-300 bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 shadow-lg"

@@ -100,6 +100,7 @@ export default async function Page({ params }: StorePageProps) {
     return (
       <StorefrontShell
         theme={storeData.storeTheme}
+        font={storeData.storeFont}
         onSubdomain={onSubdomain}
         apexOrigin={apexOrigin}
       >
@@ -121,6 +122,7 @@ export default async function Page({ params }: StorePageProps) {
   return (
     <StorefrontShell
       theme={storeData.storeTheme}
+      font={storeData.storeFont}
       onSubdomain={onSubdomain}
       apexOrigin={apexOrigin}
     >
