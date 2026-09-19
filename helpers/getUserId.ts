@@ -1,4 +1,4 @@
-import { getStoreByUsername } from "@/lib/db";
+use timport { getStoreByUsername } from "@/lib/db";
 
 const userIdPromiseCache = new Map<string, Promise<string | null>>();
 

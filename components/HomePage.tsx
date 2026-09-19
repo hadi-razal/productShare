@@ -14,7 +14,6 @@ import {
 import { onAuthChange } from "@/lib/auth";
 import { signedInHomePath } from "@/lib/super-admin";
 import HeroSection from "./HeroSection";
-import PricingSection from "./PricingSection";
 import FaqSection from "./FaqSection";
 
 const features = [
@@ -71,7 +70,7 @@ const steps = [
 const facts = [
   { value: "Global", label: "Catalogs, anywhere" },
   { value: "Minutes", label: "To go live" },
-  { value: "WhatsApp", label: "Ready to share" },
+  { value: "One link", label: "Share anywhere" },
   { value: "₹249", label: "Plus plan" },
 ];
 
@@ -223,8 +222,6 @@ const Home = () => {
       </section>
 
       <FaqSection />
-
-      <PricingSection />
 
       <section className="bg-primary">
         <div className="mx-auto max-w-[1440px] px-3 py-16 sm:px-5">
