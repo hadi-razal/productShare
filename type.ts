@@ -35,6 +35,7 @@ export interface ProductType {
     whatsappNumber?: string;
     additionalNotes: string;
     username: string;
+    onboardingCompleted?: boolean | null;
     isVisitedCount?: string;
     themeColor:string
     storeTheme?: string;

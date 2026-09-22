@@ -14,6 +14,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { getUserId } from "@/helpers/getUserId";
 import { onAuthChange } from "@/lib/auth";
 import { ProductType } from "@/type";
+import { storeWhatsappDigits } from "@/lib/store-profile";
 import { useStorefrontNav } from "@/components/storefront-nav";
 import StorefrontImage, { usableMediaSrc } from "@/components/StorefrontImage";
 
@@ -32,11 +33,6 @@ const formatPrice = (value: number) =>
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
-
-const whatsappDigits = (value?: string | null) => {
-  const digits = (value || "").replace(/\D/g, "");
-  return digits || "919400244731";
-};
 
 const ProductSkeleton = () => (
   <div className="sf-page w-full pb-16 pt-8">
@@ -246,9 +242,11 @@ const ProductPage = ({
   };
 
   const handleEnquire = () => {
+    const number = storeWhatsappDigits(storeWhatsapp);
+    if (number.length < 10) return;
     const message = productMessage();
     window.open(
-      `https://wa.me/${whatsappDigits(storeWhatsapp)}?text=${encodeURIComponent(message)}`,
+      `https://wa.me/${number}?text=${encodeURIComponent(message)}`,
       "_blank",
     );
   };
@@ -478,14 +476,16 @@ const ProductPage = ({
             )}
 
             <div className="mt-10 flex flex-col gap-3">
-              <button
-                type="button"
-                onClick={handleEnquire}
-                className="sf-btn inline-flex w-full items-center justify-center gap-2 py-3.5 text-[12px] font-medium uppercase tracking-[0.16em]"
-              >
-                <FaWhatsapp className="h-4 w-4" />
-                Enquire on WhatsApp
-              </button>
+              {storeWhatsappDigits(storeWhatsapp).length >= 10 ? (
+                <button
+                  type="button"
+                  onClick={handleEnquire}
+                  className="sf-btn inline-flex w-full items-center justify-center gap-2 py-3.5 text-[12px] font-medium uppercase tracking-[0.16em]"
+                >
+                  <FaWhatsapp className="h-4 w-4" />
+                  Enquire on WhatsApp
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={() => setShareOpen(true)}

@@ -41,9 +41,13 @@ import {
   removeCustomCategory,
 } from "@/lib/product-categories";
 import {
+  emitStoreSetupComplete,
   isStoreProfileComplete,
+  isValidOptionalWhatsapp,
+  markOnboardingLocallyComplete,
   missingStoreProfileFields,
   storeProfileIncompleteMessage,
+  storeWhatsappDigits,
 } from "@/lib/store-profile";
 
 const SettingsPage: React.FC = () => {
@@ -114,8 +118,8 @@ const SettingsPage: React.FC = () => {
       return;
     }
 
-    if (!/^\d{10}$/.test(whatsappNumber)) {
-      toast.error("WhatsApp Number must be 10 digits.");
+    if (!isValidOptionalWhatsapp(whatsappNumber)) {
+      toast.error("WhatsApp number must be 10–15 digits, or leave it blank.");
       return;
     }
 
@@ -151,9 +155,10 @@ const SettingsPage: React.FC = () => {
         storeTheme,
         storeFont,
         additionalNotes,
-        whatsappNumber,
+        whatsappNumber: storeWhatsappDigits(whatsappNumber),
         isOffline,
         productCategories,
+        onboardingCompleted: true,
       };
 
       if (logoImage) {
@@ -179,7 +184,18 @@ const SettingsPage: React.FC = () => {
       }
       setOriginalUsername(normalizedUsername);
       setUsername(normalizedUsername);
+      setWhatsappNumber(storeWhatsappDigits(whatsappNumber));
       setSavedProfileComplete(true);
+      markOnboardingLocallyComplete(userId);
+      emitStoreSetupComplete({
+        id: userId,
+        name,
+        username: normalizedUsername,
+        whatsappNumber: storeWhatsappDigits(whatsappNumber),
+        additionalNotes,
+        logoImage: updatedData.logoImage || logoImageUrl,
+        onboardingCompleted: true,
+      });
       emitStoreThemeChange(storeTheme);
       toast.success("Changes saved successfully!");
       router.push("/store");
@@ -209,7 +225,7 @@ const SettingsPage: React.FC = () => {
     if (!savedProfileComplete) {
       toast.error(
         storeProfileIncompleteMessage({ username, name, whatsappNumber }) ||
-          "Save your username, store name, and WhatsApp number first.",
+          "Save your username and store name first.",
       );
       return;
     }
@@ -277,14 +293,23 @@ const SettingsPage: React.FC = () => {
       {missingFields.length > 0 && (
         <div className="ds-profile-banner" role="status">
           <p>
-            <strong>Complete your store profile.</strong> Username, store name, and WhatsApp number must be saved before you can create products or categories.
+            <strong>Complete your store profile.</strong> Username and store name must be saved before you can create products or categories. WhatsApp is optional.
           </p>
         </div>
       )}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6">
         <section className="ds-card min-w-0">
+          <div className="ds-settings-intro">
+            <h2 className="ds-card-title">Catalog details</h2>
+            <p>
+              These details appear on your public catalog. Store name and username are required.
+              WhatsApp is optional.
+            </p>
+          </div>
           <div className="ds-form-group">
-            <label className="ds-form-label">Store Logo</label>
+            <label className="ds-form-label">
+              Store Logo <span className="ds-optional">Optional</span>
+            </label>
             <input
               ref={logoInputRef}
               type="file"
@@ -298,22 +323,32 @@ const SettingsPage: React.FC = () => {
           {[
             {
               label: "Username",
+              required: true,
               value: username,
               onChange: (value: string) => setUsername(normalizeUsername(value)),
               disabled: false,
               hint: "3–30 characters, letters and numbers only. Must be unique.",
             },
             { label: "Email", value: email, disabled: true },
-            { label: "Store name", value: name, onChange: setName },
+            { label: "Store name", required: true, value: name, onChange: setName },
             {
               label: "WhatsApp Number",
+              optional: true,
               value: whatsappNumber,
-              onChange: setWhatsappNumber,
-              hint: "10-digit number for customer inquiries.",
+              onChange: (value: string) => setWhatsappNumber(storeWhatsappDigits(value)),
+              hint: "Optional. 10–15 digits so customers can enquire from your catalog.",
             },
           ].map((field, index) => (
             <div key={index} className="ds-form-group">
-              <label className="ds-form-label">{field.label}</label>
+              <label className="ds-form-label">
+                {field.label}
+                {"required" in field && field.required ? (
+                  <span className="ds-required">Required</span>
+                ) : null}
+                {"optional" in field && field.optional ? (
+                  <span className="ds-optional">Optional</span>
+                ) : null}
+              </label>
               <input
                 type="text"
                 value={field.value}
@@ -451,7 +486,7 @@ const SettingsPage: React.FC = () => {
             <p className="ds-form-hint mb-3">
               Create categories for your catalog. They appear when you add or edit a product.
               {!savedProfileComplete
-                ? " Save your username, store name, and WhatsApp number first."
+                ? " Save your username and store name first."
                 : ""}
             </p>
             <div className="flex flex-wrap gap-2 mb-3">
@@ -509,7 +544,9 @@ const SettingsPage: React.FC = () => {
           </div>
 
           <div className="ds-form-group">
-            <label className="ds-form-label">Additional Notes</label>
+            <label className="ds-form-label">
+              Additional Notes <span className="ds-optional">Optional</span>
+            </label>
             <textarea
               rows={3}
               value={additionalNotes}

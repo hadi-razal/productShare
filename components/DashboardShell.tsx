@@ -18,12 +18,15 @@ import {
   FiStar,
   FiTag,
 } from "react-icons/fi";
-import { getStoreById } from "@/lib/db";
-import { getCurrentUser, onAuthChange, signOutUser } from "@/lib/auth";
+import { getStoreById, type StoreRecord } from "@/lib/db";
+import { ensureStoreForUser, getCurrentUser, onAuthChange, signOutUser } from "@/lib/auth";
 import { isSuperAdminEmail } from "@/lib/super-admin";
+import StoreSetupModal from "@/components/StoreSetupModal";
 import {
   isStoreProfileComplete,
+  needsStoreOnboarding,
   STORE_SETTINGS_PATH,
+  STORE_SETUP_EVENT,
   storeProfileIncompleteMessage,
 } from "@/lib/store-profile";
 import {
@@ -88,6 +91,9 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const [storeName, setStoreName] = useState("My Store");
   const [profileComplete, setProfileComplete] = useState(true);
   const [profileMessage, setProfileMessage] = useState("");
+  const [needsSetup, setNeedsSetup] = useState(false);
+  const [setupUserId, setSetupUserId] = useState<string | null>(null);
+  const [setupStore, setSetupStore] = useState<StoreRecord | null>(null);
   const [storeLogo, setStoreLogo] = useState<string | null>(null);
   const [storeOffline, setStoreOffline] = useState(false);
   const [storeTheme, setStoreTheme] = useState<StoreThemeId>("minimal");
@@ -115,9 +121,13 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       setIsAdmin(false);
       const fallback = formatStoreName(user.displayName || user.email?.split("@")[0] || "My Store");
       try {
+        await ensureStoreForUser(user);
         const store = await getStoreById(user.uid);
         const name = String(store?.name || "").trim();
         const complete = isStoreProfileComplete(store);
+        setSetupUserId(user.uid);
+        setSetupStore(store);
+        setNeedsSetup(needsStoreOnboarding(store));
         setStoreName(name || formatStoreName(store?.username || fallback));
         setStoreLogo(store?.logoImage || store?.image || null);
         setStoreOffline(Boolean(store?.isOffline));
@@ -135,6 +145,8 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         setStoreLogo(null);
         setStoreOffline(false);
         setProfileComplete(false);
+        setNeedsSetup(true);
+        setSetupStore(null);
         setProfileMessage(storeProfileIncompleteMessage(null));
       }
     });
@@ -152,8 +164,21 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     const onTheme = (event: Event) => {
       setStoreTheme(normalizeStoreTheme((event as CustomEvent<string>).detail));
     };
+    const onSetup = (event: Event) => {
+      const detail = (event as CustomEvent<Partial<StoreRecord>>).detail || {};
+      setNeedsSetup(false);
+      setProfileComplete(true);
+      setProfileMessage("");
+      if (detail.name) setStoreName(String(detail.name).trim() || "My Store");
+      if (detail.logoImage) setStoreLogo(detail.logoImage);
+      setSetupStore((current) => (current ? { ...current, ...detail, onboardingCompleted: true } : current));
+    };
     window.addEventListener(DASHBOARD_THEME_EVENT, onTheme);
-    return () => window.removeEventListener(DASHBOARD_THEME_EVENT, onTheme);
+    window.addEventListener(STORE_SETUP_EVENT, onSetup);
+    return () => {
+      window.removeEventListener(DASHBOARD_THEME_EVENT, onTheme);
+      window.removeEventListener(STORE_SETUP_EVENT, onSetup);
+    };
   }, []);
 
   useEffect(() => {
@@ -169,6 +194,8 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         const store = await getStoreById(user.uid);
         if (cancelled) return;
         setStoreOffline(Boolean(store?.isOffline));
+        setSetupStore(store);
+        setNeedsSetup(needsStoreOnboarding(store));
         const complete = isStoreProfileComplete(store);
         setProfileComplete(complete);
         setProfileMessage(complete ? "" : storeProfileIncompleteMessage(store));
@@ -343,7 +370,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
         <main className="ds-content">
           <div className="ds-content-inner">
-            {!profileComplete && !isSettings && profileMessage ? (
+            {!profileComplete && !isSettings && !needsSetup && profileMessage ? (
               <div className="ds-profile-banner" role="status">
                 <p>
                   <strong>Complete your store profile.</strong> {profileMessage}
@@ -355,6 +382,23 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           </div>
         </main>
       </div>
+
+      {needsSetup && !isSettings && setupUserId && setupStore ? (
+        <StoreSetupModal
+          userId={setupUserId}
+          store={setupStore}
+          onComplete={(next) => {
+            setNeedsSetup(false);
+            setProfileComplete(true);
+            setProfileMessage("");
+            if (next.name) setStoreName(String(next.name).trim() || storeName);
+            if (next.logoImage) setStoreLogo(next.logoImage);
+            setSetupStore((current) =>
+              current ? { ...current, ...next, onboardingCompleted: true } : current,
+            );
+          }}
+        />
+      ) : null}
 
       <nav className="ds-bottombar" aria-label="Quick navigation">
         {navigation.filter((item) => !item.hideFromTabs).map((item) => {

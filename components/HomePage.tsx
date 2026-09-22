@@ -11,7 +11,7 @@ import {
   FiMessageCircle,
   FiSettings,
 } from "react-icons/fi";
-import { onAuthChange } from "@/lib/auth";
+import { onAuthChange, ensureStoreForUser } from "@/lib/auth";
 import { signedInHomePath } from "@/lib/super-admin";
 import HeroSection from "./HeroSection";
 import FaqSection from "./FaqSection";
@@ -99,10 +99,14 @@ const Home = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthChange((user) => {
-      if (user) {
-        router.replace(signedInHomePath(user.email));
+    const unsubscribe = onAuthChange(async (user) => {
+      if (!user) return;
+      try {
+        await ensureStoreForUser(user);
+      } catch (error) {
+        console.error("Failed to prepare store:", error);
       }
+      router.replace(signedInHomePath(user.email));
     });
 
     return () => unsubscribe();

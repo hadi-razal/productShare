@@ -41,6 +41,7 @@ type StoreRow = {
   subscription_id?: string | null;
   subscribed_at?: string | null;
   is_offline?: boolean | null;
+  onboarding_completed?: boolean | null;
   product_categories?: unknown;
   created_at?: string | null;
 };
@@ -98,6 +99,8 @@ const storeFromRow = (row: StoreRow): StoreRecord => ({
   subscriptionId: row.subscription_id ?? undefined,
   subscribedAt: row.subscribed_at ?? null,
   isOffline: Boolean(row.is_offline),
+  onboardingCompleted:
+    typeof row.onboarding_completed === "boolean" ? row.onboarding_completed : null,
   productCategories: asCategoryList(row.product_categories),
   createdAt: row.created_at ?? undefined,
   isVisitedCount: String(row.visit_count ?? 0),
@@ -219,15 +222,29 @@ export const createStore = async (
     premiumUser?: boolean;
   },
 ): Promise<void> => {
-  const { error } = await supabase.from("stores").insert({
+  const payload: Record<string, unknown> = {
     id,
     uid: id,
     username: input.username,
     name: input.name ?? "",
     email: input.email ?? "",
     is_premium_user: Boolean(input.premiumUser),
-  });
-  if (error) throw error;
+    onboarding_completed: false,
+  };
+
+  const { error } = await supabase.from("stores").insert(payload);
+  if (!error) return;
+
+  const missingColumn =
+    error.message.match(/'([^']+)' column/i)?.[1] ??
+    error.message.match(/column \w+\.(\w+) does not exist/i)?.[1];
+  if (missingColumn === "onboarding_completed" || error.code === "PGRST204") {
+    delete payload.onboarding_completed;
+    const retry = await supabase.from("stores").insert(payload);
+    if (retry.error) throw retry.error;
+    return;
+  }
+  throw error;
 };
 
 export const updateStore = async (
@@ -254,6 +271,9 @@ export const updateStore = async (
   if (input.subscriptionId !== undefined) row.subscription_id = input.subscriptionId;
   if (input.subscribedAt !== undefined) row.subscribed_at = input.subscribedAt;
   if (input.isOffline !== undefined) row.is_offline = input.isOffline;
+  if (input.onboardingCompleted !== undefined) {
+    row.onboarding_completed = Boolean(input.onboardingCompleted);
+  }
   if (input.productCategories !== undefined) {
     row.product_categories = asCategoryList(input.productCategories);
   }
@@ -279,13 +299,15 @@ export const updateStore = async (
       if (!retry.error) return;
     }
     const missingOptionalColumn =
-      /store_theme|store_font|is_offline|product_categories/i.test(error.message) ||
-      error.code === "PGRST204";
+      /store_theme|store_font|is_offline|product_categories|onboarding_completed/i.test(
+        error.message,
+      ) || error.code === "PGRST204";
     if (missingOptionalColumn) {
       delete row.store_theme;
       delete row.store_font;
       delete row.is_offline;
       delete row.product_categories;
+      delete row.onboarding_completed;
       const retry = await supabase.from("stores").update(row).eq("id", id);
       if (retry.error) throw retry.error;
       return;

@@ -22,6 +22,7 @@ create table if not exists stores (
   subscription_id text,
   subscribed_at timestamptz,
   is_offline boolean not null default false,
+  onboarding_completed boolean,
   created_at timestamptz not null default now()
 );
 
@@ -60,6 +61,7 @@ alter table stores add column if not exists is_offline boolean not null default 
 alter table stores add column if not exists store_theme text not null default 'minimal';
 alter table stores add column if not exists product_categories jsonb not null default '[]'::jsonb;
 alter table stores add column if not exists store_font text not null default 'default';
+alter table stores add column if not exists onboarding_completed boolean;
 
 create or replace function increment_store_visits(p_id text)
 returns void
