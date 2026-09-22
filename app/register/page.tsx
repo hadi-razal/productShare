@@ -9,7 +9,6 @@ import {
   onAuthChange,
   signInWithEmail,
   signInWithGoogle,
-  signUpWithEmail,
 } from "@/lib/auth";
 import AuthBackLink from "@/components/AuthBackLink";
 import { isValidEmail, normalizeEmail } from "@/lib/email";
@@ -138,24 +137,12 @@ const RegisterPage: React.FC = () => {
         throw new Error(completeData.error || "Invalid verification code.");
       }
 
-      try {
-        await signInWithEmail(normalizedEmail, password);
-      } catch (signInError) {
-        try {
-          await signUpWithEmail(normalizedEmail, password);
-          await signInWithEmail(normalizedEmail, password);
-        } catch (signUpError) {
-          const message = authErrorMessage(
-            signUpError,
-            authErrorMessage(signInError, "Registration failed. Please try again."),
-          );
-          if (message.toLowerCase().includes("already")) {
-            redirectToLogin(normalizedEmail, true);
-            return;
-          }
-          throw signUpError;
-        }
+      if (completeData.exists) {
+        redirectToLogin(normalizedEmail, true);
+        return;
       }
+
+      await signInWithEmail(normalizedEmail, password);
 
       const user = await getCurrentUser();
       if (user) {

@@ -1,4 +1,5 @@
 import { isValidUsername, normalizeUsername } from "@/lib/username-rules";
+import { isValidWhatsappNumber, whatsappDigits } from "@/lib/whatsapp";
 
 export const STORE_SETTINGS_PATH = "/store/settings";
 export const STORE_SETUP_EVENT = "productshare:store-setup";
@@ -13,14 +14,10 @@ export type StoreProfileFields = {
   onboardingCompleted?: boolean | null;
 };
 
-export const storeWhatsappDigits = (value?: string | null) =>
-  String(value || "").replace(/\D/g, "");
+export const storeWhatsappDigits = (value?: string | null) => whatsappDigits(value);
 
-export const isValidOptionalWhatsapp = (value?: string | null) => {
-  const digits = storeWhatsappDigits(value);
-  if (!digits) return true;
-  return digits.length >= 10 && digits.length <= 15;
-};
+export const isValidOptionalWhatsapp = (value?: string | null) =>
+  isValidWhatsappNumber(value);
 
 export const missingStoreProfileFields = (store?: StoreProfileFields | null) => {
   const missing: string[] = [];
@@ -30,7 +27,7 @@ export const missingStoreProfileFields = (store?: StoreProfileFields | null) => 
   if (!String(store?.name || "").trim()) {
     missing.push("Store name");
   }
-  if (!isValidOptionalWhatsapp(store?.whatsappNumber)) {
+  if (!isValidWhatsappNumber(store?.whatsappNumber)) {
     missing.push("WhatsApp number");
   }
   return missing;

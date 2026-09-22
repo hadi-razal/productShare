@@ -1,17 +1,8 @@
+import { cookies } from "next/headers";
+import { provisionConfirmedUser } from "@/lib/confirmed-signup";
 import { isValidEmail, normalizeEmail } from "@/lib/email";
 import { verifyOtp } from "@/lib/otp-store";
-import { getSupabaseAdmin } from "@/lib/supabase-admin";
-
-const alreadyExists = (code?: string, message?: string) => {
-  const lower = (message || "").toLowerCase();
-  return (
-    code === "email_exists" ||
-    code === "user_already_exists" ||
-    lower.includes("already registered") ||
-    lower.includes("already been registered") ||
-    lower.includes("already exists")
-  );
-};
+import { OTP_COOKIE, verifyOtpToken } from "@/lib/otp-token";
 
 export async function POST(request: Request) {
   try {
@@ -29,34 +20,30 @@ export async function POST(request: Request) {
     if (!otp) {
       return Response.json({ error: "Please enter the verification code." }, { status: 400 });
     }
-    if (!verifyOtp(email, otp)) {
+
+    const cookieStore = await cookies();
+    const token = cookieStore.get(OTP_COOKIE)?.value || "";
+    const tokenValid = token ? verifyOtpToken(email, otp, token) : false;
+    const memoryValid = verifyOtp(email, otp);
+
+    if (!tokenValid && !memoryValid) {
       return Response.json(
         { error: "Invalid or expired verification code." },
         { status: 400 },
       );
     }
 
-    const admin = getSupabaseAdmin();
-    if (!admin) {
-      return Response.json({ success: true, verified: true });
+    const result = await provisionConfirmedUser(email, password);
+    if (!result.ok) {
+      return Response.json({ error: result.message }, { status: result.reason === "missing_admin" ? 503 : 400 });
     }
 
-    const { error } = await admin.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { full_name: email.split("@")[0] },
+    cookieStore.delete(OTP_COOKIE);
+    return Response.json({
+      success: true,
+      created: result.created,
+      exists: result.exists,
     });
-
-    if (error && !alreadyExists(error.code, error.message)) {
-      console.error("Admin create user failed:", error);
-      return Response.json(
-        { error: "Could not create the account. Please try signing in." },
-        { status: 400 },
-      );
-    }
-
-    return Response.json({ success: true, created: !error });
   } catch (error) {
     console.error("Complete signup error:", error);
     return Response.json(

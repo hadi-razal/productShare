@@ -150,7 +150,7 @@ export const authErrorMessage = (err: unknown, fallback: string) => {
     return "An account with this email already exists. Please sign in.";
   }
   if (code === "email_not_confirmed" || lower.includes("email not confirmed")) {
-    return "This email is not confirmed yet. Register again to get a new code.";
+    return "This email is not confirmed yet. Register with the same email, enter the code we send, and we will confirm it.";
   }
   if (
     code === "invalid_credentials" ||
@@ -190,10 +190,27 @@ export const ensureStoreForUser = async (user: AuthUser) => {
   const existing = await getStoreById(user.uid);
   if (existing) return existing;
 
-  await createStore(user.uid, {
-    username: usernameFromIdentity(user.email, user.displayName),
-    name: user.displayName || user.email?.split("@")[0] || "My Store",
-    email: user.email,
-    premiumUser: false,
-  });
+  const name = user.displayName || user.email?.split("@")[0] || "My Store";
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      await createStore(user.uid, {
+        username: usernameFromIdentity(user.email, user.displayName),
+        name,
+        email: user.email,
+        premiumUser: false,
+      });
+      return getStoreById(user.uid);
+    } catch (error) {
+      lastError = error;
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === "object" && error && "message" in error
+            ? String((error as { message?: unknown }).message || "")
+            : String(error);
+      if (!/duplicate|unique|username/i.test(message)) break;
+    }
+  }
+  throw lastError;
 };

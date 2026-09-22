@@ -43,12 +43,13 @@ import {
 import {
   emitStoreSetupComplete,
   isStoreProfileComplete,
-  isValidOptionalWhatsapp,
   markOnboardingLocallyComplete,
   missingStoreProfileFields,
   storeProfileIncompleteMessage,
   storeWhatsappDigits,
 } from "@/lib/store-profile";
+import { normalizeWhatsappNumber, whatsappValidationMessage } from "@/lib/whatsapp";
+import WhatsAppNumberField from "@/components/WhatsAppNumberField";
 
 const SettingsPage: React.FC = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -95,7 +96,7 @@ const SettingsPage: React.FC = () => {
         setOriginalUsername(data.username || "");
         setName(data.name || "");
         setEmail(data.email || "");
-        setWhatsappNumber(data?.whatsappNumber || "");
+        setWhatsappNumber(normalizeWhatsappNumber(data?.whatsappNumber));
         setAdditionalNotes(data?.additionalNotes || "");
         setLogoImageUrl(data?.logoImage || null);
         setStoreTheme(normalizeStoreTheme(data?.storeTheme));
@@ -118,8 +119,9 @@ const SettingsPage: React.FC = () => {
       return;
     }
 
-    if (!isValidOptionalWhatsapp(whatsappNumber)) {
-      toast.error("WhatsApp number must be 10–15 digits, or leave it blank.");
+    const whatsappError = whatsappValidationMessage(whatsappNumber);
+    if (whatsappError) {
+      toast.error(whatsappError);
       return;
     }
 
@@ -293,7 +295,7 @@ const SettingsPage: React.FC = () => {
       {missingFields.length > 0 && (
         <div className="ds-profile-banner" role="status">
           <p>
-            <strong>Complete your store profile.</strong> Username and store name must be saved before you can create products or categories. WhatsApp is optional.
+            <strong>Complete your store profile.</strong> Username, store name, and WhatsApp must be saved before you can create products or categories.
           </p>
         </div>
       )}
@@ -302,8 +304,7 @@ const SettingsPage: React.FC = () => {
           <div className="ds-settings-intro">
             <h2 className="ds-card-title">Catalog details</h2>
             <p>
-              These details appear on your public catalog. Store name and username are required.
-              WhatsApp is optional.
+              These details appear on your public catalog. Store name, username, and WhatsApp are required.
             </p>
           </div>
           <div className="ds-form-group">
@@ -331,13 +332,6 @@ const SettingsPage: React.FC = () => {
             },
             { label: "Email", value: email, disabled: true },
             { label: "Store name", required: true, value: name, onChange: setName },
-            {
-              label: "WhatsApp Number",
-              optional: true,
-              value: whatsappNumber,
-              onChange: (value: string) => setWhatsappNumber(storeWhatsappDigits(value)),
-              hint: "Optional. 10–15 digits so customers can enquire from your catalog.",
-            },
           ].map((field, index) => (
             <div key={index} className="ds-form-group">
               <label className="ds-form-label">
@@ -365,6 +359,20 @@ const SettingsPage: React.FC = () => {
               )}
             </div>
           ))}
+
+          <div className="ds-form-group">
+            <label className="ds-form-label" htmlFor="settings-whatsapp">
+              WhatsApp Number <span className="ds-required">Required</span>
+            </label>
+            <WhatsAppNumberField
+              id="settings-whatsapp"
+              value={whatsappNumber}
+              onChange={setWhatsappNumber}
+            />
+            <p className="ds-form-hint">
+              Customers use this number to enquire from your catalog. India starts at +91.
+            </p>
+          </div>
 
           <div className="ds-form-group">
             <label className="ds-form-label mb-0">Store theme</label>

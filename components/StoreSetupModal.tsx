@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { FiImage } from "react-icons/fi";
+import { SITE_HOST } from "@/lib/storefront-url";
 import {
   isUsernameAvailable,
   isValidUsername,
@@ -12,14 +13,14 @@ import {
 } from "@/helpers/username";
 import { updateStore, type StoreRecord } from "@/lib/db";
 import { uploadPublicFile } from "@/lib/storage";
-import { storefrontDisplayHost } from "@/lib/storefront-url";
 import {
   emitStoreSetupComplete,
-  isValidOptionalWhatsapp,
   markOnboardingLocallyComplete,
   STORE_SETTINGS_PATH,
   storeWhatsappDigits,
 } from "@/lib/store-profile";
+import { normalizeWhatsappNumber, whatsappValidationMessage } from "@/lib/whatsapp";
+import WhatsAppNumberField from "@/components/WhatsAppNumberField";
 
 type StoreSetupModalProps = {
   userId: string;
@@ -32,8 +33,8 @@ const StoreSetupModal = ({ userId, store, onComplete }: StoreSetupModalProps) =>
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(store.name || "");
   const [username, setUsername] = useState(store.username || "");
-  const [whatsappNumber, setWhatsappNumber] = useState(
-    storeWhatsappDigits(store.whatsappNumber),
+  const [whatsappNumber, setWhatsappNumber] = useState(() =>
+    normalizeWhatsappNumber(store.whatsappNumber),
   );
   const [additionalNotes, setAdditionalNotes] = useState(store.additionalNotes || "");
   const [logoImage, setLogoImage] = useState<File | null>(null);
@@ -82,8 +83,9 @@ const StoreSetupModal = ({ userId, store, onComplete }: StoreSetupModalProps) =>
       toast.error("Username must be 3–30 characters, letters and numbers only.");
       return;
     }
-    if (!isValidOptionalWhatsapp(digits)) {
-      toast.error("WhatsApp number must be 10–15 digits, or leave it blank.");
+    const whatsappError = whatsappValidationMessage(digits);
+    if (whatsappError) {
+      toast.error(whatsappError);
       return;
     }
     if (normalizedUsername !== store.username) {
@@ -134,43 +136,37 @@ const StoreSetupModal = ({ userId, store, onComplete }: StoreSetupModalProps) =>
         aria-modal="true"
         aria-labelledby="store-setup-title"
       >
-        <p className="ds-eyebrow">Welcome to your store</p>
-        <h2 id="store-setup-title">Finish your catalog details</h2>
-        <p className="ds-setup-lead">
-          These details appear on your public catalog. Store name and username are required.
-          WhatsApp is optional.
-        </p>
+        <header className="ds-setup-head">
+          <p>Welcome</p>
+          <h2 id="store-setup-title">Set up your catalog</h2>
+          <p>Your name, catalog address, and WhatsApp appear on the public page.</p>
+        </header>
 
-        <div className="ds-form-group">
-          <label className="ds-form-label">Store logo <span className="ds-optional">Optional</span></label>
-          <div className="ds-setup-logo-row">
+        <div className="ds-setup-body">
+          <div className="ds-setup-identity">
             <button
               type="button"
               className="ds-setup-logo"
               onClick={() => logoInputRef.current?.click()}
-              aria-label="Upload store logo"
+              aria-label={previewLogoUrl ? "Change store logo" : "Upload store logo"}
             >
               {previewLogoUrl ? (
-                <Image
-                  src={previewLogoUrl}
-                  alt=""
-                  width={64}
-                  height={64}
-                  unoptimized
-                />
+                <Image src={previewLogoUrl} alt="" width={72} height={72} unoptimized />
               ) : (
                 <FiImage />
               )}
+              <span>{previewLogoUrl ? "Change" : "Logo"}</span>
             </button>
-            <div>
-              <button
-                type="button"
-                className="ds-setup-logo-btn"
-                onClick={() => logoInputRef.current?.click()}
-              >
-                {previewLogoUrl ? "Change logo" : "Upload logo"}
-              </button>
-              <p className="ds-form-hint">Shown on your catalog. Max 1MB.</p>
+            <div className="ds-setup-field">
+              <label htmlFor="setup-store-name">Store name</label>
+              <input
+                id="setup-store-name"
+                type="text"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Your shop or brand"
+                autoComplete="organization"
+              />
             </div>
             <input
               ref={logoInputRef}
@@ -180,91 +176,66 @@ const StoreSetupModal = ({ userId, store, onComplete }: StoreSetupModalProps) =>
               hidden
             />
           </div>
+
+          <div className="ds-setup-field">
+            <label htmlFor="setup-username">Catalog address</label>
+            <div className="ds-setup-url">
+              <input
+                id="setup-username"
+                type="text"
+                value={username}
+                onChange={(event) => setUsername(normalizeUsername(event.target.value))}
+                placeholder="yourstore"
+                autoComplete="off"
+                spellCheck={false}
+              />
+              <span>.{SITE_HOST}</span>
+            </div>
+          </div>
+
+          <div className="ds-setup-field">
+            <label htmlFor="setup-whatsapp">WhatsApp</label>
+            <WhatsAppNumberField
+              id="setup-whatsapp"
+              value={whatsappNumber}
+              onChange={setWhatsappNumber}
+              variant="setup"
+            />
+          </div>
+
+          <div className="ds-setup-optional">
+            <p>Optional</p>
+            <div className="ds-setup-field">
+              <label htmlFor="setup-notes">Note on your catalog</label>
+              <textarea
+                id="setup-notes"
+                rows={2}
+                value={additionalNotes}
+                onChange={(event) => setAdditionalNotes(event.target.value)}
+                placeholder="A short welcome or promo"
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="ds-form-group">
-          <label className="ds-form-label" htmlFor="setup-store-name">
-            Store name <span className="ds-required">Required</span>
-          </label>
-          <input
-            id="setup-store-name"
-            type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            className="ds-form-input"
-            placeholder="Your shop or brand name"
-            autoComplete="organization"
-          />
-        </div>
-
-        <div className="ds-form-group">
-          <label className="ds-form-label" htmlFor="setup-username">
-            Username <span className="ds-required">Required</span>
-          </label>
-          <input
-            id="setup-username"
-            type="text"
-            value={username}
-            onChange={(event) => setUsername(normalizeUsername(event.target.value))}
-            className="ds-form-input"
-            placeholder="yourstore"
-            autoComplete="off"
-          />
-          <p className="ds-form-hint">
-            Your catalog link: {storefrontDisplayHost(normalizeUsername(username) || "yourstore")}
-          </p>
-        </div>
-
-        <div className="ds-form-group">
-          <label className="ds-form-label" htmlFor="setup-whatsapp">
-            WhatsApp number <span className="ds-optional">Optional</span>
-          </label>
-          <input
-            id="setup-whatsapp"
-            type="tel"
-            inputMode="numeric"
-            value={whatsappNumber}
-            onChange={(event) => setWhatsappNumber(storeWhatsappDigits(event.target.value))}
-            className="ds-form-input"
-            placeholder="10–15 digits"
-          />
-          <p className="ds-form-hint">
-            Customers can enquire from your catalog. Leave blank if you do not use WhatsApp.
-          </p>
-        </div>
-
-        <div className="ds-form-group">
-          <label className="ds-form-label" htmlFor="setup-notes">
-            Catalog note <span className="ds-optional">Optional</span>
-          </label>
-          <textarea
-            id="setup-notes"
-            rows={3}
-            value={additionalNotes}
-            onChange={(event) => setAdditionalNotes(event.target.value)}
-            className="ds-form-input resize-none"
-            placeholder="A short welcome or promo on your catalog"
-          />
-        </div>
-
-        <div className="ds-setup-actions">
-          <button
-            type="button"
-            className="ds-btn-primary"
-            onClick={() => void handleSave()}
-            disabled={saving}
-          >
-            {saving ? "Saving..." : "Save and continue"}
-          </button>
+        <footer className="ds-setup-actions">
           <button
             type="button"
             className="ds-setup-secondary"
             onClick={() => router.push(STORE_SETTINGS_PATH)}
             disabled={saving}
           >
-            Open full settings
+            More settings
           </button>
-        </div>
+          <button
+            type="button"
+            className="ds-setup-primary"
+            onClick={() => void handleSave()}
+            disabled={saving}
+          >
+            {saving ? "Saving..." : "Continue"}
+          </button>
+        </footer>
       </div>
     </div>
   );

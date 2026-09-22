@@ -391,7 +391,7 @@ function Readiness({
         <span className="ds-eyebrow">Next steps</span>
         <Link href="/store/settings" className="ds-next-step">
           <span className="teal"><FiMessageCircle /></span>
-          <div><strong>Add WhatsApp contact</strong><p>Optional, so customers can enquire from your catalog</p></div>
+          <div><strong>Add WhatsApp contact</strong><p>Required, so customers can enquire from your catalog</p></div>
           <FiArrowRight />
         </Link>
         <Link href={profileComplete ? "/store/add-product" : STORE_SETTINGS_PATH} className="ds-next-step">
