@@ -124,6 +124,9 @@ export const metadata: Metadata = {
   },
   category: siteConfig.category,
   classification: siteConfig.classification,
+  verification: {
+    google: "7UEcbn5_qF1bDyC5u5OG7oJtXv7R_cx6AB7CGVMByXE",
+  },
   other: {
     "msapplication-TileColor": "#2563eb",
     "theme-color": "#ffffff",
@@ -146,6 +149,18 @@ export default async function RootLayout({
       <body
         className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-LRPNWNH0W1"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-LRPNWNH0W1');
+          `}
+        </Script>
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="lazyOnload"
