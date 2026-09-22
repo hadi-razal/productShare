@@ -192,8 +192,7 @@ const StoreProducts = ({
     (product) => !product.isHidden || isStoreOwner
   ).length;
   const announcement = storeNote?.trim() || "";
-  const description =
-    storeDescription?.trim() || "Browse products, prices, and details from this catalog.";
+  const description = storeDescription?.trim() || "";
 
   useEffect(() => {
     let results = [...products];
@@ -219,71 +218,50 @@ const StoreProducts = ({
   }, [products, searchInput, sortOption]);
 
   return (
-    <div className="sf-page relative w-full pb-20 pt-6">
-      <div className="mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8">
-        <header className="sf-store-header">
-          <div className="flex items-start gap-4">
+    <div className="sf-page relative w-full pb-20">
+      <header className="sf-store-header">
+        <div className="sf-store-header-inner">
+          <div className="sf-store-identity">
             {storeLogo ? (
               <Image
                 src={storeLogo}
-                alt={`${displayStoreName} logo`}
-                width={56}
-                height={56}
+                alt=""
+                width={52}
+                height={52}
                 unoptimized={storeLogo.startsWith("http")}
-                className="h-14 w-14 shrink-0 object-contain"
-                style={{
-                  border: "1px solid var(--sf-border)",
-                  borderRadius: "var(--sf-radius-sm)",
-                  background: "var(--sf-surface)",
-                }}
+                className="sf-store-mark-image"
               />
             ) : (
-              <div
-                className="flex h-14 w-14 shrink-0 items-center justify-center text-lg font-semibold"
-                style={{
-                  background: "var(--sf-surface)",
-                  color: "var(--sf-text)",
-                  border: "1px solid var(--sf-border)",
-                  borderRadius: "var(--sf-radius-sm)",
-                }}
-              >
+              <div className="sf-store-mark" aria-hidden="true">
                 {displayStoreName.charAt(0).toUpperCase()}
               </div>
             )}
-            <div className="min-w-0 pt-0.5">
-              <h1 className="sf-title truncate text-[22px] font-semibold tracking-[-0.03em] sm:text-2xl">
-                {displayStoreName}
-              </h1>
-              <p className="sf-muted mt-1 max-w-xl text-sm leading-6 line-clamp-2">
-                {description}
-              </p>
-              <p className="sf-muted mt-2 text-xs">
-                {products.length} {products.length === 1 ? "product" : "products"}
-              </p>
+            <div className="sf-store-copy">
+              <h1>{displayStoreName}</h1>
+              {description ? <p>{description}</p> : null}
             </div>
+            <p className="sf-store-count">
+              {products.length} {products.length === 1 ? "product" : "products"}
+            </p>
           </div>
 
-          {announcement ? (
-            <p className="sf-store-note">{announcement}</p>
-          ) : null}
+          {announcement ? <p className="sf-store-note">{announcement}</p> : null}
 
-          <div className={`sf-store-tools${isStoreOwner ? " has-manage" : ""}`}>
-            <div className="relative min-w-0 flex-1">
-              <FiSearch className="sf-muted pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+          <div className="sf-store-tools">
+            <div className="sf-store-search">
+              <FiSearch aria-hidden="true" />
               <input
                 type="search"
                 value={searchInput}
                 onChange={handleSearchInputChange}
                 placeholder="Search products"
                 aria-label="Search products"
-                className="sf-input h-11 w-full border pl-10 pr-10 text-sm outline-none"
-                style={{ borderRadius: "var(--sf-radius-sm)" }}
+                className="sf-input"
               />
               {searchInput ? (
                 <button
                   type="button"
                   onClick={() => setSearchInput("")}
-                  className="sf-muted absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center"
                   aria-label="Clear search"
                 >
                   <FiX size={16} />
@@ -295,8 +273,7 @@ const StoreProducts = ({
               value={sortOption}
               onChange={(event) => setSortOption(event.target.value)}
               aria-label="Sort products"
-              className="sf-select h-11 border px-3 text-sm outline-none sm:w-44"
-              style={{ borderRadius: "var(--sf-radius-sm)" }}
+              className="sf-select"
             >
               <option value="">Featured</option>
               <option value="newest">Newly added</option>
@@ -304,9 +281,11 @@ const StoreProducts = ({
               <option value="price-high-low">Price: high to low</option>
             </select>
           </div>
-        </header>
+        </div>
+      </header>
 
-        <div className="mb-4 mt-8 flex items-end justify-between gap-4">
+      <div className="sf-store-catalog">
+        <div className="mb-4 flex items-end justify-between gap-4">
           <h2 className="sf-title text-base font-semibold tracking-tight sm:text-lg">
             All products
           </h2>

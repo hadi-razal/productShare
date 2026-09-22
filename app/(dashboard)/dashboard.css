@@ -30,6 +30,11 @@
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   isolation: isolate;
   --ds-hover: var(--ds-canvas);
+  color-scheme: light;
+}
+
+.ds-root[data-ds-theme-mode="dark"] {
+  color-scheme: dark;
 }
 
 .ds-root button,
@@ -1637,11 +1642,10 @@
   border: 1px solid var(--ds-violet);
   border-radius: var(--ds-radius);
   background: var(--ds-violet);
-  color: white;
+  color: var(--ds-on-accent, #fff);
   font-size: 13px;
   font-weight: 670;
   cursor: pointer;
-  box-shadow: 0 7px 18px rgba(102, 87, 232, 0.18);
 }
 
 .ds-btn-primary:hover:not(:disabled) {
@@ -1783,7 +1787,54 @@
 .ds-catalog-btn-primary {
   border: 1px solid var(--ds-violet);
   background: var(--ds-violet);
-  color: white;
+  color: var(--ds-on-accent, #fff);
+}
+
+.ds-message-card {
+  max-width: 760px;
+}
+
+.ds-reviews-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 760px;
+  gap: 8px;
+}
+
+.ds-reviews-empty svg {
+  width: 22px;
+  height: 22px;
+  color: var(--ds-violet);
+}
+
+.ds-reviews-empty h3 {
+  margin: 4px 0 0;
+  color: var(--ds-ink);
+  font-size: 16px;
+  font-weight: 680;
+}
+
+.ds-reviews-empty p {
+  margin: 0;
+  color: var(--ds-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ds-message-grid {
+  display: grid;
+  gap: 0 16px;
+}
+
+.ds-message-submit {
+  max-width: 220px;
+}
+
+@media (min-width: 720px) {
+  .ds-message-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .ds-catalog-btn-primary:hover {

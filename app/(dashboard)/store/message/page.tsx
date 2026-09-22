@@ -64,32 +64,39 @@ export default function StoreMessagePage() {
   };
 
   return (
-    <div className="ds-page ds-settings">
-      <section className="ds-card" style={{ maxWidth: 560 }}>
-        <h2 className="ds-catalog-title">Send a message to ProductShare</h2>
+    <div className="ds-page ds-catalog ds-message">
+      <div className="ds-catalog-header">
+        <div className="ds-catalog-heading">
+          <h2 className="ds-catalog-title">Message ProductShare</h2>
+          <p>Suggestions, support, and feature requests. Replies go to your store email.</p>
+        </div>
+      </div>
 
-        <form onSubmit={handleSubmit} style={{ marginTop: 20 }}>
-          <div className="ds-form-group">
-            <label className="ds-form-label" htmlFor="store-message-name">Your name</label>
-            <input
-              id="store-message-name"
-              className="ds-form-input"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              required
-            />
-          </div>
+      <section className="ds-card ds-message-card">
+        <form onSubmit={handleSubmit}>
+          <div className="ds-message-grid">
+            <div className="ds-form-group">
+              <label className="ds-form-label" htmlFor="store-message-name">Your name</label>
+              <input
+                id="store-message-name"
+                className="ds-form-input"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                required
+              />
+            </div>
 
-          <div className="ds-form-group">
-            <label className="ds-form-label" htmlFor="store-message-email">Email</label>
-            <input
-              id="store-message-email"
-              className="ds-form-input"
-              type="email"
-              value={email}
-              disabled
-            />
-            <p className="ds-form-hint">We reply to the email on your store account.</p>
+            <div className="ds-form-group">
+              <label className="ds-form-label" htmlFor="store-message-email">Email</label>
+              <input
+                id="store-message-email"
+                className="ds-form-input"
+                type="email"
+                value={email}
+                disabled
+              />
+              <p className="ds-form-hint">We reply to the email on your store account.</p>
+            </div>
           </div>
 
           <div className="ds-form-group">
@@ -121,7 +128,7 @@ export default function StoreMessagePage() {
             />
           </div>
 
-          <button type="submit" className="ds-btn-primary" disabled={submitting}>
+          <button type="submit" className="ds-btn-primary ds-message-submit" disabled={submitting}>
             {submitting ? "Sending..." : "Send message"}
           </button>
         </form>

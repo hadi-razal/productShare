@@ -322,6 +322,17 @@ export const storeThemeCssVars = (
   "--sf-radius-sm": clampRadius(theme.radiusSm, MAX_RADIUS_SM),
 });
 
+const accentLuminance = (hex: string) => {
+  const rgb = parseHex(hex);
+  if (!rgb) return 0;
+  const channel = (value: number) => {
+    const scaled = value / 255;
+    return scaled <= 0.03928 ? scaled / 12.92 : ((scaled + 0.055) / 1.055) ** 2.4;
+  };
+  const [r, g, b] = rgb.map(channel);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+
 export const dashboardThemeCssVars = (
   theme: StoreTheme,
 ): Record<`--${string}`, string> => {
@@ -329,11 +340,13 @@ export const dashboardThemeCssVars = (
     ? mixHex(theme.accent, theme.surface, 0.28)
     : theme.accentSoft;
   const accentText = theme.dark ? theme.accent : shadeHex(theme.accent, -0.16);
+  const onAccent = accentLuminance(theme.accent) > 0.42 ? "#171b26" : "#ffffff";
 
   return {
     "--ds-violet": theme.accent,
     "--ds-violet-dark": accentText,
     "--ds-violet-soft": soft,
+    "--ds-on-accent": onAccent,
     "--ds-ink": theme.text,
     "--ds-muted": theme.muted,
     "--ds-border": theme.border,
