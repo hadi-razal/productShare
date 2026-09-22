@@ -1,5 +1,31 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { getSupabaseAdmin, serviceRoleProblem } from "@/lib/supabase-admin";
+
+const adminKeyMessage = () =>
+  serviceRoleProblem() === "public_key"
+    ? "Could not create the account. SUPABASE_SERVICE_ROLE_KEY is the public anon key. Replace it with the service_role secret from Supabase → Project Settings → API Keys, then redeploy."
+    : "Could not create the account. Add the Supabase service_role secret as SUPABASE_SERVICE_ROLE_KEY, then redeploy.";
+
+const failedMessage = (code?: string, message?: string) => {
+  const lower = (message || "").toLowerCase();
+  if (
+    code === "not_admin" ||
+    lower.includes("not allowed") ||
+    lower.includes("invalid api key")
+  ) {
+    return adminKeyMessage();
+  }
+  if (code === "email_address_invalid" || lower.includes("email address")) {
+    return "This email could not be used to create an account. Check the address, or sign in if you already registered.";
+  }
+  if (code === "weak_password" || lower.includes("password")) {
+    return "Password must be at least 6 characters.";
+  }
+  if (code === "over_request_rate_limit" || lower.includes("too many")) {
+    return "Too many attempts. Please try again later.";
+  }
+  return "Could not create the account. Please try again.";
+};
 
 const alreadyExists = (code?: string, message?: string) => {
   const lower = (message || "").toLowerCase();
@@ -37,8 +63,7 @@ export const provisionConfirmedUser = async (
     return {
       ok: false,
       reason: "missing_admin",
-      message:
-        "Registration cannot confirm this email yet. Add SUPABASE_SERVICE_ROLE_KEY in the server environment, then try again.",
+      message: adminKeyMessage(),
     };
   }
 
@@ -52,11 +77,11 @@ export const provisionConfirmedUser = async (
   if (!error) return { ok: true, created: true, exists: false };
 
   if (!alreadyExists(error.code, error.message)) {
-    console.error("Admin create user failed:", error);
+    console.error("Admin create user failed:", error.code, error.message);
     return {
       ok: false,
-      reason: "failed",
-      message: "Could not create the account. Please try again.",
+      reason: error.status === 403 || error.code === "not_admin" ? "missing_admin" : "failed",
+      message: failedMessage(error.code, error.message),
     };
   }
 

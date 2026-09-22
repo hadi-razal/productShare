@@ -2,7 +2,7 @@ import type { User } from "@supabase/supabase-js";
 import { createStore, getStoreById } from "@/lib/db";
 import { normalizeEmail } from "@/lib/email";
 import { getAuthRedirectOrigin } from "@/lib/storefront-url";
-import { supabase } from "@/lib/supabase";
+import { isSupabaseBrowserConfigured, supabase } from "@/lib/supabase";
 import { isSuperAdminEmail } from "@/lib/super-admin";
 
 const authRedirectUrl = (path: string) => `${getAuthRedirectOrigin()}${path}`;
@@ -75,6 +75,11 @@ export const signOutUser = async () => {
 };
 
 export const signInWithGoogle = async () => {
+  if (!isSupabaseBrowserConfigured()) {
+    throw new Error(
+      "Google sign-in is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY, then redeploy.",
+    );
+  }
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {

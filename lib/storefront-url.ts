@@ -89,7 +89,8 @@ export const getApexOrigin = (hostHeader: string, protoHeader?: string | null) =
   getRequestOrigin(hostHeader, protoHeader, { apex: true });
 
 export const getAuthRedirectOrigin = () => {
-  if (typeof window !== "undefined" && isLocalHost(window.location.host)) {
+  if (typeof window === "undefined") return siteConfig.url;
+  if (isLocalHost(window.location.host) || isApexHost(window.location.host)) {
     return window.location.origin;
   }
   return siteConfig.url;
