@@ -13,6 +13,7 @@ import {
 import { FaWhatsapp } from "react-icons/fa";
 import { getUserId } from "@/helpers/getUserId";
 import { onAuthChange } from "@/lib/auth";
+import { cataloguePrice, useCataloguePreferences } from "./catalogue-preferences";
 import { ProductType } from "@/type";
 import { storeWhatsappDigits } from "@/lib/store-profile";
 import { useStorefrontNav } from "@/components/storefront-nav";
@@ -28,11 +29,7 @@ interface ProductPageProps {
   isOffline?: boolean;
 }
 
-const formatPrice = (value: number) =>
-  `RS. ${value.toLocaleString("en-IN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+
 
 const ProductSkeleton = () => (
   <div className="sf-page w-full pb-16 pt-8">
@@ -73,6 +70,8 @@ const ProductPage = ({
   isOffline = false,
 }: ProductPageProps) => {
   const nav = useStorefrontNav();
+  const preferences = useCataloguePreferences();
+  const formatPrice = (value: number) => cataloguePrice(value, preferences.currency);
   const [productData, setProductData] = useState<ProductType | null>(initialProduct);
   const [loading, setLoading] = useState<boolean>(!initialProduct);
   const [userId, setUserId] = useState<string | null>(initialUserId);
@@ -397,7 +396,7 @@ const ProductPage = ({
 
             <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <span className="sf-price text-[22px] font-semibold tracking-tight">
-                {Number.isFinite(displayPrice) ? formatPrice(displayPrice) : "RS. 0.00"}
+                {Number.isFinite(displayPrice) ? formatPrice(displayPrice) : formatPrice(0)}
               </span>
               {isDiscounted && (
                 <>
@@ -476,7 +475,7 @@ const ProductPage = ({
             )}
 
             <div className="mt-10 flex flex-col gap-3">
-              {storeWhatsappDigits(storeWhatsapp).length >= 10 ? (
+              {preferences.allowProductEnquiries !== false && preferences.showWhatsappButton !== false && storeWhatsappDigits(storeWhatsapp).length >= 10 ? (
                 <button
                   type="button"
                   onClick={handleEnquire}

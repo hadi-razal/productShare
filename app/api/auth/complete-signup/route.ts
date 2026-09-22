@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     }
 
     const result = await provisionConfirmedUser(email, password);
-    if (!result.ok) {
+    if (result.ok === false) {
       return Response.json({ error: result.message }, { status: result.reason === "missing_admin" ? 503 : 400 });
     }
 

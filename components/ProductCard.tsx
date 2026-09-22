@@ -1,5 +1,6 @@
 "use client";
 
+import { cataloguePrice, useCataloguePreferences } from "./catalogue-preferences";
 import { ProductType } from "@/type";
 import { deleteProduct } from "@/lib/db";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
@@ -18,11 +19,7 @@ interface ProductCardProps {
   refetchProducts?: () => void;
 }
 
-const formatPrice = (value: number) =>
-  `RS. ${value.toLocaleString("en-IN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+
 
 const ProductCard = ({
   product,
@@ -34,6 +31,8 @@ const ProductCard = ({
 }: ProductCardProps) => {
   const router = useRouter();
   const nav = useStorefrontNav();
+  const preferences = useCataloguePreferences();
+  const formatPrice = (value: number) => cataloguePrice(value, preferences.currency);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const productHref =
     storeId && product?.id ? nav.productHref(storeId, product.id) : null;
@@ -162,7 +161,7 @@ const ProductCard = ({
           </h3>
           <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2">
             <span className="sf-price text-sm font-semibold">
-              {Number.isFinite(displayPrice) ? formatPrice(displayPrice) : "RS. 0.00"}
+              {Number.isFinite(displayPrice) ? formatPrice(displayPrice) : formatPrice(0)}
             </span>
             {isDiscounted && (
               <span className="sf-muted text-xs line-through">

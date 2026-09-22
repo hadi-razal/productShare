@@ -129,7 +129,7 @@ const SettingsPage: React.FC = () => {
 
     if (!isValidUsername(normalizedUsername)) {
       toast.error(
-        "Username must be 3–30 characters, letters and numbers only.",
+        "Username must be 3–30 characters, letters, numbers or internal hyphens.",
       );
       return;
     }
@@ -328,7 +328,7 @@ const SettingsPage: React.FC = () => {
               value: username,
               onChange: (value: string) => setUsername(normalizeUsername(value)),
               disabled: false,
-              hint: "3–30 characters, letters and numbers only. Must be unique.",
+              hint: "3–30 characters, letters, numbers or internal hyphens. Must be unique.",
             },
             { label: "Email", value: email, disabled: true },
             { label: "Store name", required: true, value: name, onChange: setName },

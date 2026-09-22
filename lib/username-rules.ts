@@ -1,4 +1,4 @@
-export const USERNAME_REGEX = /^[a-z0-9]{3,30}$/;
+export const USERNAME_REGEX = /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/;
 
 /**
  * Usernames that cannot be used as a store subdomain or /store/<name> path.
@@ -55,6 +55,9 @@ export const RESERVED_USERNAMES = new Set([
   "reviews",
   "root",
   "settings",
+  "message",
+  "onboarding",
+  "add-product",
   "shop",
   "signin",
   "signup",
@@ -72,7 +75,7 @@ export const RESERVED_USERNAMES = new Set([
 ]);
 
 export const normalizeUsername = (value: string) =>
-  value.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+  value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
 export const isReservedUsername = (username: string) =>
   RESERVED_USERNAMES.has(username);

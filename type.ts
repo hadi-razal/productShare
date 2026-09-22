@@ -33,6 +33,9 @@ export interface ProductType {
     image?: string;
     email: string;
     whatsappNumber?: string;
+    showWhatsappButton?: boolean;
+    allowProductEnquiries?: boolean;
+    currency?: string;
     additionalNotes: string;
     username: string;
     onboardingCompleted?: boolean | null;

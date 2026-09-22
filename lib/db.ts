@@ -27,6 +27,9 @@ type StoreRow = {
   name?: string | null;
   email?: string | null;
   whatsapp_number?: string | null;
+  show_whatsapp_button?: boolean | null;
+  allow_product_enquiries?: boolean | null;
+  currency?: string | null;
   additional_notes?: string | null;
   logo_image?: string | null;
   image?: string | null;
@@ -84,6 +87,9 @@ const storeFromRow = (row: StoreRow): StoreRecord => ({
   name: row.name ?? "",
   email: row.email ?? "",
   whatsappNumber: row.whatsapp_number ?? "",
+  showWhatsappButton: row.show_whatsapp_button ?? true,
+  allowProductEnquiries: row.allow_product_enquiries ?? true,
+  currency: row.currency ?? "INR",
   additionalNotes: row.additional_notes ?? "",
   logoImage: row.logo_image ?? undefined,
   image: row.image ?? undefined,

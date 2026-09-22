@@ -19,6 +19,7 @@ import { getUserId } from "@/helpers/getUserId";
 import { incrementStoreVisits, listProductsByStore } from "@/lib/db";
 import ProductCard from "@/components/ProductCard";
 import { useStorefrontNav } from "@/components/storefront-nav";
+import { useCataloguePreferences } from "./catalogue-preferences";
 import { ProductType } from "@/type";
 
 interface StoreProductsProps {
@@ -84,6 +85,7 @@ const StoreProducts = ({
   isOffline = false,
 }: StoreProductsProps) => {
   const nav = useStorefrontNav();
+  const preferences = useCataloguePreferences();
   const [products, setProducts] = useState<ProductType[]>(() => initialProducts ?? []);
   const [isLoading, setIsLoading] = useState(initialProducts === undefined);
   const [searchInput, setSearchInput] = useState<string>("");
@@ -245,6 +247,7 @@ const StoreProducts = ({
             </p>
           </div>
 
+          {preferences.showWhatsappButton !== false && /^[1-9]\d{7,14}$/.test(preferences.whatsappNumber || "") && <a className="sf-ghost inline-flex min-h-11 items-center rounded-lg px-4 my-3 text-sm" href={`https://wa.me/${preferences.whatsappNumber}`} target="_blank" rel="noopener noreferrer">Contact us on WhatsApp</a>}
           {announcement ? <p className="sf-store-note">{announcement}</p> : null}
 
           <div className="sf-store-tools">

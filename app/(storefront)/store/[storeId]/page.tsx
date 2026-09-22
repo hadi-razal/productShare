@@ -99,6 +99,7 @@ export default async function Page({ params }: StorePageProps) {
   if (storeData.isOffline) {
     return (
       <StorefrontShell
+      preferences={storeData}
         theme={storeData.storeTheme}
         font={storeData.storeFont}
         onSubdomain={onSubdomain}
@@ -121,6 +122,7 @@ export default async function Page({ params }: StorePageProps) {
 
   return (
     <StorefrontShell
+      preferences={storeData}
       theme={storeData.storeTheme}
       font={storeData.storeFont}
       onSubdomain={onSubdomain}

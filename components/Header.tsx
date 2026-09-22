@@ -47,6 +47,7 @@ const getStoreThemeColor = async (username: string) => {
 };
 
 const HIDDEN_HEADER_ROUTES = [
+  "/onboarding",
   "/store",
   "/store/add-product",
   "/store/edit",

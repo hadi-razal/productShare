@@ -338,7 +338,7 @@ export function productJsonLd({
     offers: {
       "@type": "Offer",
       url,
-      priceCurrency: "INR",
+      priceCurrency: store.currency || "INR",
       price: Number.isFinite(price) ? String(price) : undefined,
       availability,
       seller: {

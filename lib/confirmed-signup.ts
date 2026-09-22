@@ -1,4 +1,4 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 const alreadyExists = (code?: string, message?: string) => {
@@ -16,7 +16,8 @@ const findUserByEmail = async (admin: SupabaseClient, email: string) => {
   for (let page = 1; page <= 20; page += 1) {
     const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 200 });
     if (error) throw error;
-    const match = data.users.find((user) => user.email?.toLowerCase() === email);
+    const users: User[] = data.users;
+    const match = users.find((user) => user.email?.toLowerCase() === email);
     if (match) return match;
     if (data.users.length < 200) return null;
   }

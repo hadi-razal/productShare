@@ -9,6 +9,7 @@ export type StoreProfileFields = {
   username?: string | null;
   name?: string | null;
   whatsappNumber?: string | null;
+  showWhatsappButton?: boolean;
   logoImage?: string | null;
   additionalNotes?: string | null;
   onboardingCompleted?: boolean | null;
@@ -27,7 +28,7 @@ export const missingStoreProfileFields = (store?: StoreProfileFields | null) => 
   if (!String(store?.name || "").trim()) {
     missing.push("Store name");
   }
-  if (!isValidWhatsappNumber(store?.whatsappNumber)) {
+  if (store?.showWhatsappButton !== false && !isValidWhatsappNumber(store?.whatsappNumber)) {
     missing.push("WhatsApp number");
   }
   return missing;

@@ -111,3 +111,25 @@ submit a focused pull request.
 ---
 
 Built with ❤️ for modern merchants.
+
+## Store onboarding
+
+New customers reach `/onboarding` through the dashboard's setup gate. Existing completed stores keep their dashboard access. The seven-step setup includes a live catalogue preview, private per-account drafts, logo uploads, slug availability checks, and a support screen with a pausable ten-second dashboard redirect.
+
+### Database setup (required before deploying)
+
+After the existing `supabase/schema.sql`, run `supabase/migrations/20260922_store_onboarding.sql` in the project's Supabase SQL editor. This migration creates the owner-only `store_onboarding` table, catalogue preference columns, and the `complete_store_onboarding` transaction. It can be reapplied safely. The migration has not been applied to a live database by this change.
+
+Set the existing `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Onboarding uses the authenticated user's session and does not require a service-role key. The existing public `uploads` bucket must be configured for authenticated uploads.
+
+Draft details are stored as JSON in the private table, keyed by `user_id`, with the current step, completion flag and timestamps. They are saved after completed steps and one second after edits. Failed saves remain visible and can be retried; unsaved edits trigger the browser's leave warning. No personal draft details are stored in localStorage. Final submission validates on the client and API, then updates the store and completes the draft in one database transaction. Unique username enforcement handles competing slug claims.
+
+Slugs support internal hyphens and exclude application routes. The displayed `productshare.in/store/[slug]` links use the existing storefront routing, which redirects to the canonical store subdomain in production. Catalogue currency, brand accent and enquiry preferences are applied to the storefront as well as the preview. Uploaded logos are public assets; customer contact details and other setup answers stay in the private draft record.
+
+### Validation
+
+Run `npm run dev` in one terminal and `npm run test:onboarding` in another. The browser test uses Edge on Windows; elsewhere first run `npx playwright install chromium`. Optional environment variables: `ONBOARDING_TEST_URL` (default `http://localhost:3001`) and `PLAYWRIGHT_CHANNEL`.
+
+The test intercepts Supabase and completion requests; it never creates a real customer or changes live data. It covers all seven steps, invalid Indian phone numbers, unavailable slugs, custom-value draft restoration, save failure/retry, viewport widths of 320/390/768/1024/1440px, completion, and the WhatsApp support link. Screenshots are written under `tests/` and ignored by Git. A real authenticated integration check against the migrated Supabase project is still required before release.
+
+Database regression coverage is in `tests/onboarding.database.cjs`. Install `@electric-sql/pglite` in a temporary directory, set `PGLITE_MODULE` to that package's absolute path, then run `node tests/onboarding.database.cjs`. This executes the migration twice in an isolated embedded PostgreSQL database and verifies owner-only draft access, anonymous denial, reserved slugs, atomic completion, repeated submission, and rollback on duplicate slugs. It does not connect to Supabase.

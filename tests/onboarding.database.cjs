@@ -1,0 +1,38 @@
+// Run with PGLITE_MODULE pointing to an installed @electric-sql/pglite package.
+const { PGlite } = require(process.env.PGLITE_MODULE || '@electric-sql/pglite');
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+(async () => {
+  const db = new PGlite();
+  await db.exec(`create role anon; create role authenticated; create schema auth;
+    create table auth.users(id uuid primary key, email text);
+    create function auth.uid() returns uuid language sql as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+    grant usage on schema auth to authenticated;
+    insert into auth.users values ('11111111-1111-4111-8111-111111111111', 'one@example.com'), ('22222222-2222-4222-8222-222222222222', 'two@example.com');`);
+  await db.exec(fs.readFileSync('supabase/schema.sql', 'utf8').split('-- Public bucket')[0]);
+  const migration = fs.readFileSync('supabase/migrations/20260922_store_onboarding.sql', 'utf8');
+  await db.exec(migration);
+  await db.exec(migration);
+  const first = '11111111-1111-4111-8111-111111111111', second = '22222222-2222-4222-8222-222222222222';
+  await db.exec(`set role authenticated; set request.jwt.claim.sub = '${first}'`);
+  await db.query('insert into store_onboarding(user_id) values ($1)', [first]);
+  await assert.rejects(db.query('insert into store_onboarding(user_id) values ($1)', [second]), /row-level security/);
+  await assert.rejects(db.query('update store_onboarding set onboarding_completed = true where user_id = $1', [first]), /row-level security/);
+  const payload = { full_name: 'Ananya Sharma', email: 'one@example.com', country_code: '+91', contact_number: '9876543210', store_name: 'Everyday Edit', store_description: 'Everyday essentials', store_logo_url: '', city: 'Kochi', state: 'Kerala', business_category: 'Home Décor', custom_business_category: '', catalogue_sharing_methods: ['WhatsApp images'], product_count_range: '20–50', store_slug: 'everyday-edit', brand_color: '#6860C9', whatsapp_number: '919876543210', show_whatsapp_button: true, allow_product_enquiries: true, currency: 'INR' };
+  await assert.rejects(db.query('select complete_store_onboarding($1::jsonb)', [JSON.stringify({...payload, store_slug: 'add-product'})]), /Invalid onboarding/);
+  await db.query('select complete_store_onboarding($1::jsonb)', [JSON.stringify(payload)]);
+  await db.query('select complete_store_onboarding($1::jsonb)', [JSON.stringify(payload)]);
+  assert.equal((await db.query('select * from stores where id = $1', [first])).rows.length, 1);
+  assert.equal((await db.query('select onboarding_completed from store_onboarding where user_id = $1', [first])).rows[0].onboarding_completed, true);
+  await db.exec(`set request.jwt.claim.sub = '${second}'`);
+  assert.equal((await db.query('select * from store_onboarding')).rows.length, 0);
+  await db.query('insert into store_onboarding(user_id) values ($1)', [second]);
+  await assert.rejects(db.query('select complete_store_onboarding($1::jsonb)', [JSON.stringify(payload)]), /duplicate key/);
+  assert.equal((await db.query('select onboarding_completed from store_onboarding where user_id = $1', [second])).rows[0].onboarding_completed, false);
+  assert.equal((await db.query('select * from stores where id = $1', [second])).rows.length, 0);
+  await db.exec('reset role; set role anon;');
+  await assert.rejects(db.query('select * from store_onboarding'), /permission denied/);
+  await assert.rejects(db.query('select complete_store_onboarding($1::jsonb)', [JSON.stringify(payload)]), /permission denied/);
+  await db.close();
+  console.log('PASS: migration syntax/reapplication, owner isolation, anonymous denial, reserved slug rejection, atomic completion, idempotency and collision rollback.');
+})().catch(error => { console.error(error); process.exit(1); });

@@ -10,6 +10,7 @@ import {
 } from "@/lib/storefront-url";
 
 const APEX_ONLY_PREFIXES = [
+  "/onboarding",
   "/login",
   "/register",
   "/auth",

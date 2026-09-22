@@ -92,6 +92,7 @@ export default async function Page({ params }: ProductRouteProps) {
   if (storefrontProduct.store.isOffline) {
     return (
       <StorefrontShell
+      preferences={storefrontProduct.store}
         theme={storefrontProduct.store.storeTheme}
         font={storefrontProduct.store.storeFont}
         onSubdomain={onSubdomain}
@@ -111,6 +112,7 @@ export default async function Page({ params }: ProductRouteProps) {
 
   return (
     <StorefrontShell
+      preferences={storefrontProduct.store}
       theme={storefrontProduct.store.storeTheme}
       font={storefrontProduct.store.storeFont}
       onSubdomain={onSubdomain}

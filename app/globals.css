@@ -340,7 +340,7 @@ body {
 
 .sf-btn {
   background: var(--sf-accent);
-  color: #fff;
+  color: var(--sf-accent-text, #fff);
 }
 
 .sf-btn:hover {
