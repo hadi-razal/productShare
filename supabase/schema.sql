@@ -165,3 +165,6 @@ create policy "auth delete uploads"
 on storage.objects for delete
 to authenticated
 using (bucket_id = 'uploads');
+
+-- Customizable storefront header
+alter table public.stores add column if not exists store_header jsonb not null default '{}'::jsonb;

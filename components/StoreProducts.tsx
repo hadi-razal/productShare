@@ -14,7 +14,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import Link from "next/link";
-import Image from "next/image";
+import StoreHeader from "./StoreHeader";
 import { getUserId } from "@/helpers/getUserId";
 import { incrementStoreVisits, listProductsByStore } from "@/lib/db";
 import ProductCard from "@/components/ProductCard";
@@ -223,32 +223,8 @@ const StoreProducts = ({
     <div className="sf-page relative w-full pb-20">
       <header className="sf-store-header">
         <div className="sf-store-header-inner">
-          <div className="sf-store-identity">
-            {storeLogo ? (
-              <Image
-                src={storeLogo}
-                alt=""
-                width={52}
-                height={52}
-                unoptimized={storeLogo.startsWith("http")}
-                className="sf-store-mark-image"
-              />
-            ) : (
-              <div className="sf-store-mark" aria-hidden="true">
-                {displayStoreName.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <div className="sf-store-copy">
-              <h1>{displayStoreName}</h1>
-              {description ? <p>{description}</p> : null}
-            </div>
-            <p className="sf-store-count">
-              {products.length} {products.length === 1 ? "product" : "products"}
-            </p>
-          </div>
-
-          {preferences.showWhatsappButton !== false && /^[1-9]\d{7,14}$/.test(preferences.whatsappNumber || "") && <a className="sf-ghost inline-flex min-h-11 items-center rounded-lg px-4 my-3 text-sm" href={`https://wa.me/${preferences.whatsappNumber}`} target="_blank" rel="noopener noreferrer">Contact us on WhatsApp</a>}
-          {announcement ? <p className="sf-store-note">{announcement}</p> : null}
+          <StoreHeader name={displayStoreName} logo={storeLogo} description={description} note={announcement} header={preferences.storeHeader} whatsapp={preferences.showWhatsappButton !== false ? preferences.whatsappNumber : undefined} />
+          {isStoreOwner && <Link className="sf-customize" href={nav.dashboardHref("/store/settings#store-header")}><FiSettings aria-hidden="true" /> Customize header</Link>}
 
           <div className="sf-store-tools">
             <div className="sf-store-search">

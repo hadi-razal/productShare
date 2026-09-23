@@ -14,6 +14,8 @@ import { getStoreById, updateStore } from "@/lib/db";
 import { useRouter } from "next/navigation";
 import { userType } from "@/type";
 import toast from "react-hot-toast";
+import { normalizeStoreHeader, type StoreHeader } from "@/lib/store-header";
+import StoreBannerEditor from "@/components/StoreBannerEditor";
 import StoreSettingsPreview from "@/components/StoreSettingsPreview";
 import {
   isUsernameAvailable,
@@ -60,11 +62,13 @@ const SettingsPage: React.FC = () => {
   const [whatsappNumber, setWhatsappNumber] = useState<string>("");
   const [storeTheme, setStoreTheme] = useState<StoreThemeId>("minimal");
   const [storeFont, setStoreFont] = useState<StoreFontId>("default");
+  const [storeHeader, setStoreHeader] = useState<StoreHeader>(() => normalizeStoreHeader(null));
+  const [description, setDescription] = useState("");
   const [additionalNotes, setAdditionalNotes] = useState<string>("");
+  const [bannerUploading, setBannerUploading] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [logoImage, setLogoImage] = useState<File | null>(null);
   const [logoImageUrl, setLogoImageUrl] = useState<string | null>(null);
-  const [newPassword, setNewPassword] = useState<string>("");
   const [isOffline, setIsOffline] = useState(false);
   const [visibilitySaving, setVisibilitySaving] = useState(false);
   const [productCategories, setProductCategories] = useState<string[]>([]);
@@ -98,6 +102,8 @@ const SettingsPage: React.FC = () => {
         setEmail(data.email || "");
         setWhatsappNumber(normalizeWhatsappNumber(data?.whatsappNumber));
         setAdditionalNotes(data?.additionalNotes || "");
+        setStoreHeader(normalizeStoreHeader(data.storeHeader));
+        setDescription(data.description || "");
         setLogoImageUrl(data?.logoImage || null);
         setStoreTheme(normalizeStoreTheme(data?.storeTheme));
         setStoreFont(normalizeStoreFont(data?.storeFont));
@@ -112,7 +118,7 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleSaveChanges = async () => {
-    if (!userId) return;
+    if (!userId || bannerUploading || loading) return;
 
     if (!name.trim()) {
       toast.error("Store name is required.");
@@ -156,6 +162,8 @@ const SettingsPage: React.FC = () => {
         themeColor: STORE_THEME_MAP[storeTheme].accent,
         storeTheme,
         storeFont,
+        storeHeader,
+        description,
         additionalNotes,
         whatsappNumber: storeWhatsappDigits(whatsappNumber),
         isOffline,
@@ -203,7 +211,7 @@ const SettingsPage: React.FC = () => {
       router.push("/store");
     } catch (error) {
       console.error("Error saving changes:", error);
-      toast.error("Failed to save changes.");
+      toast.error(error && typeof error === "object" && "message" in error && typeof error.message === "string" ? error.message : "Failed to save changes.");
     } finally {
       setLoading(false);
     }
@@ -551,12 +559,30 @@ const SettingsPage: React.FC = () => {
             </div>
           </div>
 
+          <div id="store-header" className="ds-form-group scroll-mt-6">
+            <h2 className="ds-form-label">Store header</h2>
+            <p className="ds-form-hint mb-4">Share an offer, introduce a collection, or keep customers updated.</p>
+            <label className="ds-form-label" htmlFor="header-layout">Layout</label>
+            <select id="header-layout" className="ds-form-input mb-4" value={storeHeader.layout} onChange={e => setStoreHeader({...storeHeader, layout: e.target.value as StoreHeader["layout"]})}><option value="spacious">Spacious</option><option value="compact">Compact</option></select>
+            <label className="ds-form-label" htmlFor="header-description">Store introduction</label>
+            <input id="header-description" className="ds-form-input mb-4" value={description} maxLength={200} onChange={e => setDescription(e.target.value)} placeholder="What makes your store special?" />
+            <StoreBannerEditor userId={userId} header={storeHeader} onChange={setStoreHeader} onBusyChange={setBannerUploading} disabled={loading} />
+            <p className="ds-form-hint mb-4">Uploaded banners replace the text spotlight below. Remove all banners to show the text spotlight again.</p>
+            <label className="flex items-center gap-2 text-sm mb-4"><input type="checkbox" checked={storeHeader.enabled} onChange={e => setStoreHeader({...storeHeader, enabled: e.target.checked})} /> Show spotlight on my store</label>
+            <label className="ds-form-label" htmlFor="header-kind">Spotlight type</label>
+            <select id="header-kind" className="ds-form-input mb-4" value={storeHeader.kind} onChange={e => setStoreHeader({...storeHeader, kind: e.target.value as StoreHeader["kind"]})}><option value="announcement">Announcement</option><option value="offer">Special offer</option><option value="arrival">New arrivals</option></select>
+            <label className="ds-form-label" htmlFor="header-title">Headline</label>
+            <input id="header-title" className="ds-form-input mb-4" maxLength={100} value={storeHeader.title} onChange={e => setStoreHeader({...storeHeader, title: e.target.value})} placeholder="e.g. A treat for your first order" />
+            {storeHeader.kind === "offer" && <><label className="ds-form-label" htmlFor="header-code">Promo code (optional)</label><input id="header-code" className="ds-form-input" maxLength={30} value={storeHeader.code} onChange={e => setStoreHeader({...storeHeader, code: e.target.value})} placeholder="WELCOME10" /><p className="ds-form-hint">Customers can mention this code when ordering. Discounts are handled by you.</p></>}
+          </div>
           <div className="ds-form-group">
-            <label className="ds-form-label">
-              Additional Notes <span className="ds-optional">Optional</span>
+            <label className="ds-form-label" htmlFor="header-message">
+              Spotlight message <span className="ds-optional">Optional</span>
             </label>
             <textarea
+              id="header-message"
               rows={3}
+              maxLength={500}
               value={additionalNotes}
               onChange={(e) => setAdditionalNotes(e.target.value)}
               className="ds-form-input resize-none"
@@ -596,7 +622,7 @@ const SettingsPage: React.FC = () => {
           <motion.button
             onClick={handleSaveChanges}
             className="ds-btn-primary"
-            disabled={loading}
+            disabled={loading || bannerUploading}
           >
             {loading ? "Saving..." : "Save Changes"}
           </motion.button>
@@ -610,6 +636,9 @@ const SettingsPage: React.FC = () => {
             themeColor={STORE_THEME_MAP[storeTheme].accent}
             storeTheme={storeTheme}
             storeFont={storeFont}
+            storeHeader={storeHeader}
+            description={description}
+            whatsappNumber={storeWhatsappDigits(whatsappNumber)}
             additionalNotes={additionalNotes}
             isOffline={isOffline}
           />

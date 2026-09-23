@@ -36,6 +36,8 @@ export interface ProductType {
     showWhatsappButton?: boolean;
     allowProductEnquiries?: boolean;
     currency?: string;
+    storeHeader?: import("@/lib/store-header").StoreHeader;
+    description?: string;
     additionalNotes: string;
     username: string;
     onboardingCompleted?: boolean | null;
@@ -46,3 +48,4 @@ export interface ProductType {
     isOffline?: boolean;
     productCategories?: string[];
   }
+

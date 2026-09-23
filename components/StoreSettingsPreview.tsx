@@ -1,6 +1,7 @@
 "use client";
 
 import { type CSSProperties } from "react";
+import StoreHeader from "./StoreHeader";
 import { FiSearch } from "react-icons/fi";
 import {
   normalizeStoreFont,
@@ -23,6 +24,9 @@ interface StoreSettingsPreviewProps {
   themeColor: string;
   storeTheme?: StoreThemeId | string;
   storeFont?: StoreFontId | string;
+  storeHeader?: import("@/lib/store-header").StoreHeader;
+  description?: string;
+  whatsappNumber?: string;
   additionalNotes: string;
   isOffline?: boolean;
 }
@@ -41,6 +45,7 @@ const StoreSettingsPreview = ({
   themeColor,
   storeTheme,
   storeFont,
+  storeHeader, description, whatsappNumber,
   additionalNotes,
   isOffline = false,
 }: StoreSettingsPreviewProps) => {
@@ -89,36 +94,7 @@ const StoreSettingsPreview = ({
               } as CSSProperties
             }
           >
-            <div
-              className="flex items-center gap-3 px-4 py-3"
-              style={{ background: accent }}
-            >
-              {logoUrl ? (
-                <img
-                  src={logoUrl}
-                  alt="Store logo"
-                  className="h-10 w-10 rounded-full object-cover border-2 border-white/30 flex-shrink-0"
-                />
-              ) : (
-                <div className="h-10 w-10 rounded-full bg-white/20 border-2 border-white/30 flex-shrink-0 flex items-center justify-center text-white text-xs font-bold">
-                  {storeLabel.charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div className="min-w-0">
-                <p className="sf-title text-white font-bold text-sm truncate">{storeLabel}</p>
-                <p className="text-white/70 text-[10px] truncate">@{username || "username"}</p>
-              </div>
-            </div>
-
-            {additionalNotes.trim() && (
-              <p
-                className="sf-muted line-clamp-2 px-4 py-2 text-[10px] leading-4"
-                style={{ borderBottom: "1px solid var(--sf-border)" }}
-              >
-                {additionalNotes.trim()}
-              </p>
-            )}
-
+            <div className="p-4"><StoreHeader name={storeLabel} logo={logoUrl} description={description} note={additionalNotes} header={storeHeader} whatsapp={whatsappNumber} /></div>
             <div className="px-3 py-3" style={{ borderBottom: "1px solid var(--sf-border)" }}>
               <div className="relative">
                 <input

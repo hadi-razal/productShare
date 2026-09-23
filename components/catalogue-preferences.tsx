@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useContext } from "react";
 export type CataloguePreferences = {
+  storeHeader?: import("@/lib/store-header").StoreHeader;
   themeColor?: string;
   currency?: string;
   showWhatsappButton?: boolean;

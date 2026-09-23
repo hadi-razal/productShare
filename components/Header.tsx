@@ -11,40 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { onAuthChange, signOutUser } from "@/lib/auth";
-import { getStoreByUsername } from "@/lib/db";
 import Image from "next/image";
-
-const storeThemeCache = new Map<string, string | null>();
-const storeThemePromiseCache = new Map<string, Promise<string | null>>();
-
-const getStoreThemeColor = async (username: string) => {
-  if (storeThemeCache.has(username)) {
-    return storeThemeCache.get(username) ?? null;
-  }
-
-  const cachedPromise = storeThemePromiseCache.get(username);
-  if (cachedPromise) {
-    return cachedPromise;
-  }
-
-  const themePromise = (async () => {
-    try {
-      const store = await getStoreByUsername(username);
-      const color = store?.themeColor || null;
-
-      storeThemeCache.set(username, color);
-      return color;
-    } catch (error) {
-      console.error("Error fetching theme color:", error);
-      return null;
-    } finally {
-      storeThemePromiseCache.delete(username);
-    }
-  })();
-
-  storeThemePromiseCache.set(username, themePromise);
-  return themePromise;
-};
 
 const HIDDEN_HEADER_ROUTES = [
   "/onboarding",
@@ -66,7 +33,6 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [themeColor, setThemeColor] = useState<string | null>(null);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -118,35 +84,6 @@ const Header = () => {
       window.removeEventListener("keydown", handleEscape);
     };
   }, [menuOpen]);
-
-  useEffect(() => {
-    let isCancelled = false;
-
-    if (!isStorePage) {
-      setThemeColor(null);
-      return () => {
-        isCancelled = true;
-      };
-    }
-
-    const username = pathname.split("/")[2];
-    if (!username) {
-      setThemeColor(null);
-      return () => {
-        isCancelled = true;
-      };
-    }
-
-    void getStoreThemeColor(username).then((color) => {
-      if (!isCancelled) {
-        setThemeColor(color);
-      }
-    });
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [pathname, isStorePage]);
 
   const handleLogout = async () => {
     await signOutUser();

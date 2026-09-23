@@ -161,10 +161,6 @@ export default async function RootLayout({
             gtag('config', 'G-LRPNWNH0W1');
           `}
         </Script>
-        <Script
-          src="https://checkout.razorpay.com/v1/checkout.js"
-          strategy="lazyOnload"
-        />
 
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd()} />

@@ -16,7 +16,6 @@ import {
   addCustomCategory,
   asCategoryList,
   categoryKeys,
-  categoryLabel,
   mergeProductCategories,
   renameCategory,
 } from "@/lib/product-categories";

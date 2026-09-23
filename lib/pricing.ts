@@ -71,28 +71,6 @@ export const yearlyEffectiveMonthlyInr = (monthlyPriceInr: number) =>
 export const planPriceInr = (plan: CatalogPlan, cycle: BillingCycle) =>
   cycle === "yearly" ? yearlyPriceInr(plan.monthlyPriceInr) : plan.monthlyPriceInr;
 
-export const razorpayPlanEnvKey = (planId: PlanId, cycle: BillingCycle) => {
-  const keys = {
-    plus: {
-      monthly: "NEXT_PUBLIC_RZP_PLUS_MONTHLY_PLAN_ID",
-      yearly: "NEXT_PUBLIC_RZP_PLUS_YEARLY_PLAN_ID",
-    },
-    pro: {
-      monthly: "NEXT_PUBLIC_RZP_PRO_MONTHLY_PLAN_ID",
-      yearly: "NEXT_PUBLIC_RZP_PRO_YEARLY_PLAN_ID",
-    },
-  } as const;
-  return keys[planId][cycle];
-};
-
-export const razorpayPlanId = (planId: PlanId, cycle: BillingCycle) => {
-  const specific = process.env[razorpayPlanEnvKey(planId, cycle)];
-  if (specific) return specific;
-  return cycle === "yearly"
-    ? process.env.NEXT_PUBLIC_RZP_YEARLY_PLAN_ID
-    : process.env.NEXT_PUBLIC_RZP_MONTHLY_PLAN_ID;
-};
-
 export const formatInrAmount = (amount: number) =>
   amount.toLocaleString("en-IN", {
     minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,

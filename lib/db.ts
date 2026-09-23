@@ -1,3 +1,4 @@
+import { normalizeStoreHeader, packStoreNotes, unpackStoreNotes } from "@/lib/store-header";
 import { supabase } from "@/lib/supabase";
 import { asCategoryList } from "@/lib/product-categories";
 import { ensureStoreProfileComplete } from "@/lib/store-profile";
@@ -30,6 +31,7 @@ type StoreRow = {
   show_whatsapp_button?: boolean | null;
   allow_product_enquiries?: boolean | null;
   currency?: string | null;
+  store_header?: unknown;
   additional_notes?: string | null;
   logo_image?: string | null;
   image?: string | null;
@@ -90,7 +92,8 @@ const storeFromRow = (row: StoreRow): StoreRecord => ({
   showWhatsappButton: row.show_whatsapp_button ?? true,
   allowProductEnquiries: row.allow_product_enquiries ?? true,
   currency: row.currency ?? "INR",
-  additionalNotes: row.additional_notes ?? "",
+  storeHeader: unpackStoreNotes(row.additional_notes).header ?? normalizeStoreHeader(row.store_header),
+  additionalNotes: unpackStoreNotes(row.additional_notes).notes,
   logoImage: row.logo_image ?? undefined,
   image: row.image ?? undefined,
   themeColor: row.theme_color ?? "#000000",
@@ -262,6 +265,7 @@ export const updateStore = async (
   if (input.name !== undefined) row.name = input.name;
   if (input.email !== undefined) row.email = input.email;
   if (input.whatsappNumber !== undefined) row.whatsapp_number = input.whatsappNumber;
+  if (input.storeHeader !== undefined) row.store_header = normalizeStoreHeader(input.storeHeader);
   if (input.additionalNotes !== undefined) row.additional_notes = input.additionalNotes;
   if (input.logoImage !== undefined) row.logo_image = input.logoImage;
   if (input.image !== undefined) row.image = input.image;
@@ -284,42 +288,40 @@ export const updateStore = async (
     row.product_categories = asCategoryList(input.productCategories);
   }
 
-  const { error } = await supabase.from("stores").update(row).eq("id", id);
-  if (error) {
+  // Preserve fallback header data when another editor updates only the notes.
+  if ((input.additionalNotes !== undefined && input.storeHeader === undefined) ||
+      (input.storeHeader !== undefined && input.additionalNotes === undefined)) {
+    const { data, error } = await supabase.from("stores").select("additional_notes").eq("id", id).single();
+    if (error) throw error;
+    const stored = unpackStoreNotes(data.additional_notes);
+    if (input.storeHeader !== undefined) row.additional_notes = stored.notes;
+    else if (stored.header) row.additional_notes = packStoreNotes(input.additionalNotes!, stored.header);
+  }
+
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const { error } = await supabase.from("stores").update(row).eq("id", id);
+    if (!error) return;
     const missingColumn =
       error.message.match(/'([^']+)' column/i)?.[1] ??
-      error.message.match(/column \w+\.(\w+) does not exist/i)?.[1];
-    if (missingColumn && missingColumn in row) {
-      delete row[missingColumn];
-      if (
-        missingColumn === "store_font" &&
-        input.storeTheme !== undefined &&
-        input.storeFont
-      ) {
-        row.store_theme = packedStoreThemeValue(
-          String(input.storeTheme),
-          String(input.storeFont),
-        );
+      error.message.match(/column (?:\w+\.)?(\w+) does not exist/i)?.[1];
+    if (!missingColumn || !(missingColumn in row) || !["PGRST204", "42703"].includes(error.code)) throw error;
+
+    if (missingColumn === "store_header") {
+      let notes = typeof row.additional_notes === "string" ? unpackStoreNotes(row.additional_notes).notes : undefined;
+      if (notes === undefined) {
+        const current = await supabase.from("stores").select("additional_notes").eq("id", id).single();
+        if (current.error) throw current.error;
+        notes = unpackStoreNotes(current.data.additional_notes).notes;
       }
-      const retry = await supabase.from("stores").update(row).eq("id", id);
-      if (!retry.error) return;
+      row.additional_notes = packStoreNotes(notes, normalizeStoreHeader(input.storeHeader));
+    } else if (missingColumn === "store_font" && input.storeTheme !== undefined && input.storeFont) {
+      row.store_theme = packedStoreThemeValue(String(input.storeTheme), String(input.storeFont));
+    } else if (!["store_theme", "store_font", "is_offline", "product_categories", "onboarding_completed"].includes(missingColumn)) {
+      throw error;
     }
-    const missingOptionalColumn =
-      /store_theme|store_font|is_offline|product_categories|onboarding_completed/i.test(
-        error.message,
-      ) || error.code === "PGRST204";
-    if (missingOptionalColumn) {
-      delete row.store_theme;
-      delete row.store_font;
-      delete row.is_offline;
-      delete row.product_categories;
-      delete row.onboarding_completed;
-      const retry = await supabase.from("stores").update(row).eq("id", id);
-      if (retry.error) throw retry.error;
-      return;
-    }
-    throw error;
+    delete row[missingColumn];
   }
+  throw new Error("Store settings could not be saved. Please try again.");
 };
 
 export const incrementStoreVisits = async (id: string): Promise<void> => {
