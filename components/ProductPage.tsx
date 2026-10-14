@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { getProduct, incrementProductViews } from "@/lib/db";
 import {
@@ -29,6 +29,13 @@ interface ProductPageProps {
   isOffline?: boolean;
 }
 
+interface EnquiryDetails {
+  name: string;
+  address: string;
+  phone: string;
+}
+
+const ENQUIRY_STORAGE_KEY = "MyShop_Enquiry_Details";
 
 
 const ProductSkeleton = () => (
@@ -82,6 +89,28 @@ const ProductPage = ({
   const [isOwner, setIsOwner] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [enquiryOpen, setEnquiryOpen] = useState(false);
+  const [enquiryDetails, setEnquiryDetails] = useState<EnquiryDetails>({
+    name: "",
+    address: "",
+    phone: "",
+  });
+  const [enquiryError, setEnquiryError] = useState("");
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(ENQUIRY_STORAGE_KEY) || "null");
+      if (saved && typeof saved === "object") {
+        setEnquiryDetails({
+          name: typeof saved.name === "string" ? saved.name : "",
+          address: typeof saved.address === "string" ? saved.address : "",
+          phone: typeof saved.phone === "string" ? saved.phone : "",
+        });
+      }
+    } catch {
+      // Ignore unavailable or malformed storage.
+    }
+  }, []);
 
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
@@ -187,6 +216,7 @@ const ProductPage = ({
       if (event.key === "Escape") {
         setZoomOpen(false);
         setShareOpen(false);
+        setEnquiryOpen(false);
       }
       if (mediaArray.length < 2) return;
       if (event.key === "ArrowRight") nextImage();
@@ -241,9 +271,40 @@ const ProductPage = ({
   };
 
   const handleEnquire = () => {
+    if (storeWhatsappDigits(storeWhatsapp).length < 10) return;
+    setEnquiryError("");
+    setEnquiryOpen(true);
+  };
+
+  const submitEnquiry = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const number = storeWhatsappDigits(storeWhatsapp);
     if (number.length < 10) return;
-    const message = productMessage();
+    const name = enquiryDetails.name.trim();
+    const address = enquiryDetails.address.trim();
+    const phone = enquiryDetails.phone.trim();
+    if (!name || !address || !phone) {
+      setEnquiryError("Please fill in your name, address and contact number.");
+      return;
+    }
+    if (!/^\+?[\d\s()-]{7,20}$/.test(phone) || phone.replace(/\D/g, "").length < 7) {
+      setEnquiryError("Please enter a valid contact number.");
+      return;
+    }
+    try {
+      localStorage.setItem(ENQUIRY_STORAGE_KEY, JSON.stringify({ name, address, phone }));
+    } catch {
+      // Storage unavailable; details just won't be prefilled next time.
+    }
+    const message = [
+      productMessage(),
+      "",
+      "*My details*",
+      `Name: ${name}`,
+      `Address: ${address}`,
+      `Contact: ${phone}`,
+    ].join("\n");
+    setEnquiryOpen(false);
     window.open(
       `https://wa.me/${number}?text=${encodeURIComponent(message)}`,
       "_blank",
@@ -574,6 +635,97 @@ const ProductPage = ({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {enquiryOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setEnquiryOpen(false)}
+        >
+          <form
+            className="sf-card w-full max-w-sm p-6"
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={submitEnquiry}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="enquiry-title"
+            noValidate
+          >
+            <div className="mb-2 flex items-center justify-between">
+              <h3
+                id="enquiry-title"
+                className="sf-title text-[12px] font-medium uppercase tracking-[0.16em]"
+              >
+                Enquire on WhatsApp
+              </h3>
+              <button
+                type="button"
+                onClick={() => setEnquiryOpen(false)}
+                className="sf-muted p-1 hover:opacity-80"
+                aria-label="Close"
+              >
+                <FiX className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="sf-muted mb-5 text-xs leading-relaxed">
+              Share your details so the seller can get back to you about{" "}
+              <strong>{productData.name}</strong>.
+            </p>
+            <div className="flex flex-col gap-4">
+              {(
+                [
+                  { key: "name", label: "Name", type: "text", autoComplete: "name" },
+                  { key: "phone", label: "Contact number", type: "tel", autoComplete: "tel" },
+                ] as const
+              ).map((field) => (
+                <label key={field.key} className="flex flex-col gap-1.5">
+                  <span className="sf-muted text-[11px] font-medium uppercase tracking-[0.16em]">
+                    {field.label}
+                  </span>
+                  <input
+                    type={field.type}
+                    autoComplete={field.autoComplete}
+                    required
+                    value={enquiryDetails[field.key]}
+                    onChange={(e) =>
+                      setEnquiryDetails((prev) => ({ ...prev, [field.key]: e.target.value }))
+                    }
+                    className="sf-input w-full border px-3 py-2.5 text-sm outline-none"
+                    style={{ borderRadius: "var(--sf-radius-sm)" }}
+                  />
+                </label>
+              ))}
+              <label className="flex flex-col gap-1.5">
+                <span className="sf-muted text-[11px] font-medium uppercase tracking-[0.16em]">
+                  Address
+                </span>
+                <textarea
+                  autoComplete="street-address"
+                  required
+                  rows={3}
+                  value={enquiryDetails.address}
+                  onChange={(e) =>
+                    setEnquiryDetails((prev) => ({ ...prev, address: e.target.value }))
+                  }
+                  className="sf-input w-full resize-none border px-3 py-2.5 text-sm outline-none"
+                  style={{ borderRadius: "var(--sf-radius-sm)" }}
+                />
+              </label>
+              {enquiryError && (
+                <p className="text-xs text-red-600" role="alert">
+                  {enquiryError}
+                </p>
+              )}
+              <button
+                type="submit"
+                className="sf-btn mt-1 inline-flex w-full items-center justify-center gap-2 py-3.5 text-[12px] font-medium uppercase tracking-[0.16em]"
+              >
+                <FaWhatsapp className="h-4 w-4" />
+                Send enquiry
+              </button>
+            </div>
+          </form>
         </div>
       )}
 

@@ -1,6 +1,10 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { LayoutGrid, List } from "lucide-react";
+import { ErrorState } from "@/components/dashboard/WorkspaceUI";
+import ManagementProductCard from "@/components/dashboard/ManagementProductCard";
+import WorkspaceDialog from "@/components/dashboard/WorkspaceDialog";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -39,6 +43,9 @@ const csvCell = (value: string | number) =>
 
 export default function ProductsPage() {
   const router = useRouter();
+  const [view, setView] = useState<"list" | "grid">("list");
+  const [sort, setSort] = useState("default");
+  const [loadError, setLoadError] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState("");
@@ -54,6 +61,7 @@ export default function ProductsPage() {
   const [deleting, setDeleting] = useState(false);
 
   const fetchProducts = async (uid: string) => {
+    setLoadError(false);
     const [productsData, store] = await Promise.all([
       listProductsByStore(uid),
       getStoreById(uid),
@@ -73,6 +81,7 @@ export default function ProductsPage() {
       try {
         await fetchProducts(user.uid);
       } catch (error) {
+        setLoadError(true);
         console.error(error);
         toast.error("Could not load products.");
       } finally {
@@ -109,7 +118,7 @@ export default function ProductsPage() {
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
-    return products.filter((product) => {
+    const matches = products.filter((product) => {
       const hidden = Boolean(product.isHidden);
       const outOfStock = product.isInStock === false;
       const category = String(product.category || "").trim();
@@ -124,7 +133,8 @@ export default function ProductsPage() {
         (product.tags || "").toLowerCase().includes(term)
       );
     });
-  }, [categoryFilter, products, search, statusFilter]);
+    return sort === "name" ? matches.sort((a, b) => (a.name || "").localeCompare(b.name || "")) : sort === "views" ? matches.sort((a, b) => Number(b.views || 0) - Number(a.views || 0)) : sort === "price" ? matches.sort((a, b) => Number(a.discountPrice || a.regularPrice || 0) - Number(b.discountPrice || b.regularPrice || 0)) : matches;
+  }, [categoryFilter, products, search, statusFilter, sort]);
 
   const allVisibleSelected =
     filtered.length > 0 && filtered.every((product) => selected.includes(product.id));
@@ -201,7 +211,7 @@ export default function ProductsPage() {
     <div className="ds-page ds-catalog">
       <div className="ds-catalog-header">
         <div className="ds-catalog-heading">
-          <h2 className="ds-catalog-title">Products</h2>
+          <h1 className="ds-catalog-title">Products</h1>
           <p>
             {loading
               ? "Manage your catalog, stock, and listings."
@@ -245,7 +255,8 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <section className="ds-catalog-card">
+      {loadError && <ErrorState message="We couldn’t load your products. Your catalogue has not been changed." onRetry={() => { if (userId) { setLoading(true); void fetchProducts(userId).catch(() => setLoadError(true)).finally(() => setLoading(false)); } }} />}
+      <section className="ds-catalog-card" hidden={loadError}>
         <div className="ds-catalog-toolbar">
           <div className="ds-catalog-search">
             <FiSearch />
@@ -298,6 +309,8 @@ export default function ProductsPage() {
           )}
         </div>
 
+        <div className="ps-product-options"><span>{selected.length ? `${selected.length} selected` : `${filtered.length} products`}</span><label>Sort by <select aria-label="Sort products" value={sort} onChange={(event) => setSort(event.target.value)}><option value="default">Default</option><option value="name">Name A–Z</option><option value="views">Most viewed</option><option value="price">Price: low to high</option></select></label><div className="ps-view-toggle"><button type="button" aria-label="List view" aria-pressed={view === "list"} onClick={() => setView("list")}><List size={18} /></button><button type="button" aria-label="Grid view" aria-pressed={view === "grid"} onClick={() => setView("grid")}><LayoutGrid size={18} /></button></div></div>
+        {view === "grid" && !loading && filtered.length > 0 ? <div className="ps-product-grid">{filtered.map((product) => <ManagementProductCard key={product.id} product={product} href={username ? `/store/edit/${product.id}` : STORE_SETTINGS_PATH} price={priceLabel(product)} selected={selected.includes(product.id)} onSelect={() => toggleOne(product.id)} />)}</div> :
         <div className="ds-catalog-table-wrap">
           <div className="ds-catalog-table" role="table">
             <div className="ds-catalog-head" role="row">
@@ -388,16 +401,15 @@ export default function ProductsPage() {
               </div>
             )}
           </div>
-        </div>
+        </div>}
       </section>
 
       {confirmDelete && (
-        <div className="ds-catalog-modal" onClick={() => setConfirmDelete(false)}>
-          <div onClick={(event) => event.stopPropagation()}>
+        <WorkspaceDialog label="Delete selected products" onClose={() => setConfirmDelete(false)} busy={deleting}>
             <strong>Delete {selected.length} product{selected.length === 1 ? "" : "s"}?</strong>
             <p>This action cannot be undone.</p>
             <div>
-              <button type="button" className="ds-catalog-btn" onClick={() => setConfirmDelete(false)}>
+              <button type="button" className="ds-catalog-btn" disabled={deleting} onClick={() => setConfirmDelete(false)}>
                 Cancel
               </button>
               <button
@@ -409,8 +421,7 @@ export default function ProductsPage() {
                 {deleting ? "Deleting..." : "Delete"}
               </button>
             </div>
-          </div>
-        </div>
+        </WorkspaceDialog>
       )}
     </div>
   );

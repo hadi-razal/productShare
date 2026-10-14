@@ -15,6 +15,7 @@ export type StoreRecord = userType & {
   premiumUser?: boolean;
   subscriptionId?: string;
   subscribedAt?: string | null;
+  trialEndsAt?: string | null;
   description?: string;
   createdAt?: string;
 };
@@ -45,6 +46,7 @@ type StoreRow = {
   is_premium_user?: boolean | null;
   subscription_id?: string | null;
   subscribed_at?: string | null;
+  trial_ends_at?: string | null;
   is_offline?: boolean | null;
   onboarding_completed?: boolean | null;
   product_categories?: unknown;
@@ -107,6 +109,7 @@ const storeFromRow = (row: StoreRow): StoreRecord => ({
   premiumUser: Boolean(row.is_premium_user),
   subscriptionId: row.subscription_id ?? undefined,
   subscribedAt: row.subscribed_at ?? null,
+  trialEndsAt: row.trial_ends_at ?? null,
   isOffline: Boolean(row.is_offline),
   onboardingCompleted:
     typeof row.onboarding_completed === "boolean" ? row.onboarding_completed : null,
@@ -280,6 +283,7 @@ export const updateStore = async (
   if (input.premiumUser !== undefined) row.is_premium_user = input.premiumUser;
   if (input.subscriptionId !== undefined) row.subscription_id = input.subscriptionId;
   if (input.subscribedAt !== undefined) row.subscribed_at = input.subscribedAt;
+  if (input.trialEndsAt !== undefined) row.trial_ends_at = input.trialEndsAt;
   if (input.isOffline !== undefined) row.is_offline = input.isOffline;
   if (input.onboardingCompleted !== undefined) {
     row.onboarding_completed = Boolean(input.onboardingCompleted);

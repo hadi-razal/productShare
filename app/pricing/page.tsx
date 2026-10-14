@@ -13,6 +13,7 @@ import {
   type BillingCycle,
   type PlanId,
 } from "@/lib/pricing";
+import { TRIAL_DAYS } from "@/lib/subscription";
 
 const rows: { label: string; plus: string; pro: string }[] = [
   { label: "Product listings", plus: `Up to ${PLANS.plus.productLimit}`, pro: `Up to ${PLANS.pro.productLimit}` },
@@ -49,6 +50,9 @@ const PricingPage = () => {
               Plus at {inrLabel(PLANS.plus.monthlyPriceInr)} / month with 30 products and 3 themes.
               Pro at {inrLabel(PLANS.pro.monthlyPriceInr)} / month with 120 products, 10+ themes, and extra catalog tools.
               Yearly billing is {YEARLY_DISCOUNT_PERCENT}% off, paid upfront.
+            </p>
+            <p className="mt-3 text-sm font-medium text-primary">
+              Every new store starts with a {TRIAL_DAYS}-day free trial. No payment needed to start.
             </p>
           </div>
 

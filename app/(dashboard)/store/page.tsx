@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { PageHeader, QuickActionCard, SetupTaskCard, ErrorState } from "@/components/dashboard/WorkspaceUI";
+import { Plus, FolderPlus, Palette, Share2 } from "lucide-react";
+import CatalogueQrCode from "@/components/dashboard/CatalogueQrCode";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -139,13 +142,14 @@ function StoreTraffic({
   totalViews,
   products,
 }: {
-  visitorData: any[];
+  visitorData: unknown[];
   previewChart: ChartPoint[] | null;
   loading: boolean;
   totalViews: number | null;
   products: DashboardProduct[];
 }) {
   const [metric, setMetric] = useState<TrafficMetric | null>(null);
+  const [days, setDays] = useState(7);
   const tooltipStyle = {
     border: "1px solid var(--ds-border)",
     borderRadius: 8,
@@ -157,12 +161,14 @@ function StoreTraffic({
 
   const weeklyViews = useMemo(() => {
     if (previewChart) return previewChart;
-    return Array.from({ length: 7 }, (_, index) => {
+    return Array.from({ length: days }, (_, index) => {
       const day = new Date();
-      day.setDate(day.getDate() - (6 - index));
-      const views = visitorData.filter((visit: any) => {
-        const timestamp = visit?.timestamp?.toDate?.() || visit?.timestamp;
-        if (!timestamp) return false;
+      day.setDate(day.getDate() - (days - 1 - index));
+      const views = visitorData.filter((visit) => {
+        if (!visit || typeof visit !== "object" || !("timestamp" in visit)) return false;
+        const raw = visit.timestamp;
+        const timestamp = raw && typeof raw === "object" && "toDate" in raw && typeof raw.toDate === "function" ? raw.toDate() : raw;
+        if (!(timestamp instanceof Date) && typeof timestamp !== "string" && typeof timestamp !== "number") return false;
         const visitDate = new Date(timestamp);
         return !Number.isNaN(visitDate.getTime()) && visitDate.toDateString() === day.toDateString();
       }).length;
@@ -171,7 +177,7 @@ function StoreTraffic({
         views,
       };
     });
-  }, [previewChart, visitorData]);
+  }, [previewChart, visitorData, days]);
 
   const moverData = useMemo(
     () =>
@@ -246,6 +252,7 @@ function StoreTraffic({
             {loading ? <Pulse className="mt-2 h-7 w-64" /> : <h2>{heading}</h2>}
           </div>
           <div className="ds-chart-toolbar">
+            {!previewChart && activeMetric === "views" && <select className="ps-date-select" aria-label="Performance date range" value={days} onChange={(event) => setDays(Number(event.target.value))}><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option><option value={90}>Last 90 days</option></select>}
             <div className="ds-chart-switch" role="tablist" aria-label="Chart metric">
               {chartTabs.map((tab) => (
                 <button
@@ -266,7 +273,7 @@ function StoreTraffic({
         {loading ? (
           <Pulse className="h-[226px] w-full" />
         ) : hasActiveChart && activeMetric === "views" ? (
-          <div className="ds-traffic-chart" key="views" aria-label={showingDailyViews ? "Store views for the last seven days" : "Product views"}>
+          <div className="ds-traffic-chart" key="views" aria-label={showingDailyViews ? `Store views for the last ${days} days` : "Product views"}>
             <ResponsiveContainer width="100%" height="100%">
               {showingDailyViews ? (
                 <AreaChart data={viewsChartData} margin={{ top: 10, right: 8, left: -22, bottom: 0 }}>
@@ -280,7 +287,7 @@ function StoreTraffic({
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "var(--ds-muted)", fontSize: 11 }} dy={8} />
                   <YAxis axisLine={false} tickLine={false} allowDecimals={false} tick={{ fill: "var(--ds-muted)", fontSize: 11 }} />
                   <Tooltip cursor={{ stroke: "var(--ds-violet-soft)" }} contentStyle={tooltipStyle} />
-                  <Area type="monotone" dataKey="views" name="Views" stroke="var(--ds-violet)" strokeWidth={2.5} fill="url(#dsViewsFill)" />
+                  <Area isAnimationActive={false} type="monotone" dataKey="views" name="Views" stroke="var(--ds-violet)" strokeWidth={2.5} fill="url(#dsViewsFill)" />
                 </AreaChart>
               ) : (
                 <BarChart data={viewsChartData} margin={{ top: 10, right: 4, left: -22, bottom: 0 }}>
@@ -293,7 +300,7 @@ function StoreTraffic({
                     formatter={(value) => [Number(value).toLocaleString("en-IN"), "Views"]}
                     labelFormatter={(_, payload) => payload?.[0]?.payload?.fullName || ""}
                   />
-                  <Bar dataKey="views" fill="var(--ds-violet)" radius={[7, 7, 2, 2]} maxBarSize={42} />
+                  <Bar isAnimationActive={false} dataKey="views" fill="var(--ds-violet)" radius={[7, 7, 2, 2]} maxBarSize={42} />
                 </BarChart>
               )}
             </ResponsiveContainer>
@@ -311,7 +318,7 @@ function StoreTraffic({
                   formatter={(value) => [Number(value).toLocaleString("en-IN"), "Views"]}
                   labelFormatter={(_, payload) => payload?.[0]?.payload?.fullName || ""}
                 />
-                <Bar dataKey="views" radius={[0, 7, 7, 0]} maxBarSize={22}>
+                <Bar isAnimationActive={false} dataKey="views" radius={[0, 7, 7, 0]} maxBarSize={22}>
                   {moverData.map((entry, index) => (
                     <Cell key={entry.fullName} fill={moverColors[index] || "var(--ds-violet)"} />
                   ))}
@@ -332,7 +339,7 @@ function StoreTraffic({
                   formatter={(value) => [Number(value).toLocaleString("en-IN"), "In stock"]}
                   labelFormatter={(_, payload) => payload?.[0]?.payload?.fullName || ""}
                 />
-                <Bar dataKey="stock" radius={[7, 7, 2, 2]} maxBarSize={42}>
+                <Bar isAnimationActive={false} dataKey="stock" radius={[7, 7, 2, 2]} maxBarSize={42}>
                   {stockData.map((entry) => (
                     <Cell key={entry.fullName} fill={entry.low ? "var(--ds-amber)" : "var(--ds-teal)"} />
                   ))}
@@ -376,7 +383,7 @@ function Readiness({
             <ResponsiveContainer width="100%" height="100%">
               <RadialBarChart innerRadius="80%" outerRadius="100%" data={chartData} startAngle={90} endAngle={-270}>
                 <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
-                <RadialBar background={{ fill: "var(--ds-border)" }} dataKey="value" cornerRadius={10} />
+                <RadialBar isAnimationActive={false} background={{ fill: "var(--ds-border)" }} dataKey="value" cornerRadius={10} />
               </RadialBarChart>
             </ResponsiveContainer>
             <strong>{score}%</strong>
@@ -391,7 +398,7 @@ function Readiness({
         <span className="ds-eyebrow">Next steps</span>
         <Link href="/store/settings" className="ds-next-step">
           <span className="teal"><FiMessageCircle /></span>
-          <div><strong>Add WhatsApp contact</strong><p>Required, so customers can enquire from your catalog</p></div>
+          <div><strong>Review contact details</strong><p>Keep your enquiry contact information up to date</p></div>
           <FiArrowRight />
         </Link>
         <Link href={profileComplete ? "/store/add-product" : STORE_SETTINGS_PATH} className="ds-next-step">
@@ -405,11 +412,14 @@ function Readiness({
 }
 
 export default function StoreDashboard() {
+  const [firstName, setFirstName] = useState("");
+  const [loadError, setLoadError] = useState(false);
+  const [designComplete, setDesignComplete] = useState(false);
   const [stats, setStats] = useState({
     products: null as number | null,
     visitors: null as number | null,
     lowStockItems: null as number | null,
-    visitorData: [] as any[],
+    visitorData: [] as unknown[],
   });
   const [products, setProducts] = useState<DashboardProduct[]>([]);
   const [username, setUsername] = useState<string | null>(null);
@@ -451,11 +461,12 @@ export default function StoreDashboard() {
         router.push("/login");
         return;
       }
+      setFirstName((user.displayName || "").split(" ")[0]);
       setUserId(user.uid);
       void fetchData(user.uid);
     });
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (!username) {
@@ -472,12 +483,14 @@ export default function StoreDashboard() {
   const fetchData = async (uid: string) => {
     try {
       setLoading(true);
+      setLoadError(false);
       const [uname, fetchedProducts, store] = await Promise.all([
         getUsername(uid),
         listProductsByStore(uid),
         getStoreById(uid),
       ]);
       const userData = store;
+      setDesignComplete(Boolean(store?.logoImage));
       const sortedProducts = [...fetchedProducts].sort((a, b) => Number(b.views || 0) - Number(a.views || 0));
       const derivedLowStock = fetchedProducts.filter((product) => {
         const count = stockCount(product);
@@ -498,6 +511,7 @@ export default function StoreDashboard() {
         visitorData: Array.isArray(userData?.visitorData) ? userData.visitorData : [],
       });
     } catch (error) {
+      setLoadError(true);
       console.error("Dashboard error:", error);
       toast.error("We could not refresh your dashboard.");
     } finally {
@@ -527,16 +541,28 @@ export default function StoreDashboard() {
 
   return (
     <div className="ds-page ds-dashboard-page">
+      <PageHeader title={`Welcome back${firstName ? `, ${firstName}` : ""}`} description="Here’s what’s happening with your catalogue.">
+        {username && <Link href={openHref || storefrontInternalPath(username)} target="_blank" className="ds-catalog-btn"><FiExternalLink /> View catalogue</Link>}
+        <Link href={profileComplete ? "/store/add-product" : STORE_SETTINGS_PATH} className="ds-catalog-btn-primary"><Plus size={17} /> Add product</Link>
+      </PageHeader>
+      {loadError && <ErrorState message="Your dashboard could not be loaded. Please try again." onRetry={() => { if (userId) void fetchData(userId); }} />}
+      {!loading && !loadError && (!products.length || !designComplete || !products.some((product) => product.category)) && <section className="ps-setup-card">
+        <div className="ds-panel-header"><div><span className="ds-eyebrow">MAKE IT YOURS</span><h2>Set up your ProductShare catalogue</h2><p>A few small steps. One professional catalogue.</p></div><span className="ps-progress-label">{[products.length > 0, products.some((product) => product.category), designComplete].filter(Boolean).length} of 3 completed</span></div>
+        <progress aria-label="Catalogue setup progress" max={3} value={[products.length > 0, products.some((product) => product.category), designComplete].filter(Boolean).length} />
+        <div className="ps-setup-grid"><SetupTaskCard href={profileComplete ? "/store/add-product" : STORE_SETTINGS_PATH} title="Add your first product" description="Bring your catalogue to life with photos and details." complete={products.length > 0} /><SetupTaskCard href="/store/categories" title="Organize your products" description="Make the right products easy to discover." complete={products.some((product) => Boolean(product.category))} /><SetupTaskCard href="/store/settings" title="Make it your own" description="Add your logo and choose your catalogue design." complete={designComplete} /></div>
+      </section>}
+      <div className="ps-quick-grid"><QuickActionCard href={profileComplete ? "/store/add-product" : STORE_SETTINGS_PATH} icon={Plus} title="Add product" description="Something new to share" /><QuickActionCard href="/store/categories" icon={FolderPlus} title="Create category" description="Keep everything organized" /><QuickActionCard href="#share-catalogue" icon={Share2} title="Share catalogue" description="One link. All your products." /><QuickActionCard href="/store/settings" icon={Palette} title="Customize design" description="Give your brand a home" /></div>
       <section className="ds-metrics-band" aria-label="Store metrics">
         {[
           { label: "Products", value: stats.products, icon: FiPackage, tone: "violet" },
           { label: "Store views", value: stats.visitors, icon: FiEye, tone: "teal" },
-          { label: "Low stock", value: stats.lowStockItems, icon: FiAlertTriangle, tone: "amber" },
+          { label: "Product enquiries", value: null, icon: FiMessageCircle, tone: "violet" },
+          { label: "Link clicks", value: null, icon: FiShare2, tone: "violet" },
         ].map((metric) => (
           <div className="ds-metric" key={metric.label}>
             <span className={`ds-metric-icon ${metric.tone}`}><metric.icon /></span>
-            {loading ? <Pulse className="h-8 w-20" /> : <strong>{(metric.value || 0).toLocaleString("en-IN")}</strong>}
-            <span>{metric.label}</span>
+            {loading ? <Pulse className="h-8 w-20" /> : <strong title={metric.value === null ? "Tracking is not available" : "All time"}>{metric.value === null ? "—" : metric.value.toLocaleString("en-IN")}</strong>}
+            <span>{metric.label}{metric.value === null && !loading && <small className="ps-unavailable">Tracking unavailable</small>}</span>
           </div>
         ))}
         <button
@@ -585,14 +611,14 @@ export default function StoreDashboard() {
           ) : visibleProducts.length ? (
             <div className="ds-product-table">
               <div className="ds-product-table-head"><span>Product</span><span>Price</span><span>Views</span><span>Stock</span></div>
-              {visibleProducts.map((product, index) => {
+              {visibleProducts.map((product) => {
                 const count = stockCount(product);
                 const low = product.isInStock === false || (count !== null && count <= 3);
-                const image = product.images?.[0] || fallbackImages[index % fallbackImages.length];
+                const image = product.images?.[0];
                 const content = (
                   <>
                     <span className="ds-product-cell">
-                      <Image src={image} alt="" width={56} height={56} sizes="56px" unoptimized={image.startsWith("http")} />
+                      {image ? <Image src={image} alt="" width={56} height={56} sizes="56px" unoptimized={image.startsWith("http")} /> : <span className="ps-image-placeholder"><FiPackage /></span>}
                       <span><strong>{product.name || "Untitled product"}</strong><small>{product.category || "Product"}</small></span>
                     </span>
                     <span className="ds-product-price">{priceLabel(product)}</span>
@@ -617,7 +643,7 @@ export default function StoreDashboard() {
         </section>
 
         <aside className="ds-activity-panel">
-          <div className="ds-panel-header"><div><h2>Recent activity</h2><p>What needs your attention</p></div></div>
+          <div className="ds-panel-header"><div><h2>Catalogue insights</h2><p>What needs your attention</p></div></div>
           <div className="ds-activity-list">
             <div className="ds-activity-item">
               <span className="violet"><FiStar /></span>
@@ -636,7 +662,7 @@ export default function StoreDashboard() {
         </aside>
       </div>
 
-      <section className="ds-share-panel">
+      <section className="ds-share-panel" id="share-catalogue">
         <span className="ds-share-icon"><FiShare2 /></span>
         <div className="ds-share-copy">
           <strong>Share your store</strong>
@@ -646,6 +672,7 @@ export default function StoreDashboard() {
           <button type="button" onClick={copyStoreLink} disabled={!username}>
             {copied ? <FiCheck /> : <FiCopy />} {copied ? "Copied" : "Copy link"}
           </button>
+          {username && <><a className="ds-catalog-btn" href={`https://wa.me/?text=${encodeURIComponent(storeUrl)}`} target="_blank" rel="noreferrer"><FiMessageCircle /> WhatsApp</a><a className="ds-catalog-btn" href={`mailto:?subject=${encodeURIComponent("Explore our catalogue")}&body=${encodeURIComponent(storeUrl)}`}>Email</a></>}
           {username && (
             <Link href={openHref || storefrontInternalPath(username)} target="_blank">
               <FiExternalLink /> Open store
@@ -653,6 +680,7 @@ export default function StoreDashboard() {
           )}
         </div>
       </section>
+      {storeUrl && <CatalogueQrCode url={storeUrl} />}
     </div>
   );
 }

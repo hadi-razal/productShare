@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import localFont from "next/font/local";
-// @ts-ignore: global CSS imports are handled by Next.js
 import "./globals.css";
 import Header from "@/components/Header";
 import ProgressBar from "@/components/ProgressBar";

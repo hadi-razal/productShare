@@ -1,5 +1,8 @@
 "use client";
 
+import WorkspaceDialog from "@/components/dashboard/WorkspaceDialog";
+import { ErrorState } from "@/components/dashboard/WorkspaceUI";
+
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -27,6 +30,7 @@ import {
 
 export default function CategoriesPage() {
   const router = useRouter();
+  const [loadError, setLoadError] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -48,6 +52,7 @@ export default function CategoriesPage() {
   );
 
   const loadCategories = async (uid: string) => {
+    setLoadError(false);
     const [store, products] = await Promise.all([
       getStoreById(uid),
       listProductsByStore(uid),
@@ -80,6 +85,7 @@ export default function CategoriesPage() {
         await loadCategories(user.uid);
       } catch (error) {
         console.error(error);
+        setLoadError(true);
         toast.error("Could not load categories.");
       } finally {
         setLoading(false);
@@ -184,7 +190,7 @@ export default function CategoriesPage() {
     <div className="ds-page ds-catalog">
       <div className="ds-catalog-header">
         <div className="ds-catalog-heading">
-          <h2 className="ds-catalog-title">Categories</h2>
+          <h1 className="ds-catalog-title">Categories</h1>
           <p>
             {loading
               ? "Organize products into categories."
@@ -205,7 +211,8 @@ export default function CategoriesPage() {
         </div>
       </div>
 
-      <section className="ds-catalog-card">
+      {loadError && <ErrorState message="Your categories could not be loaded." onRetry={() => { if (userId) { setLoading(true); void loadCategories(userId).catch(() => setLoadError(true)).finally(() => setLoading(false)); } }} /> }
+      <section className="ds-catalog-card" hidden={loadError}>
         {loading ? (
           <div className="ds-category-list">
             <div className="ds-category-head">
@@ -282,11 +289,11 @@ export default function CategoriesPage() {
       </section>
 
       {adding && (
-        <div className="ds-catalog-modal" onClick={() => !saving && setAdding(false)}>
-          <div onClick={(event) => event.stopPropagation()}>
+        <WorkspaceDialog label="Add category" onClose={() => setAdding(false)} busy={saving}>
             <strong>Add new category</strong>
             <p>This category will be available when you add or edit products.</p>
             <input
+              aria-label="Category name"
               autoFocus
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
@@ -319,24 +326,15 @@ export default function CategoriesPage() {
                 {saving ? "Adding..." : "Add category"}
               </button>
             </div>
-          </div>
-        </div>
+        </WorkspaceDialog>
       )}
 
       {editing && (
-        <div
-          className="ds-catalog-modal"
-          onClick={() => {
-            if (!saving) {
-              setEditing(null);
-              setEditDraft("");
-            }
-          }}
-        >
-          <div onClick={(event) => event.stopPropagation()}>
+        <WorkspaceDialog label="Edit category" onClose={() => { setEditing(null); setEditDraft(""); }} busy={saving}>
             <strong>Edit category</strong>
             <p>Products in this category will be updated to the new name.</p>
             <input
+              aria-label="Category name"
               autoFocus
               value={editDraft}
               onChange={(event) => setEditDraft(event.target.value)}
@@ -372,13 +370,11 @@ export default function CategoriesPage() {
                 {saving ? "Saving..." : "Save"}
               </button>
             </div>
-          </div>
-        </div>
+        </WorkspaceDialog>
       )}
 
       {confirmDelete && (
-        <div className="ds-catalog-modal" onClick={() => setConfirmDelete(null)}>
-          <div onClick={(event) => event.stopPropagation()}>
+        <WorkspaceDialog label="Delete category" onClose={() => setConfirmDelete(null)} busy={saving}>
             <strong>Delete {confirmDelete.label}?</strong>
             <p>Products in this category will keep their current category name.</p>
             <div>
@@ -398,8 +394,7 @@ export default function CategoriesPage() {
                 {saving ? "Deleting..." : "Delete"}
               </button>
             </div>
-          </div>
-        </div>
+        </WorkspaceDialog>
       )}
     </div>
   );

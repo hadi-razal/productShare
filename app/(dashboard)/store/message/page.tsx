@@ -67,7 +67,7 @@ export default function StoreMessagePage() {
     <div className="ds-page ds-catalog ds-message">
       <div className="ds-catalog-header">
         <div className="ds-catalog-heading">
-          <h2 className="ds-catalog-title">Message ProductShare</h2>
+          <h1 className="ds-catalog-title">Message ProductShare</h1>
           <p>Suggestions, support, and feature requests. Replies go to your store email.</p>
         </div>
       </div>

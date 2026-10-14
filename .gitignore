@@ -44,3 +44,7 @@ supabase/.temp/
 
 # Onboarding browser QA screenshots
 /tests/onboarding-*.png
+
+# Dashboard verification output
+/.next-qa/
+/artifacts/

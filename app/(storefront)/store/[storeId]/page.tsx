@@ -25,11 +25,13 @@ export async function generateMetadata({
   const storeData = await getStorefrontStore(storeId);
 
   const storeName = storeData?.name ?? "Store";
-  const isOffline = Boolean(storeData?.isOffline);
+  const isOffline = Boolean(storeData?.isOffline || storeData?.planExpired);
 
   if (isOffline) {
     const title = `${storeName} is currently unavailable`;
-    const description = `${storeName} has taken this storefront offline for now.`;
+    const description = storeData?.planExpired
+      ? `${storeName}'s storefront is temporarily unavailable.`
+      : `${storeName} has taken this storefront offline for now.`;
     return {
       title,
       description,
@@ -96,7 +98,7 @@ export default async function Page({ params }: StorePageProps) {
     notFound();
   }
 
-  if (storeData.isOffline) {
+  if (storeData.isOffline || storeData.planExpired) {
     return (
       <StorefrontShell
       preferences={storeData}
@@ -112,6 +114,7 @@ export default async function Page({ params }: StorePageProps) {
           storeLogo={storeData.logoImage || storeData.image}
           storeDescription={storeData.description}
           storeNote={storeData.additionalNotes}
+          planExpired={storeData.planExpired}
         />
       </StorefrontShell>
     );

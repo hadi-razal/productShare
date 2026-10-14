@@ -1,5 +1,7 @@
 "use client";
 
+import { PageHeader } from "@/components/dashboard/WorkspaceUI";
+
 import React, {
   useState,
   useEffect,
@@ -54,6 +56,7 @@ import { normalizeWhatsappNumber, whatsappValidationMessage } from "@/lib/whatsa
 import WhatsAppNumberField from "@/components/WhatsAppNumberField";
 
 const SettingsPage: React.FC = () => {
+  const [mobileTab, setMobileTab] = useState<"customize" | "preview">("customize");
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState<string>("");
   const [originalUsername, setOriginalUsername] = useState<string>("");
@@ -300,6 +303,7 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="ds-page ds-settings">
+      <PageHeader title="Catalogue design & settings" description="Make your catalogue feel like your business. Preview your changes as you go." />
       {missingFields.length > 0 && (
         <div className="ds-profile-banner" role="status">
           <p>
@@ -307,7 +311,8 @@ const SettingsPage: React.FC = () => {
           </p>
         </div>
       )}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6">
+      <div className="ps-design-tabs"><button type="button" aria-pressed={mobileTab === "customize"} onClick={() => setMobileTab("customize")}>Customize</button><button type="button" aria-pressed={mobileTab === "preview"} onClick={() => setMobileTab("preview")}>Preview</button></div>
+      <div className={`ps-design-layout ps-design-${mobileTab} grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6`}>
         <section className="ds-card min-w-0">
           <div className="ds-settings-intro">
             <h2 className="ds-card-title">Catalog details</h2>
@@ -621,7 +626,7 @@ const SettingsPage: React.FC = () => {
 
           <motion.button
             onClick={handleSaveChanges}
-            className="ds-btn-primary"
+            className="ds-btn-primary ps-save-settings"
             disabled={loading || bannerUploading}
           >
             {loading ? "Saving..." : "Save Changes"}

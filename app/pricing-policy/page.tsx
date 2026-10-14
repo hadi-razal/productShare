@@ -80,7 +80,7 @@ const PricingPolicy = () => {
         <section>
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">Customer Support</h2>
           <p className="text-gray-600 mb-4">
-            If you have any questions or need assistance regarding our pricing or plans, please don't hesitate to contact our support team. We're here to help!
+            If you have any questions or need assistance regarding our pricing or plans, please don&apos;t hesitate to contact our support team. We&apos;re here to help!
           </p>
           <ul className="list-disc pl-6 space-y-2 text-gray-600">
             <li>Phone: <a href={`tel:${siteConfig.supportPhoneHref}`} className="text-blue-600 underline">{siteConfig.supportPhone}</a></li>

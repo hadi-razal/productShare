@@ -52,7 +52,7 @@ const ShippingPolicy = () => {
 
       <h3>Digital Services and Platform Accessibility</h3>
       <p>
-        We ensure that the digital services we offer are available around the clock. However, please note that Product Share is not responsible for any internet connectivity issues or technical difficulties that may arise on the user's end. Access to the platform and management of your store is dependent on your own internet service provider.
+        We ensure that the digital services we offer are available around the clock. However, please note that Product Share is not responsible for any internet connectivity issues or technical difficulties that may arise on the user&apos;s end. Access to the platform and management of your store is dependent on your own internet service provider.
       </p>
     </div>
   );

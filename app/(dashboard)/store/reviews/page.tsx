@@ -7,7 +7,7 @@ const CustomerReviewsPage = () => {
     <div className="ds-page ds-catalog">
       <div className="ds-catalog-header">
         <div className="ds-catalog-heading">
-          <h2 className="ds-catalog-title">Reviews</h2>
+          <h1 className="ds-catalog-title">Reviews</h1>
         </div>
       </div>
 

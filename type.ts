@@ -1,19 +1,19 @@
 export interface ProductType {
     id?: string; 
-    createdAt?:any;
+    createdAt?: number | string | { toMillis: () => number } | null;
     name: string;
-    video?: any;
+    video?: string;
     description: string;
     category: string;
     colors:string[];
     sizes:string[];
     images: string[];
-    regularPrice: any;
-    discountPrice: any;
+    regularPrice: string | number;
+    discountPrice: string | number;
     isNew?: boolean;
     isInStock?: boolean;
     isBestSelling?: boolean;
-    views?: any;
+    views?: number;
     rating?: number;
     totalReviews?: number;
     ratingCount?: number;

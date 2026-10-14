@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Keep verification builds separate from a running development server.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   devIndicators: false,
   allowedDevOrigins: ["*.localhost"],
   images: {

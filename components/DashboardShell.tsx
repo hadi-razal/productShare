@@ -4,24 +4,14 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import type { IconType } from "react-icons";
-import {
-  FiCreditCard,
-  FiGrid,
-  FiHelpCircle,
-  FiHome,
-  FiLogOut,
-  FiMessageCircle,
-  FiPlus,
-  FiSettings,
-  FiShield,
-  FiStar,
-  FiTag,
-} from "react-icons/fi";
+import { Menu, PanelLeftClose, ExternalLink, Layers, X, type LucideIcon, CreditCard as FiCreditCard, LayoutDashboard as FiHome, LayoutGrid as FiGrid, CircleHelp as FiHelpCircle, LogOut as FiLogOut, MessageCircle as FiMessageCircle, Plus as FiPlus, Settings as FiSettings, Shield as FiShield, Star as FiStar, Tag as FiTag } from "lucide-react";
+import { storefrontPublicUrl } from "@/lib/storefront-url";
 import { getStoreById, type StoreRecord } from "@/lib/db";
 import { ensureStoreForUser, getCurrentUser, onAuthChange, signOutUser } from "@/lib/auth";
 import { isSuperAdminEmail } from "@/lib/super-admin";
 import StoreSetupModal from "@/components/StoreSetupModal";
+import { PlanExpiredScreen, TrialBanner } from "@/components/dashboard/PlanLock";
+import { storePlanStatus } from "@/lib/subscription";
 import {
   isStoreProfileComplete,
   needsStoreOnboarding,
@@ -42,12 +32,12 @@ const navigation: {
   name: string;
   shortName: string;
   href: string;
-  icon: IconType;
+  icon: LucideIcon;
   exact?: boolean;
   aliases?: string[];
   hideFromTabs?: boolean;
 }[] = [
-  { name: "Home", shortName: "Home", href: "/store", icon: FiHome, exact: true },
+  { name: "Dashboard", shortName: "Home", href: "/store", icon: FiHome, exact: true },
   { name: "Products", shortName: "Products", href: "/store/products", icon: FiTag, aliases: ["/store/add-product", "/store/edit/"] },
   { name: "Categories", shortName: "Categories", href: "/store/categories", icon: FiGrid },
   { name: "Reviews", shortName: "Reviews", href: "/store/reviews", icon: FiStar },
@@ -87,6 +77,8 @@ const formatStoreName = (value: string) =>
     .trim();
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
+  const [collapsed, setCollapsed] = useState(false);
+  const drawerRef = useRef<HTMLDialogElement>(null);
   const [mobileAccountOpen, setMobileAccountOpen] = useState(false);
   const [storeName, setStoreName] = useState("My Store");
   const [profileComplete, setProfileComplete] = useState(true);
@@ -183,6 +175,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
   useEffect(() => {
     setMobileAccountOpen(false);
+    drawerRef.current?.close();
   }, [pathname]);
 
   useEffect(() => {
@@ -218,8 +211,10 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         setMobileAccountOpen(false);
       }
     };
+    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") setMobileAccountOpen(false); };
+    document.addEventListener("keydown", escape);
     document.addEventListener("mousedown", closeAccountMenus);
-    return () => document.removeEventListener("mousedown", closeAccountMenus);
+    return () => { document.removeEventListener("mousedown", closeAccountMenus); document.removeEventListener("keydown", escape); };
   }, []);
 
   const initials = useMemo(
@@ -245,14 +240,27 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const addProductHref = profileComplete ? "/store/add-product" : STORE_SETTINGS_PATH;
   const themeTokens = STORE_THEME_MAP[storeTheme];
   const themeVars = dashboardThemeCssVars(themeTokens);
+  const planStatus = storePlanStatus(setupStore);
+  const planLocked = planStatus.state === "expired" && pathname !== "/store/message";
+  const planLabel = !setupStore
+    ? "Your workspace plan"
+    : planStatus.state === "premium"
+      ? "Premium plan"
+      : planStatus.state === "expired"
+        ? "Free trial ended"
+        : `Free trial · ${planStatus.daysLeft} day${planStatus.daysLeft === 1 ? "" : "s"} left`;
 
   const navItems = () =>
-    navigation.map((item) => {
+    navigation.map((item, index) => {
       const active = isNavActive(item, pathname);
       return (
+        <React.Fragment key={item.name}>
+        {[0, 1, 4].includes(index) && <span className="ps-nav-label">{index === 0 ? "Overview" : index === 1 ? "Catalogue" : "Account"}</span>}
         <Link
+          title={item.name}
           key={item.name}
           href={item.href}
+          aria-label={item.name}
           className={`ds-nav-link ${active ? "active" : ""}`}
           aria-current={active ? "page" : undefined}
         >
@@ -261,17 +269,20 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           </span>
           <span>{item.name}</span>
         </Link>
+        </React.Fragment>
       );
     });
 
   return (
     <div
-      className="ds-root"
+      className={`ds-root ps-workspace ${collapsed ? "ps-collapsed" : ""}`}
       data-ds-theme={storeTheme}
       data-ds-theme-mode={themeTokens.dark ? "dark" : "light"}
       style={themeVars as React.CSSProperties}
     >
+      <a className="ps-skip" href="#workspace-content">Skip to content</a>
       <aside className="ds-sidebar" aria-label="Dashboard navigation">
+        <Link href="/store" className="ps-wordmark"><span><Layers size={22} /></span><strong>ProductShare<small>BUSINESS WORKSPACE</small></strong></Link>
         <div className="ds-brand-block">
           <Link href="/store" className="ds-store-identity" aria-label={`${storeName} dashboard`}>
             {storeLogo ? (
@@ -298,25 +309,27 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         <nav className="ds-nav">{navItems()}</nav>
 
         <div className="ds-sidebar-bottom">
+          <div className="ps-plan-card"><strong>{planLabel}</strong><p>Find the right plan for your business.</p><Link href="/pricing">Explore plans <ExternalLink size={14} /></Link></div>
+          <button type="button" className="ds-sidebar-utility" title={collapsed ? "Expand sidebar" : "Collapse sidebar"} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} onClick={() => setCollapsed(!collapsed)}><PanelLeftClose /><span>Collapse sidebar</span></button>
           {isAdmin ? (
             <Link href="/admin" className="ds-sidebar-utility">
               <FiShield />
               <span>Super admin</span>
             </Link>
           ) : null}
-          <Link href="/pricing" className="ds-sidebar-utility">
+          <Link href="/pricing" aria-label="Plans" title="Plans" className="ds-sidebar-utility">
             <FiCreditCard />
             <span>Plan</span>
           </Link>
-          <Link href="/store/message" className="ds-sidebar-utility">
+          <Link href="/store/message" aria-label="Help and support" title="Help and support" className="ds-sidebar-utility">
             <FiHelpCircle />
             <span>Help & support</span>
           </Link>
-          <Link href="/store/settings" className="ds-sidebar-utility">
+          <Link href="/store/settings" aria-label="Settings" title="Settings" className="ds-sidebar-utility">
             <FiSettings />
             <span>Settings</span>
           </Link>
-          <button type="button" className="ds-sidebar-utility" onClick={handleSignOut}>
+          <button type="button" aria-label="Sign out" title="Sign out" className="ds-sidebar-utility" onClick={handleSignOut}>
             <FiLogOut />
             <span>Sign out</span>
           </button>
@@ -325,6 +338,13 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
       <div className="ds-main">
         <header className="ds-topbar">
+          <button type="button" className="ps-menu ds-mobile-add" aria-label="Open navigation" onClick={() => drawerRef.current?.showModal()}><Menu size={20} /></button>
+          <Link href="/store" className="ps-mobile-brand">ProductShare</Link>
+          <div className="ps-breadcrumb"><span>Workspace</span><span>/</span><strong>{pageTitle}</strong></div>
+          <div className="ps-top-actions">
+            {setupStore?.username && <a href={storefrontPublicUrl(setupStore.username)} target="_blank" rel="noreferrer" className="ds-catalog-btn"><ExternalLink size={16} /><span>View catalogue</span></a>}
+            <Link href="/store/message" className="ds-mobile-add" title="Help and support" aria-label="Help and support"><FiHelpCircle size={19} /></Link>
+          </div>
           <div className="ds-mobile-account" ref={mobileAccountRef}>
             <button
               type="button"
@@ -333,7 +353,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               aria-label="Open account menu"
               aria-expanded={mobileAccountOpen}
             >
-              <span className="ds-avatar ds-avatar-small">{initials || "PS"}</span>
+              <span className="ds-avatar ds-avatar-small">{initials || "PS"}</span><span className="ps-profile-name">{storeName}</span>
             </button>
             {mobileAccountOpen && (
               <div className="ds-mobile-account-menu">
@@ -368,9 +388,10 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           <Link href={addProductHref} className="ds-mobile-add" aria-label="Add product"><FiPlus /></Link>
         </header>
 
-        <main className="ds-content">
+        <main className="ds-content" id="workspace-content">
           <div className="ds-content-inner">
-            {!profileComplete && !isSettings && !needsSetup && profileMessage ? (
+            <TrialBanner status={planStatus} />
+            {!planLocked && !profileComplete && !isSettings && !needsSetup && profileMessage ? (
               <div className="ds-profile-banner" role="status">
                 <p>
                   <strong>Complete your store profile.</strong> {profileMessage}
@@ -378,12 +399,12 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                 <Link href={STORE_SETTINGS_PATH}>Open settings</Link>
               </div>
             ) : null}
-            {children}
+            {planLocked ? <PlanExpiredScreen store={setupStore} status={planStatus} /> : children}
           </div>
         </main>
       </div>
 
-      {needsSetup && !isSettings && setupUserId && setupStore ? (
+      {needsSetup && !isSettings && !planLocked && setupUserId && setupStore ? (
         <StoreSetupModal
           userId={setupUserId}
           store={setupStore}
@@ -400,6 +421,9 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         />
       ) : null}
 
+      <dialog ref={drawerRef} className="ps-drawer" onClick={(event) => { if (event.target === event.currentTarget) drawerRef.current?.close(); }}>
+        <div className="ps-drawer-content"><div className="ps-drawer-title"><strong>ProductShare</strong><button type="button" className="ds-mobile-add" aria-label="Close navigation" onClick={() => drawerRef.current?.close()}><X /></button></div><nav className="ds-nav" aria-label="Mobile navigation">{navItems()}</nav><button type="button" aria-label="Sign out" title="Sign out" className="ds-sidebar-utility" onClick={handleSignOut}><FiLogOut />Sign out</button></div>
+      </dialog>
       <nav className="ds-bottombar" aria-label="Quick navigation">
         {navigation.filter((item) => !item.hideFromTabs).map((item) => {
           const active = isNavActive(item, pathname);

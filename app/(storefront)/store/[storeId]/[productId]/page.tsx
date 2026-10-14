@@ -27,10 +27,12 @@ export async function generateMetadata({
   const productData = storefrontProduct?.product ?? null;
   const storeName = storefrontProduct?.store.name ?? "Store";
 
-  if (storefrontProduct?.store.isOffline) {
+  if (storefrontProduct?.store.isOffline || storefrontProduct?.store.planExpired) {
     return {
       title: `${storeName} is currently unavailable`,
-      description: `${storeName} has taken this storefront offline for now.`,
+      description: storefrontProduct.store.planExpired
+        ? `${storeName}'s storefront is temporarily unavailable.`
+        : `${storeName} has taken this storefront offline for now.`,
       robots: { index: false, follow: false },
     };
   }
@@ -89,7 +91,7 @@ export default async function Page({ params }: ProductRouteProps) {
     notFound();
   }
 
-  if (storefrontProduct.store.isOffline) {
+  if (storefrontProduct.store.isOffline || storefrontProduct.store.planExpired) {
     return (
       <StorefrontShell
       preferences={storefrontProduct.store}
@@ -105,6 +107,7 @@ export default async function Page({ params }: ProductRouteProps) {
           storeLogo={storefrontProduct.store.logoImage || storefrontProduct.store.image}
           productId={productId}
           storeWhatsapp={storefrontProduct.store.whatsappNumber}
+          planExpired={storefrontProduct.store.planExpired}
         />
       </StorefrontShell>
     );

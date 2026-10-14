@@ -7,6 +7,7 @@ import {
   type ProductRecord,
   type StoreRecord,
 } from "@/lib/db";
+import { isStorePlanExpired } from "@/lib/subscription";
 import { ProductType, userType } from "@/type";
 
 export interface StorefrontStore extends userType {
@@ -14,6 +15,8 @@ export interface StorefrontStore extends userType {
   description?: string;
   logoImage?: string;
   whatsappNumber?: string;
+  /** Free trial ended without a paid plan; the catalogue is hidden from visitors. */
+  planExpired: boolean;
 }
 
 export interface StorefrontProduct extends ProductType {
@@ -23,6 +26,7 @@ export interface StorefrontProduct extends ProductType {
 const toStorefrontStore = (store: StoreRecord): StorefrontStore => ({
   ...store,
   id: store.id,
+  planExpired: isStorePlanExpired(store),
 });
 
 const toStorefrontProduct = (product: ProductRecord): StorefrontProduct => product;
@@ -86,7 +90,7 @@ export const getPublicStorefrontEntries = cache(
 
     const entries = await Promise.all(
       stores.map(async (store) => {
-        if (!store.username || store.isOffline) {
+        if (!store.username || store.isOffline || isStorePlanExpired(store)) {
           return null;
         }
 

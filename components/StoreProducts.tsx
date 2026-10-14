@@ -38,7 +38,7 @@ const getCreatedAtValue = (createdAt: ProductType["createdAt"]) => {
     return createdAt;
   }
 
-  if (typeof createdAt?.toMillis === "function") {
+  if (createdAt && typeof createdAt === "object" && typeof createdAt.toMillis === "function") {
     return createdAt.toMillis();
   }
 
@@ -54,14 +54,14 @@ const sortProducts = (items: ProductType[], option: string): ProductType[] => {
     case "price-low-high":
       return [...items].sort(
         (a, b) =>
-          (a.discountPrice || a.regularPrice) -
-          (b.discountPrice || b.regularPrice)
+          Number(a.discountPrice || a.regularPrice) -
+          Number(b.discountPrice || b.regularPrice)
       );
     case "price-high-low":
       return [...items].sort(
         (a, b) =>
-          (b.discountPrice || b.regularPrice) -
-          (a.discountPrice || a.regularPrice)
+          Number(b.discountPrice || b.regularPrice) -
+          Number(a.discountPrice || a.regularPrice)
       );
     case "newest":
       return [...items].sort((a, b) => {

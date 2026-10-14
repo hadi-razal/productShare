@@ -16,6 +16,13 @@ import {
   type StoreRecord,
 } from "@/lib/db";
 import { isLocalHost, storefrontInternalPath, storefrontPublicUrl } from "@/lib/storefront-url";
+import {
+  extendedTrialEndsAt,
+  formatTrialDate,
+  planStatusLabel,
+  storePlanStatus,
+  TRIAL_DAYS,
+} from "@/lib/subscription";
 
 const storeHref = (username: string) => {
   if (!username) return "";
@@ -113,6 +120,22 @@ export default function AdminStorePage() {
     }
   };
 
+  const extendTrial = async () => {
+    if (!store) return;
+    const trialEndsAt = extendedTrialEndsAt(store);
+    setBusy(true);
+    try {
+      await updateStore(store.id, { trialEndsAt });
+      setStore({ ...store, trialEndsAt });
+      toast.success(`Trial extended to ${formatTrialDate(new Date(trialEndsAt))}.`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Could not extend trial. Has the trial migration been run?");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const removeProduct = async () => {
     if (!store || !confirmProductId) return;
     setBusy(true);
@@ -153,6 +176,7 @@ export default function AdminStorePage() {
 
   const href = storeHref(store.username);
   const logo = store.logoImage || store.image;
+  const planStatus = storePlanStatus(store);
 
   return (
     <div className="ds-page ds-catalog">
@@ -182,6 +206,11 @@ export default function AdminStorePage() {
           <button type="button" className="ds-catalog-btn" onClick={() => void toggleOffline()} disabled={busy}>
             {store.isOffline ? "Set live" : "Set offline"}
           </button>
+          {planStatus.state !== "premium" ? (
+            <button type="button" className="ds-catalog-btn" onClick={() => void extendTrial()} disabled={busy}>
+              Extend trial {TRIAL_DAYS} days
+            </button>
+          ) : null}
           <button type="button" className="ds-catalog-btn-primary" onClick={() => setConfirmPlan(true)} disabled={busy}>
             {store.isPremiumUser ? "Switch to Free" : "Switch to Premium"}
           </button>
@@ -194,7 +223,10 @@ export default function AdminStorePage() {
       <section className="ds-catalog-card" style={{ padding: 20, marginBottom: 16 }}>
         <div className="ds-admin-meta">
           <div><span>WhatsApp</span><strong>{store.whatsappNumber || "Not set"}</strong></div>
-          <div><span>Plan</span><strong>{store.isPremiumUser ? "Premium" : "Free"}</strong></div>
+          <div><span>Plan</span><strong>{planStatusLabel(planStatus)}</strong></div>
+          {planStatus.state !== "premium" ? (
+            <div><span>Trial ends</span><strong>{formatTrialDate(planStatus.trialEndsAt)}</strong></div>
+          ) : null}
           <div><span>Status</span><strong>{store.isOffline ? "Offline" : "Live"}</strong></div>
           <div><span>Store views</span><strong>{Number(store.visitCount || 0).toLocaleString("en-IN")}</strong></div>
           <div><span>Products</span><strong>{products.length}</strong></div>

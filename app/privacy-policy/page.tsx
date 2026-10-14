@@ -24,7 +24,7 @@ const PrivacyPolicy: FC = () => {
         <section>
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Introduction</h2>
           <p className="text-gray-600">
-            Welcome to Product Share's Privacy Policy. This policy explains how we collect, use, disclose, and safeguard your information when you use our services.
+            Welcome to Product Share&apos;s Privacy Policy. This policy explains how we collect, use, disclose, and safeguard your information when you use our services.
           </p>
         </section>
 

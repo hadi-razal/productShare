@@ -1,5 +1,8 @@
 "use client";
 
+import { useUnsavedChanges } from "@/components/dashboard/useUnsavedChanges";
+import Image from "next/image";
+
 import { useState, useEffect, ChangeEvent, FormEvent, ReactNode } from "react";
 import { uploadPublicFile } from "@/lib/storage";
 import { getCurrentUser } from "@/lib/auth";
@@ -15,11 +18,11 @@ import {
   STORE_SETTINGS_PATH,
   storeProfileIncompleteMessage,
 } from "@/lib/store-profile";
-// @ts-ignore
+// @ts-expect-error react-color does not ship declarations in this project.
 import { ChromePicker, ColorResult } from "react-color";
 
 // ── Toggle Switch ────────────────────────────────────────────────────────────
-const Toggle = ({ name, checked, onChange, label, description }: any) => (
+const Toggle = ({ name, checked, onChange, label, description }: { name: string; checked?: boolean; onChange: (event: ChangeEvent<HTMLInputElement>) => void; label: string; description?: string }) => (
   <div className="flex items-center justify-between py-3">
     <div>
       <p className="text-sm font-medium text-gray-800">{label}</p>
@@ -30,6 +33,7 @@ const Toggle = ({ name, checked, onChange, label, description }: any) => (
     <label className="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
       <input
         type="checkbox"
+        aria-label={label}
         name={name}
         checked={checked}
         onChange={onChange}
@@ -64,6 +68,7 @@ const inputCls =
 const labelCls = "block text-sm font-semibold text-gray-700 mb-1.5";
 
 const CreateProduct = () => {
+  const { markDirty, markSaved } = useUnsavedChanges();
   const [productData, setProductData] = useState<ProductType>({
     name: "",
     description: "",
@@ -369,6 +374,7 @@ const CreateProduct = () => {
         video: videoUrl,
       });
       alert("Product created successfully!");
+      markSaved();
       router.push("/store");
     } catch (error) {
       console.error(error);
@@ -416,7 +422,7 @@ const CreateProduct = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6 items-start">
-        <form onSubmit={handleSubmit} className="space-y-5 min-w-0">
+        <form onChange={markDirty} onSubmit={handleSubmit} className="space-y-5 min-w-0">
           {/* Basic Info */}
           <Section title="Basic Information">
             <div className="space-y-4">
@@ -613,7 +619,10 @@ const CreateProduct = () => {
               <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
                 {previewImages.map((image, index) => (
                   <div key={index} className="relative aspect-square group">
-                    <img
+                    <Image
+                      width={160}
+                      height={160}
+                      unoptimized
                       src={image}
                       alt={`Product ${index + 1}`}
                       className="w-full h-full object-cover rounded-md border border-gray-200"
@@ -625,8 +634,9 @@ const CreateProduct = () => {
                     )}
                     <button
                       type="button"
+                      aria-label={`Remove image ${index + 1}`}
                       onClick={() => removeImage(index)}
-                      className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 bg-red-500 text-white rounded-md text-[9px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                      className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 bg-red-500 text-white rounded-md text-[9px] font-semibold opacity-100 transition-opacity shadow-md"
                     >
                       Remove
                     </button>

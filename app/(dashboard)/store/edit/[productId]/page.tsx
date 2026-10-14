@@ -1,5 +1,8 @@
 "use client";
 
+import { useUnsavedChanges } from "@/components/dashboard/useUnsavedChanges";
+import Image from "next/image";
+
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { FiChevronLeft } from "react-icons/fi";
 import { getProduct, getStoreById, listProductsByStore, updateProduct, updateStore } from "@/lib/db";
@@ -17,14 +20,14 @@ import {
 } from "@/lib/store-profile";
 import toast from "react-hot-toast";
 
-const Toggle = ({ name, checked, onChange, label, description }: any) => (
+const Toggle = ({ name, checked, onChange, label, description }: { name: string; checked?: boolean; onChange: (event: ChangeEvent<HTMLInputElement>) => void; label: string; description?: string }) => (
   <div className="flex items-center justify-between py-3">
     <div>
       <p className="text-sm font-medium text-gray-800">{label}</p>
       {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
     </div>
     <label className="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
-      <input type="checkbox" name={name} checked={checked} onChange={onChange} className="sr-only peer" />
+      <input aria-label={label} type="checkbox" name={name} checked={checked} onChange={onChange} className="sr-only peer" />
       <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-primary transition-all after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 after:shadow-sm" />
     </label>
   </div>
@@ -71,6 +74,7 @@ const EditProduct = () => {
   const router = useRouter();
   const { productId } = useParams();
 
+  const { markDirty, markSaved } = useUnsavedChanges();
   const [productData, setProductData] = useState<ProductType>({
     id: "",
     name: "",
@@ -247,6 +251,7 @@ const EditProduct = () => {
         console.error("Product updated, but removed images could not be deleted from storage:", storageError);
       }
       toast.success("Product updated.");
+      markSaved();
       router.push("/store/products");
     } catch (error) {
       console.error("Error updating product:", error);
@@ -275,7 +280,7 @@ const EditProduct = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6 items-start">
-        <form onSubmit={handleSubmit} className="space-y-5 min-w-0">
+        <form onChange={markDirty} onSubmit={handleSubmit} className="space-y-5 min-w-0">
           <Section title="Basic Information">
             <div className="space-y-4">
               <div>
@@ -417,7 +422,10 @@ const EditProduct = () => {
               <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
                 {previewImages.map((image, index) => (
                   <div key={index} className="relative aspect-square group">
-                    <img
+                    <Image
+                      width={160}
+                      height={160}
+                      unoptimized
                       src={image}
                       alt={`Product ${index + 1}`}
                       className="w-full h-full object-cover rounded-xl border border-gray-200"
@@ -427,8 +435,9 @@ const EditProduct = () => {
                     )}
                     <button
                       type="button"
+                      aria-label={`Remove image ${index + 1}`}
                       onClick={() => removeImage(index)}
-                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-100 transition-opacity shadow-md"
                     >
                       ×
                     </button>

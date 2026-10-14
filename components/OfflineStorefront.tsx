@@ -18,6 +18,7 @@ type OfflineStorefrontProps = {
   storeNote?: string;
   productId?: string;
   storeWhatsapp?: string;
+  planExpired?: boolean;
 };
 
 export default function OfflineStorefront({
@@ -29,6 +30,7 @@ export default function OfflineStorefront({
   storeNote,
   productId,
   storeWhatsapp,
+  planExpired = false,
 }: OfflineStorefrontProps) {
   const nav = useStorefrontNav();
   const [isOwner, setIsOwner] = useState(false);
@@ -45,9 +47,14 @@ export default function OfflineStorefront({
       <>
         <div className="sticky top-0 z-40 border-b border-amber-200 bg-amber-50 px-4 py-3 text-center">
           <p className="text-sm text-amber-950">
-            Your store is offline. Visitors cannot see this page.{" "}
-            <Link href={nav.dashboardHref("/store/settings")} className="font-semibold underline underline-offset-2">
-              Turn it back on in settings
+            {planExpired
+              ? "Your free trial has ended. Visitors cannot see this page until you choose a plan. "
+              : "Your store is offline. Visitors cannot see this page. "}
+            <Link
+              href={nav.dashboardHref(planExpired ? "/store" : "/store/settings")}
+              className="font-semibold underline underline-offset-2"
+            >
+              {planExpired ? "Choose a plan" : "Turn it back on in settings"}
             </Link>
           </p>
         </div>
@@ -97,10 +104,10 @@ export default function OfflineStorefront({
           </span>
         )}
         <h1 className="sf-title mt-6 text-2xl font-semibold tracking-tight">
-          This store is offline
+          {planExpired ? "This store is unavailable" : "This store is offline"}
         </h1>
         <p className="sf-muted mt-3 text-sm leading-6">
-          {storeName ? `${storeName} has taken this storefront offline for now.` : "This storefront is temporarily unavailable."}{" "}
+          {storeName && !planExpired ? `${storeName} has taken this storefront offline for now.` : "This storefront is temporarily unavailable."}{" "}
           Please check back later.
         </p>
         <Link

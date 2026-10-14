@@ -24,8 +24,9 @@ import {
   type StoreRecord,
 } from "@/lib/db";
 import { isLocalHost, storefrontInternalPath, storefrontPublicUrl } from "@/lib/storefront-url";
+import { isStorePlanExpired, planStatusLabel, storePlanStatus } from "@/lib/subscription";
 
-type StatusFilter = "all" | "premium" | "free" | "offline";
+type StatusFilter = "all" | "premium" | "free" | "expired" | "offline";
 
 const storeHref = (username: string) => {
   if (!username) return "";
@@ -86,6 +87,7 @@ export default function SuperAdminPage() {
     return stores.filter((store) => {
       if (statusFilter === "premium" && !store.isPremiumUser) return false;
       if (statusFilter === "free" && store.isPremiumUser) return false;
+      if (statusFilter === "expired" && !isStorePlanExpired(store)) return false;
       if (statusFilter === "offline" && !store.isOffline) return false;
       if (!term) return true;
       const haystack = [
@@ -226,7 +228,8 @@ export default function SuperAdminPage() {
             >
               <option value="all">All stores</option>
               <option value="premium">Premium</option>
-              <option value="free">Free</option>
+              <option value="free">Free / trial</option>
+              <option value="expired">Trial ended</option>
               <option value="offline">Offline</option>
             </select>
           </label>
@@ -279,7 +282,7 @@ export default function SuperAdminPage() {
                     <span>{Number(store.visitCount || 0).toLocaleString("en-IN")}</span>
                     <span>
                       <i className={`ds-status-pill ${store.isPremiumUser ? "active" : "hidden"}`}>
-                        {store.isPremiumUser ? "Premium" : "Free"}
+                        {planStatusLabel(storePlanStatus(store))}
                       </i>
                     </span>
                     <span>
