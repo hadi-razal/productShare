@@ -8,6 +8,7 @@ import {
   listContactMessages,
   type ContactMessageRecord,
 } from "@/lib/db";
+import MessageViewModal from "@/components/dashboard/MessageViewModal";
 
 const formatDate = (value: string) => {
   if (!value) return "—";
@@ -28,6 +29,7 @@ export default function AdminContactsPage() {
   const [search, setSearch] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<ContactMessageRecord | null>(null);
+  const [viewing, setViewing] = useState<ContactMessageRecord | null>(null);
 
   const load = async () => {
     const rows = await listContactMessages("website");
@@ -130,9 +132,14 @@ export default function AdminContactsPage() {
                     <strong>{item.name || "—"}</strong>
                   </span>
                   <span className="ds-admin-contact">{item.email || "—"}</span>
-                  <span className="ds-contacts-message" title={item.message}>
+                  <button
+                    type="button"
+                    className="ds-contacts-message"
+                    onClick={() => setViewing(item)}
+                    title="View full message"
+                  >
                     {item.message || "—"}
-                  </span>
+                  </button>
                   <span>
                     {formatDate(item.updatedAt)}
                     {item.createdAt && item.updatedAt && item.createdAt !== item.updatedAt ? (
@@ -167,6 +174,27 @@ export default function AdminContactsPage() {
           </div>
         </div>
       </section>
+
+      {viewing && (
+        <MessageViewModal
+          message={viewing}
+          title={`Enquiry from ${viewing.name || viewing.email || "visitor"}`}
+          meta={[
+            { label: "Name", value: viewing.name },
+            { label: "Email", value: viewing.email },
+            { label: "Updated", value: formatDate(viewing.updatedAt) },
+            {
+              label: "First sent",
+              value: viewing.createdAt !== viewing.updatedAt ? formatDate(viewing.createdAt) : "",
+            },
+          ]}
+          onClose={() => setViewing(null)}
+          onDelete={() => {
+            setConfirmDelete(viewing);
+            setViewing(null);
+          }}
+        />
+      )}
 
       {confirmDelete && (
         <div className="ds-catalog-modal" onClick={() => busyId !== confirmDelete.id && setConfirmDelete(null)}>
