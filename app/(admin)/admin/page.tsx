@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  FiCreditCard,
   FiEye,
   FiEyeOff,
   FiExternalLink,
@@ -275,40 +276,43 @@ export default function SuperAdminPage() {
         </div>
 
         <div className="ds-catalog-table-wrap">
-          <div className="ds-admin-table">
+          <div className="ds-admin-table ds-store-list">
             <div className="ds-admin-head">
               <span>Store</span>
               <span>Contact</span>
-              <span>Products</span>
-              <span>Views</span>
+              <span>Catalogue</span>
               <span>Created</span>
               <span>Last active</span>
-              <span>Plan</span>
-              <span>Status</span>
-              <span>Actions</span>
+              <span>Plan &amp; status</span>
+              <span className="ds-store-list-actions-head">Actions</span>
             </div>
             {loading ? (
               [0, 1, 2, 3, 4].map((item) => (
                 <div key={item} className="ds-admin-row ds-catalog-skeleton">
-                  <span /><span /><span /><span /><span /><span /><span /><span /><span />
+                  <span /><span /><span /><span /><span /><span /><span />
                 </div>
               ))
             ) : filtered.length ? (
               filtered.map((store) => {
                 const count = productCounts[store.id] || 0;
+                const views = Number(store.visitCount || 0);
                 const href = openHref[store.id];
                 const logo = store.logoImage || store.image;
+                const plan = storePlanStatus(store);
+                const storeLabel = store.name || store.username || "store";
                 return (
                   <div key={store.id} className="ds-admin-row">
                     <button
                       type="button"
-                      className="ds-catalog-product"
+                      className="ds-catalog-product ds-store-cell"
                       onClick={() => router.push(`/admin/${store.id}`)}
                     >
                       {logo ? (
                         <Image src={logo} alt="" width={40} height={40} sizes="40px" unoptimized />
                       ) : (
-                        <span className="ds-catalog-thumb" />
+                        <span className="ds-store-initial" aria-hidden="true">
+                          {(store.name || store.username || "S").trim().charAt(0).toUpperCase()}
+                        </span>
                       )}
                       <span>
                         <strong>{store.name || "Untitled store"}</strong>
@@ -316,33 +320,44 @@ export default function SuperAdminPage() {
                       </span>
                     </button>
                     <span className="ds-admin-contact">
-                      {store.email || "—"}
-                      {store.whatsappNumber ? <small>{store.whatsappNumber}</small> : null}
+                      <span title={store.email}>{store.email || "—"}</span>
+                      {store.whatsappNumber ? <small>+{store.whatsappNumber}</small> : null}
                     </span>
-                    <span>{count}</span>
-                    <span>{Number(store.visitCount || 0).toLocaleString("en-IN")}</span>
-                    <span title={store.createdAt ? new Date(store.createdAt).toLocaleString("en-IN") : undefined}>
+                    <span className="ds-store-stats">
+                      <span><b>{count}</b> {count === 1 ? "product" : "products"}</span>
+                      <span><b>{views.toLocaleString("en-IN")}</b> {views === 1 ? "view" : "views"}</span>
+                    </span>
+                    <span
+                      className="ds-store-date"
+                      title={store.createdAt ? new Date(store.createdAt).toLocaleString("en-IN") : undefined}
+                    >
                       {createdLabel(store)}
                     </span>
-                    <span title={store.lastActiveAt ? new Date(store.lastActiveAt).toLocaleString("en-IN") : undefined}>
+                    <span
+                      className={`ds-store-date ${store.lastActiveAt ? "" : "is-muted"}`}
+                      title={store.lastActiveAt ? new Date(store.lastActiveAt).toLocaleString("en-IN") : undefined}
+                    >
                       {relativeTime(store.lastActiveAt)}
                     </span>
-                    <span>
-                      <i className={`ds-status-pill ${store.isPremiumUser ? "active" : "hidden"}`}>
-                        {planStatusLabel(storePlanStatus(store))}
-                      </i>
-                    </span>
-                    <span>
-                      <i className={`ds-status-pill ${store.isOffline ? "hidden" : "active"}`}>
+                    <span className="ds-store-badges">
+                      <i className={`ds-plan-pill is-${plan.state}`}>{planStatusLabel(plan)}</i>
+                      <i className={`ds-plan-pill ${store.isOffline ? "is-offline" : "is-live"}`}>
                         {store.isOffline ? "Offline" : "Live"}
                       </i>
                     </span>
-                    <span className="ds-admin-actions">
+                    <span className="ds-admin-actions ds-store-actions">
                       <Link href={`/admin/${store.id}`} className="ds-catalog-btn">
                         Manage
                       </Link>
                       {href ? (
-                        <a href={href} target="_blank" rel="noreferrer" className="ds-admin-icon" aria-label="Open store">
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="ds-admin-icon"
+                          aria-label={`Open ${storeLabel} catalogue`}
+                          title="Open catalogue"
+                        >
                           <FiExternalLink />
                         </a>
                       ) : null}
@@ -351,24 +366,27 @@ export default function SuperAdminPage() {
                         className="ds-admin-icon"
                         onClick={() => void toggleOffline(store)}
                         disabled={busyId === store.id}
-                        aria-label={store.isOffline ? "Set live" : "Set offline"}
+                        aria-label={store.isOffline ? `Set ${storeLabel} live` : `Set ${storeLabel} offline`}
                         title={store.isOffline ? "Set live" : "Set offline"}
                       >
                         {store.isOffline ? <FiEye /> : <FiEyeOff />}
                       </button>
                       <button
                         type="button"
-                        className="ds-catalog-btn"
+                        className="ds-admin-icon"
                         onClick={() => setConfirmPlan(store)}
                         disabled={busyId === store.id}
+                        aria-label={`Change plan for ${storeLabel}`}
+                        title="Change plan"
                       >
-                        Change plan
+                        <FiCreditCard />
                       </button>
                       <button
                         type="button"
                         className="ds-admin-icon is-danger"
                         onClick={() => setConfirmDelete(store)}
-                        aria-label={`Delete ${store.name || store.username}`}
+                        aria-label={`Delete ${storeLabel}`}
+                        title="Delete store"
                       >
                         <FiTrash2 />
                       </button>

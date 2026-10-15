@@ -2769,13 +2769,13 @@
 }
 
 .ds-admin-table {
-  min-width: 1200px;
+  min-width: 980px;
 }
 
 .ds-admin-head,
 .ds-admin-row {
   display: grid;
-  grid-template-columns: minmax(220px, 1.5fr) minmax(180px, 1.1fr) 80px 80px 110px 100px 90px 90px minmax(220px, 1.2fr);
+  grid-template-columns: minmax(220px, 1.5fr) minmax(180px, 1.1fr) 80px 80px 90px 90px minmax(220px, 1.2fr);
   align-items: center;
   column-gap: 12px;
   padding: 0 12px;
@@ -3174,3 +3174,36 @@ button.ds-contacts-message:hover { color: var(--ds-violet-dark); text-decoration
 .ds-message-view dd { margin: 2px 0 0; font-size: 13px; overflow-wrap: anywhere; }
 .ds-catalog-modal .ds-message-view-body { margin: 0; padding: 14px; flex: 1 1 auto; min-height: 80px; overflow-y: auto; border: 1px solid var(--ds-border); border-radius: var(--ds-radius-sm); background: var(--ds-canvas); color: var(--ds-ink); font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
 .ds-message-view > div:last-child { display: flex; justify-content: flex-end; gap: 8px; }
+
+/* Admin: store list */
+.ds-admin-table.ds-store-list { min-width: 1080px; }
+.ds-store-list .ds-admin-head,
+.ds-store-list .ds-admin-row {
+  grid-template-columns: minmax(220px, 1.5fr) minmax(200px, 1.3fr) 110px 110px 100px 150px 196px;
+  column-gap: 16px;
+  padding: 0 16px;
+}
+.ds-store-list .ds-admin-head { text-transform: uppercase; letter-spacing: 0.04em; font-size: 11px; }
+.ds-store-list .ds-admin-row { min-height: 72px; padding-top: 12px; padding-bottom: 12px; }
+.ds-store-list .ds-store-list-actions-head { text-align: right; }
+.ds-store-cell { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.ds-store-cell img, .ds-store-initial { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 10px; object-fit: cover; }
+.ds-store-initial { display: inline-flex; align-items: center; justify-content: center; background: var(--ds-violet-soft); color: var(--ds-violet-dark); font-size: 16px; font-weight: 700; }
+.ds-store-cell strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+.ds-store-cell small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ds-store-list .ds-admin-contact > span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ds-store-stats { display: grid; gap: 2px; font-size: 12px; color: var(--ds-muted); white-space: nowrap; }
+.ds-store-stats b { color: var(--ds-ink); font-size: 13px; font-weight: 650; }
+.ds-store-date { white-space: nowrap; }
+.ds-store-date.is-muted { color: var(--ds-muted); }
+.ds-store-badges { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ds-plan-pill { display: inline-flex; align-items: center; gap: 5px; min-height: 22px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-style: normal; font-weight: 650; white-space: nowrap; }
+.ds-plan-pill::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
+.ds-plan-pill.is-premium { background: var(--ds-violet-soft); color: var(--ds-violet-dark); }
+.ds-plan-pill.is-trial { background: #fef3c7; color: #92400e; }
+.ds-plan-pill.is-expired { background: #fee2e2; color: #b91c1c; }
+.ds-plan-pill.is-live { background: #dcfce7; color: #166534; }
+.ds-plan-pill.is-offline { background: #e5e7eb; color: #4b5563; }
+.ds-store-actions { flex-wrap: nowrap; }
+.ds-store-actions .ds-admin-icon { background: var(--ds-surface); }
+.ds-store-actions .ds-admin-icon:disabled { opacity: 0.5; cursor: not-allowed; }
