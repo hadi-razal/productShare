@@ -17,6 +17,7 @@ import {
 } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { deleteProduct, getStoreById, listProductsByStore } from "@/lib/db";
+import { logStoreActivity } from "@/lib/activity";
 import type { ProductType } from "@/type";
 import { categoryLabel } from "@/lib/product-categories";
 import { isStoreProfileComplete, STORE_SETTINGS_PATH } from "@/lib/store-profile";
@@ -192,6 +193,7 @@ export default function ProductsPage() {
       await Promise.all(
         selected.map((id) => deleteProduct(userId, id)),
       );
+      void logStoreActivity(userId, "product_deleted", { count: selected.length });
       setProducts((current) => current.filter((product) => !selected.includes(product.id)));
       setSelected([]);
       setConfirmDelete(false);

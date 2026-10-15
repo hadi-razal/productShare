@@ -7,6 +7,7 @@ import { useState, useEffect, ChangeEvent, FormEvent, ReactNode } from "react";
 import { uploadPublicFile } from "@/lib/storage";
 import { getCurrentUser } from "@/lib/auth";
 import { createProduct, getStoreById, listProductsByStore, updateStore } from "@/lib/db";
+import { logStoreActivity } from "@/lib/activity";
 import { ProductType } from "@/type";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -373,6 +374,7 @@ const CreateProduct = () => {
         images: imageUrls,
         video: videoUrl,
       });
+      void logStoreActivity(user.uid, "product_added", { productName: productData.name });
       alert("Product created successfully!");
       markSaved();
       router.push("/store");

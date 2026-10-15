@@ -16,6 +16,7 @@ export type StoreRecord = userType & {
   subscriptionId?: string;
   subscribedAt?: string | null;
   trialEndsAt?: string | null;
+  lastActiveAt?: string | null;
   description?: string;
   createdAt?: string;
 };
@@ -47,6 +48,7 @@ type StoreRow = {
   subscription_id?: string | null;
   subscribed_at?: string | null;
   trial_ends_at?: string | null;
+  last_active_at?: string | null;
   is_offline?: boolean | null;
   onboarding_completed?: boolean | null;
   product_categories?: unknown;
@@ -110,6 +112,7 @@ const storeFromRow = (row: StoreRow): StoreRecord => ({
   subscriptionId: row.subscription_id ?? undefined,
   subscribedAt: row.subscribed_at ?? null,
   trialEndsAt: row.trial_ends_at ?? null,
+  lastActiveAt: row.last_active_at ?? null,
   isOffline: Boolean(row.is_offline),
   onboardingCompleted:
     typeof row.onboarding_completed === "boolean" ? row.onboarding_completed : null,

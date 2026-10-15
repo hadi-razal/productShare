@@ -25,8 +25,24 @@ import {
 } from "@/lib/db";
 import { isLocalHost, storefrontInternalPath, storefrontPublicUrl } from "@/lib/storefront-url";
 import { isStorePlanExpired, planStatusLabel, storePlanStatus } from "@/lib/subscription";
+import { relativeTime } from "@/components/dashboard/StoreBehaviour";
 
 type StatusFilter = "all" | "premium" | "free" | "expired" | "offline";
+type SortOrder = "newest" | "oldest" | "active" | "name";
+
+const timeOf = (value?: string | null) => {
+  const time = value ? new Date(value).getTime() : NaN;
+  return Number.isNaN(time) ? null : time;
+};
+
+const createdTime = (store: StoreRecord) => timeOf(store.createdAt);
+
+const createdLabel = (store: StoreRecord) => {
+  const time = createdTime(store);
+  return time === null
+    ? "—"
+    : new Date(time).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+};
 
 const storeHref = (username: string) => {
   if (!username) return "";
@@ -43,6 +59,7 @@ export default function SuperAdminPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<StoreRecord | null>(null);
   const [confirmPlan, setConfirmPlan] = useState<StoreRecord | null>(null);
@@ -84,7 +101,7 @@ export default function SuperAdminPage() {
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
-    return stores.filter((store) => {
+    const matches = stores.filter((store) => {
       if (statusFilter === "premium" && !store.isPremiumUser) return false;
       if (statusFilter === "free" && store.isPremiumUser) return false;
       if (statusFilter === "expired" && !isStorePlanExpired(store)) return false;
@@ -100,7 +117,17 @@ export default function SuperAdminPage() {
         .toLowerCase();
       return haystack.includes(term);
     });
-  }, [search, statusFilter, stores]);
+    // `stores` is already sorted by name; stores without a created date go last.
+    if (sortOrder === "name") return matches;
+    const sortTime = (store: StoreRecord) =>
+      sortOrder === "active" ? timeOf(store.lastActiveAt) : createdTime(store);
+    return [...matches].sort((a, b) => {
+      const aTime = sortTime(a);
+      const bTime = sortTime(b);
+      if (aTime === null || bTime === null) return aTime === bTime ? 0 : aTime === null ? 1 : -1;
+      return sortOrder === "oldest" ? aTime - bTime : bTime - aTime;
+    });
+  }, [search, sortOrder, statusFilter, stores]);
 
   const stats = useMemo(() => {
     const premium = stores.filter((store) => store.isPremiumUser).length;
@@ -233,6 +260,18 @@ export default function SuperAdminPage() {
               <option value="offline">Offline</option>
             </select>
           </label>
+          <label className="ds-catalog-view">
+            <select
+              value={sortOrder}
+              onChange={(event) => setSortOrder(event.target.value as SortOrder)}
+              aria-label="Sort stores"
+            >
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="active">Recently active</option>
+              <option value="name">Name (A–Z)</option>
+            </select>
+          </label>
         </div>
 
         <div className="ds-catalog-table-wrap">
@@ -242,6 +281,8 @@ export default function SuperAdminPage() {
               <span>Contact</span>
               <span>Products</span>
               <span>Views</span>
+              <span>Created</span>
+              <span>Last active</span>
               <span>Plan</span>
               <span>Status</span>
               <span>Actions</span>
@@ -249,7 +290,7 @@ export default function SuperAdminPage() {
             {loading ? (
               [0, 1, 2, 3, 4].map((item) => (
                 <div key={item} className="ds-admin-row ds-catalog-skeleton">
-                  <span /><span /><span /><span /><span /><span /><span />
+                  <span /><span /><span /><span /><span /><span /><span /><span /><span />
                 </div>
               ))
             ) : filtered.length ? (
@@ -280,6 +321,12 @@ export default function SuperAdminPage() {
                     </span>
                     <span>{count}</span>
                     <span>{Number(store.visitCount || 0).toLocaleString("en-IN")}</span>
+                    <span title={store.createdAt ? new Date(store.createdAt).toLocaleString("en-IN") : undefined}>
+                      {createdLabel(store)}
+                    </span>
+                    <span title={store.lastActiveAt ? new Date(store.lastActiveAt).toLocaleString("en-IN") : undefined}>
+                      {relativeTime(store.lastActiveAt)}
+                    </span>
                     <span>
                       <i className={`ds-status-pill ${store.isPremiumUser ? "active" : "hidden"}`}>
                         {planStatusLabel(storePlanStatus(store))}

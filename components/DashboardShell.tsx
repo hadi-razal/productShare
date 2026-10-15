@@ -12,6 +12,7 @@ import { isSuperAdminEmail } from "@/lib/super-admin";
 import StoreSetupModal from "@/components/StoreSetupModal";
 import { PlanExpiredScreen, TrialBanner } from "@/components/dashboard/PlanLock";
 import { storePlanStatus } from "@/lib/subscription";
+import { logStoreSession } from "@/lib/activity";
 import {
   isStoreProfileComplete,
   needsStoreOnboarding,
@@ -115,6 +116,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       try {
         await ensureStoreForUser(user);
         const store = await getStoreById(user.uid);
+        if (store) void logStoreSession(user.uid);
         const name = String(store?.name || "").trim();
         const complete = isStoreProfileComplete(store);
         setSetupUserId(user.uid);

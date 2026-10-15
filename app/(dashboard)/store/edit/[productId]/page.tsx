@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { FiChevronLeft } from "react-icons/fi";
 import { getProduct, getStoreById, listProductsByStore, updateProduct, updateStore } from "@/lib/db";
+import { logStoreActivity } from "@/lib/activity";
 import { deletePublicFiles, uploadPublicFile } from "@/lib/storage";
 import { useParams, useRouter } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
@@ -245,6 +246,10 @@ const EditProduct = () => {
       const imageUrls = await uploadImages();
       const updatedData = { ...productData, images: [...productData.images, ...imageUrls] };
       await updateProduct(user.uid, productId as string, updatedData);
+      void logStoreActivity(user.uid, "product_updated", {
+        productId: productId as string,
+        productName: productData.name,
+      });
       try {
         await deletePublicFiles(removedImageUrls);
       } catch (storageError) {

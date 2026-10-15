@@ -16,6 +16,7 @@ import { onAuthChange } from "@/lib/auth";
 import { cataloguePrice, useCataloguePreferences } from "./catalogue-preferences";
 import { ProductType } from "@/type";
 import { storeWhatsappDigits } from "@/lib/store-profile";
+import { logStoreActivity } from "@/lib/activity";
 import { useStorefrontNav } from "@/components/storefront-nav";
 import StorefrontImage, { usableMediaSrc } from "@/components/StorefrontImage";
 
@@ -305,6 +306,13 @@ const ProductPage = ({
       `Contact: ${phone}`,
     ].join("\n");
     setEnquiryOpen(false);
+    if (!isOffline && !isOwner) {
+      // Count only: shopper details stay in the WhatsApp message, never in our database.
+      void logStoreActivity(userId ?? initialUserId, "enquiry", {
+        productId,
+        productName: productData?.name ?? "",
+      });
+    }
     window.open(
       `https://wa.me/${number}?text=${encodeURIComponent(message)}`,
       "_blank",

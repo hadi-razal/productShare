@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import { onAuthChange } from "@/lib/auth";
 import { uploadPublicFile } from "@/lib/storage";
 import { getStoreById, updateStore } from "@/lib/db";
+import { logStoreActivity } from "@/lib/activity";
 import { useRouter } from "next/navigation";
 import { userType } from "@/type";
 import toast from "react-hot-toast";
@@ -190,6 +191,7 @@ const SettingsPage: React.FC = () => {
       }
 
       await updateStore(userId, updatedData);
+      void logStoreActivity(userId, "settings_saved");
       if (updatedData.logoImage) {
         setLogoImageUrl(updatedData.logoImage);
         setLogoImage(null);
@@ -275,6 +277,7 @@ const SettingsPage: React.FC = () => {
     setVisibilitySaving(true);
     try {
       await updateStore(userId, { isOffline: next });
+      void logStoreActivity(userId, next ? "store_offline" : "store_live");
       toast.success(next ? "Your store is now offline." : "Your store is live again.");
     } catch (error) {
       console.error("Error updating store visibility:", error);

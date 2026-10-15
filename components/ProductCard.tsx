@@ -3,6 +3,7 @@
 import { cataloguePrice, useCataloguePreferences } from "./catalogue-preferences";
 import { ProductType } from "@/type";
 import { deleteProduct } from "@/lib/db";
+import { logStoreActivity } from "@/lib/activity";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -76,6 +77,10 @@ const ProductCard = ({
       }
 
       await deleteProduct(storeOwnerId, product.id);
+      void logStoreActivity(storeOwnerId, "product_deleted", {
+        count: 1,
+        productName: product.name ?? "",
+      });
       refetchProducts?.();
       toast.success("Product deleted successfully!");
       setShowDeleteModal(false);

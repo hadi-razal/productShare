@@ -170,3 +170,6 @@ using (bucket_id = 'uploads');
 
 -- Customizable storefront header
 alter table public.stores add column if not exists store_header jsonb not null default '{}'::jsonb;
+
+-- Store owner behaviour log: see migrations/20261015_store_activity.sql
+alter table stores add column if not exists last_active_at timestamptz;

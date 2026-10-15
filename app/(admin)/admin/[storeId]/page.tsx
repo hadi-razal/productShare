@@ -10,11 +10,15 @@ import {
   deleteProduct,
   deleteStore,
   getStoreById,
+  listContactMessages,
   listProductsByStore,
   updateStore,
+  type ContactMessageRecord,
   type ProductRecord,
   type StoreRecord,
 } from "@/lib/db";
+import { listStoreActivity, type StoreActivityRecord } from "@/lib/activity";
+import StoreBehaviour from "@/components/dashboard/StoreBehaviour";
 import { isLocalHost, storefrontInternalPath, storefrontPublicUrl } from "@/lib/storefront-url";
 import {
   extendedTrialEndsAt,
@@ -51,12 +55,18 @@ export default function AdminStorePage() {
   const [confirmStoreDelete, setConfirmStoreDelete] = useState(false);
   const [confirmPlan, setConfirmPlan] = useState(false);
   const [confirmProductId, setConfirmProductId] = useState<string | null>(null);
+  const [activity, setActivity] = useState<StoreActivityRecord[]>([]);
+  const [messages, setMessages] = useState<ContactMessageRecord[]>([]);
 
   const load = async (id: string) => {
-    const [storeData, productRows] = await Promise.all([
+    const [storeData, productRows, activityRows, messageRows] = await Promise.all([
       getStoreById(id),
       listProductsByStore(id),
+      listStoreActivity(id),
+      listContactMessages("store").catch(() => [] as ContactMessageRecord[]),
     ]);
+    setActivity(activityRows);
+    setMessages(messageRows.filter((message) => message.storeId === id));
     if (!storeData) {
       toast.error("Store not found.");
       router.replace("/admin");
@@ -233,6 +243,8 @@ export default function AdminStorePage() {
           <div><span>Created</span><strong>{store.createdAt ? new Date(store.createdAt).toLocaleDateString("en-IN") : "—"}</strong></div>
         </div>
       </section>
+
+      <StoreBehaviour store={store} products={products} activity={activity} messages={messages} />
 
       <section className="ds-catalog-card">
         <div className="ds-catalog-toolbar">
